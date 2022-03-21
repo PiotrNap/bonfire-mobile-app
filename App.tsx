@@ -1,112 +1,113 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import "react-native-gesture-handler";
+import * as React from "react";
+import { LogBox, Platform, UIManager } from "react-native";
+import "./global";
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { AppStackParamList } from "common/types/navigationTypes";
+import { AppContextProvider } from "contexts/appContext";
+import { ProfileContextProvider } from "contexts/profileContext";
+// import {useFonts} from 'expo-font';
+import { jsErrorHandler } from "lib/errors";
+import { setJSExceptionHandler } from "react-native-exception-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { enableScreens } from "react-native-screens";
+import { WalletTopUpScreen } from "screens/onboarding";
+import { Confirmation, DepositSuccessful } from "screens/payments";
+import { NavigationScreens } from "tabs/NavigationScreens";
+import { OnboardingScreens } from "tabs/OnboardingScreens";
+import { UserRegistrationScreens } from "tabs/UserRegistrationScreens";
+import { useAppLogin } from "lib/hooks/useAppLogin";
+// import { LogIn } from "screens/LogIn";
+// import AppLoading from 'expo-app-loading';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// Ignore all log notifications:
+// LogBox.ignoreAllLogs();
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
+enableScreens(); // enable native screens for navigation instead of using Views
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+// this will enable LayoutAnimation API
+if (Platform.OS === "android") {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+const Stack = createStackNavigator<AppStackParamList>();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+function App() {
+  const { isAuthorized, isAuthLoaded, user } = useAppLogin();
+
+  // const [fontsLoadaed] = useFonts({
+  //   'Roboto-Thin': require('./assets/fonts/Roboto-Thin.ttf'),
+  //   'Roboto-Light': require('./assets/fonts/Roboto-Light.ttf'),
+  //   'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+  //   'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
+  //   'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+  //   'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf'),
+  // });
+
+  // if (!fontsLoadaed || !isAuthLoaded) {
+  //   // return <AppLoading />;
+  // } else {
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <AppContextProvider>
+        <ProfileContextProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName={
+                isAuthorized ? "Navigation Screens" : "Onboarding Screens"
+              }
+              headerMode="screen">
+              {/*<Stack.Screen
+                      name="Log In"
+                      component={LogIn}
+                      options={{ headerShown: false }}
+                    />*/}
+              <Stack.Screen
+                name="Onboarding Screens"
+                component={OnboardingScreens}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="User Registration Screens"
+                component={UserRegistrationScreens}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Navigation Screens"
+                component={NavigationScreens}
+                options={{ headerShown: false }}
+                initialParams={user}
+              />
+              <Stack.Screen
+                name="Deposit Successful"
+                options={{ headerShown: false, gestureEnabled: false }}
+                component={DepositSuccessful}
+              />
+              <Stack.Screen
+                name="Confirmation"
+                options={{ headerShown: false, gestureEnabled: false }}
+                component={Confirmation}
+              />
+              <Stack.Screen
+                name="Add Funds"
+                options={{ headerShown: false, gestureEnabled: false }}
+                component={WalletTopUpScreen}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ProfileContextProvider>
+      </AppContextProvider>
+    </SafeAreaProvider>
   );
-};
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+}
 
 export default App;
