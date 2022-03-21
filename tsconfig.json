@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "jsx": "react-native",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "useUnknownInCatchVariables": false,
+    "experimentalDecorators": true,
+    "paths": {
+      "assets/*": ["./src/assets/*"],
+      "common/*": ["./src/common/*"],
+      "components/*": ["./src/components/*"],
+      "containers/*": ["./src/containers/*"],
+      "contexts/*": ["./src/contexts/*"],
+      "lib/*": ["./src/lib/*"],
+      "icons/*": ["./src/assets/icons/index"],
+      "images/*": ["./src/assets/images/*"],
+      "interfaces/*": ["./src/common/interfaces/*"],
+      "Api/*": ["./src/services/Api/*"],
+      "screens/*": ["./src/screens/*"],
+      "stacks/*": ["./src/stacks/*"],
+      "styles/*": ["./src/styles/index"],
+      "tabs/*": ["./src/tabs/*"],
+      "types/*": ["./src/common/types*"],
+      "utils/*": ["./src/lib/utils.ts*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ],
+  "extends": "expo/tsconfig.base"
+}
