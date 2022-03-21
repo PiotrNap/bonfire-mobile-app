@@ -19,7 +19,7 @@ import { BodyText } from "components/rnWrappers/bodyText";
 import { ProfileContext } from "contexts/profileContext";
 import { WalletSetUpModal } from "components/modals/walletSetUpModal";
 import { useNavigation } from "@react-navigation/native";
-import * as Clipboard from "expo-clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { CopyMessage } from "components/popups/copyMessage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -99,7 +99,7 @@ export const WalletTopUpScreen = ({
   );
 
   const onCopyPress = () => {
-    Clipboard.default.setString(address);
+    Clipboard.setString(address);
     setCopyMsgActive(true);
     setTimeout(() => setCopyMsgActive(false), 2000);
   };
