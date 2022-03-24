@@ -1,4 +1,6 @@
 rootProject.name = 'bonfire'
+include ':react-native-splash-screen'
+project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
 include ':@emurgo_react-native-haskell-shelley'
 project(':@emurgo_react-native-haskell-shelley').projectDir = new File(rootProject.projectDir, '../node_modules/@emurgo/react-native-haskell-shelley/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
