@@ -1,5 +1,5 @@
 import { Dimensions, Platform } from "react-native";
-import * as Random from "expo-random";
+import { randomBytes } from "react-native-randombytes";
 import * as yup from "yup";
 import {
   AvailabilitiesDay,
@@ -21,9 +21,21 @@ import { AnyObject } from "yup/lib/types";
 // import { customAvailabilities } from "../api_data/customAvailabilities.js";
 
 const IS_ANDROID = Platform.OS === "android";
+const IS_IOS = Platform.OS === "ios";
 
 export function scale(size: number, factor = 1) {
   return +((Dimensions.get("window").width / 390) * size * factor).toFixed(2);
+}
+
+export function getDeepLinkUri(path: String = ""): String {
+  const scheme = "bonfire://";
+  const host = "gimbalabs.bonfire.com";
+  if (IS_ANDROID) {
+    let dl = scheme + host;
+    return path ? dl + "/" + path : dl;
+  } else {
+    return path ? scheme + path : scheme;
+  }
 }
 
 /**
@@ -650,19 +662,13 @@ export function getLocaleTimezone(): string {
 }
 
 /**
- * Uses Random library from expo-random to generate array of random bytes
+ * Uses randomBytes method from react-native-randombytes to
+ * generate array of random bytes
  *
  * @param number - number of bytes
  */
 export function getRandomKey(bytes: number): string {
-  return Random.getRandomBytes(bytes).join("");
-}
-
-export async function getRandomKeyAsync(bytes: number): Promise<string> {
-  const res = await Random.getRandomBytesAsync(bytes);
-  const arr = res.join("");
-
-  return arr;
+  return randomBytes(bytes).join("");
 }
 
 export const roundDateMinutes = (date: Date): Date => {

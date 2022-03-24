@@ -67,7 +67,6 @@ export type ProfileStackParamList = {
 /**
  * Navigation params interfaces
  */
-
 interface EventDescription {
   title: string;
   titleColor: string;
@@ -81,4 +80,15 @@ interface EventDescription {
   eventId: string;
   fromScreen?: string;
   isBookingWalletTopUp?: boolean;
+}
+
+export enum DEEP_LINKING_PATHS {
+  ADD_FUNDS = "add-funds",
+  AVAILABLE_DAYS_SELECTION = "available-days-selection/:success",
+  AVAILABLE_EVENTS_DAYS_SELECTION = "available-event-days-selection",
+  BROWSE = "browse",
+  HOME = "home",
+  NAVIGATION = "navigation",
+  NEW_EVENT_DESCRIPTION = "new-event-description",
+  ONBOARDING = "onboarding",
 }
