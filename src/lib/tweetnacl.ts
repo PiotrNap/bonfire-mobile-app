@@ -1,4 +1,4 @@
-import nacl from "tweet-nacl-react-native-expo";
+import nacl from "react-native-tweet-nacl";
 import base64 from "base64-js";
 import { getFromEncryptedStorage } from "./encryptedStorage";
 

@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import * as Updates from "expo-updates";
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import { DevSettings, Pressable, View, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Buttons, Typography } from "styles/index";
@@ -31,7 +30,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
           <Text style={Buttons.barText.primary_light}>Try again</Text>
         </Pressable>
         <Pressable
-          onPress={async () => await Updates.reloadAsync()}
+          onPress={() => DevSettings.reload()}
           style={Buttons.applyOpacity(styles.button)}>
           <Text style={Buttons.barText.primary_light}>Restart</Text>
         </Pressable>
