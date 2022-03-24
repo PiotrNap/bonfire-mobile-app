@@ -3,6 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import "RNSplashScreen.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -74,6 +75,11 @@ static void ClearKeychainIfNecessary() {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+
+  [RNSplashScreen.show];
+  // or
+  // [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
+  
   return YES;
 }
 

@@ -14,6 +14,8 @@ target 'bonfire' do
 
   pod 'react-native-haskell-shelley', :path => '../node_modules/@emurgo/react-native-haskell-shelley'
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'bonfireTests' do
     inherit! :complete
     # Pods for testing
