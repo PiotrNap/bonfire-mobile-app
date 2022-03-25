@@ -262,7 +262,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
               marginRight: Sizing.x20,
             }}>
             <Text style={{ ...fontWeight.bold, textAlign: "center" }}>
-              Select your time frame &{"\n"} add new time slot
+              Select your time frame &{"\n"} add a new time slot!
             </Text>
             <CurvedArrow
               style={[
@@ -349,8 +349,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   arrowIcon: {
-    width: Sizing.x70,
-    height: Sizing.x70,
+    width: Sizing.x60,
+    height: Sizing.x60,
     alignSelf: "center",
   },
 });
