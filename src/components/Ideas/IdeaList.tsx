@@ -1,17 +1,17 @@
-import * as React from "react";
-import { View, StyleSheet, Pressable, TextInput } from "react-native";
-import { Buttons, Typography, Sizing, Outlines } from "styles/index";
-import { RemoveIcon, EditIcon } from "icons/index";
+import * as React from "react"
+import { View, StyleSheet, Pressable, TextInput } from "react-native"
+import { Buttons, Typography, Sizing, Outlines } from "styles/index"
+import { RemoveIcon, EditIcon } from "icons/index"
 
 export interface IdeaProps {
-  value: string;
-  key: string;
+  value: string
+  key: string
 }
 
 export interface IdeaListProps {
-  item: IdeaProps;
-  onIdeaInputChange: (value: string, key: string) => void;
-  removeIdea: (key: string) => void;
+  item: IdeaProps
+  onIdeaInputChange: (value: string, key: string) => void
+  removeIdea: (key: string) => void
 }
 
 export const IdeaList = ({
@@ -19,7 +19,7 @@ export const IdeaList = ({
   onIdeaInputChange,
   removeIdea,
 }: IdeaListProps) => {
-  var inputRef: TextInput | null;
+  var inputRef: TextInput | null
 
   return (
     <View style={styles.ideaItem}>
@@ -33,7 +33,7 @@ export const IdeaList = ({
       <View style={styles.ideaIcons}>
         <Pressable
           onPress={() => {
-            inputRef && inputRef.focus();
+            inputRef && inputRef.focus()
           }}
           style={Buttons.applyOpacity(styles.icon)}>
           <EditIcon width={20} height={20} />
@@ -45,8 +45,8 @@ export const IdeaList = ({
         </Pressable>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   ideaItem: {
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: Sizing.x5,
   },
-});
+})

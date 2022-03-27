@@ -1,28 +1,23 @@
-import * as React from "react";
-import {
-  StyleSheet,
-  ColorSchemeName,
-  Pressable,
-  ViewStyle,
-} from "react-native";
+import * as React from "react"
+import { StyleSheet, ColorSchemeName, Pressable, ViewStyle } from "react-native"
 
-import { LeftArrowIcon, RightArrowIcon } from "assets/icons";
-import { Buttons, Colors, Outlines, Sizing } from "styles/index";
-import { CalendarHeader } from "common/interfaces/myCalendarInterface";
-import { monthsByName } from "common/types/calendarTypes";
-import { useRoute } from "@react-navigation/native";
-import { isSixMonthsLater } from "lib/utils";
+import { LeftArrowIcon, RightArrowIcon } from "assets/icons"
+import { Buttons, Colors, Outlines, Sizing } from "styles/index"
+import { CalendarHeader } from "common/interfaces/myCalendarInterface"
+import { monthsByName } from "common/types/calendarTypes"
+import { useRoute } from "@react-navigation/native"
+import { isSixMonthsLater } from "lib/utils"
 
 export interface CalendarTopNavigationProps {
-  onPreviousPress: () => void;
-  onNextPress: () => void;
-  colorScheme: ColorSchemeName;
-  calendarHeader: CalendarHeader;
-  isBookingCalendar?: boolean;
-  isNewEventCalendar?: boolean;
+  onPreviousPress: () => void
+  onNextPress: () => void
+  colorScheme: ColorSchemeName
+  calendarHeader: CalendarHeader
+  isBookingCalendar?: boolean
+  isNewEventCalendar?: boolean
 }
 
-type Direction = "next" | "prev";
+type Direction = "next" | "prev"
 
 export const CalendarTopNavigation = ({
   onPreviousPress,
@@ -34,8 +29,8 @@ export const CalendarTopNavigation = ({
 }: CalendarTopNavigationProps) => {
   const [currentPressed, setCurrentPressed] = React.useState<null | Direction>(
     null
-  );
-  const { month, year } = calendarHeader;
+  )
+  const { month, year } = calendarHeader
 
   /**
    * This will show disabled buttons after six months span time
@@ -46,25 +41,25 @@ export const CalendarTopNavigation = ({
   //   monthsByName[calendarHeader.month]
   // );
 
-  var disabledNextButton = false;
-  var disabledPreviousButton = false;
+  var disabledNextButton = false
+  var disabledPreviousButton = false
 
   if (isBookingCalendar || isNewEventCalendar) {
     disabledPreviousButton =
       year === new Date().getFullYear() &&
-      monthsByName[month] === new Date().getMonth();
+      monthsByName[month] === new Date().getMonth()
 
     if (isBookingCalendar) {
-      var { toDate }: any = useRoute().params;
+      var { toDate }: any = useRoute().params
 
       disabledNextButton =
         year === new Date(toDate).getFullYear() &&
-        monthsByName[month] === new Date(toDate).getMonth();
+        monthsByName[month] === new Date(toDate).getMonth()
     } else {
       disabledNextButton = isSixMonthsLater(
         calendarHeader.year,
         monthsByName[calendarHeader.month]
-      );
+      )
     }
   }
 
@@ -75,28 +70,28 @@ export const CalendarTopNavigation = ({
         ? {
             backgroundColor: Colors.neutral.s400,
           }
-        : {};
+        : {}
 
     const buttonStyle =
       colorScheme === "light"
         ? styles.monthSwitchButton_light
-        : styles.monthSwitchButton_dark;
-    const shadow = currentPressed === direction ? Outlines.shadow.base : {};
+        : styles.monthSwitchButton_dark
+    const shadow = currentPressed === direction ? Outlines.shadow.base : {}
 
-    return { ...buttonStyle, ...disabled, ...shadow };
-  };
+    return { ...buttonStyle, ...disabled, ...shadow }
+  }
 
   const onPress = (direction: Direction) => {
     if (direction === "next") {
-      onNextPress();
-      setCurrentPressed(direction);
+      onNextPress()
+      setCurrentPressed(direction)
     }
     if (direction === "prev") {
-      onPreviousPress();
-      setCurrentPressed(direction);
+      onPreviousPress()
+      setCurrentPressed(direction)
     }
-  };
-  const onPressOut = () => setCurrentPressed(null);
+  }
+  const onPressOut = () => setCurrentPressed(null)
 
   return (
     <>
@@ -133,8 +128,8 @@ export const CalendarTopNavigation = ({
         />
       </Pressable>
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   monthSwitchButton_light: {
@@ -155,4 +150,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-});
+})

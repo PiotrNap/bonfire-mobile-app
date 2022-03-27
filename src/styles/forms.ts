@@ -1,11 +1,11 @@
-import { TextStyle } from "react-native";
+import { TextStyle } from "react-native"
 
-import * as Colors from "./colors";
-import * as Outlines from "./outlines";
-import * as Sizing from "./sizing";
-import * as Typography from "./typography";
+import * as Colors from "./colors"
+import * as Outlines from "./outlines"
+import * as Sizing from "./sizing"
+import * as Typography from "./typography"
 
-type Input = "primary" | "primary_light" | "primary_dark";
+type Input = "primary" | "primary_light" | "primary_dark"
 export const input: Record<Input, TextStyle> = {
   primary: {
     ...Typography.subHeader.x30,
@@ -43,9 +43,9 @@ export const input: Record<Input, TextStyle> = {
     color: Colors.primary.s600,
     ...Outlines.shadow.lifted,
   },
-};
+}
 
-type InputLabel = "primary" | "error" | "primary_light" | "primary_dark";
+type InputLabel = "primary" | "error" | "primary_light" | "primary_dark"
 export const inputLabel: Record<InputLabel, TextStyle> = {
   primary: {
     ...Typography.subHeader.x30,
@@ -69,4 +69,4 @@ export const inputLabel: Record<InputLabel, TextStyle> = {
     ...Typography.body.x10,
     fontFamily: "Roboto-Medium",
   },
-};
+}

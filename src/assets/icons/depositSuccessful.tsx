@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path, Circle } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path, Circle } from "react-native-svg"
 
 export const DepositSuccessfulIcon = (props: SvgProps) => {
   return (
@@ -40,5 +40,5 @@ export const DepositSuccessfulIcon = (props: SvgProps) => {
         d="M127.351 360.424l-12.938-16.637 7.524-5.852 6.126 7.877 20.697-21.848 6.921 6.557-28.33 29.903z"
       />
     </Svg>
-  );
-};
+  )
+}

@@ -15,4 +15,4 @@ module.exports = {
 
   plugins: ["react", "react-native", "react-hooks", "import"],
   root: true,
-};
+}

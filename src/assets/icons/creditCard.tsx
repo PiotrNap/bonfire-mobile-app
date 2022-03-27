@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path, Circle } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path, Circle } from "react-native-svg"
 
 export const CreditCardIcon = (props: SvgProps) => {
   return (
@@ -75,5 +75,5 @@ export const CreditCardIcon = (props: SvgProps) => {
       />
       <Path d="M738 468H1a1 1 0 010-2h737a1 1 0 010 2z" fill="#cbcbcb" />
     </Svg>
-  );
-};
+  )
+}

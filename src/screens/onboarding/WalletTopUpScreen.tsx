@@ -1,93 +1,94 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   StyleSheet,
   Text,
   Pressable,
   useWindowDimensions,
-} from "react-native";
+} from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import ViewPager from "react-native-pager-view";
-import QRCode from "react-native-qrcode-svg";
-import { CustomPlainInput } from "components/forms/CustomPlainInput";
-import { DuplicateIcon, LeftArrowIcon } from "icons/index";
-import { Typography, Colors, Sizing, Outlines, Buttons } from "styles/index";
-import { appContext } from "contexts/contextApi";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { ProfileContext } from "contexts/profileContext";
-import { WalletSetUpModal } from "components/modals/walletSetUpModal";
-import { useNavigation } from "@react-navigation/native";
-import Clipboard from "@react-native-clipboard/clipboard";
-import { CopyMessage } from "components/popups/copyMessage";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context"
+import ViewPager from "react-native-pager-view"
+import QRCode from "react-native-qrcode-svg"
+import { CustomPlainInput } from "components/forms/CustomPlainInput"
+import { DuplicateIcon, LeftArrowIcon } from "icons/index"
+import { Typography, Colors, Sizing, Outlines, Buttons } from "styles/index"
+import { appContext } from "contexts/contextApi"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { ProfileContext } from "contexts/profileContext"
+import { WalletSetUpModal } from "components/modals/walletSetUpModal"
+import { useNavigation } from "@react-navigation/native"
+import Clipboard from "@react-native-clipboard/clipboard"
+import { CopyMessage } from "components/popups/copyMessage"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export interface WalletTopUpScreenProps {
-  pagerRef?: React.RefObject<ViewPager>;
-  navigation?: any;
-  route?: any;
+  pagerRef?: React.RefObject<ViewPager>
+  navigation?: any
+  route?: any
 }
 
 export const WalletTopUpScreen = ({
   route,
   pagerRef,
 }: WalletTopUpScreenProps) => {
-  const navigation = useNavigation();
-  const { colorScheme } = appContext();
-  const [isLightMode, setIsLightMode] = React.useState<boolean>(false);
-  const [address, setAddress] = React.useState<string>("");
-  const [amount, setAmount] = React.useState<string>("");
-  const [copyMsgActive, setCopyMsgActive] = React.useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false);
-  const { hasSyncedWallet, walletBalance, setWalletBalance } =
-    React.useContext(ProfileContext);
-  const windowWidth = useWindowDimensions().width;
-  const { fromScreen } = route.params;
+  const navigation = useNavigation()
+  const { colorScheme } = appContext()
+  const [isLightMode, setIsLightMode] = React.useState<boolean>(false)
+  const [address, setAddress] = React.useState<string>("")
+  const [amount, setAmount] = React.useState<string>("")
+  const [copyMsgActive, setCopyMsgActive] = React.useState<boolean>(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false)
+  const { hasSyncedWallet, walletBalance, setWalletBalance } = React.useContext(
+    ProfileContext
+  )
+  const windowWidth = useWindowDimensions().width
+  const { fromScreen } = route.params
 
-  const isRegistrationScreen = pagerRef?.current instanceof ViewPager;
-  const isBookingScreen = route != null && route.params?.isBookingScreen;
-  const isDisabled = !address || !amount;
+  const isRegistrationScreen = pagerRef?.current instanceof ViewPager
+  const isBookingScreen = route != null && route.params?.isBookingScreen
+  const isDisabled = !address || !amount
 
-  const onTextChangeCallback = (value: any) => setAddress(value);
-  const onAmountChangeCallback = (value: any) => setAmount(value);
+  const onTextChangeCallback = (value: any) => setAddress(value)
+  const onAmountChangeCallback = (value: any) => setAmount(value)
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
 
   const wait = (ms: number): Promise<void> =>
-    new Promise((res) => setTimeout(res, ms));
+    new Promise((res) => setTimeout(res, ms))
 
   const processPayment = async () => {
     // if user hasn't synced any wallet yet:
-    if (!hasSyncedWallet) return setIsVisibleModal(true);
+    if (!hasSyncedWallet) return setIsVisibleModal(true)
 
-    setIsLoading(true);
+    setIsLoading(true)
     //@TODO change in production
-    await wait(2000);
-    setWalletBalance(Number(walletBalance) + Number(amount));
-    setIsLoading(false);
+    await wait(2000)
+    setWalletBalance(Number(walletBalance) + Number(amount))
+    setIsLoading(false)
 
     // this means we are on the onboarding screen
     if (isRegistrationScreen) {
       navigation.navigate("Deposit Successful", {
         fromScreen: "User Registration Screens",
-      });
+      })
     }
 
     if (route != null && route.params?.fromScreen == "Duration Choice") {
       navigation.navigate("Deposit Successful", {
         fromScreen: route.params.fromScreen,
-      });
+      })
     }
 
     navigation.navigate("Deposit Successful", {
       ...route.params,
       isBookingWalletTopUp: true,
-    });
-  };
+    })
+  }
 
-  const hideModal = () => setIsVisibleModal(false);
+  const hideModal = () => setIsVisibleModal(false)
 
   const WalletTopUpModal = React.useMemo(
     () => (
@@ -96,24 +97,24 @@ export const WalletTopUpScreen = ({
       </View>
     ),
     [isVisibleModal]
-  );
+  )
 
   const onCopyPress = () => {
-    Clipboard.setString(address);
-    setCopyMsgActive(true);
-    setTimeout(() => setCopyMsgActive(false), 2000);
-  };
+    Clipboard.setString(address)
+    setCopyMsgActive(true)
+    setTimeout(() => setCopyMsgActive(false), 2000)
+  }
   const onBackPress = () => {
-    pagerRef?.current?.setPage(0);
-  };
+    pagerRef?.current?.setPage(0)
+  }
 
   React.useEffect(() => {
     if (pagerRef?.current instanceof ViewPager) {
-      setIsLightMode(false);
+      setIsLightMode(false)
     } else {
-      setIsLightMode(colorScheme === "light");
+      setIsLightMode(colorScheme === "light")
     }
-  }, [colorScheme]);
+  }, [colorScheme])
 
   return (
     <SafeAreaView
@@ -227,8 +228,8 @@ export const WalletTopUpScreen = ({
         {isVisibleModal && WalletTopUpModal}
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -311,4 +312,4 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: -Sizing.x12,
   },
-});
+})

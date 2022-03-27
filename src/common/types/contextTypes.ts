@@ -1,10 +1,10 @@
-import { OrganizerRate } from "common/interfaces/bookingInterface";
+import { OrganizerRate } from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
   SelectedWeekDays,
   TextContent,
-} from "common/interfaces/newEventInterface";
-import { ColorSchemeName, JWTPayload } from "interfaces/appInterface";
+} from "common/interfaces/newEventInterface"
+import { ColorSchemeName, JWTPayload } from "interfaces/appInterface"
 import {
   Availabilities,
   CalendarHeader,
@@ -12,7 +12,7 @@ import {
   NewCalendarMonths,
   PreviewingDayEvents,
   Events,
-} from "interfaces/myCalendarInterface";
+} from "interfaces/myCalendarInterface"
 
 export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
@@ -78,159 +78,156 @@ export enum MyCalendarTypes {
 export type ActionMap<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
     ? {
-        type: Key;
+        type: Key
       }
     : {
-        type: Key;
-        payload: M[Key];
-      };
-};
+        type: Key
+        payload: M[Key]
+      }
+}
 
 export type AppPayload = {
   [AppTypes.ToggleAuth]: {
-    auth: boolean | null;
-    accountType: string | null;
-  };
+    auth: boolean | null
+    accountType: string | null
+  }
   [AppTypes.SetRef]: {
-    ref: any;
-  };
+    ref: any
+  }
   [AppTypes.SetJWT]: {
-    jwtPayload: JWTPayload;
-  };
+    jwtPayload: JWTPayload
+  }
   [AppTypes.SetPageIndex]: {
-    pageIndex: number;
-  };
+    pageIndex: number
+  }
   [AppTypes.SetFavoriteOrganizer]: {
-    alias: string;
-  };
+    alias: string
+  }
   [AppTypes.SetColorScheme]: {
-    newColorScheme: ColorSchemeName;
-  };
-  ["unknown"]: any;
-};
+    newColorScheme: ColorSchemeName
+  }
+  ["unknown"]: any
+}
 
 export type EventCreationPayload = {
   [EventCreationTypes.AddAvailability]: {
-    availability: EventAvailability;
-  };
+    availability: EventAvailability
+  }
   [EventCreationTypes.RemoveAvailability]: {
-    availability: EventAvailability;
-  };
+    availability: EventAvailability
+  }
   [EventCreationTypes.SetSelectedDays]: {
-    selectedDays: number[];
-    isRecurringSelection: boolean;
-  };
-  [EventCreationTypes.RemoveSelectedDays]: any;
+    selectedDays: number[]
+    isRecurringSelection: boolean
+  }
+  [EventCreationTypes.RemoveSelectedDays]: any
   [EventCreationTypes.SetSelectedWeek]: {
-    selectedWeek: SelectedWeekDays;
-  };
+    selectedWeek: SelectedWeekDays
+  }
   [EventCreationTypes.SetDateFrame]: {
-    fromDate: Date;
-    toDate: Date;
-  };
-  [EventCreationTypes.RemoveSelectedWeeks]: any;
+    fromDate: Date
+    toDate: Date
+  }
+  [EventCreationTypes.RemoveSelectedWeeks]: any
   [EventCreationTypes.SetHourlyRate]: {
-    hourlyRate: number;
-  };
+    hourlyRate: number
+  }
   [EventCreationTypes.SetImageURI]: {
-    imageURI: string;
-  };
+    imageURI: string
+  }
   [EventCreationTypes.SetTags]: {
-    tags: string[];
-  };
+    tags: string[]
+  }
   [EventCreationTypes.SetTextContent]: {
-    textContent: TextContent;
-  };
+    textContent: TextContent
+  }
   [EventCreationTypes.SetPrivateEvent]: {
-    privateEvent: boolean;
-  };
+    privateEvent: boolean
+  }
   [EventCreationTypes.SetEventCardColor]: {
-    eventCardColor: string;
-  };
+    eventCardColor: string
+  }
   [EventCreationTypes.SetEventTitleColor]: {
-    eventTitleColor: string;
-  };
-  [EventCreationTypes.ResetState]: any;
-  ["unknown"]: any;
-};
+    eventTitleColor: string
+  }
+  [EventCreationTypes.ResetState]: any
+  ["unknown"]: any
+}
 
 export type BookingPayload = {
   [BookingTypes.SetDuration]: {
-    duration: number;
-  };
+    duration: number
+  }
   [BookingTypes.SetDurationCost]: {
-    durationCost: number;
-  };
+    durationCost: number
+  }
   [BookingTypes.SetEventTitle]: {
-    title: string;
-  };
+    title: string
+  }
   [BookingTypes.SetOrganizerRate]: {
-    organizerRate: OrganizerRate;
-  };
+    organizerRate: OrganizerRate
+  }
   [BookingTypes.SetPickedDate]: {
-    pickedDate: number;
-  };
+    pickedDate: number
+  }
   [BookingTypes.SetMaxTimeSlotDuration]: {
-    maxTimeSlotDuration: number;
-  };
+    maxTimeSlotDuration: number
+  }
   [BookingTypes.SetMinTimeSlotDuration]: {
-    minTimeSlotDuration: number;
-  };
+    minTimeSlotDuration: number
+  }
   [BookingTypes.SetPreviewingOrganizer]: {
-    previewingOrganizer: any;
-  };
+    previewingOrganizer: any
+  }
   [BookingTypes.SetPreviewingEvent]: {
-    previewingEvent: any;
-  };
-  [BookingTypes.ResetState]: {};
-  ["unknown"]: any;
-};
+    previewingEvent: any
+  }
+  [BookingTypes.ResetState]: {}
+  ["unknown"]: any
+}
 
 export type MyCalendarPaylaod = {
   [MyCalendarTypes.AddEvent]: {
-    event: Events;
-  };
+    event: Events
+  }
   [MyCalendarTypes.AddAvailability]: {
-    availabilities: Availabilities[];
-  };
+    availabilities: Availabilities[]
+  }
   [MyCalendarTypes.LoadInitialMyCalendar]: {
-    calendarArgs: NewCalendarMonths;
-  };
+    calendarArgs: NewCalendarMonths
+  }
   [MyCalendarTypes.LoadMyCalendar]: {
-    calendarArgs: NewCalendarMonths;
-  };
+    calendarArgs: NewCalendarMonths
+  }
   [MyCalendarTypes.ChangeMonthHeader]: {
-    calendarHeader: CalendarHeader;
-  };
+    calendarHeader: CalendarHeader
+  }
   [MyCalendarTypes.PreviewDayEvents]: {
-    newPreviewingDayEvents: PreviewingDayEvents;
-  };
+    newPreviewingDayEvents: PreviewingDayEvents
+  }
   [MyCalendarTypes.ResetState]: {
-    calendarState?: MyCalendarState;
-  };
+    calendarState?: MyCalendarState
+  }
   [MyCalendarTypes.CalendarDirection]: {
-    direction: null | "previous" | "next";
-  };
+    direction: null | "previous" | "next"
+  }
   [MyCalendarTypes.SetAvailCalendar]: {
-    availabilities?: any;
-  };
+    availabilities?: any
+  }
   [MyCalendarTypes.SetCurrentSelectedDay]: {
-    selectedDay: any;
-  };
+    selectedDay: any
+  }
   [MyCalendarTypes.SetEvents]: {
-    events: any;
-  };
+    events: any
+  }
   [MyCalendarTypes.UpdateCalendarMonth]: {
-    calendarArgs: NewCalendarMonths;
-  };
-  [MyCalendarTypes.ClearDayPreview]: object;
-  ["unknown"]: any;
-};
+    calendarArgs: NewCalendarMonths
+  }
+  [MyCalendarTypes.ClearDayPreview]: object
+  ["unknown"]: any
+}
 
-export type MyCalendarActions =
-  ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>];
-export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>];
-export type BookingActions =
-  ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>];
-export type EventCreationActions =
-  ActionMap<EventCreationPayload>[keyof ActionMap<EventCreationPayload>];
+export type MyCalendarActions = ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
+export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
+export type BookingActions = ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
+export type EventCreationActions = ActionMap<EventCreationPayload>[keyof ActionMap<EventCreationPayload>]

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   StyleSheet,
@@ -6,95 +6,99 @@ import {
   ScrollView,
   Linking,
   Text,
-} from "react-native";
+} from "react-native"
 
-import { CheckIcon, LeftArrowIcon } from "assets/icons";
-import { appContext, eventCreationContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, Outlines, Sizing } from "styles/index";
-import { HeaderText } from "components/rnWrappers/headerText";
-import { StackScreenProps } from "@react-navigation/stack";
-import { EventCreationParamList } from "common/types/navigationTypes";
-import { MonthlyWrapper } from "components/calendar";
-import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { useGoogleAuth } from "lib/hooks/useGoogleAuth";
-import { ErrorModal } from "components/modals/errorModal";
-import * as qs from "qs";
-import { fontWeight } from "../../../styles/typography";
+import { CheckIcon, LeftArrowIcon } from "assets/icons"
+import { appContext, eventCreationContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Colors, Outlines, Sizing } from "styles/index"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { StackScreenProps } from "@react-navigation/stack"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { MonthlyWrapper } from "components/calendar"
+import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
+import { ErrorModal } from "components/modals/errorModal"
+import * as qs from "qs"
+import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<
   EventCreationParamList,
   "Available Days Selection"
->;
+>
 
 export const AvailableDaysSelection = ({ navigation }: Props) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
   const {
     selectedDays,
     setDateFrame,
     removeSelectedDays,
     removeSelectedWeeks,
-  } = eventCreationContext();
-  const { isRequesting, isValidOauth, isLoading, requestAccess } =
-    useGoogleAuth();
-  const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<any>({ isVisible: false, type: "" });
+  } = eventCreationContext()
+  const {
+    isRequesting,
+    isValidOauth,
+    isLoading,
+    requestAccess,
+  } = useGoogleAuth()
+  const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
 
   const listener = {
     start: function () {
       Linking.addEventListener("url", (event) => {
-        const query = qs.parse(event.url.split("?")[1]);
-        const { success } = query;
+        const query = qs.parse(event.url.split("?")[1])
+        const { success } = query
 
         if (success === "false") {
-          setError({ isVisible: true, type: "GoogleOauth" });
+          setError({ isVisible: true, type: "GoogleOauth" })
         }
 
-        if (success === "true") navigation.navigate("Available Time Selection");
-      });
+        if (success === "true") navigation.navigate("Available Time Selection")
+      })
     },
     remove: function () {
-      Linking.removeEventListener("url", this.start);
+      Linking.removeEventListener("url", this.start)
     },
-  };
+  }
 
   React.useEffect(() => {
-    listener.start();
+    listener.start()
 
-    return () => listener.remove();
-  }, []);
+    return () => listener.remove()
+  }, [])
 
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
   const isDisabledBtn =
-    selectedDays === null || !Object.entries(selectedDays).length;
+    selectedDays === null || !Object.entries(selectedDays).length
   const onCheckBoxPress = () => {
-    setError({ isVisible: false, type: "" });
-    setAcceptedChecbox((prev) => !prev);
-  };
+    setError({ isVisible: false, type: "" })
+    setAcceptedChecbox((prev) => !prev)
+  }
   const onBackNavigationPress = React.useCallback(() => {
-    removeSelectedDays();
-    removeSelectedWeeks();
-    setAcceptedChecbox(false);
-    navigation.goBack();
-  }, []);
+    removeSelectedDays()
+    removeSelectedWeeks()
+    setAcceptedChecbox(false)
+    navigation.goBack()
+  }, [])
   const onNextButtonPress = async () => {
-    if (error.isVisible) setError({ isVisible: false, type: "" });
+    if (error.isVisible) setError({ isVisible: false, type: "" })
 
     if (acceptedCheckbox)
       try {
-        await requestAccess();
+        await requestAccess()
       } catch (e) {}
 
-    const selectedDaysKeys = Object.keys(selectedDays);
+    const selectedDaysKeys = Object.keys(selectedDays)
     setDateFrame(
       new Date(Number(selectedDaysKeys[0])),
       new Date(Number(selectedDaysKeys[selectedDaysKeys.length - 1]))
-    );
+    )
 
-    if (!acceptedCheckbox) navigation.navigate("Available Time Selection");
-  };
+    if (!acceptedCheckbox) navigation.navigate("Available Time Selection")
+  }
 
   return (
     <>
@@ -201,8 +205,8 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
       </SafeAreaView>
       <ErrorModal isModalVisible={error.isVisible} errorType={error.type} />
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -232,4 +236,4 @@ const styles = StyleSheet.create({
     borderRadius: Sizing.x3,
   },
   button: { width: "90%", marginTop: "auto", marginBottom: Sizing.x15 },
-});
+})

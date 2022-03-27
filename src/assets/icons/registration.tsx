@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path, Circle } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path, Circle } from "react-native-svg"
 
 export const RegistrationIcon = (props: SvgProps) => {
   return (
@@ -112,5 +112,5 @@ export const RegistrationIcon = (props: SvgProps) => {
       />
       <Path d="M382 523.444H1a1 1 0 010-2h381a1 1 0 010 2z" fill="#cacaca" />
     </Svg>
-  );
-};
+  )
+}

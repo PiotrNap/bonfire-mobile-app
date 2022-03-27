@@ -1,12 +1,13 @@
-import * as React from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 
-import { EyeIcon, EyeOffIcon } from "icons/index";
-import { Sizing, Forms, Colors, Outlines } from "styles/index";
+import { EyeIcon, EyeOffIcon } from "icons/index"
+import { Sizing, Forms, Colors, Outlines } from "styles/index"
 
 export const CustomPasswordInput = (props: any) => {
-  const [isVisiblePassword, setIsVisiblePassword] =
-    React.useState<boolean>(false);
+  const [isVisiblePassword, setIsVisiblePassword] = React.useState<boolean>(
+    false
+  )
 
   const {
     field: { onChange, name, onBlur, value },
@@ -16,14 +17,14 @@ export const CustomPasswordInput = (props: any) => {
     submitted,
     validateForm,
     ...inputProps
-  } = props;
+  } = props
 
   const onEyeIconPress = () => {
-    setIsVisiblePassword((prev) => !prev);
-  };
-  const PasswordEyeIcon = isVisiblePassword ? EyeIcon : EyeOffIcon;
+    setIsVisiblePassword((prev) => !prev)
+  }
+  const PasswordEyeIcon = isVisiblePassword ? EyeIcon : EyeOffIcon
 
-  const hasError = errors[name] && touched[name];
+  const hasError = errors[name] && touched[name]
 
   //@TODO: Fix form validation
 
@@ -46,8 +47,8 @@ export const CustomPasswordInput = (props: any) => {
           secureTextEntry={isVisiblePassword}
           textContentType="newPassword"
           onBlur={() => {
-            setFieldTouched(name);
-            onBlur(name);
+            setFieldTouched(name)
+            onBlur(name)
           }}
           {...inputProps}
         />
@@ -65,8 +66,8 @@ export const CustomPasswordInput = (props: any) => {
         {hasError && <Text style={styles.error}>{errors[name]}</Text>}
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -116,4 +117,4 @@ const styles = StyleSheet.create({
     ...Forms.inputLabel.error,
     color: Colors.primary.neutral,
   },
-});
+})

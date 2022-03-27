@@ -1,12 +1,12 @@
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import * as React from "react"
+import { View, StyleSheet } from "react-native"
 
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { EventLine, SectionDetail } from "common/interfaces/bookingInterface";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { appContext } from "contexts/contextApi";
-import { useNavigation } from "@react-navigation/native";
-import { fontWeight } from "../../styles/typography";
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { EventLine, SectionDetail } from "common/interfaces/bookingInterface"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { appContext } from "contexts/contextApi"
+import { useNavigation } from "@react-navigation/native"
+import { fontWeight } from "../../styles/typography"
 
 export const EventConfirmationDetail = ({
   label,
@@ -14,17 +14,17 @@ export const EventConfirmationDetail = ({
   isLastItem,
   callbackFn,
 }: SectionDetail) => {
-  const { colorScheme } = appContext();
-  const navigation = useNavigation();
-  const isLightMode = colorScheme === "light";
+  const { colorScheme } = appContext()
+  const navigation = useNavigation()
+  const isLightMode = colorScheme === "light"
 
   if (lineContent == null) {
-    return <></>;
+    return <></>
   }
 
   const onTextPress = (screen: string) => {
-    if (callbackFn != null) navigation.navigate(screen);
-  };
+    if (callbackFn != null) navigation.navigate(screen)
+  }
 
   return (
     <View
@@ -95,8 +95,8 @@ export const EventConfirmationDetail = ({
         </>
       )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -119,4 +119,4 @@ const styles = StyleSheet.create({
     // fontSize: 16,
     // fontFamily: "Roboto-Medium",
   },
-});
+})

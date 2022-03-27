@@ -1,9 +1,9 @@
-import { TextStyle, ViewStyle, PressableStateCallbackType } from "react-native";
+import { TextStyle, ViewStyle, PressableStateCallbackType } from "react-native"
 
-import * as Colors from "./colors";
-import * as Outlines from "./outlines";
-import * as Sizing from "./sizing";
-import * as Typography from "./typography";
+import * as Colors from "./colors"
+import * as Outlines from "./outlines"
+import * as Sizing from "./sizing"
+import * as Typography from "./typography"
 
 type Bar =
   | "primary_light"
@@ -11,7 +11,7 @@ type Bar =
   | "secondary"
   | "transparent_light"
   | "transparent_dark"
-  | "small";
+  | "small"
 export const bar: Record<Bar, ViewStyle> = {
   primary_light: {
     width: "100%",
@@ -73,7 +73,7 @@ export const bar: Record<Bar, ViewStyle> = {
     borderRadius: Outlines.borderRadius.base,
     backgroundColor: Colors.primary.s200,
   },
-};
+}
 
 // text style for each bar (button) type above
 type BarText =
@@ -82,7 +82,7 @@ type BarText =
   | "secondary"
   | "transparent_light"
   | "transparent_dark"
-  | "small";
+  | "small"
 export const barText: Record<BarText, TextStyle> = {
   primary_light: {
     ...Typography.subHeader.x35,
@@ -114,9 +114,9 @@ export const barText: Record<BarText, TextStyle> = {
     ...Typography.fontWeight.regular,
     color: Colors.neutral.s500,
   },
-};
+}
 
-type Circular = "primary";
+type Circular = "primary"
 export const circular: Record<Circular, ViewStyle> = {
   primary: {
     height: Sizing.x30,
@@ -126,20 +126,20 @@ export const circular: Record<Circular, ViewStyle> = {
     backgroundColor: Colors.primary.brand,
     borderRadius: Outlines.borderRadius.max,
   },
-};
+}
 
 const opacity = (state: PressableStateCallbackType): ViewStyle => {
-  var opacity = state.pressed ? 0.65 : 1;
-  return { opacity };
-};
+  var opacity = state.pressed ? 0.65 : 1
+  return { opacity }
+}
 
 export const applyOpacity = (style: ViewStyle | ViewStyle[]) => {
   if ((style as any).length !== undefined)
-    style = Object.assign({}, ...(style as any));
+    style = Object.assign({}, ...(style as any))
   return (state: PressableStateCallbackType): ViewStyle => {
     return {
       ...style,
       ...opacity(state),
-    };
-  };
-};
+    }
+  }
+}

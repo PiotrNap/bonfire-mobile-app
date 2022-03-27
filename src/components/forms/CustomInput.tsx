@@ -6,9 +6,9 @@
  *               provide flexibility on passing custom styles.
  */
 
-import * as React from "react";
-import { TextInput, Text, View } from "react-native";
-import { Colors } from "styles/index";
+import * as React from "react"
+import { TextInput, Text, View } from "react-native"
+import { Colors } from "styles/index"
 
 export interface CustomInputProps {}
 
@@ -21,9 +21,9 @@ export const CustomInput = (props: any) => {
     customHandler,
     validateForm,
     ...inputProps
-  } = props;
+  } = props
 
-  const hasError = errors[name] && touched[name];
+  const hasError = errors[name] && touched[name]
 
   return (
     <>
@@ -39,11 +39,11 @@ export const CustomInput = (props: any) => {
           onEndEditing={() => validateForm()}
           onChange={() => validateForm()}
           onChangeText={(text) => {
-            onChange(name)(text);
+            onChange(name)(text)
           }}
           onBlur={() => {
-            setFieldTouched(name);
-            onBlur(name);
+            setFieldTouched(name)
+            onBlur(name)
           }}
           {...inputProps}
         />
@@ -58,5 +58,5 @@ export const CustomInput = (props: any) => {
         {hasError && <Text style={styles.error}>{errors[name]}</Text>}
       </View>
     </>
-  );
-};
+  )
+}

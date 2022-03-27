@@ -1,24 +1,24 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context"
 import {
   appContext,
   bookingContext,
   eventCreationContext,
-} from "contexts/contextApi";
-import { LeftArrowIcon } from "assets/icons";
-import { Colors, Sizing, Typography } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { EventConfirmationDetails } from "components/booking";
-import { ProfileContext } from "contexts/profileContext";
-import { Events } from "Api/Events";
-import { CreateEventDto } from "common/types/dto/create-event.dto";
+} from "contexts/contextApi"
+import { LeftArrowIcon } from "assets/icons"
+import { Colors, Sizing, Typography } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { EventConfirmationDetails } from "components/booking"
+import { ProfileContext } from "contexts/profileContext"
+import { Events } from "Api/Events"
+import { CreateEventDto } from "common/types/dto/create-event.dto"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext);
-  const { colorScheme } = appContext();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext)
+  const { colorScheme } = appContext()
   const {
     textContent,
     selectedDays,
@@ -31,15 +31,15 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     eventCardColor,
     eventTitleColor,
     availabilities,
-  } = eventCreationContext();
-  const { duration, pickedDate, previewingEvent } = bookingContext();
-  const { username, id } = React.useContext(ProfileContext);
-  const params = route?.params;
-  const isLightMode = colorScheme === "light";
+  } = eventCreationContext()
+  const { duration, pickedDate, previewingEvent } = bookingContext()
+  const { username, id } = React.useContext(ProfileContext)
+  const params = route?.params
+  const isLightMode = colorScheme === "light"
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
   const onButtonPress = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     if (params?.isNewEvent) {
       const newEvent: CreateEventDto = {
@@ -59,21 +59,21 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           id,
           username,
         },
-      };
+      }
 
       try {
-        const eventId = await Events.createEvent(newEvent);
+        const eventId = await Events.createEvent(newEvent)
 
         if (eventId) {
-          setIsLoading(false);
+          setIsLoading(false)
 
           navigation.navigate("Confirmation", {
             isBookingConfirmation: false,
-          });
+          })
         }
       } catch (e) {
-        setIsLoading(false);
-        console.error(e);
+        setIsLoading(false)
+        console.error(e)
       }
     } else {
       try {
@@ -81,22 +81,22 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           eventId: previewingEvent.id,
           bookedDate: new Date(pickedDate),
           bookedDuration: duration,
-        });
+        })
 
         if (res) {
           navigation.navigate("Confirmation", {
             isBookingConfirmation: true,
-          });
+          })
         }
       } catch (e) {
-        console.error(e);
-        setIsLoading(false);
+        console.error(e)
+        setIsLoading(false)
       }
 
       //@TODO submit transaction to blockchain
       // setWalletBalance(walletBalance - durationCost);
     }
-  };
+  }
 
   return (
     <SafeAreaView
@@ -137,8 +137,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -174,4 +174,4 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     marginBottom: Sizing.x15,
   },
-});
+})

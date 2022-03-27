@@ -3,11 +3,11 @@
  *              cross platform set of fonts weights.
  */
 
-import { TextStyle, Platform } from "react-native";
-import { systemWeights } from "react-native-typography";
-import { scale } from "lib/utils";
+import { TextStyle, Platform } from "react-native"
+import { systemWeights } from "react-native-typography"
+import { scale } from "lib/utils"
 
-import * as Colors from "./colors";
+import * as Colors from "./colors"
 
 type FontSize =
   | "x5"
@@ -23,7 +23,7 @@ type FontSize =
   | "x55"
   | "x60"
   | "x65"
-  | "x70";
+  | "x70"
 export const fontSize: Record<FontSize, TextStyle> = {
   x5: {
     fontSize: scale(10),
@@ -67,9 +67,9 @@ export const fontSize: Record<FontSize, TextStyle> = {
   x70: {
     fontSize: scale(38),
   },
-};
+}
 
-type FontWeight = "thin" | "light" | "regular" | "semibold" | "bold";
+type FontWeight = "thin" | "light" | "regular" | "semibold" | "bold"
 export const fontWeight: Record<FontWeight, TextStyle> = {
   thin: {
     ...systemWeights.thin,
@@ -86,14 +86,14 @@ export const fontWeight: Record<FontWeight, TextStyle> = {
   bold: {
     ...systemWeights.bold,
   },
-};
+}
 
-type LetterSpacing = "x20" | "x30" | "x40";
+type LetterSpacing = "x20" | "x30" | "x40"
 export const letterSpacing: Record<LetterSpacing, number> = {
   x20: 1,
   x30: 2,
   x40: 3,
-};
+}
 
 type LineHeight =
   | "x5"
@@ -108,7 +108,7 @@ type LineHeight =
   | "x55"
   | "x60"
   | "x65"
-  | "x70";
+  | "x70"
 export const lineHeight: Record<LineHeight, TextStyle> = {
   x5: {
     lineHeight: scale(10),
@@ -149,7 +149,7 @@ export const lineHeight: Record<LineHeight, TextStyle> = {
   x70: {
     lineHeight: scale(44),
   },
-};
+}
 
 type Header =
   | "x5"
@@ -164,7 +164,7 @@ type Header =
   | "x55"
   | "x60"
   | "x65"
-  | "x70";
+  | "x70"
 export const header: Record<Header, TextStyle> = {
   x5: {
     ...fontSize.x5,
@@ -244,7 +244,7 @@ export const header: Record<Header, TextStyle> = {
     ...fontWeight.bold,
     fontFamily: "Roboto-Medium",
   },
-};
+}
 
 type SubHeader =
   | "x5"
@@ -255,7 +255,7 @@ type SubHeader =
   | "x30"
   | "x35"
   | "x40"
-  | "x50";
+  | "x50"
 export const subHeader: Record<SubHeader, TextStyle> = {
   x5: {
     ...fontSize.x5,
@@ -311,9 +311,9 @@ export const subHeader: Record<SubHeader, TextStyle> = {
     ...fontWeight.semibold,
     fontFamily: "Roboto-Regular",
   },
-};
+}
 
-type Body = "x5" | "x10" | "x20" | "x25" | "x30" | "x35" | "x40" | "x50";
+type Body = "x5" | "x10" | "x20" | "x25" | "x30" | "x35" | "x40" | "x50"
 export const body: Record<Body, TextStyle> = {
   x5: {
     ...fontSize.x5,
@@ -363,23 +363,23 @@ export const body: Record<Body, TextStyle> = {
     color: Colors.neutral.s800,
     fontFamily: "Roboto-Light",
   },
-};
+}
 
 // depending on which platform user is running our app
 const monospaceFontFamily = Platform.select({
   ios: "Menlo",
   android: "monospace",
-});
+})
 
-type Monospace = "base";
+type Monospace = "base"
 export const monospace: Record<Monospace, TextStyle> = {
   base: {
     fontFamily: monospaceFontFamily,
     letterSpacing: letterSpacing.x30,
   },
-};
+}
 
-type Roboto = "thin" | "light" | "regular" | "medium" | "bold" | "black";
+type Roboto = "thin" | "light" | "regular" | "medium" | "bold" | "black"
 export const roboto: Record<Roboto, TextStyle> = {
   thin: {
     fontFamily: "Roboto-Thin",
@@ -405,4 +405,4 @@ export const roboto: Record<Roboto, TextStyle> = {
     fontFamily: "Roboto-Black",
     letterSpacing: letterSpacing.x20,
   },
-};
+}

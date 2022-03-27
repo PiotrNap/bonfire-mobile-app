@@ -1,14 +1,14 @@
-import * as React from "react";
-import { Text, StyleSheet, Animated } from "react-native";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
+import * as React from "react"
+import { Text, StyleSheet, Animated } from "react-native"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
 
 export interface CopyMessageProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 export const CopyMessage = ({ isActive }: CopyMessageProps) => {
-  const copyMsgPosition = React.useRef(new Animated.ValueXY()).current;
-  const copyMsgOpacity = React.useRef(new Animated.Value(0)).current;
+  const copyMsgPosition = React.useRef(new Animated.ValueXY()).current
+  const copyMsgOpacity = React.useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
     Animated.parallel([
@@ -27,8 +27,8 @@ export const CopyMessage = ({ isActive }: CopyMessageProps) => {
         toValue: isActive ? -25 : 0,
         duration: 80,
       }),
-    ]).start();
-  }, [isActive]);
+    ]).start()
+  }, [isActive])
 
   return (
     <Animated.View
@@ -42,8 +42,8 @@ export const CopyMessage = ({ isActive }: CopyMessageProps) => {
       ]}>
       <Text style={styles.text}>Copied!</Text>
     </Animated.View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
     ...Typography.subHeader.x25,
     color: Colors.primary.neutral,
   },
-});
+})

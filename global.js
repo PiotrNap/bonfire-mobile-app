@@ -1,1 +1,1 @@
-global.Buffer = require('safe-buffer').Buffer;
+global.Buffer = require("safe-buffer").Buffer

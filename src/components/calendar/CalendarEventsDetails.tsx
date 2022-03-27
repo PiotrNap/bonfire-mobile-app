@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from "react"
 
-import { CalendarEventsDetail } from "./CalendarEventsDetail";
+import { CalendarEventsDetail } from "./CalendarEventsDetail"
 
 export const CalendarEventsDetails = ({ item }: any) => {
   const {
@@ -15,7 +15,7 @@ export const CalendarEventsDetails = ({ item }: any) => {
     listSection,
     organizer,
     index,
-  } = item;
+  } = item
 
   return (
     <CalendarEventsDetail
@@ -32,5 +32,5 @@ export const CalendarEventsDetails = ({ item }: any) => {
       organizer={organizer}
       index={index}
     />
-  );
-};
+  )
+}

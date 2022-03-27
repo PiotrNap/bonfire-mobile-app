@@ -1,18 +1,18 @@
-import * as React from "react";
-import { Text, Pressable } from "react-native";
+import * as React from "react"
+import { Text, Pressable } from "react-native"
 
-import ModalSelector from "react-native-modal-selector";
-import { Buttons, Sizing, Typography, Outlines } from "styles/index";
+import ModalSelector from "react-native-modal-selector"
+import { Buttons, Sizing, Typography, Outlines } from "styles/index"
 
 export interface NativeModalProps {
-  cameraAccessCb: () => any;
-  mediaLibraryCb: () => any;
-  child: React.ReactNode;
+  cameraAccessCb: () => any
+  mediaLibraryCb: () => any
+  child: React.ReactNode
 }
 
 export const NativeModal = React.memo(
   ({ cameraAccessCb, mediaLibraryCb, child }: NativeModalProps) => {
-    const [selector, setSelector] = React.useState<ModalSelector | null>(null);
+    const [selector, setSelector] = React.useState<ModalSelector | null>(null)
 
     const modalData = [
       {
@@ -65,7 +65,7 @@ export const NativeModal = React.memo(
           </Pressable>
         ),
       },
-    ];
+    ]
 
     return (
       <>
@@ -81,6 +81,6 @@ export const NativeModal = React.memo(
           {child}
         </ModalSelector>
       </>
-    );
+    )
   }
-);
+)

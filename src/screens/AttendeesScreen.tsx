@@ -1,7 +1,7 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Buttons, Typography, Sizing, Outlines } from "styles/index";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Buttons, Typography, Sizing, Outlines } from "styles/index"
 
 export const AttendeesScreen = ({ navigation }: any) => {
   return (
@@ -27,8 +27,8 @@ export const AttendeesScreen = ({ navigation }: any) => {
         </Pressable>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     margin: Sizing.x10,
   },
   buttonText: {},
-});
+})

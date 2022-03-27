@@ -1,11 +1,11 @@
-import * as React from "react";
+import * as React from "react"
 import Svg, {
   SvgProps,
   Ellipse,
   Defs,
   LinearGradient,
   Stop,
-} from "react-native-svg";
+} from "react-native-svg"
 
 export const PartiallyBookedDay = (props: SvgProps) => {
   return (
@@ -31,5 +31,5 @@ export const PartiallyBookedDay = (props: SvgProps) => {
         </LinearGradient>
       </Defs>
     </Svg>
-  );
-};
+  )
+}

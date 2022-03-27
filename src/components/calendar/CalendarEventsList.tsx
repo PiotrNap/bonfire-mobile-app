@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   LayoutChangeEvent,
@@ -7,21 +7,21 @@ import {
   SectionList,
   Text,
   VirtualizedList,
-} from "react-native";
-import { CalendarEventsDetail } from "./CalendarEventsDetail";
+} from "react-native"
+import { CalendarEventsDetail } from "./CalendarEventsDetail"
 
-import { appContext, myCalendarContext } from "contexts/contextApi";
-import { getDate, getYear } from "lib/utils";
-import { Sizing, Colors, Outlines, Typography } from "styles/index";
-import { Event } from "common/interfaces/myCalendarInterface";
-import { CalendarEventsListHeader } from "./CalendarEventsListHeader";
-import { months, monthsByName } from "common/types/calendarTypes";
+import { appContext, myCalendarContext } from "contexts/contextApi"
+import { getDate, getYear } from "lib/utils"
+import { Sizing, Colors, Outlines, Typography } from "styles/index"
+import { Event } from "common/interfaces/myCalendarInterface"
+import { CalendarEventsListHeader } from "./CalendarEventsListHeader"
+import { months, monthsByName } from "common/types/calendarTypes"
 
 export interface CalendarEventsListProps {
-  isHomeScreen?: boolean;
-  isBookingCalendar?: boolean;
-  isRegularCalendar?: boolean;
-  currentSelectedDay?: Date | null;
+  isHomeScreen?: boolean
+  isBookingCalendar?: boolean
+  isRegularCalendar?: boolean
+  currentSelectedDay?: Date | null
 }
 
 export const CalendarEventsList = ({
@@ -30,26 +30,32 @@ export const CalendarEventsList = ({
   isRegularCalendar,
   currentSelectedDay,
 }: CalendarEventsListProps) => {
-  const { events, calendarHeader } = myCalendarContext();
-  const { colorScheme, accountType } = appContext();
+  const { events, calendarHeader } = myCalendarContext()
+  const { colorScheme, accountType } = appContext()
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
     null
-  );
+  )
   // console.log(JSON.stringify(events, null, 4));
   // console.log(currentSelectedDay);
   const [highlightedDay, setHighlightedDay] = React.useState<any>({
     listSection: "",
     index: null,
-  });
-  const [currMonthEvents, setCurrMonthEvents] = React.useState<any[]>([]);
+  })
+  const [currMonthEvents, setCurrMonthEvents] = React.useState<any[]>([])
 
   // console.log("current selected day is :", currentSelectedDay);
 
   const renderItem = ({ item, index, section }: any) => {
-    const { title, description, fromTime, toTime, participants, organizer } =
-      item;
+    const {
+      title,
+      description,
+      fromTime,
+      toTime,
+      participants,
+      organizer,
+    } = item
 
-    return <Text>{item.id}</Text>;
+    return <Text>{item.id}</Text>
 
     // return (
     //   <CalendarEventsDetail
@@ -67,21 +73,21 @@ export const CalendarEventsList = ({
     //     setHighlightedDay={setHighlightedDay}
     //   />
     // );
-  };
+  }
 
   const keyExtractor = (item: any, index: number) =>
-    `${index}_${item.fromTime}_${item.toTime}`;
+    `${index}_${item.fromTime}_${item.toTime}`
 
   const onLayout = (event: LayoutChangeEvent) => {
-    setDimensions(event.nativeEvent.layout);
-  };
+    setDimensions(event.nativeEvent.layout)
+  }
 
   const getCurrMonthEvents = React.useCallback((): {
-    monthlyEvents?: Event[];
-    dayEvents?: Event[];
+    monthlyEvents?: Event[]
+    dayEvents?: Event[]
   } => {
-    var monthlyEvents: Event[] = [];
-    var dayEvents: Event[] = [];
+    var monthlyEvents: Event[] = []
+    var dayEvents: Event[] = []
 
     // merge two arrays,
     // based on the event type ('booked event' or 'scheduled event') display the right color/info,
@@ -92,53 +98,53 @@ export const CalendarEventsList = ({
           if (scheduledYear.months) {
             var monthObj = scheduledYear.months.find((obj) => {
               if (isHomeScreen && accountType === "attendee") {
-                return obj.month === months[new Date().getMonth()];
+                return obj.month === months[new Date().getMonth()]
               }
-              return obj.month === calendarHeader.month;
-            });
+              return obj.month === calendarHeader.month
+            })
 
             if (monthObj != null) {
               monthObj.days.forEach((day: any) =>
                 day.events.forEach((evt: Event) => {
                   if (isHomeScreen && day.day === new Date().getDate()) {
-                    dayEvents.push(evt);
+                    dayEvents.push(evt)
                   } else if (day.day === getDate()) {
-                    dayEvents.push(evt);
+                    dayEvents.push(evt)
                   } else {
-                    monthlyEvents.push(evt);
+                    monthlyEvents.push(evt)
                   }
                 })
-              );
+              )
             }
           }
         }
       }
     }
 
-    return { monthlyEvents, dayEvents };
-  }, [calendarHeader.month, events]);
+    return { monthlyEvents, dayEvents }
+  }, [calendarHeader.month, events])
 
   const getSections = () => {
-    const { monthlyEvents, dayEvents } = getCurrMonthEvents();
-    const sections: any[] = [];
+    const { monthlyEvents, dayEvents } = getCurrMonthEvents()
+    const sections: any[] = []
 
     if (dayEvents.length) {
-      sections.push({ title: "Today", data: [...dayEvents] });
+      sections.push({ title: "Today", data: [...dayEvents] })
     }
     if (monthlyEvents.length) {
       sections.push({
         title: "This month",
         data: [...monthlyEvents],
-      });
+      })
     }
 
-    return sections;
-  };
+    return sections
+  }
 
   // console.log("data is ", JSON.stringify(data(), null, 4));
 
   const sectionHeader = ({ section }: any) => {
-    const { title } = section;
+    const { title } = section
 
     return (
       <View style={styles.sectionHeaderWrapper}>
@@ -151,17 +157,17 @@ export const CalendarEventsList = ({
           {title}
         </Text>
       </View>
-    );
-  };
+    )
+  }
   const numOfEvents = React.useMemo(() => {
-    if (!events) return 0;
+    if (!events) return 0
 
-    const uniqueEvents: Array<String> = [];
-    const yearToSearch = calendarHeader.year;
-    const monthToSearch = calendarHeader.month;
+    const uniqueEvents: Array<String> = []
+    const yearToSearch = calendarHeader.year
+    const monthToSearch = calendarHeader.month
 
     if (currentSelectedDay) {
-      let dayToSearch = new Date(currentSelectedDay).getDate();
+      let dayToSearch = new Date(currentSelectedDay).getDate()
 
       events
         .find((obj) => obj.year === yearToSearch)
@@ -170,7 +176,7 @@ export const CalendarEventsList = ({
         ?.events.forEach(
           (event) =>
             !uniqueEvents.includes(event.id) && uniqueEvents.push(event.id)
-        );
+        )
     } else {
       events
         .find((obj) => obj.year === yearToSearch)
@@ -180,16 +186,16 @@ export const CalendarEventsList = ({
             (event) =>
               !uniqueEvents.includes(event.id) && uniqueEvents.push(event.id)
           )
-        );
+        )
     }
-    return uniqueEvents.length;
-  }, [currentSelectedDay, calendarHeader]);
+    return uniqueEvents.length
+  }, [currentSelectedDay, calendarHeader])
 
-  const getItemCount = (data: any) => data.length;
+  const getItemCount = (data: any) => data.length
   const getItem = (data: any, index: number) => ({
     id: Math.random().toString(12).substring(0),
     ...data,
-  });
+  })
   // console.log(JSON.stringify(getSections(), null, 4));
 
   return (
@@ -245,8 +251,8 @@ export const CalendarEventsList = ({
         />
       )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   eventsHolder: {
@@ -271,4 +277,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x30,
     color: Colors.primary.neutral,
   },
-});
+})

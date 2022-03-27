@@ -6,18 +6,18 @@
  * @param callbackFn - callback function which will be called on onPress
  */
 
-import * as React from "react";
-import { Text, StyleSheet, StyleProp, TextStyle } from "react-native";
+import * as React from "react"
+import { Text, StyleSheet, StyleProp, TextStyle } from "react-native"
 
-import { appContext } from "contexts/contextApi";
-import { Colors, Typography } from "styles/index";
+import { appContext } from "contexts/contextApi"
+import { Colors, Typography } from "styles/index"
 
 export interface SubHeaderTextProps {
-  children?: any;
-  colors?: string[];
-  customStyle?: StyleProp<TextStyle>;
-  callbackFn?: () => any;
-  extraProps?: any;
+  children?: any
+  colors?: string[]
+  customStyle?: StyleProp<TextStyle>
+  callbackFn?: () => any
+  extraProps?: any
 }
 
 export const SubHeaderText = ({
@@ -27,7 +27,7 @@ export const SubHeaderText = ({
   callbackFn,
   extraProps,
 }: SubHeaderTextProps) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
 
   const textColor =
     colors != null
@@ -36,9 +36,9 @@ export const SubHeaderText = ({
           ? { color: colors[0] }
           : { color: colors[1] }
         : { color: colors[0] }
-      : { color: Colors.primary.neutral };
+      : { color: Colors.primary.neutral }
 
-  const onPress = () => callbackFn && callbackFn();
+  const onPress = () => callbackFn && callbackFn()
 
   return (
     <Text
@@ -47,12 +47,12 @@ export const SubHeaderText = ({
       {...extraProps}>
       {children}
     </Text>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   text: {
     ...Typography.subHeader.x30,
     maxWidth: "90%",
   },
-});
+})

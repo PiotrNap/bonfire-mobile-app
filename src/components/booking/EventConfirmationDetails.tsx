@@ -1,12 +1,12 @@
-import * as React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, FlatList } from "react-native"
 
 import {
   appContext,
   bookingContext,
   eventCreationContext,
-} from "contexts/contextApi";
-import { EventConfirmationDetail } from "./EventConfirmationDetail";
+} from "contexts/contextApi"
+import { EventConfirmationDetail } from "./EventConfirmationDetail"
 import {
   AdaIcon,
   CalendarIcon,
@@ -16,27 +16,27 @@ import {
   PresentationIcon,
   TimeIcon,
   UserIcon,
-} from "assets/icons";
-import { Colors, Sizing } from "styles/index";
-import { months, weekDays } from "common/types/calendarTypes";
-import { SectionDetail } from "common/interfaces/bookingInterface";
+} from "assets/icons"
+import { Colors, Sizing } from "styles/index"
+import { months, weekDays } from "common/types/calendarTypes"
+import { SectionDetail } from "common/interfaces/bookingInterface"
 import {
   getDate,
   getDay,
   getDigitalLocaleTime,
   getMonth,
   getTimeSpanLength,
-} from "lib/utils";
-import { ProfileContext } from "contexts/profileContext";
+} from "lib/utils"
+import { ProfileContext } from "contexts/profileContext"
 
 export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
   const {
     duration = null,
     durationCost = null,
     pickedDate = null,
     previewingEvent,
-  } = bookingContext();
+  } = bookingContext()
   const {
     textContent,
     hourlyRate: eventHourlyRate,
@@ -44,19 +44,19 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
     imageURI,
     eventCardColor,
     eventTitleColor,
-  } = eventCreationContext();
-  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext);
+  } = eventCreationContext()
+  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext)
 
-  var selectedDaysArr: number[] = [];
-  var fromDate, toDate;
+  var selectedDaysArr: number[] = []
+  var fromDate, toDate
 
   if (isNewEvent) {
-    selectedDaysArr = Object.values(selectedDays as any);
-    fromDate = Math.min(...selectedDaysArr);
-    toDate = Math.max(...selectedDaysArr);
+    selectedDaysArr = Object.values(selectedDays as any)
+    fromDate = Math.min(...selectedDaysArr)
+    toDate = Math.max(...selectedDaysArr)
   }
 
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s600 : Colors.primary.s200,
@@ -64,7 +64,7 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
     width: 24,
     height: 24,
     marginRight: Sizing.x5,
-  };
+  }
 
   const sectionsIcons = {
     presentation: <PresentationIcon {...iconStyles} />,
@@ -75,7 +75,7 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
     ada: <AdaIcon {...iconStyles} />,
     placeholder: <PlaceholderIcon {...iconStyles} />,
     colorsPallete: <ColorsPalleteIcon {...iconStyles} />,
-  };
+  }
 
   const newEventSections: any[] = [
     textContent?.title && {
@@ -149,7 +149,7 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
         },
       ],
     },
-  ];
+  ]
 
   const bookingEventSections: SectionDetail[] = [
     previewingEvent?.title && {
@@ -207,19 +207,19 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
         icon: sectionsIcons.ada,
       },
     },
-  ];
+  ]
 
   const isLastItem = (index: number) =>
     isNewEvent
       ? index === newEventSections.length - 1
-      : index === bookingEventSections.length - 1;
+      : index === bookingEventSections.length - 1
 
   const renderSections = ({
     item,
     index,
   }: {
-    item: SectionDetail;
-    index: number;
+    item: SectionDetail
+    index: number
   }) => {
     return (
       <EventConfirmationDetail
@@ -229,12 +229,12 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
         callbackFn={item.callbackFn}
         isLastItem={isLastItem(index)}
       />
-    );
-  };
+    )
+  }
 
   const keyExtractor = (item: any, index: number) => {
-    return `${item.label}_${index}`;
-  };
+    return `${item.label}_${index}`
+  }
 
   return (
     <FlatList
@@ -242,5 +242,5 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
       renderItem={renderSections}
       keyExtractor={keyExtractor}
     />
-  );
-};
+  )
+}

@@ -8,8 +8,7 @@ export const LiveCollaborationIcon = (props: SvgProps) => {
       width={748.756}
       height={544}
       viewBox="0 0 748.756 544"
-      {...props}
-    >
+      {...props}>
       <Path
         data-name="Path 141"
         d="M346.959 404.36H3.986A3.992 3.992 0 010 400.375V81.866a3.992 3.992 0 013.986-3.987H346.96a3.992 3.992 0 013.986 3.987v318.507a3.99 3.99 0 01-3.986 3.987z"

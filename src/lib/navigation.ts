@@ -1,5 +1,5 @@
-import { LinkingOptions } from "@react-navigation/native";
-import { DEEP_LINKING_PATHS } from "common/types/navigationTypes";
+import { LinkingOptions } from "@react-navigation/native"
+import { DEEP_LINKING_PATHS } from "common/types/navigationTypes"
 
 /**
  * Return config for deep linking to be used by react-natvigation.
@@ -39,8 +39,8 @@ export const getAthorizedLinkingConfig = (
       },
     },
     prefixes: ["bonfire://gimbalabs.bonfire.com", "bonfire://"],
-  };
-};
+  }
+}
 
 export const getUnauthorizedLinkingConfig = (): LinkingOptions => {
   return {
@@ -48,9 +48,9 @@ export const getUnauthorizedLinkingConfig = (): LinkingOptions => {
       screens: { "Onboarding Screens": DEEP_LINKING_PATHS.ONBOARDING },
     },
     prefixes: ["bonfire://gimbalabs.bonfire.com", "bonfire://"],
-  };
-};
+  }
+}
 
 export const createNestedPath = (pathsArray: string[]): string => {
-  return pathsArray.join("/");
-};
+  return pathsArray.join("/")
+}

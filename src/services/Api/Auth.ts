@@ -1,29 +1,29 @@
-import axios from "./base";
+import axios from "./base"
 
 export class ChallengeResponseDTO {
   constructor(challenge: string, signature: string, userCredential: any) {
-    this.challengeString = challenge;
-    this.signature = signature;
-    this.userCredential = userCredential;
+    this.challengeString = challenge
+    this.signature = signature
+    this.userCredential = userCredential
   }
 
-  challengeString: string;
-  signature: string;
+  challengeString: string
+  signature: string
   // this value is used for looking up user in db
-  userCredential: UserCredential;
+  userCredential: UserCredential
 }
 
-export type UserCredential = { [index: string]: any };
+export type UserCredential = { [index: string]: any }
 
 export class Auth {
   public static async requestChallenge(
     credential: UserCredential
   ): Promise<any | void> {
     try {
-      const res = await axios.post("/auth/challenge", credential);
-      if (res.data) return res.data;
+      const res = await axios.post("/auth/challenge", credential)
+      if (res.data) return res.data
     } catch (e) {
-      if (e.response) console.error(e.response.data);
+      if (e.response) console.error(e.response.data)
     }
   }
 
@@ -36,22 +36,22 @@ export class Auth {
       challenge,
       signature,
       userCredential
-    );
+    )
 
     try {
-      const res = await axios.post(`/auth/login`, challengeRequestDTO);
-      if (res.data) return res.data;
+      const res = await axios.post(`/auth/login`, challengeRequestDTO)
+      if (res.data) return res.data
     } catch (e) {
-      if (e.response) console.error(e.response.data);
+      if (e.response) console.error(e.response.data)
     }
   }
 
   public static async checkForGoogleAuth(): Promise<any> {
     try {
-      const res = await axios.get("/auth/google-oauth-valid");
-      return res.data;
+      const res = await axios.get("/auth/google-oauth-valid")
+      return res.data
     } catch (e) {
-      console.error(e.response);
+      console.error(e.response)
     }
   }
 }

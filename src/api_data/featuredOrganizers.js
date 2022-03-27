@@ -179,4 +179,4 @@ export const featuredOrganizers = {
       hourlyRate: 50,
     },
   ],
-};
+}

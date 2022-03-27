@@ -1,8 +1,8 @@
-import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
 
 export const CheckIcon = React.forwardRef((props: SvgProps, ref) => {
-  const { strokeWidth, opacity } = props;
+  const { strokeWidth, opacity } = props
 
   return (
     <Svg
@@ -20,5 +20,5 @@ export const CheckIcon = React.forwardRef((props: SvgProps, ref) => {
         d="M5 13l4 4L19 7"
       />
     </Svg>
-  );
-});
+  )
+})

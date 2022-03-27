@@ -8,7 +8,7 @@
 
 export interface LogInProps {}
 
-export const LogIn = ({}: LogInProps) => {};
+export const LogIn = ({}: LogInProps) => {}
 
 //   return (
 //     <View style={styles.container}>

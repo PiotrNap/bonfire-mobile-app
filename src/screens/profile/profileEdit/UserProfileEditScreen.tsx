@@ -1,17 +1,17 @@
-import * as React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet, View } from "react-native"
 
-import { appContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, Sizing } from "styles/index";
-import { LeftArrowIcon } from "assets/icons";
+import { appContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Colors, Sizing } from "styles/index"
+import { LeftArrowIcon } from "assets/icons"
 
 export const UserProfileEditScreen = ({ navigation }: any) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
 
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
 
   return (
     <SafeAreaView
@@ -30,8 +30,8 @@ export const UserProfileEditScreen = ({ navigation }: any) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -49,4 +49,4 @@ const styles = StyleSheet.create({
     width: "90%",
     marginVertical: Sizing.x15,
   },
-});
+})

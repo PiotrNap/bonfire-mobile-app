@@ -1,37 +1,37 @@
-import * as React from "react";
-import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native"
 
-import Modal from "react-native-modal";
-import { PaymentIcon } from "assets/icons";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { appContext } from "contexts/contextApi";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { ProfileContext } from "contexts/profileContext";
+import Modal from "react-native-modal"
+import { PaymentIcon } from "assets/icons"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { appContext } from "contexts/contextApi"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface WalletSetUpModalProps {
-  isVisible: boolean;
-  hideModal: () => void;
+  isVisible: boolean
+  hideModal: () => void
 }
 
 export const WalletSetUpModal = ({
   isVisible,
   hideModal,
 }: WalletSetUpModalProps) => {
-  const { setHasSyncedWallet } = React.useContext(ProfileContext);
-  const { colorScheme } = appContext();
-  const [visible, setVisible] = React.useState<boolean>(isVisible);
-  const windowWidth = useWindowDimensions().width;
-  const windowHeight = useWindowDimensions().height;
-  const isLightMode = colorScheme === "light";
+  const { setHasSyncedWallet } = React.useContext(ProfileContext)
+  const { colorScheme } = appContext()
+  const [visible, setVisible] = React.useState<boolean>(isVisible)
+  const windowWidth = useWindowDimensions().width
+  const windowHeight = useWindowDimensions().height
+  const isLightMode = colorScheme === "light"
 
-  const onHideModal = () => setVisible(false);
-  const onHidedModal = () => hideModal();
+  const onHideModal = () => setVisible(false)
+  const onHidedModal = () => hideModal()
 
   const onLinkWallet = () => {
-    setHasSyncedWallet(true);
-    setVisible(false);
-  };
+    setHasSyncedWallet(true)
+    setVisible(false)
+  }
 
   return (
     <View>
@@ -96,8 +96,8 @@ export const WalletSetUpModal = ({
         </View>
       </Modal>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   modal: {
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x40,
     marginTop: "auto",
   },
-});
+})

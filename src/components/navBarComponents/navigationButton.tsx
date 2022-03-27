@@ -1,11 +1,11 @@
-import * as React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, Pressable, Text } from "react-native"
 
-import { Colors, Buttons, Sizing, Outlines, Typography } from "styles/index";
+import { Colors, Buttons, Sizing, Outlines, Typography } from "styles/index"
 
 export interface NavigationButtonProps {
-  onPress: () => void;
-  Icon: React.ComponentClass<React.SVGProps<any>>;
+  onPress: () => void
+  Icon: React.ComponentClass<React.SVGProps<any>>
 }
 
 export const NavigationButton = ({ onPress, Icon }: NavigationButtonProps) => {
@@ -18,8 +18,8 @@ export const NavigationButton = ({ onPress, Icon }: NavigationButtonProps) => {
       </Pressable>
       <Text style={styles.navButtonSubTitle}>Wallet</Text>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   navButtonWrapper: {
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   navButtonSubTitle: {
     ...Typography.body.x5,
   },
-});
+})

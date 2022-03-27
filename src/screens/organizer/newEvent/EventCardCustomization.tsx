@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   StyleSheet,
@@ -6,35 +6,35 @@ import {
   Switch,
   ScrollView,
   Text,
-} from "react-native";
+} from "react-native"
 
-import { StackScreenProps } from "@react-navigation/stack";
-import { EventCreationParamList } from "common/types/navigationTypes";
-import { appContext, eventCreationContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, Sizing, Outlines, Buttons, Typography } from "styles/index";
-import { LeftArrowIcon } from "assets/icons";
-import { HeaderText } from "components/rnWrappers/headerText";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { EventsListCard } from "components/booking/EventsListCard";
+import { StackScreenProps } from "@react-navigation/stack"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { appContext, eventCreationContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Colors, Sizing, Outlines, Buttons, Typography } from "styles/index"
+import { LeftArrowIcon } from "assets/icons"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { EventsListCard } from "components/booking/EventsListCard"
 import {
   SliderHuePicker,
   SliderSaturationPicker,
   SliderValuePicker,
-} from "react-native-slider-color-picker";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { applyOpacity } from "../../../styles/colors";
-import tinyColor from "tinycolor2";
-import Slider from "react-native-smooth-slider";
-import { fontWeight } from "../../../styles/typography";
+} from "react-native-slider-color-picker"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { applyOpacity } from "../../../styles/colors"
+import tinyColor from "tinycolor2"
+import Slider from "react-native-smooth-slider"
+import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<
   EventCreationParamList,
   "Event Card Customization"
->;
-type SliderColor = { a: number; h: number; s: number; v: number };
-type SliderType = "saturation" | "hue" | "value" | "opacity";
+>
+type SliderColor = { a: number; h: number; s: number; v: number }
+type SliderType = "saturation" | "hue" | "value" | "opacity"
 
 export const EventCardCustomization = ({ navigation }: Props) => {
   const {
@@ -45,46 +45,44 @@ export const EventCardCustomization = ({ navigation }: Props) => {
     setEventCardColor,
     setEventTitleColor,
     eventCardColor,
-  } = eventCreationContext();
-  const { colorScheme } = appContext();
+  } = eventCreationContext()
+  const { colorScheme } = appContext()
   const [bgColor, setBgColor] = React.useState<any>({
     a: 1,
     h: 0,
     s: 0.01,
     v: 0.01,
-  });
+  })
   const [titleColor, setTitleColor] = React.useState<any>({
     a: 1,
     h: 0,
     s: 0.01,
     v: 1,
-  });
+  })
   const [currColor, setCurrColor] = React.useState<SliderColor>({
     a: 0,
     h: 0,
     s: 0,
     v: 0,
-  });
-  const [opacity, setOpacity] = React.useState<number>(0);
-  const [titleOpacity, setTitleOpacity] = React.useState<number>(1);
-  const [transparent, setTransparent] = React.useState<boolean>(false);
+  })
+  const [opacity, setOpacity] = React.useState<number>(0)
+  const [titleOpacity, setTitleOpacity] = React.useState<number>(1)
+  const [transparent, setTransparent] = React.useState<boolean>(false)
   const [activeSelection, setActiveSelection] = React.useState<
     "background" | "title"
-  >("background");
-  const _color = tinyColor(bgColor).setAlpha(opacity).toRgbString();
-  const _titleColor = tinyColor(titleColor)
-    .setAlpha(titleOpacity)
-    .toRgbString();
+  >("background")
+  const _color = tinyColor(bgColor).setAlpha(opacity).toRgbString()
+  const _titleColor = tinyColor(titleColor).setAlpha(titleOpacity).toRgbString()
 
   React.useEffect(() => {
-    if (eventCardColor) setBgColor(eventCardColor);
-  }, []);
+    if (eventCardColor) setBgColor(eventCardColor)
+  }, [])
 
-  const toHexString = (value: any) => tinyColor(value).toHexString();
-  const toHsvString = (value: any) => tinyColor(value).toHsvString();
+  const toHexString = (value: any) => tinyColor(value).toHexString()
+  const toHsvString = (value: any) => tinyColor(value).toHsvString()
 
   // const currColor = activeSelection === "background" ? color : titleColor;
-  const isLightMode = colorScheme !== "dark";
+  const isLightMode = colorScheme !== "dark"
   const buttonStyle = React.useCallback(
     (type) => {
       var bgColor = isLightMode
@@ -93,20 +91,20 @@ export const EventCardCustomization = ({ navigation }: Props) => {
           : Colors.primary.s200
         : type === activeSelection
         ? Colors.primary.neutral
-        : "transparent";
-      var bdColor = isLightMode ? "transparent" : Colors.primary.neutral;
+        : "transparent"
+      var bdColor = isLightMode ? "transparent" : Colors.primary.neutral
       var txColor = isLightMode
         ? type === activeSelection
           ? Colors.primary.neutral
           : Colors.primary.s800
         : type === activeSelection
         ? Colors.primary.s800
-        : Colors.primary.neutral;
+        : Colors.primary.neutral
 
-      return { backgroundColor: bgColor, borderColor: bdColor, color: txColor };
+      return { backgroundColor: bgColor, borderColor: bdColor, color: txColor }
     },
     [activeSelection, colorScheme]
-  );
+  )
 
   const onColorChange = (
     colorHsvOrRgb: SliderColor,
@@ -114,59 +112,59 @@ export const EventCardCustomization = ({ navigation }: Props) => {
     sliderType: SliderType
   ) => {
     if (resType === "end") {
-      const { h, v, s } = colorHsvOrRgb;
-      let newColor = currColor;
+      const { h, v, s } = colorHsvOrRgb
+      let newColor = currColor
 
       switch (sliderType) {
         case "hue": {
-          setCurrColor({ ...currColor, h });
-          newColor = { ...currColor, h };
-          break;
+          setCurrColor({ ...currColor, h })
+          newColor = { ...currColor, h }
+          break
         }
         case "value": {
-          setCurrColor({ ...currColor, v });
-          newColor = { ...currColor, v };
-          break;
+          setCurrColor({ ...currColor, v })
+          newColor = { ...currColor, v }
+          break
         }
         case "saturation": {
-          setCurrColor({ ...currColor, s });
-          newColor = { ...currColor, s };
-          break;
+          setCurrColor({ ...currColor, s })
+          newColor = { ...currColor, s }
+          break
         }
         default:
-          console.log("Slider type not recognized");
+          console.log("Slider type not recognized")
       }
 
       if (activeSelection === "background") {
-        setBgColor(newColor);
+        setBgColor(newColor)
       } else {
-        setTitleColor(newColor);
+        setTitleColor(newColor)
       }
     }
-  };
+  }
   const onOpacityChange = (val: number) => {
     if (activeSelection === "background") {
-      setOpacity(val);
+      setOpacity(val)
     } else {
-      setTitleOpacity(val);
+      setTitleOpacity(val)
     }
-  };
-  const onBackNavigationPress = () => navigation.goBack();
+  }
+  const onBackNavigationPress = () => navigation.goBack()
   const onNextPress = () => {
-    setEventCardColor(transparent ? "transparent" : _color);
-    setEventTitleColor(transparent ? "white" : _titleColor);
+    setEventCardColor(transparent ? "transparent" : _color)
+    setEventTitleColor(transparent ? "white" : _titleColor)
     navigation.navigate("Event Confirmation Details", {
       isNewEvent: true,
-    });
-  };
+    })
+  }
   const onBackgroundSelected = () => {
-    setCurrColor(toHsvString(bgColor));
-    setActiveSelection("background");
-  };
+    setCurrColor(toHsvString(bgColor))
+    setActiveSelection("background")
+  }
   const onTitleSelected = () => {
-    setCurrColor(toHsvString(titleColor));
-    setActiveSelection("title");
-  };
+    setCurrColor(toHsvString(titleColor))
+    setActiveSelection("title")
+  }
   return (
     <SafeAreaView
       style={[
@@ -376,8 +374,8 @@ export const EventCardCustomization = ({ navigation }: Props) => {
         />
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -470,4 +468,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x20,
     marginRight: Sizing.x5,
   },
-});
+})

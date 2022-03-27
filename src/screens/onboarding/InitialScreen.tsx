@@ -1,27 +1,27 @@
-import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet } from "react-native"
 
-import PagerView from "react-native-pager-view";
-import { LiveCollaborationIcon } from "icons/index";
-import { LearnMoreModal } from "components/modals/learnMoreModal";
-import { Colors, Typography, Sizing } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { scale } from "lib/utils";
+import PagerView from "react-native-pager-view"
+import { LiveCollaborationIcon } from "icons/index"
+import { LearnMoreModal } from "components/modals/learnMoreModal"
+import { Colors, Typography, Sizing } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { scale } from "lib/utils"
 
 export interface InitialScreenProps {
-  pagerRef: React.RefObject<PagerView>;
+  pagerRef: React.RefObject<PagerView>
 }
 
 export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
-  const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false);
+  const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false)
 
   const navigateToNextScreen = () => {
-    pagerRef.current?.setPage(1);
-  };
+    pagerRef.current?.setPage(1)
+  }
 
   const onPressLearnMore = () => {
-    setIsVisibleModal(true);
-  };
+    setIsVisibleModal(true)
+  }
 
   return (
     <View style={styles.container}>
@@ -57,8 +57,8 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
         isVisibleModal={isVisibleModal}
       />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+})

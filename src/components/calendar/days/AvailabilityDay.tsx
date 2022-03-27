@@ -1,16 +1,16 @@
-import * as React from "react";
-import { Pressable, Text, View, StyleSheet } from "react-native";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { Day } from "interfaces/myCalendarInterface";
-import { getTime } from "lib/utils";
-import { monthsByName } from "common/types/calendarTypes";
+import * as React from "react"
+import { Pressable, Text, View, StyleSheet } from "react-native"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Day } from "interfaces/myCalendarInterface"
+import { getTime } from "lib/utils"
+import { monthsByName } from "common/types/calendarTypes"
 
 export interface AvailabilityDayProps extends Day {
-  number: number;
-  month: string;
-  year: number;
-  isSelectedDay: boolean;
-  onPressCallback: (val: number) => void;
+  number: number
+  month: string
+  year: number
+  isSelectedDay: boolean
+  onPressCallback: (val: number) => void
 }
 
 /**
@@ -46,8 +46,8 @@ export const _AvailabilityDay = ({
         </Text>
       </View>
     </Pressable>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   dayNumber: {
@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
   selectedDayButton: {
     backgroundColor: Colors.primary.s600,
   },
-});
+})
 
-export const AvailabilityDay = React.memo(_AvailabilityDay);
+export const AvailabilityDay = React.memo(_AvailabilityDay)

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { StyleSheet, Text } from "react-native";
+import * as React from "react"
+import { StyleSheet, Text } from "react-native"
 
-import { appContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { appContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
 
-import { Typography, Colors } from "styles/index";
+import { Typography, Colors } from "styles/index"
 
 export const FavoritesScreen = () => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
   return (
     <SafeAreaView style={styles.safeArea}>
       <Text
@@ -19,8 +19,8 @@ export const FavoritesScreen = () => {
         Welcome from Favorites Screen
       </Text>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x40,
     color: Colors.primary.neutral,
   },
-});
+})

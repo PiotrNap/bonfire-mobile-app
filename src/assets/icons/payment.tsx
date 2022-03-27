@@ -7,8 +7,7 @@ export const PaymentIcon = (props: SvgProps) => {
       width={773.979}
       height={419.084}
       viewBox="0 0 773.979 419.084"
-      {...props}
-    >
+      {...props}>
       <Path
         d="M420 221.693v.91a31.515 31.515 0 01-31.52 31.51H32.71a31.513 31.513 0 01-31.51-31.51v-.91z"
         fill="#f2f2f2"

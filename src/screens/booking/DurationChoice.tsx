@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -6,39 +6,36 @@ import {
   Pressable,
   ScrollView,
   ImageBackground,
-} from "react-native";
+} from "react-native"
 
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { LeftArrowIcon } from "icons/index";
-import { appContext, bookingContext } from "contexts/contextApi";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { getTimeSpanLength } from "lib/utils";
-import { ProfileContext } from "contexts/profileContext";
-import { useDurationSlots } from "lib/hooks/useDurationSlots";
-import AnimatedNumber from "react-native-animated-number";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { LeftArrowIcon } from "icons/index"
+import { appContext, bookingContext } from "contexts/contextApi"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { getTimeSpanLength } from "lib/utils"
+import { ProfileContext } from "contexts/profileContext"
+import { useDurationSlots } from "lib/hooks/useDurationSlots"
+import AnimatedNumber from "react-native-animated-number"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { StackScreenProps } from "@react-navigation/stack"
 
-type Props = StackScreenProps<BookingStackParamList, "Duration Choice">;
+type Props = StackScreenProps<BookingStackParamList, "Duration Choice">
 
 export const DurationChoice = ({ navigation, route }: Props) => {
-  const { title, image, color, titleColor } = route.params;
-  const { maxTimeSlotDuration, minTimeSlotDuration } = bookingContext();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [selectedDuration, setSelectedDuration] = React.useState<number>(0);
-  const [cost, setCost] = React.useState<number>(0);
-  const { walletBalance } = React.useContext(ProfileContext);
+  const { title, image, color, titleColor } = route.params
+  const { maxTimeSlotDuration, minTimeSlotDuration } = bookingContext()
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [selectedDuration, setSelectedDuration] = React.useState<number>(0)
+  const [cost, setCost] = React.useState<number>(0)
+  const { walletBalance } = React.useContext(ProfileContext)
 
-  const { setDuration, setDurationCost } = bookingContext();
-  const { colorScheme } = appContext();
+  const { setDuration, setDurationCost } = bookingContext()
+  const { colorScheme } = appContext()
 
-  const insets = useSafeAreaInsets();
-  const isLightMode = colorScheme === "light";
-  const isDisabled = selectedDuration === 0;
+  const insets = useSafeAreaInsets()
+  const isLightMode = colorScheme === "light"
+  const isDisabled = selectedDuration === 0
   //@TODO: insert check for auth state
   //    !auth
   // ? "Sign up"
@@ -47,14 +44,14 @@ export const DurationChoice = ({ navigation, route }: Props) => {
   const buttonText =
     walletBalance != null && walletBalance < cost
       ? "Deposit Funds"
-      : "Preview Order";
+      : "Preview Order"
 
   const { timeSlots } = useDurationSlots(
     minTimeSlotDuration,
     maxTimeSlotDuration
-  );
+  )
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
 
   const onNextPress = async () => {
     // if (buttonText === "Sign up") return; // @TODO must navigate to sign up screen
@@ -62,30 +59,30 @@ export const DurationChoice = ({ navigation, route }: Props) => {
       navigation.navigate("Add Funds", {
         ...route.params,
         fromScreen: "Duration Choice",
-      });
+      })
     if (buttonText === "Preview Order") {
-      setIsLoading(true);
-      setDuration(selectedDuration);
-      setDurationCost(cost);
-      setIsLoading(false);
-      navigation.navigate("Booking Confirmation", route.params);
+      setIsLoading(true)
+      setDuration(selectedDuration)
+      setDurationCost(cost)
+      setIsLoading(false)
+      navigation.navigate("Booking Confirmation", route.params)
     }
-  };
+  }
 
   const onPressCallback = (time: number) => {
     if (selectedDuration === time) {
-      setSelectedDuration(0);
-      setCost(0);
+      setSelectedDuration(0)
+      setCost(0)
     } else {
-      setSelectedDuration(time);
+      setSelectedDuration(time)
 
       // TODO What's the hourly rate for this event?
-      const hourlyRate = 50;
-      const totalCost = (hourlyRate ?? 50) * (time / 60 / 60 / 1000);
+      const hourlyRate = 50
+      const totalCost = (hourlyRate ?? 50) * (time / 60 / 60 / 1000)
 
-      setCost(Math.round(totalCost));
+      setCost(Math.round(totalCost))
     }
-  };
+  }
 
   const renderTimeSlots = React.useCallback(
     (time: number, index: number) => (
@@ -111,7 +108,7 @@ export const DurationChoice = ({ navigation, route }: Props) => {
       </Pressable>
     ),
     [selectedDuration]
-  );
+  )
 
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
@@ -204,8 +201,8 @@ export const DurationChoice = ({ navigation, route }: Props) => {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -327,4 +324,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x55,
     color: Colors.primary.neutral,
   },
-});
+})

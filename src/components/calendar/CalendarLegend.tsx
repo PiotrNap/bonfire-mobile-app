@@ -1,14 +1,14 @@
-import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet } from "react-native"
 
-import { SingleColorDot, DoubleColorDot } from "assets/icons/index";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { fontWeight } from "../../styles/typography";
+import { SingleColorDot, DoubleColorDot } from "assets/icons/index"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { fontWeight } from "../../styles/typography"
 
 export interface CalendarLegendProps {
-  colorScheme: "light" | "dark";
-  isBookingCalendar?: boolean;
-  isRegularCalendar?: boolean;
+  colorScheme: "light" | "dark"
+  isBookingCalendar?: boolean
+  isRegularCalendar?: boolean
 }
 
 export const CalendarLegend = ({
@@ -16,7 +16,7 @@ export const CalendarLegend = ({
   isRegularCalendar,
   isBookingCalendar,
 }: CalendarLegendProps) => {
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
 
   return (
     <View style={styles.container}>
@@ -82,8 +82,8 @@ export const CalendarLegend = ({
         </>
       ) : null}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
     paddingTop: Sizing.x3,
     color: Colors.primary.neutral,
   },
-});
+})

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   TextInput,
   StyleSheet,
@@ -6,15 +6,15 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
-} from "react-native";
+} from "react-native"
 
-import { Buttons, Colors, Sizing, Outlines, Typography } from "styles/index";
-import { myCalendarContext } from "contexts/contextApi";
+import { Buttons, Colors, Sizing, Outlines, Typography } from "styles/index"
+import { myCalendarContext } from "contexts/contextApi"
 
 // This will enable LayoutAnimation on Android too.
 if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+    UIManager.setLayoutAnimationEnabledExperimental(true)
   }
 }
 
@@ -24,46 +24,46 @@ export const CalendarHeader = () => {
     changeMonthHeader,
     setCalendarDirection,
     calendar,
-  } = myCalendarContext();
+  } = myCalendarContext()
 
-  const [activeSearch, setActiveSearch] = React.useState<boolean>(false);
-  const [nodeTag, setNodeTag] = React.useState<number | null>(null);
+  const [activeSearch, setActiveSearch] = React.useState<boolean>(false)
+  const [nodeTag, setNodeTag] = React.useState<number | null>(null)
 
-  const searchInputRef = React.useRef<TextInput>(null);
+  const searchInputRef = React.useRef<TextInput>(null)
 
   // AnimationRef is used as reference to width value
   // const animatedScale = React.useRef(new Animated.Value(1)).current;
 
   const handleResponderEvent = (event: any) => {
-    event.persist();
+    event.persist()
     if (nodeTag) {
       if (nodeTag === event.target) {
-        return true;
+        return true
       }
     }
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setActiveSearch(false);
-    Keyboard.dismiss();
-    return true;
-  };
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    setActiveSearch(false)
+    Keyboard.dismiss()
+    return true
+  }
 
   const setChildNodes = (component: any) => {
     if (component && component._children) {
-      const childNativeTag = component._children[0]._nativeTag;
-      setNodeTag(childNativeTag);
+      const childNativeTag = component._children[0]._nativeTag
+      setNodeTag(childNativeTag)
     }
-  };
+  }
 
   const handleSearchPress = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setActiveSearch(true);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    setActiveSearch(true)
 
     if (searchInputRef && searchInputRef.current) {
-      searchInputRef.current!.focus();
+      searchInputRef.current!.focus()
     }
-  };
+  }
 
-  return <></>;
+  return <></>
   {
     /* 
         
@@ -98,7 +98,7 @@ export const CalendarHeader = () => {
         </View>
       </View> */
   }
-};
+}
 
 const styles = StyleSheet.create({
   // searchBarView: {
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
   //   marginLeft: Sizing.x5,
   //   ...Typography.fontSize.x30,
   // },
-});
+})

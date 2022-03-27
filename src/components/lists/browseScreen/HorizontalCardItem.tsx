@@ -1,20 +1,20 @@
-import * as React from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
+import * as React from "react"
+import { ImageBackground, StyleSheet, Text, View } from "react-native"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
 
 // Remove this code once we have external images.
 /* @ts-ignore */
-import investing from "assets/images/investing.jpg";
+import investing from "assets/images/investing.jpg"
 /* @ts-ignore */
-import developing from "assets/images/developing.jpg";
+import developing from "assets/images/developing.jpg"
 /* @ts-ignore */
-import clothes from "assets/images/clothes.jpg";
+import clothes from "assets/images/clothes.jpg"
 /* @ts-ignore */
-import health from "assets/images/health.png";
+import health from "assets/images/health.png"
 /* @ts-ignore */
-import lawyer from "assets/images/lawyer.png";
+import lawyer from "assets/images/lawyer.png"
 /* @ts-ignore */
-import fashion from "assets/images/fashion.png";
+import fashion from "assets/images/fashion.png"
 
 const Images = [
   { image: investing, title: "Investing" },
@@ -23,15 +23,15 @@ const Images = [
   { image: health, title: "Health" },
   { image: lawyer, title: "Lawyer" },
   { image: fashion, title: "Fashion" },
-];
+]
 
 export interface HorizontalCardItemProps {
-  item: any;
-  navigateTo: any;
+  item: any
+  navigateTo: any
 }
 
 export const HorizontalCardItem = ({ item }: HorizontalCardItemProps) => {
-  const placeholder: any = Images[Math.floor(Math.random() * Images.length)];
+  const placeholder: any = Images[Math.floor(Math.random() * Images.length)]
 
   return (
     <ImageBackground
@@ -46,8 +46,8 @@ export const HorizontalCardItem = ({ item }: HorizontalCardItemProps) => {
         <Text style={styles.innerText}>{placeholder.title}</Text>
       </View>
     </ImageBackground>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -73,4 +73,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x30,
     color: Colors.primary.neutral,
   },
-});
+})

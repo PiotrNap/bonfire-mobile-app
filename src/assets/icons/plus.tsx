@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
 
 export const PlusIcon = (props: SvgProps) => {
   return (
@@ -11,5 +11,5 @@ export const PlusIcon = (props: SvgProps) => {
         d="M12 4v16m8-8H4"
       />
     </Svg>
-  );
-};
+  )
+}

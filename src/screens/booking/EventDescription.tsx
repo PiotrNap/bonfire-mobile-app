@@ -1,71 +1,79 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   Pressable,
-} from "react-native";
+} from "react-native"
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { applyOpacity } from "../../styles/colors";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { convertToCalendarAvailabilities, getEventCardDate } from "lib/utils";
-import { LeftArrowIcon } from "assets/icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { applyOpacity } from "../../styles/colors"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { convertToCalendarAvailabilities, getEventCardDate } from "lib/utils"
+import { LeftArrowIcon } from "assets/icons"
 import {
   appContext,
   bookingContext,
   myCalendarContext,
-} from "contexts/contextApi";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { StackScreenProps } from "@react-navigation/stack";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import tinyColor from "tinycolor2";
-import { Events } from "Api/Events";
+} from "contexts/contextApi"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { StackScreenProps } from "@react-navigation/stack"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import tinyColor from "tinycolor2"
+import { Events } from "Api/Events"
 
-type Props = StackScreenProps<BookingStackParamList, "Event Description">;
+type Props = StackScreenProps<BookingStackParamList, "Event Description">
 
 export const EventDescription = ({ navigation, route }: Props) => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { title, description, id, fromDate, toDate, image, color, titleColor } =
-    route.params;
-  const { colorScheme } = appContext();
-  const { setPreviewingEvent, resetState } = bookingContext();
-  const { setAvailCalendar } = myCalendarContext();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const {
+    title,
+    description,
+    id,
+    fromDate,
+    toDate,
+    image,
+    color,
+    titleColor,
+  } = route.params
+  const { colorScheme } = appContext()
+  const { setPreviewingEvent, resetState } = bookingContext()
+  const { setAvailCalendar } = myCalendarContext()
 
-  const insets = useSafeAreaInsets();
-  const isLightMode = colorScheme === "light";
-  const _color = tinyColor(color).toHexString();
+  const insets = useSafeAreaInsets()
+  const isLightMode = colorScheme === "light"
+  const _color = tinyColor(color).toHexString()
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
   const onBookEventPress = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const event = await Events.getEventById(id);
+      const event = await Events.getEventById(id)
       if (event) {
         // convert to calendar-ready data model
         const availableDays = convertToCalendarAvailabilities(
           event.selectedDays
-        );
+        )
 
-        resetState();
+        resetState()
 
-        setPreviewingEvent(Object.assign({}, event, route.params));
-        setAvailCalendar(availableDays);
+        setPreviewingEvent(Object.assign({}, event, route.params))
+        setAvailCalendar(availableDays)
       }
-      setIsLoading(false);
+      setIsLoading(false)
 
       navigation.navigate("Available Event Days Selection", {
         ...route.params,
-      });
+      })
     } catch (e) {
       // TODO Implement better error handling
-      console.error(e);
-      setIsLoading(false);
+      console.error(e)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <View style={{ flex: 1, paddingBottom: insets.bottom }}>
@@ -131,8 +139,8 @@ export const EventDescription = ({ navigation, route }: Props) => {
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   topContainer: {
@@ -194,4 +202,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x60,
     color: Colors.primary.neutral,
   },
-});
+})

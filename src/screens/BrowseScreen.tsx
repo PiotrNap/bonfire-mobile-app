@@ -1,56 +1,56 @@
-import * as React from "react";
-import { View, StyleSheet, ActivityIndicator, Animated } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, ActivityIndicator, Animated } from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StackScreenProps } from "@react-navigation/stack";
-import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { appContext } from "contexts/contextApi";
-import { useEventsPagination } from "lib/hooks/useEventsPagination";
-import { EventsList } from "components/booking/EventsList";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { applyOpacity } from "../styles/colors";
-import { useEventsResults } from "lib/hooks/useEventsResults";
-import { EmptyDocumentsIcon, SearchIcon } from "assets/icons";
-import SearchBar from "@pnap/react-native-search-bar";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { StackScreenProps } from "@react-navigation/stack"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { appContext } from "contexts/contextApi"
+import { useEventsPagination } from "lib/hooks/useEventsPagination"
+import { EventsList } from "components/booking/EventsList"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { applyOpacity } from "../styles/colors"
+import { useEventsResults } from "lib/hooks/useEventsResults"
+import { EmptyDocumentsIcon, SearchIcon } from "assets/icons"
+import SearchBar from "@pnap/react-native-search-bar"
 // import { browseFeatured } from "../api_data/browseFeatured";
 
 export interface BrowseProps
   extends StackScreenProps<BookingStackParamList, "Browse"> {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const BrowseScreen = ({ navigation }: BrowseProps) => {
-  const { colorScheme } = appContext();
-  const { events, isLoading: isPaginationLoading } = useEventsPagination();
+  const { colorScheme } = appContext()
+  const { events, isLoading: isPaginationLoading } = useEventsPagination()
   const {
     events: searchEvents,
     isLoading: isSearchLoading,
     getEventsBySearchQuery,
     setEvents,
-  } = useEventsResults();
+  } = useEventsResults()
 
-  const animatedOpacity = React.useRef(new Animated.Value(0)).current;
-  const isLightMode = colorScheme !== "dark";
-  const isLoading = isSearchLoading || isPaginationLoading;
+  const animatedOpacity = React.useRef(new Animated.Value(0)).current
+  const isLightMode = colorScheme !== "dark"
+  const isLoading = isSearchLoading || isPaginationLoading
   const isEmptyEventsList =
-    (searchEvents && !searchEvents.length) || !events.length;
+    (searchEvents && !searchEvents.length) || !events.length
 
   const onActiveSearch = (active: boolean) => {
     Animated.timing(animatedOpacity, {
       useNativeDriver: true,
       toValue: active ? 1 : 0,
       duration: 140,
-    }).start();
-  };
+    }).start()
+  }
   const onSubmitSearch = (val: string) => {
-    onActiveSearch(false);
-    getEventsBySearchQuery(val);
-  };
+    onActiveSearch(false)
+    getEventsBySearchQuery(val)
+  }
   const onToggleSearchBar = (val: boolean) => {
     // user hides search bar, show the normal events list
-    if (!val) setEvents(null);
-  };
+    if (!val) setEvents(null)
+  }
 
   const CustomSearchIcon = React.useCallback(
     () => (
@@ -65,7 +65,7 @@ export const BrowseScreen = ({ navigation }: BrowseProps) => {
       />
     ),
     []
-  );
+  )
 
   /**
    * Old code for displaying horizontal lists (categories, organizers, etc.)
@@ -151,8 +151,8 @@ export const BrowseScreen = ({ navigation }: BrowseProps) => {
         />
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+})
 
 const searchStyles = StyleSheet.create({
   searchToolContainer: {
@@ -217,4 +217,4 @@ const searchStyles = StyleSheet.create({
   searchIcon: {
     marginRight: Sizing.x10,
   },
-});
+})

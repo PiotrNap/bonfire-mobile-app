@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   StyleSheet,
@@ -7,68 +7,65 @@ import {
   LayoutChangeEvent,
   ImageBackground,
   Animated,
-} from "react-native";
+} from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraIcon, LeftArrowIcon, PlaceholderIcon } from "assets/icons";
-import { HeaderText } from "components/rnWrappers/headerText";
-import { appContext, eventCreationContext } from "contexts/contextApi";
-import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index";
-import { EventCreationParamList } from "common/types/navigationTypes";
-import { StackScreenProps } from "@react-navigation/stack";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { useMediaAccess } from "lib/hooks/useMediaAccess";
-import { useCameraAccess } from "lib/hooks/useCameraAccess";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { fontWeight } from "../../../styles/typography";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { CameraIcon, LeftArrowIcon, PlaceholderIcon } from "assets/icons"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { appContext, eventCreationContext } from "contexts/contextApi"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { StackScreenProps } from "@react-navigation/stack"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { useMediaAccess } from "lib/hooks/useMediaAccess"
+import { useCameraAccess } from "lib/hooks/useCameraAccess"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { fontWeight } from "../../../styles/typography"
 
-type Props = StackScreenProps<EventCreationParamList, "Image Cover Selection">;
+type Props = StackScreenProps<EventCreationParamList, "Image Cover Selection">
 
 export const ImageCoverSelection = ({ navigation }: Props) => {
-  const [layout, setLayout] = React.useState<any>(null);
-  const [currImage, setCurrImage] = React.useState<string>("");
-  const { launchImageLibrary, mediaObj, setMediaObj } = useMediaAccess();
-  const { launchCamera, imageObj, setImgObj } = useCameraAccess();
-  const { colorScheme } = appContext();
-  const { setImageUri, imageURI } = eventCreationContext();
+  const [layout, setLayout] = React.useState<any>(null)
+  const [currImage, setCurrImage] = React.useState<string>("")
+  const { launchImageLibrary, mediaObj, setMediaObj } = useMediaAccess()
+  const { launchCamera, imageObj, setImgObj } = useCameraAccess()
+  const { colorScheme } = appContext()
+  const { setImageUri, imageURI } = eventCreationContext()
 
-  const mainPositionAnimation = React.useRef<any>(
-    new Animated.Value(0)
-  ).current;
-  const secondPositionAnimation = React.useRef<any>(
-    new Animated.Value(200)
-  ).current;
-  const isLightMode = colorScheme === "light";
+  const mainPositionAnimation = React.useRef<any>(new Animated.Value(0)).current
+  const secondPositionAnimation = React.useRef<any>(new Animated.Value(200))
+    .current
+  const isLightMode = colorScheme === "light"
 
   React.useEffect(() => {
     if (!currImage && imageURI) {
-      animateNavigationButtons();
-      setCurrImage(imageURI);
+      animateNavigationButtons()
+      setCurrImage(imageURI)
     }
 
     if (imageObj?.assets[0]?.uri && imageObj !== currImage) {
-      setCurrImage(imageObj.assets[0].uri);
-      animateNavigationButtons();
+      setCurrImage(imageObj.assets[0].uri)
+      animateNavigationButtons()
     } else if (mediaObj?.assets[0]?.uri && mediaObj !== currImage) {
-      setCurrImage(mediaObj.assets[0].uri);
-      animateNavigationButtons();
+      setCurrImage(mediaObj.assets[0].uri)
+      animateNavigationButtons()
     }
 
-    setMediaObj(null);
-    setImgObj(null);
-  }, [imageObj, mediaObj]);
+    setMediaObj(null)
+    setImgObj(null)
+  }, [imageObj, mediaObj])
 
   const onBackNavigationPress = () => {
-    navigation.goBack();
-  };
+    navigation.goBack()
+  }
 
   const onNextPress = () => {
     if (currImage) {
-      setImageUri(currImage);
-      navigation.navigate("Event Card Customization");
+      setImageUri(currImage)
+      navigation.navigate("Event Card Customization")
     }
-  };
-  const onLayout = (e: LayoutChangeEvent) => setLayout(e.nativeEvent.layout);
+  }
+  const onLayout = (e: LayoutChangeEvent) => setLayout(e.nativeEvent.layout)
 
   const animateNavigationButtons = () => {
     Animated.parallel([
@@ -82,8 +79,8 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
         useNativeDriver: false,
         duration: 200,
       }),
-    ]).start();
-  };
+    ]).start()
+  }
 
   return (
     <SafeAreaView
@@ -217,8 +214,8 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -309,4 +306,4 @@ const styles = StyleSheet.create({
     color: Colors.primary.s800,
     marginRight: Sizing.x5,
   },
-});
+})

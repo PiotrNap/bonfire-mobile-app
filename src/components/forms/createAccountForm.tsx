@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import * as React from "react"
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native"
 
-import { Formik, Field } from "formik";
+import { Formik, Field } from "formik"
 import {
   Buttons,
   Typography,
@@ -9,40 +9,41 @@ import {
   Sizing,
   Forms,
   Outlines,
-} from "styles/index";
-import { createAccountValidationScheme } from "lib/utils";
-import { CustomInput } from "../forms/CustomInput";
-import { Users } from "Api/Users";
-import { setAuthorizationToken } from "Api/base";
-import { CheckIcon } from "icons/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { setToEncryptedStorage } from "lib/encryptedStorage";
-import { ProfileContext } from "contexts/profileContext";
-import { useNavigation } from "@react-navigation/native";
-import { appContext } from "contexts/contextApi";
-import { startChallengeSequence } from "lib/helpers";
-import { generateKeyPair } from "lib/tweetnacl";
-import base64 from "base64-js";
+} from "styles/index"
+import { createAccountValidationScheme } from "lib/utils"
+import { CustomInput } from "../forms/CustomInput"
+import { Users } from "Api/Users"
+import { setAuthorizationToken } from "Api/base"
+import { CheckIcon } from "icons/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { setToEncryptedStorage } from "lib/encryptedStorage"
+import { ProfileContext } from "contexts/profileContext"
+import { useNavigation } from "@react-navigation/native"
+import { appContext } from "contexts/contextApi"
+import { startChallengeSequence } from "lib/helpers"
+import { generateKeyPair } from "lib/tweetnacl"
+import base64 from "base64-js"
 
 export interface CreateAccountFormProps {
-  onErrorCallback: (val: string) => void;
-  onChangeCallback: () => void;
+  onErrorCallback: (val: string) => void
+  onChangeCallback: () => void
 }
 
-const AnimatedCheckIcon = Animated.createAnimatedComponent(CheckIcon);
+const AnimatedCheckIcon = Animated.createAnimatedComponent(CheckIcon)
 
 export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,
 }: CreateAccountFormProps) => {
-  const { profileType, setUsername, setId, setName } =
-    React.useContext(ProfileContext);
-  const { toggleAuth } = appContext();
-  const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false);
-  const [submitted, setSubmitted] = React.useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const animatedOpacity = React.useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation();
+  const { profileType, setUsername, setId, setName } = React.useContext(
+    ProfileContext
+  )
+  const { toggleAuth } = appContext()
+  const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
+  const [submitted, setSubmitted] = React.useState<boolean>(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const animatedOpacity = React.useRef(new Animated.Value(0)).current
+  const navigation = useNavigation()
 
   const fadeIn = () => {
     Animated.timing(animatedOpacity, {
@@ -50,93 +51,93 @@ export const CreateAccountForm = ({
       duration: 0,
       useNativeDriver: true,
     }).start(({ finished }) => {
-      if (finished) setAcceptedChecbox(true);
-    });
-  };
+      if (finished) setAcceptedChecbox(true)
+    })
+  }
   const fadeOut = () => {
     Animated.timing(animatedOpacity, {
       toValue: 0,
       duration: 0,
       useNativeDriver: true,
     }).start(({ finished }) => {
-      if (finished) setAcceptedChecbox(false);
-    });
-  };
+      if (finished) setAcceptedChecbox(false)
+    })
+  }
 
   React.useEffect(() => {
-    setAcceptedChecbox(false);
-    fadeOut();
-  }, [profileType]);
+    setAcceptedChecbox(false)
+    fadeOut()
+  }, [profileType])
 
   const onCheckBoxPress = () => {
-    onChangeCallback();
-    !acceptedCheckbox ? fadeIn() : fadeOut();
-  };
+    onChangeCallback()
+    !acceptedCheckbox ? fadeIn() : fadeOut()
+  }
 
   const onSubmit = async (values: any) => {
     if (!acceptedCheckbox) {
-      onErrorCallback("AcceptedTerms");
-      return;
+      onErrorCallback("AcceptedTerms")
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
 
     // generate key pair
-    const keyPair = await generateKeyPair();
-    const secretKey = keyPair?.secretKey;
-    const publicKey = keyPair?.publicKey;
+    const keyPair = await generateKeyPair()
+    const secretKey = keyPair?.secretKey
+    const publicKey = keyPair?.publicKey
 
     if (publicKey && secretKey) {
       // store private key in encrypted storage as base64
-      setToEncryptedStorage("secret", base64.fromByteArray(secretKey));
-      setToEncryptedStorage("public", base64.fromByteArray(publicKey));
+      setToEncryptedStorage("secret", base64.fromByteArray(secretKey))
+      setToEncryptedStorage("public", base64.fromByteArray(publicKey))
 
       try {
-        values.publicKey = base64.fromByteArray(publicKey);
-        values.profileType = profileType;
+        values.publicKey = base64.fromByteArray(publicKey)
+        values.profileType = profileType
 
         // get new user object
-        const user = await Users.createAccount(values);
+        const user = await Users.createAccount(values)
 
         if (user != null) {
-          const { id, name, username } = user;
+          const { id, name, username } = user
 
-          setId(id);
-          setUsername(username);
-          setName(name);
+          setId(id)
+          setUsername(username)
+          setName(name)
 
           // start challenge and get JWT
-          const loginResponseDTO = await startChallengeSequence(id, true);
+          const loginResponseDTO = await startChallengeSequence(id, true)
 
           if (loginResponseDTO) {
-            const { accessToken } = loginResponseDTO;
-            setAuthorizationToken(accessToken);
-            setToEncryptedStorage("accessToken", accessToken);
+            const { accessToken } = loginResponseDTO
+            setAuthorizationToken(accessToken)
+            setToEncryptedStorage("accessToken", accessToken)
           }
 
-          setSubmitted(true);
-          toggleAuth(true, profileType);
+          setSubmitted(true)
+          toggleAuth(true, profileType)
 
           if (profileType === "attendee") {
-            navigation.navigate("Navigation Screens");
+            navigation.navigate("Navigation Screens")
           } else if (profileType === "organizer") {
-            navigation.navigate("User Registration Screens");
+            navigation.navigate("User Registration Screens")
           }
 
-          setIsLoading(false);
+          setIsLoading(false)
         }
       } catch (e: any) {
         // show error notification
         if (e.message === "User already exists") {
-          onErrorCallback("UserNameTaken");
+          onErrorCallback("UserNameTaken")
         } else {
-          console.error(e);
-          onErrorCallback("Server");
+          console.error(e)
+          onErrorCallback("Server")
         }
 
-        setIsLoading(false);
+        setIsLoading(false)
       }
     }
-  };
+  }
 
   return (
     <Formik
@@ -215,8 +216,8 @@ export const CreateAccountForm = ({
         </>
       )}
     </Formik>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   formInput: {
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     color: Colors.primary.s300,
   },
-});
+})
 
 /**
  * Styles passed as props to CustomInput
@@ -327,4 +328,4 @@ const inputStyles = StyleSheet.create({
     ...Forms.inputLabel.error,
     color: Colors.primary.neutral,
   },
-});
+})

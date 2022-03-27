@@ -1,11 +1,11 @@
-import { Platform } from "react-native";
+import { Platform } from "react-native"
 
-import { ANDROID_API_URL, IOS_API_URL } from "@env";
-import { signChallenge } from "./tweetnacl";
-import base64 from "base64-js";
+import { ANDROID_API_URL, IOS_API_URL } from "@env"
+import { signChallenge } from "./tweetnacl"
+import base64 from "base64-js"
 
-import { monthsByName } from "common/types/calendarTypes";
-import { Auth } from "../services/Api/Auth";
+import { monthsByName } from "common/types/calendarTypes"
+import { Auth } from "../services/Api/Auth"
 
 /**
  *  Takes index of the selected day in the weeek
@@ -26,27 +26,27 @@ export const getRecurringMonthDays = (
   year: number,
   month: string
 ) => {
-  const daysArray: number[] = [];
+  const daysArray: number[] = []
 
-  const numOfDays = new Date(year, monthsByName[month] + 1, 0).getDate();
-  const firstDayOfWeek = new Date(year, monthsByName[month]).getDay();
+  const numOfDays = new Date(year, monthsByName[month] + 1, 0).getDate()
+  const firstDayOfWeek = new Date(year, monthsByName[month]).getDay()
 
   var firstDayToSelect =
     firstDayOfWeek > index
       ? 7 - firstDayOfWeek + index + 1
-      : 1 + (index - firstDayOfWeek);
+      : 1 + (index - firstDayOfWeek)
   // Calculate number of weeks (+1 because starting from current selected day)
-  var numOfWeeks = Math.floor((numOfDays - firstDayToSelect) / 7 + 1);
+  var numOfWeeks = Math.floor((numOfDays - firstDayToSelect) / 7 + 1)
 
   for (; numOfWeeks > 0; numOfWeeks--) {
     daysArray.push(
       new Date(year, monthsByName[month], firstDayToSelect).getTime()
-    );
-    firstDayToSelect = firstDayToSelect + 7;
+    )
+    firstDayToSelect = firstDayToSelect + 7
   }
 
-  return daysArray;
-};
+  return daysArray
+}
 
 /**
  * Starts challenge sequence to obtain JWT from the server.
@@ -60,34 +60,34 @@ export const startChallengeSequence = async (
   isSigningUp: boolean
 ): Promise<{ [index: string]: string } | null> => {
   try {
-    let res = await Auth.requestChallenge({ credential });
-    let { challengeString } = res;
+    let res = await Auth.requestChallenge({ credential })
+    let { challengeString } = res
 
     if (challengeString) {
-      let signature: any = await signChallenge(challengeString);
+      let signature: any = await signChallenge(challengeString)
 
       if (signature) {
-        signature = base64.fromByteArray(signature);
+        signature = base64.fromByteArray(signature)
 
         // request JWT
         let res = await Auth.requestAccessToken(
           challengeString,
           signature,
           isSigningUp ? { id: credential } : { publicKey: credential }
-        );
-        if (res) return res;
+        )
+        if (res) return res
       }
     }
 
-    return null;
+    return null
   } catch (e) {
-    throw new Error(e.message);
+    throw new Error(e.message)
   }
-};
+}
 
 export const getApiUrl = (url: string): string => {
-  if (url[0] !== "/") url = "/" + url;
-  const baseUrl = Platform.OS === "ios" ? IOS_API_URL : ANDROID_API_URL;
+  if (url[0] !== "/") url = "/" + url
+  const baseUrl = Platform.OS === "ios" ? IOS_API_URL : ANDROID_API_URL
 
-  return baseUrl + url;
-};
+  return baseUrl + url
+}

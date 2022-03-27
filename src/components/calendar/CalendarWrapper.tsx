@@ -1,17 +1,17 @@
-import * as React from "react";
-import { StyleSheet } from "react-native";
+import * as React from "react"
+import { StyleSheet } from "react-native"
 
-import { appContext } from "contexts/contextApi";
-import { MyCalendarProvider } from "contexts/myCalendarContext";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "styles/index";
+import { appContext } from "contexts/contextApi"
+import { MyCalendarProvider } from "contexts/myCalendarContext"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Colors } from "styles/index"
 
 export interface CalendarWrapperProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const CalendarWrapper = ({ children }: CalendarWrapperProps) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
   return (
     <SafeAreaView
       style={
@@ -19,8 +19,8 @@ export const CalendarWrapper = ({ children }: CalendarWrapperProps) => {
       }>
       <MyCalendarProvider>{children}</MyCalendarProvider>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary.s600,
     alignItems: "center",
   },
-});
+})

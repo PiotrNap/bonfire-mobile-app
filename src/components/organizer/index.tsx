@@ -1,1 +1,1 @@
-export { OrganizerBottomNav } from "./OrganizerBottomNav";
+export { OrganizerBottomNav } from "./OrganizerBottomNav"

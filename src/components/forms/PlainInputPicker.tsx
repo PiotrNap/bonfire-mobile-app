@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -8,34 +8,36 @@ import {
   LayoutChangeEvent,
   LayoutRectangle,
   Animated,
-} from "react-native";
+} from "react-native"
 
-import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index";
-import { Picker } from "@react-native-picker/picker";
-import { DownIcon } from "assets/icons";
+import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
+import { Picker } from "@react-native-picker/picker"
+import { DownIcon } from "assets/icons"
 
 export interface PlainInputPickerProps {
-  label: string;
-  minTime?: number;
-  maxTime?: number;
-  inputRange: any[];
-  styles?: any;
-  isLightMode?: boolean;
-  enabledPicker: boolean;
-  openPicker: string | null;
-  onValueChange: (val: number) => void;
-  onOpenChange: (arg: string | null) => void;
+  label: string
+  minTime?: number
+  maxTime?: number
+  inputRange: any[]
+  styles?: any
+  isLightMode?: boolean
+  enabledPicker: boolean
+  openPicker: string | null
+  onValueChange: (val: number) => void
+  onOpenChange: (arg: string | null) => void
 }
 
 export const PlainInputPicker = (props: PlainInputPickerProps) => {
-  const [, setIconAnimationValue] = React.useState<number>(0);
-  const [dropDownAnimationValue, setDropDownAnimationValue] =
-    React.useState<number>(0);
+  const [, setIconAnimationValue] = React.useState<number>(0)
+  const [
+    dropDownAnimationValue,
+    setDropDownAnimationValue,
+  ] = React.useState<number>(0)
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
     null
-  );
-  const [showPicker, setShowPicker] = React.useState<boolean>(false);
-  const [inputValue, setInputValue] = React.useState<any>(null);
+  )
+  const [showPicker, setShowPicker] = React.useState<boolean>(false)
+  const [inputValue, setInputValue] = React.useState<any>(null)
   var {
     label,
     inputRange,
@@ -47,57 +49,56 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     enabledPicker,
     onValueChange,
     onOpenChange,
-  }: PlainInputPickerProps = props;
-  const iconRotationRef = React.useRef(new Animated.Value(0)).current;
-  const dropDownHeightRef = React.useRef(new Animated.Value(0)).current;
-  const isDisabled = inputValue === "--";
-  const os = Platform.OS;
+  }: PlainInputPickerProps = props
+  const iconRotationRef = React.useRef(new Animated.Value(0)).current
+  const dropDownHeightRef = React.useRef(new Animated.Value(0)).current
+  const isDisabled = inputValue === "--"
+  const os = Platform.OS
 
   React.useEffect(() => {
-    setInputValue(minTime || maxTime || inputRange[0] || "--");
-  }, [inputRange, minTime, maxTime]);
+    setInputValue(minTime || maxTime || inputRange[0] || "--")
+  }, [inputRange, minTime, maxTime])
 
   if (isLightMode) {
-    styles = Object.assign({}, defaultStyles, styles, formStyleLight);
+    styles = Object.assign({}, defaultStyles, styles, formStyleLight)
   } else {
-    styles = Object.assign({}, defaultStyles, styles, formStyleDark);
+    styles = Object.assign({}, defaultStyles, styles, formStyleDark)
   }
 
   React.useEffect(() => {
     // whenever user opens another drop down, close the current open one
-    if (!openPicker && showPicker) onInputPress();
+    if (!openPicker && showPicker) onInputPress()
 
     const listeners = () => {
       iconRotationRef.addListener(({ value }) => {
-        setIconAnimationValue(value);
-      });
+        setIconAnimationValue(value)
+      })
       dropDownHeightRef.addListener(({ value }) =>
         setDropDownAnimationValue(value)
-      );
-    };
-    listeners();
+      )
+    }
+    listeners()
 
     const removeListeners = () => {
-      iconRotationRef.removeAllListeners;
-      dropDownHeightRef.removeAllListeners;
-    };
+      iconRotationRef.removeAllListeners
+      dropDownHeightRef.removeAllListeners
+    }
 
-    return removeListeners;
-  }, [openPicker]);
+    return removeListeners
+  }, [openPicker])
 
-  const AnimatedIcon = Animated.createAnimatedComponent(DownIcon);
+  const AnimatedIcon = Animated.createAnimatedComponent(DownIcon)
 
   const spin = iconRotationRef.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "180deg"],
-  });
+  })
 
-  const onLayout = (e: LayoutChangeEvent) =>
-    setDimensions(e.nativeEvent.layout);
+  const onLayout = (e: LayoutChangeEvent) => setDimensions(e.nativeEvent.layout)
 
   const onChange = (val: string) => {
-    onValueChange(Number(val));
-  };
+    onValueChange(Number(val))
+  }
 
   /**
    * Animations
@@ -106,45 +107,45 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     toValue: (iconRotationRef as any)._value === 0 ? 1 : 0,
     duration: 120,
     useNativeDriver: true,
-  });
+  })
   const dropDownAnimation = Animated.timing(dropDownHeightRef, {
     toValue: dropDownAnimationValue === 0 ? 150 : 0,
     duration: 120,
     useNativeDriver: true,
-  });
+  })
 
   const onInputPress = () => {
-    if (openPicker && openPicker !== label) return onOpenChange(null);
-    const animations: any[] = [];
-    animations.push(iconAnimation);
+    if (openPicker && openPicker !== label) return onOpenChange(null)
+    const animations: any[] = []
+    animations.push(iconAnimation)
     if (os === "ios") {
-      animations.push(dropDownAnimation);
+      animations.push(dropDownAnimation)
     }
     // on Android we can close by pressing buttons, we do not need
     // change showTimePicker value
     setShowPicker((prev: boolean) => {
       if (os === "android" && prev) {
-        return false;
+        return false
       }
-      return !prev;
-    });
+      return !prev
+    })
     // update the reference of current open picker
     if (!openPicker && !showPicker) {
-      onOpenChange(label);
+      onOpenChange(label)
     } else {
-      onOpenChange(null);
+      onOpenChange(null)
     }
-    Animated.parallel(animations).start();
-  };
+    Animated.parallel(animations).start()
+  }
 
   const PickerItem = (val: number) => (
     <Picker.Item key={val} label={String(val)} value={String(val)} />
-  );
+  )
 
   const renderPickerItems = React.useCallback(
     () => inputRange.map((val) => PickerItem(val)),
     [inputRange]
-  );
+  )
 
   return (
     <View style={styles.inputContainer}>
@@ -203,8 +204,8 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
         )}
       </Pressable>
     </View>
-  );
-};
+  )
+}
 
 const defaultStyles = StyleSheet.create({
   inputContainer: {
@@ -245,7 +246,7 @@ const defaultStyles = StyleSheet.create({
     position: "absolute",
     right: 0,
   },
-});
+})
 
 const formStyleLight = StyleSheet.create({
   label: {
@@ -261,7 +262,7 @@ const formStyleLight = StyleSheet.create({
     color: Colors.primary.s600,
     ...Typography.subHeader.x30,
   },
-});
+})
 
 const formStyleDark = StyleSheet.create({
   label: {
@@ -276,4 +277,4 @@ const formStyleDark = StyleSheet.create({
     color: Colors.primary.s600,
     ...Typography.subHeader.x30,
   },
-});
+})

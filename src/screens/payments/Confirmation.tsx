@@ -1,39 +1,39 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StackScreenProps } from "@react-navigation/stack";
-import { Colors, Sizing, Typography } from "styles/index";
-import { appContext } from "contexts/contextApi";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { StackScreenProps } from "@react-navigation/stack"
+import { Colors, Sizing, Typography } from "styles/index"
+import { appContext } from "contexts/contextApi"
 
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { LeftArrowIcon, PaymentSuccessfulIcon } from "assets/icons";
-import { AppStackParamList } from "common/types/navigationTypes";
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { LeftArrowIcon, PaymentSuccessfulIcon } from "assets/icons"
+import { AppStackParamList } from "common/types/navigationTypes"
 
 export interface ConfirmationProps {}
 
-type Props = StackScreenProps<AppStackParamList, "Confirmation">;
+type Props = StackScreenProps<AppStackParamList, "Confirmation">
 
 export const Confirmation = ({ navigation, route }: Props) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
 
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
 
   const navigateBack = () => {
     if (route.params?.isBookingWalletTopUp != null) {
-      navigation.navigate("Duration Choice");
+      navigation.navigate("Duration Choice")
     }
     if (route.params?.isBookingConfirmation != null) {
       navigation.reset({
         index: 0,
         routes: [{ name: "Navigation Screens" }],
-      });
+      })
     }
-  };
+  }
 
-  const onButtonPress = () => navigateBack();
-  const onBackNavigationPress = () => navigateBack();
+  const onButtonPress = () => navigateBack()
+  const onBackNavigationPress = () => navigateBack()
 
   return (
     <SafeAreaView
@@ -78,8 +78,8 @@ export const Confirmation = ({ navigation, route }: Props) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -123,4 +123,4 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x80,
     marginTop: "auto",
   },
-});
+})

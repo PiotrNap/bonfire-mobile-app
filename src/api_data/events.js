@@ -17,4 +17,4 @@ export const events = [
     image: "Fall", // should this be a url?
     color: "#831843",
   },
-];
+]

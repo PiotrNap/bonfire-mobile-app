@@ -1,14 +1,14 @@
-import * as React from "react";
-import { Pressable, StyleSheet, View, Text } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet, View, Text } from "react-native"
 
-import { CurvedArrow, LeftArrowIcon, PlusIcon } from "assets/icons";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { AvailabilityList } from "components/events/availabilityList";
-import { PlainInputPicker } from "components/forms/PlainInputPicker";
-import { TimePickerInput } from "components/forms/TimePickerInput";
-import { HeaderText } from "components/rnWrappers/headerText";
-import { appContext, eventCreationContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { CurvedArrow, LeftArrowIcon, PlusIcon } from "assets/icons"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { AvailabilityList } from "components/events/availabilityList"
+import { PlainInputPicker } from "components/forms/PlainInputPicker"
+import { TimePickerInput } from "components/forms/TimePickerInput"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { appContext, eventCreationContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
 import {
   Buttons,
   Colors,
@@ -16,83 +16,81 @@ import {
   Outlines,
   Sizing,
   Typography,
-} from "styles/index";
-import { StackScreenProps } from "@react-navigation/stack";
-import { EventCreationParamList } from "common/types/navigationTypes";
-import { roundDateMinutes } from "lib/utils";
-import { fontWeight } from "../../../styles/typography";
+} from "styles/index"
+import { StackScreenProps } from "@react-navigation/stack"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { roundDateMinutes } from "lib/utils"
+import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<
   EventCreationParamList,
   "Available Time Selection"
->;
+>
 
 export const AvailableTimeSelection = ({ navigation }: Props) => {
   const [fromTime, setFromTime] = React.useState<Date>(
     roundDateMinutes(new Date())
-  );
-  const [toTime, setToTime] = React.useState<Date>(
-    roundDateMinutes(new Date())
-  );
-  const [minTime, setMinTime] = React.useState<number>(0);
-  const [maxTime, setMaxTime] = React.useState<number>(0);
-  const [maxInputRange, setMaxInputRange] = React.useState<any[]>([]);
-  const [minInputRange, setMinInputRange] = React.useState<any[]>([]);
-  const [enabledPicker, setEnabledPicker] = React.useState<boolean>(true);
-  const [openPicker, setOpenPicker] = React.useState<string | null>(null);
-  const [alreadyCreated, setAlreadyCreated] = React.useState<boolean>(false);
-  const { colorScheme } = appContext();
-  const { addAvailability, availabilities } = eventCreationContext();
+  )
+  const [toTime, setToTime] = React.useState<Date>(roundDateMinutes(new Date()))
+  const [minTime, setMinTime] = React.useState<number>(0)
+  const [maxTime, setMaxTime] = React.useState<number>(0)
+  const [maxInputRange, setMaxInputRange] = React.useState<any[]>([])
+  const [minInputRange, setMinInputRange] = React.useState<any[]>([])
+  const [enabledPicker, setEnabledPicker] = React.useState<boolean>(true)
+  const [openPicker, setOpenPicker] = React.useState<string | null>(null)
+  const [alreadyCreated, setAlreadyCreated] = React.useState<boolean>(false)
+  const { colorScheme } = appContext()
+  const { addAvailability, availabilities } = eventCreationContext()
 
   React.useEffect(() => {
-    setMinInputRange(calculateMinRange());
-    setMaxInputRange(calculateMaxRange());
-  }, [fromTime, toTime, minTime, maxTime]);
+    setMinInputRange(calculateMinRange())
+    setMaxInputRange(calculateMaxRange())
+  }, [fromTime, toTime, minTime, maxTime])
 
   const calculateMinRange = () => {
-    let arr: any[] = [];
-    const range = toTime.getTime() - fromTime.getTime();
+    let arr: any[] = []
+    const range = toTime.getTime() - fromTime.getTime()
 
     if (range > 0) {
       // in range of 5min
       for (let i = 5; i < range / 1000 / 60 + 1; i += 5) {
-        arr.push(i);
+        arr.push(i)
       }
-      if (!minTime) setMinTime(arr[0]);
-      setEnabledPicker(true);
+      if (!minTime) setMinTime(arr[0])
+      setEnabledPicker(true)
     } else {
-      arr = ["--"];
-      setMinTime(0);
-      setEnabledPicker(false);
+      arr = ["--"]
+      setMinTime(0)
+      setEnabledPicker(false)
     }
 
-    return arr;
-  };
+    return arr
+  }
 
   const calculateMaxRange = () => {
-    let arr: any[] = [];
-    const range = toTime.getTime() - fromTime.getTime();
+    let arr: any[] = []
+    const range = toTime.getTime() - fromTime.getTime()
 
     if (range > 0) {
       for (let i = 5; i < range / 1000 / 60 + 1; i += 5) {
-        arr.push(i);
+        arr.push(i)
       }
-      if (!maxTime) setMaxTime(arr[0]);
-      setEnabledPicker(true);
+      if (!maxTime) setMaxTime(arr[0])
+      setEnabledPicker(true)
 
       // when the `maxTime` is bigger than new selected time range
-      if (maxTime > arr[arr.length - 1]) setMaxTime(arr[arr.length - 1]);
+      if (maxTime > arr[arr.length - 1]) setMaxTime(arr[arr.length - 1])
     } else {
-      arr = ["--"];
-      setMaxTime(0);
-      setEnabledPicker(false);
+      arr = ["--"]
+      setMaxTime(0)
+      setEnabledPicker(false)
     }
 
     // when minTime is already selected, substract it from maxTime,
-    if (minTime) arr.splice(0, arr.indexOf(minTime));
+    if (minTime) arr.splice(0, arr.indexOf(minTime))
 
-    return arr;
-  };
+    return arr
+  }
 
   const hasExistingAvailability = !!availabilities.find(
     (el) =>
@@ -101,42 +99,42 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
       el.to === toTime &&
       el.maxDuration === maxTime &&
       el.minDuration === minTime
-  );
-  const hasAvailabilities = !!availabilities.length;
+  )
+  const hasAvailabilities = !!availabilities.length
 
-  const isLightMode = colorScheme === "light";
-  const isDisabledButton = !hasAvailabilities;
+  const isLightMode = colorScheme === "light"
+  const isDisabledButton = !hasAvailabilities
   const isDisabledAddBtn =
-    String(fromTime) === String(toTime) || String(fromTime) > String(toTime);
+    String(fromTime) === String(toTime) || String(fromTime) > String(toTime)
 
   const onTimeChangeValue = (label: string, val: Date) => {
-    if (label === "From") setFromTime(val);
-    if (label === "To") setToTime(val);
-  };
+    if (label === "From") setFromTime(val)
+    if (label === "To") setToTime(val)
+  }
   const onMinValueChange = (val: number) => {
-    setMinTime(val != 0 ? val : 1);
+    setMinTime(val != 0 ? val : 1)
     // if new min. time slot > max. time slot, reset maxTime
-    if (val > maxTime) setMaxTime(val);
-  };
-  const onMaxValueChange = (val: number) => setMaxTime(val);
-  const onOpenChange = (label: string | null) => setOpenPicker(label);
+    if (val > maxTime) setMaxTime(val)
+  }
+  const onMaxValueChange = (val: number) => setMaxTime(val)
+  const onOpenChange = (label: string | null) => setOpenPicker(label)
   const addNewAvailability = () => {
     addAvailability({
       from: fromTime,
       to: toTime,
       maxDuration: maxTime ?? maxInputRange[0],
       minDuration: minTime ?? minInputRange[0],
-    });
+    })
     // react-navigation doesn't update screen immediately after context dispatch
-    navigation.setParams({ availabilities: availabilities.length++ });
+    navigation.setParams({ availabilities: availabilities.length++ })
 
-    setAlreadyCreated(true);
-  };
+    setAlreadyCreated(true)
+  }
   /**
    * Navigation handlers
    */
-  const onBackNavigationPress = () => navigation.goBack();
-  const onNextPress = () => navigation.navigate("Image Cover Selection");
+  const onBackNavigationPress = () => navigation.goBack()
+  const onNextPress = () => navigation.navigate("Image Cover Selection")
 
   return (
     <SafeAreaView
@@ -282,8 +280,8 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
         />
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -353,4 +351,4 @@ const styles = StyleSheet.create({
     height: Sizing.x60,
     alignSelf: "center",
   },
-});
+})

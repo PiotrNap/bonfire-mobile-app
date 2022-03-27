@@ -1,12 +1,12 @@
-import * as React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet } from "react-native"
 
-import { Sizing } from "styles/index";
+import { Sizing } from "styles/index"
 
 export interface PressableIconProps {
-  onPressCallback: () => void;
-  icon: React.ReactNode;
-  styles: any;
+  onPressCallback: () => void
+  icon: React.ReactNode
+  styles: any
 }
 
 export const PressableIcon = ({
@@ -21,8 +21,8 @@ export const PressableIcon = ({
       onPress={onPressCallback}>
       {icon}
     </Pressable>
-  );
-};
+  )
+}
 
 const defaultStyles = StyleSheet.create({
   default: {
@@ -30,4 +30,4 @@ const defaultStyles = StyleSheet.create({
     height: "100%",
     padding: Sizing.x2,
   },
-});
+})

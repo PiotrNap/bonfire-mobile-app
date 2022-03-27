@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -6,41 +6,37 @@ import {
   Pressable,
   ImageBackground,
   ScrollView,
-} from "react-native";
+} from "react-native"
 
-import { StackScreenProps } from "@react-navigation/stack";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { appContext, bookingContext } from "contexts/contextApi";
-import { LeftArrowIcon } from "assets/icons";
-import { MonthlyWrapper } from "components/calendar";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
+import { StackScreenProps } from "@react-navigation/stack"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
+import { appContext, bookingContext } from "contexts/contextApi"
+import { LeftArrowIcon } from "assets/icons"
+import { MonthlyWrapper } from "components/calendar"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
 
 type Props = StackScreenProps<
   BookingStackParamList,
   "Available Event Days Selection"
->;
+>
 
 export const AvailableDaysSelection = ({ navigation, route }: Props) => {
-  const { title, image, color, titleColor } = route.params;
-  const { colorScheme } = appContext();
-  const { pickedDate, resetState } = bookingContext();
+  const { title, image, color, titleColor } = route.params
+  const { colorScheme } = appContext()
+  const { pickedDate, resetState } = bookingContext()
 
-  const isLightMode = colorScheme !== "dark";
-  const isDisabled = pickedDate === null;
-  const insets = useSafeAreaInsets();
+  const isLightMode = colorScheme !== "dark"
+  const isDisabled = pickedDate === null
+  const insets = useSafeAreaInsets()
 
   //@TODO add the organizer info to route params
   const onBackNavigationPress = () => {
-    resetState();
-    navigation.navigate("Browse");
-  };
-  const onNextPress = () =>
-    navigation.navigate("Available Times", route.params);
+    resetState()
+    navigation.navigate("Browse")
+  }
+  const onNextPress = () => navigation.navigate("Available Times", route.params)
 
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
@@ -108,8 +104,8 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   navigation: {
@@ -181,4 +177,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x55,
     color: Colors.primary.neutral,
   },
-});
+})

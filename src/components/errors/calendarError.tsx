@@ -1,8 +1,7 @@
-import * as React from "react";
-import { FallbackProps } from "react-error-boundary";
-import { Text, Pressable, View, StyleSheet } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context'
-
+import * as React from "react"
+import { FallbackProps } from "react-error-boundary"
+import { Text, Pressable, View, StyleSheet } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export const CalendarError = ({ error, resetErrorBoundary }: FallbackProps) => {
   return (
@@ -15,8 +14,8 @@ export const CalendarError = ({ error, resetErrorBoundary }: FallbackProps) => {
         </Pressable>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -26,4 +25,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+})

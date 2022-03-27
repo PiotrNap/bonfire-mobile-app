@@ -1,46 +1,45 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   StyleSheet,
   Text,
   Pressable,
   ImageBackground,
-} from "react-native";
+} from "react-native"
 
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { appContext } from "contexts/contextApi";
-import { HearthIcon } from "assets/icons/index";
-import { ProfileTag } from "components/profile/profileTag";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { scale } from "lib/utils";
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { appContext } from "contexts/contextApi"
+import { HearthIcon } from "assets/icons/index"
+import { ProfileTag } from "components/profile/profileTag"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { scale } from "lib/utils"
 
 // Remove this code once we have user data available
 //@ts-ignore
-import profilePicThree from "assets/images/profilePicThree.png";
+import profilePicThree from "assets/images/profilePicThree.png"
 
 export interface OrganizerProfileProps {
-  profile: any;
+  profile: any
 }
 
 export const OrganizerProfile = ({ profile }: OrganizerProfileProps) => {
-  const { colorScheme, setFavoriteOrganizer, favoriteOrganizers } =
-    appContext();
+  const { colorScheme, setFavoriteOrganizer, favoriteOrganizers } = appContext()
 
   const isFavorite =
-    profile != null && favoriteOrganizers.includes(profile.alias);
-  const isLightMode = colorScheme === "light";
+    profile != null && favoriteOrganizers.includes(profile.alias)
+  const isLightMode = colorScheme === "light"
 
   const onFavoritePress = () => {
-    setFavoriteOrganizer(profile.alias);
-  };
+    setFavoriteOrganizer(profile.alias)
+  }
 
   const renderProfileTags = (tag: any, i: number) => {
     return (
       <View key={`${tag.tagName}_${i}_${profile.alias}`}>
         <ProfileTag tag={tag} alias={profile.alias} />
       </View>
-    );
-  };
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -129,8 +128,8 @@ export const OrganizerProfile = ({ profile }: OrganizerProfileProps) => {
         </>
       )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -220,4 +219,4 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x10,
     marginHorizontal: Sizing.x5,
   },
-});
+})

@@ -1,28 +1,28 @@
-import * as React from "react";
-import { CalendarEventsList, MonthlyWrapper } from "components/calendar";
+import * as React from "react"
+import { CalendarEventsList, MonthlyWrapper } from "components/calendar"
 import {
   appContext,
   eventCreationContext,
   myCalendarContext,
-} from "contexts/contextApi";
+} from "contexts/contextApi"
 import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import { Outlines, Buttons, Colors, Typography, Sizing } from "styles/index";
-import { useNavigation } from "@react-navigation/native";
-import { PlusIcon } from "assets/icons";
-import { ProfileContext } from "contexts/profileContext";
-import { useCalendarEvents } from "lib/hooks/useCalendarEvents";
-import { monthsByName } from "common/types/calendarTypes";
+} from "react-native"
+import { Outlines, Buttons, Colors, Typography, Sizing } from "styles/index"
+import { useNavigation } from "@react-navigation/native"
+import { PlusIcon } from "assets/icons"
+import { ProfileContext } from "contexts/profileContext"
+import { useCalendarEvents } from "lib/hooks/useCalendarEvents"
+import { monthsByName } from "common/types/calendarTypes"
 
 export interface CalendarProps {
-  isBookingCalendar?: boolean;
-  isHomeScreen?: boolean;
-  isRegularCalendar?: boolean;
+  isBookingCalendar?: boolean
+  isHomeScreen?: boolean
+  isRegularCalendar?: boolean
 }
 
 export const Calendar = ({
@@ -30,58 +30,60 @@ export const Calendar = ({
   isHomeScreen,
   isRegularCalendar,
 }: CalendarProps) => {
-  const { colorScheme } = appContext();
-  const { resetState } = eventCreationContext();
-  const { id } = React.useContext(ProfileContext);
-  const { events, calendarHeader } = myCalendarContext();
-  const { getEvents, loadingEvents } = useCalendarEvents(id);
+  const { colorScheme } = appContext()
+  const { resetState } = eventCreationContext()
+  const { id } = React.useContext(ProfileContext)
+  const { events, calendarHeader } = myCalendarContext()
+  const { getEvents, loadingEvents } = useCalendarEvents(id)
 
-  const [currentSelectedDay, setCurrentSelectedDay] =
-    React.useState<Date | null>(null);
+  const [
+    currentSelectedDay,
+    setCurrentSelectedDay,
+  ] = React.useState<Date | null>(null)
 
-  const isLightMode = colorScheme === "light";
-  const navigation = useNavigation();
+  const isLightMode = colorScheme === "light"
+  const navigation = useNavigation()
 
   React.useEffect(() => {
     if (monthsByName[calendarHeader.month] === new Date().getMonth()) {
-      setCurrentSelectedDay(new Date());
-    } else setCurrentSelectedDay(null);
-  }, [calendarHeader]);
+      setCurrentSelectedDay(new Date())
+    } else setCurrentSelectedDay(null)
+  }, [calendarHeader])
 
   React.useEffect(() => {
     if (events === null) {
       getEvents(
         true,
         new Date(calendarHeader.year, monthsByName[calendarHeader.month])
-      );
+      )
     }
 
     const subscribe = () => {
-      navigation.addListener("blur", () => {});
+      navigation.addListener("blur", () => {})
       navigation.addListener("focus", async () => {
         getEvents(
           false,
           new Date(calendarHeader.year, monthsByName[calendarHeader.month])
-        );
-      });
-    };
+        )
+      })
+    }
 
     const unsubscribe = () => {
-      navigation.removeListener("blur", () => {});
-      navigation.removeListener("focus", () => {});
-    };
+      navigation.removeListener("blur", () => {})
+      navigation.removeListener("focus", () => {})
+    }
 
-    subscribe();
+    subscribe()
 
-    return unsubscribe;
-  }, []);
+    return unsubscribe
+  }, [])
 
   // console.log(JSON.stringify(events, null, 4));
 
   const onAddEventPress = () => {
-    resetState();
-    navigation.navigate("New Event Description");
-  };
+    resetState()
+    navigation.navigate("New Event Description")
+  }
 
   // const onMonthChange = async () => {
   //     getEvents(false,
@@ -90,7 +92,7 @@ export const Calendar = ({
   //   }
   // };
 
-  const onSelectedDayChange = (day: Date | null) => setCurrentSelectedDay(day);
+  const onSelectedDayChange = (day: Date | null) => setCurrentSelectedDay(day)
 
   return (
     <>
@@ -149,8 +151,8 @@ export const Calendar = ({
           </View>
         ))}
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   buttonWrapper: {
@@ -171,4 +173,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x20,
     marginRight: Sizing.x5,
   },
-});
+})

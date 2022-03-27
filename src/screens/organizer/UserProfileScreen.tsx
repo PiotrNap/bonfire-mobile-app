@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -7,40 +7,35 @@ import {
   Switch,
   Platform,
   ImageBackground,
-} from "react-native";
+} from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index";
-import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
+import { StackScreenProps } from "@react-navigation/stack"
 
-import { ProfileStackParamList } from "common/types/navigationTypes";
-import { appContext } from "contexts/contextApi";
-import {
-  CogIcon,
-  HearthIcon,
-  LightBulbIcon,
-  RightArrowIcon,
-} from "icons/index";
+import { ProfileStackParamList } from "common/types/navigationTypes"
+import { appContext } from "contexts/contextApi"
+import { CogIcon, HearthIcon, LightBulbIcon, RightArrowIcon } from "icons/index"
 
-import { NativeModal } from "components/modals/nativeModal";
-import { useCameraAccess } from "lib/hooks/useCameraAccess";
-import { useMediaAccess } from "lib/hooks/useMediaAccess";
-import { ProfileContext } from "contexts/profileContext";
-import { applyOpacity } from "../../styles/colors";
-import { Users } from "Api/Users";
-import { getApiUrl } from "lib/helpers";
+import { NativeModal } from "components/modals/nativeModal"
+import { useCameraAccess } from "lib/hooks/useCameraAccess"
+import { useMediaAccess } from "lib/hooks/useMediaAccess"
+import { ProfileContext } from "contexts/profileContext"
+import { applyOpacity } from "../../styles/colors"
+import { Users } from "Api/Users"
+import { getApiUrl } from "lib/helpers"
 
 export interface UserProfileScreenProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
 
 export const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
-  const { username: _username } = React.useContext(ProfileContext);
-  let username = "john";
-  const { colorScheme, setColorScheme } = appContext();
-  const [imagePressed, setImagePressed] = React.useState<boolean>(false);
-  const [currImage, setCurrImage] = React.useState<string>("");
-  const { mediaObj, launchImageLibrary } = useMediaAccess();
-  const { imageObj, launchCamera } = useCameraAccess();
+  const { username: _username } = React.useContext(ProfileContext)
+  let username = "john"
+  const { colorScheme, setColorScheme } = appContext()
+  const [imagePressed, setImagePressed] = React.useState<boolean>(false)
+  const [currImage, setCurrImage] = React.useState<string>("")
+  const { mediaObj, launchImageLibrary } = useMediaAccess()
+  const { imageObj, launchCamera } = useCameraAccess()
 
   React.useEffect(() => {
     /**
@@ -48,35 +43,35 @@ export const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
      */
     if (mediaObj) {
       //we only allow user to select one image, so take the first in array
-      const { uri } = mediaObj.assets[0];
+      const { uri } = mediaObj.assets[0]
 
       if (uri !== currImage) {
-        (async () => await Users.uploadUserImage(uri))();
-        setCurrImage(uri);
+        ;(async () => await Users.uploadUserImage(uri))()
+        setCurrImage(uri)
       }
     }
     if (imageObj) {
-      const { uri } = imageObj.assets[0];
-      if (uri !== currImage) setCurrImage(uri);
+      const { uri } = imageObj.assets[0]
+      if (uri !== currImage) setCurrImage(uri)
     }
-  }, [mediaObj, imageObj]);
+  }, [mediaObj, imageObj])
 
-  const darkMode = colorScheme === "dark";
+  const darkMode = colorScheme === "dark"
 
   const setDarkMode = () => {
-    setColorScheme(darkMode ? "light" : "dark");
-  };
+    setColorScheme(darkMode ? "light" : "dark")
+  }
 
   const onImageLongPress = async () => {
     // don't run it on the browser
     if (Platform.OS !== "web") {
-      setImagePressed(true);
+      setImagePressed(true)
     }
-  };
+  }
 
-  const onImagePress = () => setImagePressed(true);
+  const onImagePress = () => setImagePressed(true)
 
-  const onImagePressOut = () => setImagePressed(false);
+  const onImagePressOut = () => setImagePressed(false)
 
   return (
     <SafeAreaView
@@ -270,8 +265,8 @@ export const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -391,4 +386,4 @@ const styles = StyleSheet.create({
     marginLeft: Sizing.x10,
     color: Colors.primary.neutral,
   },
-});
+})

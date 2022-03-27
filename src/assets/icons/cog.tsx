@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
 
 export const CogIcon = (props: SvgProps) => {
   return (
@@ -17,5 +17,5 @@ export const CogIcon = (props: SvgProps) => {
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
       />
     </Svg>
-  );
-};
+  )
+}

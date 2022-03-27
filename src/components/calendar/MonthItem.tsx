@@ -1,23 +1,23 @@
-import * as React from "react";
-import { LayoutRectangle } from "react-native";
+import * as React from "react"
+import { LayoutRectangle } from "react-native"
 
-import { PlaceholderDay } from "./PlaceholderDay";
-import { MonthlyDay } from "./days/MonthlyDay";
-import { Month } from "interfaces/myCalendarInterface";
-import { BookingDay } from "./days/BookingDay";
-import { AvailabilityDay } from "./days/AvailabilityDay";
-import { getTime } from "lib/utils";
-import { monthsByName } from "common/types/calendarTypes";
-import { eventCreationContext } from "contexts/contextApi";
+import { PlaceholderDay } from "./PlaceholderDay"
+import { MonthlyDay } from "./days/MonthlyDay"
+import { Month } from "interfaces/myCalendarInterface"
+import { BookingDay } from "./days/BookingDay"
+import { AvailabilityDay } from "./days/AvailabilityDay"
+import { getTime } from "lib/utils"
+import { monthsByName } from "common/types/calendarTypes"
+import { eventCreationContext } from "contexts/contextApi"
 
 export interface MonthProps extends Month {
-  dimensions: LayoutRectangle | null;
-  onPlaceholderPress: (direction: string) => void;
-  isBookingCalendar?: boolean;
-  isNewEventCalendar?: boolean;
-  customCallback?: (arg: any | undefined) => void;
-  secondCustomCallback?: (arg: Date | null) => void;
-  month: string;
+  dimensions: LayoutRectangle | null
+  onPlaceholderPress: (direction: string) => void
+  isBookingCalendar?: boolean
+  isNewEventCalendar?: boolean
+  customCallback?: (arg: any | undefined) => void
+  secondCustomCallback?: (arg: Date | null) => void
+  month: string
 }
 
 export const MonthItem = ({
@@ -30,48 +30,48 @@ export const MonthItem = ({
   isNewEventCalendar = false,
   secondCustomCallback,
 }: MonthProps) => {
-  const { selectedDays, setSelectedDays } = eventCreationContext();
-  const [activeDay, setActiveDay] = React.useState<number | null>(null);
+  const { selectedDays, setSelectedDays } = eventCreationContext()
+  const [activeDay, setActiveDay] = React.useState<number | null>(null)
 
   const isSelectedAvailability = React.useCallback(
     (year, month, number) => {
-      return !!selectedDays?.[getTime(year, monthsByName[month], number)];
+      return !!selectedDays?.[getTime(year, monthsByName[month], number)]
     },
     [selectedDays]
-  );
+  )
 
   const onPressCallback = React.useCallback(
     (val: number) => {
       if (!selectedDays) {
-        setSelectedDays([val]);
+        setSelectedDays([val])
       } else if (selectedDays) {
-        setSelectedDays([val]);
+        setSelectedDays([val])
       } else {
-        setSelectedDays([val]);
+        setSelectedDays([val])
       }
     },
     [isNewEventCalendar]
-  );
+  )
 
   const updateActiveDay = (num: number | null) => {
-    setActiveDay(num);
+    setActiveDay(num)
     secondCustomCallback &&
       secondCustomCallback(
         num ? new Date(year, monthsByName[month], num) : null
-      );
-  };
+      )
+  }
 
   React.useEffect(() => {
     if (!isBookingCalendar && !isNewEventCalendar) {
       let isCurrMonth =
         new Date().getFullYear() === year &&
-        new Date().getMonth() === monthsByName[month];
-      let currDay = new Date().getDate();
+        new Date().getMonth() === monthsByName[month]
+      let currDay = new Date().getDate()
 
-      setActiveDay(isCurrMonth ? currDay : null);
+      setActiveDay(isCurrMonth ? currDay : null)
     }
-    customCallback && customCallback(!!selectedDays);
-  }, [selectedDays, month]);
+    customCallback && customCallback(!!selectedDays)
+  }, [selectedDays, month])
 
   return (
     <>
@@ -118,5 +118,5 @@ export const MonthItem = ({
         )
       )}
     </>
-  );
-};
+  )
+}

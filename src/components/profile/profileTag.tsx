@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import * as React from "react"
+import { Text, View, StyleSheet } from "react-native"
 
-import { Outlines, Sizing, Tags } from "styles/index";
+import { Outlines, Sizing, Tags } from "styles/index"
 
 export interface ProfileTagProps {
-  tag: any;
-  alias?: string;
+  tag: any
+  alias?: string
 }
 
 export const ProfileTag = ({ tag }: ProfileTagProps) => {
@@ -16,8 +16,8 @@ export const ProfileTag = ({ tag }: ProfileTagProps) => {
         {tag.tagName}
       </Text>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   skillTag: {
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
   skillName: {
     ...Tags.tagHeader.small,
   },
-});
+})

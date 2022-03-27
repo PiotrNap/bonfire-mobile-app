@@ -1,12 +1,12 @@
-import { Day } from "common/interfaces/myCalendarInterface";
-import * as React from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
-import { Sizing } from "styles/index";
+import { Day } from "common/interfaces/myCalendarInterface"
+import * as React from "react"
+import { Pressable, StyleSheet, Text } from "react-native"
+import { Sizing } from "styles/index"
 
 export interface MonthlyWeekProps extends Day {}
 
 export const MonthlyWeek = ({ number, name }: MonthlyWeekProps) => {
-  const [pressed, setPressed] = React.useState(false);
+  const [pressed, setPressed] = React.useState(false)
 
   return (
     <Pressable
@@ -16,8 +16,8 @@ export const MonthlyWeek = ({ number, name }: MonthlyWeekProps) => {
         {number}
       </Text>
     </Pressable>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   dayNumber: {
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
   dayContainer: {
     width: `${100 / 7}%`,
   },
-});
+})

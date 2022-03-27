@@ -1,31 +1,36 @@
-import * as React from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, Text, TextInput } from "react-native"
 
-import { CustomPlainInput } from "components/forms/CustomPlainInput";
-import { Typography, Colors, Sizing, Forms } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { ProfileContext } from "contexts/profileContext";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { CustomPlainInput } from "components/forms/CustomPlainInput"
+import { Typography, Colors, Sizing, Forms } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { ProfileContext } from "contexts/profileContext"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef }: any) => {
-  const { setProfession, setJobTitle, setBio, setSkills, setTimeBlockCostADA } =
-    React.useContext(ProfileContext);
-  const [_profession, _setProfession] = React.useState<string>("");
-  const [_jobTitle, _setJobTitle] = React.useState<string>("");
-  const [_bio, _setBio] = React.useState<string>("");
-  const [_timeBlockCostAda, _setTimeBlockCostAda] = React.useState<number>(0);
-  const [_skills, _setSkills] = React.useState<string>("");
+  const {
+    setProfession,
+    setJobTitle,
+    setBio,
+    setSkills,
+    setTimeBlockCostADA,
+  } = React.useContext(ProfileContext)
+  const [_profession, _setProfession] = React.useState<string>("")
+  const [_jobTitle, _setJobTitle] = React.useState<string>("")
+  const [_bio, _setBio] = React.useState<string>("")
+  const [_timeBlockCostAda, _setTimeBlockCostAda] = React.useState<number>(0)
+  const [_skills, _setSkills] = React.useState<string>("")
 
   const submitBioState = () => {
-    setProfession(_profession);
-    setJobTitle(_jobTitle);
-    setBio(_bio);
-    setTimeBlockCostADA(_timeBlockCostAda);
-    setSkills(_skills);
-    pagerRef.current.setPage(1);
-  };
+    setProfession(_profession)
+    setJobTitle(_jobTitle)
+    setBio(_bio)
+    setTimeBlockCostADA(_timeBlockCostAda)
+    setSkills(_skills)
+    pagerRef.current.setPage(1)
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -101,8 +106,8 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
         colorScheme="dark"
       />
     </KeyboardAwareScrollView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginVertical: Sizing.x10,
   },
-});
+})
 /**
  * styles passed as prop to CustomPlainInput
  */
@@ -153,4 +158,4 @@ const inputStyles = StyleSheet.create({
   placeholderText: {
     color: Colors.primary.s300,
   },
-});
+})

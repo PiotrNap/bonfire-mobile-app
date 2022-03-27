@@ -1,19 +1,19 @@
-import * as React from "react";
+import * as React from "react"
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { EventCreationContextProvider } from "contexts/eventCreationContext";
-import { HomeScreen } from "screens/HomeScreen";
+import { createStackNavigator } from "@react-navigation/stack"
+import { EventCreationContextProvider } from "contexts/eventCreationContext"
+import { HomeScreen } from "screens/HomeScreen"
 import {
   AvailableDaysSelection,
   AvailableTimeSelection,
   ImageCoverSelection,
   NewEventDescription,
-} from "screens/organizer/newEvent";
-import { EventCreationParamList } from "common/types/navigationTypes";
-import { EventCardCustomization } from "screens/organizer/newEvent/EventCardCustomization";
-import { DetailedConfirmation } from "screens/payments";
+} from "screens/organizer/newEvent"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { EventCardCustomization } from "screens/organizer/newEvent/EventCardCustomization"
+import { DetailedConfirmation } from "screens/payments"
 
-const Stack = createStackNavigator<EventCreationParamList>();
+const Stack = createStackNavigator<EventCreationParamList>()
 
 export const OrganizerHomeScreenStack = ({ route }: any) => {
   return (
@@ -50,5 +50,5 @@ export const OrganizerHomeScreenStack = ({ route }: any) => {
         />
       </Stack.Navigator>
     </EventCreationContextProvider>
-  );
-};
+  )
+}

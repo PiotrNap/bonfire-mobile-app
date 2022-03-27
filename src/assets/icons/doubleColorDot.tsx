@@ -1,16 +1,16 @@
-import * as React from "react";
+import * as React from "react"
 import Svg, {
   SvgProps,
   Circle,
   Defs,
   LinearGradient,
   Stop,
-} from "react-native-svg";
+} from "react-native-svg"
 
 type DoubleColorDot = SvgProps & {
-  firstColor: string;
-  secondColor: string;
-};
+  firstColor: string
+  secondColor: string
+}
 
 export const DoubleColorDot = (props: DoubleColorDot) => {
   return (
@@ -31,5 +31,5 @@ export const DoubleColorDot = (props: DoubleColorDot) => {
         </LinearGradient>
       </Defs>
     </Svg>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -9,30 +9,30 @@ import {
   KeyboardType,
   TextStyle,
   StyleProp,
-} from "react-native";
+} from "react-native"
 
-import { Colors, Forms, Outlines, Sizing } from "styles/index";
+import { Colors, Forms, Outlines, Sizing } from "styles/index"
 
 export interface CustomPlainInputProps {
-  label: string;
-  placeholder: string;
-  styles?: any;
-  isLightMode?: boolean;
-  onPressHandler?: () => void;
-  icon?: any;
-  customChild?: React.ReactNode;
-  multiline?: boolean;
-  numberOfLines?: number;
-  maxChar?: number;
-  labelStyle?: StyleProp<TextStyle>;
-  keyboardType?: KeyboardType;
-  onChangeCallback?: (e: any) => void;
-  onPressInCallback?: (e: any) => void;
-  onBlurCallback?: (e: any) => void;
+  label: string
+  placeholder: string
+  styles?: any
+  isLightMode?: boolean
+  onPressHandler?: () => void
+  icon?: any
+  customChild?: React.ReactNode
+  multiline?: boolean
+  numberOfLines?: number
+  maxChar?: number
+  labelStyle?: StyleProp<TextStyle>
+  keyboardType?: KeyboardType
+  onChangeCallback?: (e: any) => void
+  onPressInCallback?: (e: any) => void
+  onBlurCallback?: (e: any) => void
 }
 
 export const CustomPlainInput = (props: CustomPlainInputProps) => {
-  const [charsLeft, setCharsLeft] = React.useState<number | null>(null);
+  const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
   var {
     icon,
     placeholder,
@@ -48,38 +48,38 @@ export const CustomPlainInput = (props: CustomPlainInputProps) => {
     keyboardType,
     onBlurCallback,
     onChangeCallback,
-  }: CustomPlainInputProps = props;
-  const Icon = icon;
+  }: CustomPlainInputProps = props
+  const Icon = icon
 
   const additionalProps: TextInputProps = {
     keyboardType: keyboardType ?? "default",
-  };
+  }
 
   if (multiline && numberOfLines) {
-    additionalProps.multiline = true;
-    additionalProps.numberOfLines = numberOfLines;
+    additionalProps.multiline = true
+    additionalProps.numberOfLines = numberOfLines
   }
   if (maxChar) {
-    additionalProps.maxLength = maxChar;
+    additionalProps.maxLength = maxChar
   }
 
   if (isLightMode) {
-    styles = Object.assign({}, defaultStyles, styles, formStyleLight);
+    styles = Object.assign({}, defaultStyles, styles, formStyleLight)
   } else {
-    styles = Object.assign({}, defaultStyles, styles, formStyleDark);
+    styles = Object.assign({}, defaultStyles, styles, formStyleDark)
   }
 
   const onChangeText = (val: string) => {
     if (maxChar && val.length >= maxChar - maxChar / 5) {
-      setCharsLeft(val.length);
-      onChangeCallback && onChangeCallback(val);
+      setCharsLeft(val.length)
+      onChangeCallback && onChangeCallback(val)
     } else if (charsLeft) {
-      setCharsLeft(null);
-      onChangeCallback && onChangeCallback(val);
+      setCharsLeft(null)
+      onChangeCallback && onChangeCallback(val)
     } else {
-      onChangeCallback && onChangeCallback(val);
+      onChangeCallback && onChangeCallback(val)
     }
-  };
+  }
 
   return (
     <View style={styles.inputContainer}>
@@ -107,8 +107,8 @@ export const CustomPlainInput = (props: CustomPlainInputProps) => {
         </Pressable>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const defaultStyles = StyleSheet.create({
   inputContainer: {
@@ -134,7 +134,7 @@ const defaultStyles = StyleSheet.create({
     width: Sizing.x30,
     height: Sizing.x30,
   },
-});
+})
 
 const formStyleLight = StyleSheet.create({
   label: {
@@ -148,7 +148,7 @@ const formStyleLight = StyleSheet.create({
   placeholderText: {
     color: Colors.primary.s300,
   },
-});
+})
 
 const formStyleDark = StyleSheet.create({
   label: {
@@ -162,4 +162,4 @@ const formStyleDark = StyleSheet.create({
   placeholderText: {
     color: Colors.primary.s300,
   },
-});
+})

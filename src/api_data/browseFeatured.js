@@ -203,4 +203,4 @@ export const browseFeatured = [
       },
     ],
   },
-];
+]

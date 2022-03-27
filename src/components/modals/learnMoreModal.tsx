@@ -1,29 +1,29 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native"
 
-import Modal from "react-native-modal";
-import { IdeaIcon } from "icons/index";
-import { Buttons, Colors, Typography, Sizing, Outlines } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
+import Modal from "react-native-modal"
+import { IdeaIcon } from "icons/index"
+import { Buttons, Colors, Typography, Sizing, Outlines } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
 
 export interface LearnMoreModalProps {
-  setIsVisibleModal: (arg: boolean) => void;
-  isVisibleModal: boolean;
+  setIsVisibleModal: (arg: boolean) => void
+  isVisibleModal: boolean
 }
 
 export const LearnMoreModal = ({
   isVisibleModal,
   setIsVisibleModal,
 }: LearnMoreModalProps) => {
-  const { width, height } = Dimensions.get("screen");
+  const { width, height } = Dimensions.get("screen")
 
   const onModalComplete = () => {
-    setIsVisibleModal(false);
-  };
+    setIsVisibleModal(false)
+  }
 
   const onPress = () => {
-    setIsVisibleModal(false);
-  };
+    setIsVisibleModal(false)
+  }
 
   return (
     <Modal
@@ -72,8 +72,8 @@ export const LearnMoreModal = ({
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   modalView: {
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "100%",
   },
-});
+})

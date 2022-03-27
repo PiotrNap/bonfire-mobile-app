@@ -1,18 +1,18 @@
-import { appContext } from "contexts/contextApi";
-import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { appContext } from "contexts/contextApi"
+import * as React from "react"
+import { View, Text, StyleSheet } from "react-native"
 
-import { Colors, Typography } from "styles/index";
+import { Colors, Typography } from "styles/index"
 
 export interface CalendarEventsListHeaderProps {
-  numOfEvents: number;
+  numOfEvents: number
 }
 
 export const CalendarEventsListHeader = ({
   numOfEvents,
 }: CalendarEventsListHeaderProps) => {
-  const { colorScheme } = appContext();
-  const lightTheme = colorScheme === "light";
+  const { colorScheme } = appContext()
+  const lightTheme = colorScheme === "light"
 
   return React.useMemo(
     () => (
@@ -30,8 +30,8 @@ export const CalendarEventsListHeader = ({
       </View>
     ),
     [numOfEvents]
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   dayPreviewBar: {
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: Colors.primary.neutral,
   },
-});
+})

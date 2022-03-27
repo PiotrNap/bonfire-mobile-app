@@ -1,16 +1,16 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { ClockIcon, RemoveIcon } from "assets/icons";
-import { EventAvailability } from "common/interfaces/newEventInterface";
-import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index";
-import { getDigitalLocaleTime } from "lib/utils";
-import { fontWeight } from "../../styles/typography";
+import { ClockIcon, RemoveIcon } from "assets/icons"
+import { EventAvailability } from "common/interfaces/newEventInterface"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
+import { getDigitalLocaleTime } from "lib/utils"
+import { fontWeight } from "../../styles/typography"
 
 export interface AvailabilityProps {
-  availability: EventAvailability;
-  index: number;
-  onRemovePress: (index: number) => void;
+  availability: EventAvailability
+  index: number
+  onRemovePress: (index: number) => void
 }
 
 export const Availability = ({
@@ -18,7 +18,7 @@ export const Availability = ({
   onRemovePress,
   index,
 }: AvailabilityProps) => {
-  const { from, to, maxDuration, minDuration } = availability;
+  const { from, to, maxDuration, minDuration } = availability
 
   return (
     <View style={styles.container}>
@@ -40,8 +40,8 @@ export const Availability = ({
         </Pressable>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
     height: Sizing.x25,
     color: Colors.primary.s800,
   },
-});
+})

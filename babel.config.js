@@ -1,5 +1,5 @@
 module.exports = function (api) {
-  api.cache(true);
+  api.cache(true)
 
   return {
     presets: ["module:metro-react-native-babel-preset"],
@@ -50,5 +50,5 @@ module.exports = function (api) {
       // reanimated has to be listed as last plugin.
       "react-native-reanimated/plugin",
     ],
-  };
-};
+  }
+}

@@ -1,15 +1,15 @@
-import * as React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet } from "react-native"
 
-import { Typography, Colors } from "styles/index";
+import { Typography, Colors } from "styles/index"
 
 export const CalendarEventsListEmpty = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Nothing here yet...</Text>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
   text: {
     ...Typography.subHeader.x30,
   },
-});
+})

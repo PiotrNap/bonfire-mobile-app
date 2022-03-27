@@ -1,30 +1,30 @@
-import * as React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet, View } from "react-native"
 
-import { LeftArrowIcon } from "assets/icons";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { HeaderText } from "components/rnWrappers/headerText";
-import { appContext } from "contexts/contextApi";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, Sizing } from "styles/index";
+import { LeftArrowIcon } from "assets/icons"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { appContext } from "contexts/contextApi"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Colors, Sizing } from "styles/index"
 
 export interface AvailabilitiesCreationProps {
-  navigation: any;
-  route: any;
+  navigation: any
+  route: any
 }
 
 export const AvailabilitiesCreation = ({
   navigation,
   route,
 }: AvailabilitiesCreationProps) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
 
-  const isLightMode = colorScheme === "light";
-  const isDisabledButton = true;
+  const isLightMode = colorScheme === "light"
+  const isDisabledButton = true
 
   // navigation handlers
-  const onBackNavigationPress = () => navigation.goBack();
-  const onNextPress = () => navigation.navigate("Select Availabilities");
+  const onBackNavigationPress = () => navigation.goBack()
+  const onNextPress = () => navigation.navigate("Select Availabilities")
 
   return (
     <SafeAreaView
@@ -60,8 +60,8 @@ export const AvailabilitiesCreation = ({
         />
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   button: { width: "90%", marginTop: "auto", marginBottom: Sizing.x15 },
-});
+})

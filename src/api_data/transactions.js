@@ -17,4 +17,4 @@ export const transactions = [
     oldUtxo: 102,
     newUtxo: 52,
   },
-];
+]

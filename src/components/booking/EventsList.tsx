@@ -1,27 +1,31 @@
-import * as React from "react";
+import * as React from "react"
 import {
   StyleSheet,
   ActivityIndicator,
   View,
   VirtualizedList,
-} from "react-native";
+} from "react-native"
 
-import { EventsListCard } from "./EventsListCard";
-import { getRandomKey } from "lib/utils";
-import { useEventsPagination } from "lib/hooks/useEventsPagination";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { Colors, Sizing } from "styles/index";
-import { appContext } from "contexts/contextApi";
+import { EventsListCard } from "./EventsListCard"
+import { getRandomKey } from "lib/utils"
+import { useEventsPagination } from "lib/hooks/useEventsPagination"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { Colors, Sizing } from "styles/index"
+import { appContext } from "contexts/contextApi"
 
 export interface EventsListProps {
-  customEvents?: any[] | null;
+  customEvents?: any[] | null
 }
 
 export const EventsList = ({ customEvents }: EventsListProps) => {
-  const { events, isLoading, getEventsPaginated, eventsPage } =
-    useEventsPagination();
-  const { colorScheme } = appContext();
-  const isLightMode = colorScheme !== "dark";
+  const {
+    events,
+    isLoading,
+    getEventsPaginated,
+    eventsPage,
+  } = useEventsPagination()
+  const { colorScheme } = appContext()
+  const isLightMode = colorScheme !== "dark"
 
   const renderEventCard = React.useCallback(({ item }: any) => {
     const {
@@ -35,7 +39,7 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
       eventCardColor,
       id,
       organizerId,
-    } = item;
+    } = item
     // const selectedDaysArr: number[] = Object.values(selectedDays ?? {});
     // const fromDate = Math.min(...selectedDaysArr);
     // const toDate = Math.max(...selectedDaysArr);
@@ -53,15 +57,15 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
         color={eventCardColor}
         isTransparent={eventCardColor === "transparent"}
       />
-    );
-  }, []);
+    )
+  }, [])
 
-  const keyExtractor = (item: any, index: number) => getRandomKey(index);
-  const getItem = (data: any, index: number) => data[index];
-  const getItemCount = (data: any) => data.length;
+  const keyExtractor = (item: any, index: number) => getRandomKey(index)
+  const getItem = (data: any, index: number) => data[index]
+  const getItemCount = (data: any) => data.length
   const loadEvents = async (page: number, isRefreshing: boolean) => {
-    await getEventsPaginated(page, isRefreshing);
-  };
+    await getEventsPaginated(page, isRefreshing)
+  }
 
   const _ActivityIndicator = () => (
     <ActivityIndicator
@@ -70,9 +74,9 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
       size="large"
       style={{ paddingTop: Sizing.x35 }}
     />
-  );
-  const onEndReach = () => loadEvents(eventsPage + 1, false);
-  const onRefresh = React.useCallback(() => loadEvents(1, true), []);
+  )
+  const onEndReach = () => loadEvents(eventsPage + 1, false)
+  const onRefresh = React.useCallback(() => loadEvents(1, true), [])
   const onLayout = React.useCallback(
     ({ data, index }) => ({
       length: Sizing.x130,
@@ -80,7 +84,7 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
       index,
     }),
     []
-  );
+  )
 
   return (
     <>
@@ -117,8 +121,8 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
         </View>
       )}
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   noEventsMessage: {
@@ -127,4 +131,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+})

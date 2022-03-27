@@ -1,44 +1,44 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { StackScreenProps } from "@react-navigation/stack"
 
-import { Colors, Sizing, Typography } from "styles/index";
-import { appContext } from "contexts/contextApi";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { BodyText } from "components/rnWrappers/bodyText";
-import { DepositSuccessfulIcon, LeftArrowIcon } from "assets/icons";
-import { AppStackParamList } from "common/types/navigationTypes";
+import { Colors, Sizing, Typography } from "styles/index"
+import { appContext } from "contexts/contextApi"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { DepositSuccessfulIcon, LeftArrowIcon } from "assets/icons"
+import { AppStackParamList } from "common/types/navigationTypes"
 
 export interface DepositSuccessfulProps {}
 
-type Props = StackScreenProps<AppStackParamList, "Deposit Successful">;
+type Props = StackScreenProps<AppStackParamList, "Deposit Successful">
 
 export const DepositSuccessful = ({ navigation, route }: Props) => {
-  const { colorScheme, ref } = appContext();
+  const { colorScheme, ref } = appContext()
   const buttonTitle = route.params?.isBookingWalletTopUp
     ? "Proceed to booking"
-    : "Go back";
+    : "Go back"
 
-  const isLightMode = colorScheme === "light";
+  const isLightMode = colorScheme === "light"
 
   const navigateBack = async () => {
     if (route.params?.fromScreen != null) {
       // This will set the index of page on "User Registration Screens"
-      if (ref) await ref.current.setPage(2);
+      if (ref) await ref.current.setPage(2)
 
       if (route.params?.fromScreen) {
-        const fromScreen = route.params.fromScreen;
-        navigation.navigate(fromScreen);
+        const fromScreen = route.params.fromScreen
+        navigation.navigate(fromScreen)
       }
     } else {
-      navigation.goBack();
+      navigation.goBack()
     }
-  };
+  }
 
-  const onButtonPress = () => navigateBack();
-  const onBackNavigationPress = () => navigateBack();
+  const onButtonPress = () => navigateBack()
+  const onBackNavigationPress = () => navigateBack()
 
   return (
     <SafeAreaView
@@ -85,8 +85,8 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -130,4 +130,4 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x80,
     marginTop: "auto",
   },
-});
+})

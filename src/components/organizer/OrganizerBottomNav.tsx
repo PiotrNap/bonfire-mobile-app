@@ -1,37 +1,37 @@
-import * as React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import * as React from "react"
+import { View, StyleSheet, Pressable, Text } from "react-native"
+import { NavigationContainer } from "@react-navigation/native"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import {
   CalendarIcon,
   UserIcon,
   SearchIcon,
   WalletIcon,
   HomeIcon,
-} from "icons/index";
+} from "icons/index"
 import {
   HomeScreen,
   WalletScreen,
   MyCalendarScreen,
   BrowseScreen,
-} from "screens/index";
-import { BrowseScreensStack } from "stacks/index";
+} from "screens/index"
+import { BrowseScreensStack } from "stacks/index"
 
-import { Colors, Buttons, Sizing, Outlines, Typography } from "styles/index";
-import { UserProfileScreen } from "screens/organizer/UserProfileScreen";
-import { appContext } from "contexts/contextApi";
-import { WalletTopUpScreen } from "screens/onboarding";
+import { Colors, Buttons, Sizing, Outlines, Typography } from "styles/index"
+import { UserProfileScreen } from "screens/organizer/UserProfileScreen"
+import { appContext } from "contexts/contextApi"
+import { WalletTopUpScreen } from "screens/onboarding"
 
 export interface OrganizerBottomNavProps {}
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 
 export const OrganizerBottomNav = () => {
-  const { auth } = appContext();
+  const { auth } = appContext()
 
   const tabBarOptions = {
     // change color on click, etc...
-  };
+  }
 
   return (
     <NavigationContainer>
@@ -55,5 +55,5 @@ export const OrganizerBottomNav = () => {
         )}
       </Tab.Navigator>
     </NavigationContainer>
-  );
-};
+  )
+}

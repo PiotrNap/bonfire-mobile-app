@@ -1,16 +1,16 @@
-import * as React from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, useWindowDimensions } from "react-native"
 
-import { ErrorIcon } from "assets/icons";
-import { Errors } from "common/types/errors";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { Colors, Outlines, Sizing } from "styles/index";
-import Modal from "react-native-modal";
+import { ErrorIcon } from "assets/icons"
+import { Errors } from "common/types/errors"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { Colors, Outlines, Sizing } from "styles/index"
+import Modal from "react-native-modal"
 
 export interface ErrorModalProps {
-  isModalVisible: boolean;
-  errorType: string;
-  errorHideCallback?: () => void;
+  isModalVisible: boolean
+  errorType: string
+  errorHideCallback?: () => void
 }
 
 export const ErrorModal = ({
@@ -18,21 +18,21 @@ export const ErrorModal = ({
   errorHideCallback,
   errorType,
 }: ErrorModalProps) => {
-  const [isVisible, setIsVisible] = React.useState<boolean>(isModalVisible);
-  const { width, height } = useWindowDimensions();
+  const [isVisible, setIsVisible] = React.useState<boolean>(isModalVisible)
+  const { width, height } = useWindowDimensions()
 
   React.useEffect(() => {
     if (isModalVisible) {
-      setIsVisible(isModalVisible);
+      setIsVisible(isModalVisible)
       let timeout = setTimeout(() => {
-        setIsVisible(false);
-        errorHideCallback && errorHideCallback();
-      }, 7500);
-      return () => clearTimeout(timeout);
+        setIsVisible(false)
+        errorHideCallback && errorHideCallback()
+      }, 7500)
+      return () => clearTimeout(timeout)
     } else {
-      setIsVisible(false);
+      setIsVisible(false)
     }
-  }, [isModalVisible]);
+  }, [isModalVisible])
 
   return (
     <Modal
@@ -61,8 +61,8 @@ export const ErrorModal = ({
         </SubHeaderText>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   modal: {
@@ -83,4 +83,4 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: "80%",
   },
-});
+})

@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Circle, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Circle, Path } from "react-native-svg"
 
 export const BusinessDecisionsIcon = (props: SvgProps) => {
   return (
@@ -129,5 +129,5 @@ export const BusinessDecisionsIcon = (props: SvgProps) => {
         fill="#3f3d56"
       />
     </Svg>
-  );
-};
+  )
+}

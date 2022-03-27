@@ -1,17 +1,17 @@
-import * as React from "react";
-import { View, TextInput, Text, StyleSheet, Pressable } from "react-native";
-import { Forms, Buttons, Colors, Sizing } from "styles/index";
+import * as React from "react"
+import { View, TextInput, Text, StyleSheet, Pressable } from "react-native"
+import { Forms, Buttons, Colors, Sizing } from "styles/index"
 
 export interface AddIdeaProps {
-  submitHandler: (arg: string) => void;
+  submitHandler: (arg: string) => void
 }
 
 export const AddIdea = ({ submitHandler }: AddIdeaProps) => {
-  const [value, setValue] = React.useState<string>("");
+  const [value, setValue] = React.useState<string>("")
 
   const onChangeText = (text: string) => {
-    setValue(text);
-  };
+    setValue(text)
+  }
 
   return (
     <View style={styles.container}>
@@ -26,13 +26,13 @@ export const AddIdea = ({ submitHandler }: AddIdeaProps) => {
       <Pressable
         style={Buttons.applyOpacity(styles.submitButton)}
         onPress={() => {
-          submitHandler(value);
+          submitHandler(value)
         }}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </Pressable>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Buttons.barText.small,
   },
-});
+})

@@ -3,21 +3,21 @@
  * @description context for providing state of the user calendar,
  *              e.g booked meetings, events, scheduled 1 on 1 conversations
  */
-import * as React from "react";
+import * as React from "react"
 import {
   Month,
   MyCalendarContextProps,
   MyCalendarState,
-} from "interfaces/myCalendarInterface";
-import { MyCalendarActions, MyCalendarTypes } from "common/types/contextTypes";
-import { getMonth, getCalendarMonth, getYear } from "lib/utils";
+} from "interfaces/myCalendarInterface"
+import { MyCalendarActions, MyCalendarTypes } from "common/types/contextTypes"
+import { getMonth, getCalendarMonth, getYear } from "lib/utils"
 
 // import { customScheduledEvents as scheduledEvents } from "../api_data/customScheduledEvents";
 // import { customAvailabilities as availabilities } from "../api_data/customAvailabilities";
-import { months } from "common/types/calendarTypes";
+import { months } from "common/types/calendarTypes"
 
 export interface ContextProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const initialState: MyCalendarState = {
@@ -37,25 +37,25 @@ export const initialState: MyCalendarState = {
     year: getYear(),
     numOfEvents: 0,
   },
-};
+}
 
 const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
   switch (action.type) {
     case MyCalendarTypes.AddEvent:
       // TODO: Sort through existing events, or send to a server?
       if (state.events != null) {
-        state.events.push(action.payload.event);
+        state.events.push(action.payload.event)
       }
       return {
         ...state,
-      };
+      }
     case MyCalendarTypes.AddAvailability:
       // TODO: 1. Check before dispatching if user availability already exists
       //       2. Figure out how to add availabilities to already existing objects
       return {
         ...state,
         availabilities: action.payload.availabilities,
-      };
+      }
     case MyCalendarTypes.ChangeMonthHeader:
       return {
         ...state,
@@ -64,27 +64,27 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
           year: action.payload.calendarHeader.year,
           numOfEvents: action.payload.calendarHeader.numOfEvents,
         },
-      };
+      }
     case MyCalendarTypes.PreviewDayEvents:
       return {
         ...state,
         previewingDayEvents: action.payload.newPreviewingDayEvents,
-      };
+      }
     case MyCalendarTypes.ClearDayPreview:
-      delete state.previewingDayEvents;
+      delete state.previewingDayEvents
       return {
         ...state,
-      };
+      }
     case MyCalendarTypes.CalendarDirection:
       return {
         ...state,
         direction: action.payload.direction,
-      };
+      }
     case MyCalendarTypes.SetCurrentSelectedDay: {
       return {
         ...state,
         currentSelectedDay: action.payload.selectedDay,
-      };
+      }
     }
     case MyCalendarTypes.LoadInitialMyCalendar: {
       const initialCalendar = [
@@ -104,20 +104,20 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
           [],
           state.events
         ),
-      ];
+      ]
 
       return {
         ...state,
         calendar: initialCalendar,
-      };
+      }
     }
     case MyCalendarTypes.LoadMyCalendar:
-      console.log("setting up a new calendar.");
-      console.log("... with a payload :", action.payload);
-      const nextMonths = action.payload.calendarArgs.nextMonths;
-      const year = action.payload.calendarArgs.year;
-      const month = action.payload.calendarArgs.month;
-      const newCalendar: Month[] = [...state.calendar];
+      console.log("setting up a new calendar.")
+      console.log("... with a payload :", action.payload)
+      const nextMonths = action.payload.calendarArgs.nextMonths
+      const year = action.payload.calendarArgs.year
+      const month = action.payload.calendarArgs.month
+      const newCalendar: Month[] = [...state.calendar]
 
       if (nextMonths) {
         newCalendar.push(
@@ -129,8 +129,8 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
             state.availabilities,
             state.events
           )
-        );
-        newCalendar.splice(0, 1);
+        )
+        newCalendar.splice(0, 1)
       } else {
         newCalendar.splice(
           0,
@@ -143,18 +143,18 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
             state.availabilities,
             state.events
           )
-        );
-        newCalendar.splice(newCalendar.length - 1, 1);
+        )
+        newCalendar.splice(newCalendar.length - 1, 1)
       }
       return {
         ...state,
         calendar: newCalendar,
-      };
+      }
     case MyCalendarTypes.UpdateCalendarMonth: {
-      let year = action.payload.calendarArgs.year || new Date().getFullYear();
-      let month = action.payload.calendarArgs.month;
-      const newCalendar: Month[] = [...state.calendar];
-      const isNextMonth = action.payload.calendarArgs.nextMonths;
+      let year = action.payload.calendarArgs.year || new Date().getFullYear()
+      let month = action.payload.calendarArgs.month
+      const newCalendar: Month[] = [...state.calendar]
+      const isNextMonth = action.payload.calendarArgs.nextMonths
 
       // this may seem counter-intuitive but.............
       // `getCalendarMonth` gives us next or previous month from
@@ -170,14 +170,14 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       //    Because the new calendar is now [April, May, June].
       if (month === 0) {
         if (isNextMonth) {
-          year -= 1;
-          month = 11;
-        } else month = 1;
+          year -= 1
+          month = 11
+        } else month = 1
       } else if (month === 11) {
         if (!isNextMonth) {
-          year += 1;
-          month = 0;
-        } else month = 10;
+          year += 1
+          month = 0
+        } else month = 10
       }
 
       newCalendar.splice(
@@ -191,51 +191,51 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
           state.availabilities,
           state.events
         )
-      );
+      )
 
       return {
         ...state,
         calendar: newCalendar,
-      };
+      }
     }
     case MyCalendarTypes.SetAvailCalendar:
       const availabilities =
         action.payload.availabilities != null
           ? action.payload.availabilities
-          : state.organizerAvailabilities;
+          : state.organizerAvailabilities
 
       const calendar = [
         ...getCalendarMonth(false, true, undefined, undefined, availabilities),
         ...getCalendarMonth(true, false, undefined, undefined, availabilities),
-      ];
+      ]
 
       return {
         ...state,
         availabilities: action.payload.availabilities,
         calendar,
-      };
+      }
     case MyCalendarTypes.SetEvents: {
       return {
         ...state,
         events: action.payload.events,
-      };
+      }
     }
     default:
-      throw Error(`Unknown type of action: ${action.type}`);
+      throw Error(`Unknown type of action: ${action.type}`)
   }
-};
+}
 
 export const MyCalendarContext = React.createContext<MyCalendarContextProps>({
   state: initialState,
   dispatch: () => null,
-});
+})
 
 export const MyCalendarProvider = ({ children }: ContextProviderProps) => {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer(reducer, initialState)
 
   return (
     <MyCalendarContext.Provider value={{ state, dispatch }}>
       {children}
     </MyCalendarContext.Provider>
-  );
-};
+  )
+}

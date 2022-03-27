@@ -1,15 +1,15 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { eventCreationContext, myCalendarContext } from "contexts/contextApi";
-import { Typography, Colors, Sizing, Outlines } from "../../styles";
-import { getRecurringMonthDays } from "lib/helpers";
-import { getTime } from "lib/utils";
-import { monthsByName } from "common/types/calendarTypes";
+import { eventCreationContext, myCalendarContext } from "contexts/contextApi"
+import { Typography, Colors, Sizing, Outlines } from "../../styles"
+import { getRecurringMonthDays } from "lib/helpers"
+import { getTime } from "lib/utils"
+import { monthsByName } from "common/types/calendarTypes"
 
-const weekDays: string[] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const weekDays: string[] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
-type SelectedWeekDays = { [key: string]: any };
+type SelectedWeekDays = { [key: string]: any }
 const _selectedWeekDays: SelectedWeekDays = {
   date: null,
   0: false,
@@ -19,59 +19,61 @@ const _selectedWeekDays: SelectedWeekDays = {
   4: false,
   5: false,
   6: false,
-};
+}
 
 export const WeekDayNames = ({
   isNewEventCalendar = false,
 }: {
-  isNewEventCalendar?: boolean;
-  customCallback?: (arg: boolean) => void;
+  isNewEventCalendar?: boolean
+  customCallback?: (arg: boolean) => void
 }) => {
-  const { calendarHeader } = myCalendarContext();
-  const { setSelectedDays, selectedDays, setSelectedWeek, selectedWeekDays } =
-    eventCreationContext();
-  const { month, year } = calendarHeader;
+  const { calendarHeader } = myCalendarContext()
+  const {
+    setSelectedDays,
+    selectedDays,
+    setSelectedWeek,
+    selectedWeekDays,
+  } = eventCreationContext()
+  const { month, year } = calendarHeader
   const isSelectedDay = (index: number) =>
     !!selectedWeekDays.length &&
-    !!selectedWeekDays[currMonthSelectedWeekIndex()]?.[index];
+    !!selectedWeekDays[currMonthSelectedWeekIndex()]?.[index]
   const currentMonthSelectedWeek = React.useCallback(() => {
     var week = selectedWeekDays.find(
       (week) => week.date === getTime(year, monthsByName[month])
-    );
+    )
 
-    if (week) return week;
-    return null;
-  }, [month, year]);
+    if (week) return week
+    return null
+  }, [month, year])
   const currMonthSelectedWeekIndex = React.useCallback(() => {
     return selectedWeekDays.findIndex(
       (week) => week.date === getTime(year, monthsByName[month])
-    );
-  }, [month, year]);
+    )
+  }, [month, year])
 
   const onPress = (index: number): void => {
-    const arrOfDays = getRecurringMonthDays(index, year, month);
+    const arrOfDays = getRecurringMonthDays(index, year, month)
     let selectRecurring: boolean = arrOfDays
       .map((num: number) => !!selectedDays?.[num])
-      .includes(false);
+      .includes(false)
 
-    setSelectedDays(arrOfDays, selectRecurring);
+    setSelectedDays(arrOfDays, selectRecurring)
 
-    let newSelectedWeek = currentMonthSelectedWeek();
+    let newSelectedWeek = currentMonthSelectedWeek()
 
     if (newSelectedWeek) {
-      newSelectedWeek[index] = selectRecurring ? true : !newSelectedWeek[index];
+      newSelectedWeek[index] = selectRecurring ? true : !newSelectedWeek[index]
 
-      setSelectedWeek(newSelectedWeek);
+      setSelectedWeek(newSelectedWeek)
     } else {
-      newSelectedWeek = Object.assign({}, _selectedWeekDays);
-      newSelectedWeek.date = getTime(year, monthsByName[month]);
-      newSelectedWeek[index] = selectRecurring
-        ? true
-        : !selectedWeekDays[index];
+      newSelectedWeek = Object.assign({}, _selectedWeekDays)
+      newSelectedWeek.date = getTime(year, monthsByName[month])
+      newSelectedWeek[index] = selectRecurring ? true : !selectedWeekDays[index]
 
-      setSelectedWeek(newSelectedWeek);
+      setSelectedWeek(newSelectedWeek)
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -119,8 +121,8 @@ export const WeekDayNames = ({
         )}
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {},
@@ -163,4 +165,4 @@ const styles = StyleSheet.create({
   selectedDayButton: {
     backgroundColor: Colors.primary.s600,
   },
-});
+})

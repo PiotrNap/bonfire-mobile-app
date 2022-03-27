@@ -1,44 +1,50 @@
-import * as React from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, Text, Dimensions } from "react-native"
 
-import { PencilAltIcon, RegistrationIcon } from "icons/index";
-import { Typography, Colors, Sizing, Outlines } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { appContext } from "contexts/contextApi";
-import { PressableIcon } from "components/buttons/pressableIcon";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
-import { ProfileContext } from "contexts/profileContext";
-import { Users } from "Api/Users";
-import { OrganizerProfileDto } from "common/types/dto/organizer.dto";
+import { PencilAltIcon, RegistrationIcon } from "icons/index"
+import { Typography, Colors, Sizing, Outlines } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { appContext } from "contexts/contextApi"
+import { PressableIcon } from "components/buttons/pressableIcon"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useNavigation } from "@react-navigation/native"
+import { ProfileContext } from "contexts/profileContext"
+import { Users } from "Api/Users"
+import { OrganizerProfileDto } from "common/types/dto/organizer.dto"
 import {
   getFromEncryptedStorage,
   setToEncryptedStorage,
-} from "lib/encryptedStorage";
-import { startChallengeSequence } from "lib/helpers";
+} from "lib/encryptedStorage"
+import { startChallengeSequence } from "lib/helpers"
 
 export interface RegistrationConfirmationScreen {}
 
-const SCREEN_WIDTH = Dimensions.get("screen").width;
+const SCREEN_WIDTH = Dimensions.get("screen").width
 
 export const RegistrationConfirmationScreen = () => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { profession, jobTitle, bio, timeBlockCostADA, skills, id } =
-    React.useContext(ProfileContext);
-  const { ref } = appContext();
-  const { navigate } = useNavigation();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const {
+    profession,
+    jobTitle,
+    bio,
+    timeBlockCostADA,
+    skills,
+    id,
+  } = React.useContext(ProfileContext)
+  const { ref } = appContext()
+  const { navigate } = useNavigation()
 
-  const { accountType, toggleAuth } = appContext();
+  const { accountType, toggleAuth } = appContext()
 
-  const onChangePress = () => ref.current.setPage(0);
+  const onChangePress = () => ref.current.setPage(0)
   const emptyDetails =
-    !profession && !jobTitle && !bio && !timeBlockCostADA && !skills;
+    !profession && !jobTitle && !bio && !timeBlockCostADA && !skills
 
   const onConfirm = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const publicKey = await getFromEncryptedStorage("public");
-      const secretKey = await getFromEncryptedStorage("secret");
+      const publicKey = await getFromEncryptedStorage("public")
+      const secretKey = await getFromEncryptedStorage("secret")
 
       if (publicKey && secretKey) {
         var organizerProfileDto = new OrganizerProfileDto(
@@ -47,26 +53,26 @@ export const RegistrationConfirmationScreen = () => {
           profession,
           jobTitle,
           skills
-        );
+        )
 
-        const res = await Users.updateUser(organizerProfileDto, id);
+        const res = await Users.updateUser(organizerProfileDto, id)
 
         if (res.status === 201) {
           // get challenge from server
-          const accessToken = await startChallengeSequence(id, true);
-          await setToEncryptedStorage("accessToken", accessToken);
+          const accessToken = await startChallengeSequence(id, true)
+          await setToEncryptedStorage("accessToken", accessToken)
           navigate("Navigation Screens", {
             profileType: "organizer",
-          });
+          })
         }
       } else {
-        throw new Error("Occured problems while accessing keys from storage");
+        throw new Error("Occured problems while accessing keys from storage")
       }
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -153,8 +159,8 @@ export const RegistrationConfirmationScreen = () => {
         text="Confirm"
       />
     </KeyboardAwareScrollView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   header: {
@@ -221,4 +227,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-});
+})

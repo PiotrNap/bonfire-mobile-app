@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path, Circle } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path, Circle } from "react-native-svg"
 
 export const EmptyDocumentsIcon = (props: SvgProps) => {
   return (
@@ -37,5 +37,5 @@ export const EmptyDocumentsIcon = (props: SvgProps) => {
       <Circle cx={433.636} cy={105.174} r={20} fill="#8b5cf6" />
       <Circle cx={433.636} cy={105.174} r={12.182} fill="#fff" />
     </Svg>
-  );
-};
+  )
+}

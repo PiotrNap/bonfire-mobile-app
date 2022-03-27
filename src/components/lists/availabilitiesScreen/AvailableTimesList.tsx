@@ -1,9 +1,9 @@
-import * as React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, FlatList } from "react-native"
 // import { AvailableTimeSlot } from "./AvailableTimeSlot";
 
 export interface AvailableTimesListProps {
-  availabilities: any;
+  availabilities: any
 }
 
 export const AvailableTimesList = ({
@@ -23,9 +23,9 @@ export const AvailableTimesList = ({
         keyExtractor={keyExtractor}
       />*/}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-});
+})

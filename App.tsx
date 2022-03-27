@@ -1,48 +1,48 @@
-import "react-native-gesture-handler";
-import "./global";
+import "react-native-gesture-handler"
+import "./global"
 
-import * as React from "react";
-import { LogBox, Platform, UIManager } from "react-native";
+import * as React from "react"
+import { LogBox, Platform, UIManager } from "react-native"
 
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { AppStackParamList } from "common/types/navigationTypes";
-import { AppContextProvider } from "contexts/appContext";
-import { ProfileContextProvider } from "contexts/profileContext";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { enableScreens } from "react-native-screens";
-import { WalletTopUpScreen } from "screens/onboarding";
-import { Confirmation, DepositSuccessful } from "screens/payments";
-import { NavigationScreens } from "tabs/NavigationScreens";
-import { OnboardingScreens } from "tabs/OnboardingScreens";
-import { UserRegistrationScreens } from "tabs/UserRegistrationScreens";
-import { useAppLogin } from "lib/hooks/useAppLogin";
+import { NavigationContainer } from "@react-navigation/native"
+import { createStackNavigator } from "@react-navigation/stack"
+import { AppStackParamList } from "common/types/navigationTypes"
+import { AppContextProvider } from "contexts/appContext"
+import { ProfileContextProvider } from "contexts/profileContext"
+import { SafeAreaProvider } from "react-native-safe-area-context"
+import { enableScreens } from "react-native-screens"
+import { WalletTopUpScreen } from "screens/onboarding"
+import { Confirmation, DepositSuccessful } from "screens/payments"
+import { NavigationScreens } from "tabs/NavigationScreens"
+import { OnboardingScreens } from "tabs/OnboardingScreens"
+import { UserRegistrationScreens } from "tabs/UserRegistrationScreens"
+import { useAppLogin } from "lib/hooks/useAppLogin"
 import {
   getAthorizedLinkingConfig,
   getUnauthorizedLinkingConfig,
-} from "lib/navigation";
-import SplashScreen from "react-native-splash-screen";
+} from "lib/navigation"
+import SplashScreen from "react-native-splash-screen"
 
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
-enableScreens(); // enable native screens for navigation instead of using Views
+enableScreens() // enable native screens for navigation instead of using Views
 
-LogBox.ignoreLogs(["EventEmitter.removeListener"]);
+LogBox.ignoreLogs(["EventEmitter.removeListener"])
 
 // this will enable LayoutAnimation API
 if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+    UIManager.setLayoutAnimationEnabledExperimental(true)
   }
 }
-const Stack = createStackNavigator<AppStackParamList>();
+const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
-  const { isAuthorized, isAuthLoaded, user } = useAppLogin();
+  const { isAuthorized, isAuthLoaded, user } = useAppLogin()
 
-  const onNavigationReady = () => SplashScreen.hide();
+  const onNavigationReady = () => SplashScreen.hide()
 
   if (!isAuthLoaded) {
-    return <></>;
+    return <></>
   } else {
     return (
       <SafeAreaProvider>
@@ -100,8 +100,8 @@ function App() {
           </ProfileContextProvider>
         </AppContextProvider>
       </SafeAreaProvider>
-    );
+    )
   }
 }
 
-export default App;
+export default App

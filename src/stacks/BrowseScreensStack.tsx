@@ -1,21 +1,21 @@
-import * as React from "react";
+import * as React from "react"
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { BookingContextProvider } from "contexts/bookingContext";
+import { createStackNavigator } from "@react-navigation/stack"
+import { BookingContextProvider } from "contexts/bookingContext"
 import {
   // AvailableDates,
   AvailableDaysSelection,
   AvailableTimes,
   DurationChoice,
   EventDescription,
-} from "screens/booking/index";
-import { BrowseScreen } from "screens/index";
-import { WalletTopUpScreen } from "screens/onboarding";
-import { DetailedConfirmation } from "screens/payments";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { MyCalendarProvider } from "contexts/myCalendarContext";
+} from "screens/booking/index"
+import { BrowseScreen } from "screens/index"
+import { WalletTopUpScreen } from "screens/onboarding"
+import { DetailedConfirmation } from "screens/payments"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { MyCalendarProvider } from "contexts/myCalendarContext"
 
-const Stack = createStackNavigator<BookingStackParamList>();
+const Stack = createStackNavigator<BookingStackParamList>()
 
 export const BrowseScreensStack = () => (
   <BookingContextProvider>
@@ -38,4 +38,4 @@ export const BrowseScreensStack = () => (
       </Stack.Navigator>
     </MyCalendarProvider>
   </BookingContextProvider>
-);
+)

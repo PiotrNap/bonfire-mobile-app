@@ -1,18 +1,18 @@
-import * as React from "react";
+import * as React from "react"
 
-import { DevSettings, Pressable, View, Text, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import { Buttons, Typography } from "styles/index";
+import { DevSettings, Pressable, View, Text, StyleSheet } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { ErrorBoundary, FallbackProps } from "react-error-boundary"
+import { Buttons, Typography } from "styles/index"
 
 export interface ErrorHandlerProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const myErrorHandler = (error: Error) => {
   //@TODO: do something with the error
-  return error;
-};
+  return error
+}
 
 export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   return (
@@ -36,16 +36,16 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         </Pressable>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 export const ErrorHandler = ({ children }: ErrorHandlerProps) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback} onError={myErrorHandler}>
       {children}
     </ErrorBoundary>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   button: {
     ...Buttons.bar.primary_light,
   },
-});
+})

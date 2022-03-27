@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Pressable, Text, View, StyleSheet } from "react-native";
+import * as React from "react"
+import { Pressable, Text, View, StyleSheet } from "react-native"
 
-import { Buttons, Colors, Sizing, Typography } from "styles/index";
-import { DotIcon } from "icons/index";
-import { Day } from "interfaces/myCalendarInterface";
-import { applyOpacity } from "../../../styles/colors";
+import { Buttons, Colors, Sizing, Typography } from "styles/index"
+import { DotIcon } from "icons/index"
+import { Day } from "interfaces/myCalendarInterface"
+import { applyOpacity } from "../../../styles/colors"
 
 export interface MonthlyDayProps extends Day {
-  activeDay: number | null;
-  updateActiveDay: (arg: number | null) => void;
-  setSelectedDay?: (arg: any) => any;
+  activeDay: number | null
+  updateActiveDay: (arg: number | null) => void
+  setSelectedDay?: (arg: any) => any
 }
 
 /**
@@ -23,19 +23,17 @@ export const MonthlyDay = ({
   updateActiveDay,
   events,
 }: MonthlyDayProps) => {
-  const hasActiveEvents = !!events?.find((e) => e.type === "active slot");
-  const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot");
+  const hasActiveEvents = !!events?.find((e) => e.type === "active slot")
+  const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot")
 
   // Whenever someone has pressed a day or it's a current day
-  const isActiveDay = activeDay === number;
+  const isActiveDay = activeDay === number
 
   const onPress = () => {
-    updateActiveDay(activeDay === number ? null : number);
-  };
+    updateActiveDay(activeDay === number ? null : number)
+  }
 
-  const TextComponent = () => (
-    <Text style={styles.dayButtonText}>{number}</Text>
-  );
+  const TextComponent = () => <Text style={styles.dayButtonText}>{number}</Text>
 
   return React.useMemo(
     () => (
@@ -70,8 +68,8 @@ export const MonthlyDay = ({
       </Pressable>
     ),
     [isActiveDay]
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   dotsWrapper: {
@@ -116,4 +114,4 @@ const styles = StyleSheet.create({
   rightIcon: {
     right: "35%",
   },
-});
+})

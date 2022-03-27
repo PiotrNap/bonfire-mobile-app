@@ -1,48 +1,49 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native"
 
-import PagerView from "react-native-pager-view";
-import { CreateAccountForm } from "components/forms/createAccountForm";
-import { Buttons, Colors, Sizing, Typography } from "styles/index";
+import PagerView from "react-native-pager-view"
+import { CreateAccountForm } from "components/forms/createAccountForm"
+import { Buttons, Colors, Sizing, Typography } from "styles/index"
 import {
   BusinessDecisionsIcon,
   LeftArrowIcon,
   ModernProfessionalIcon,
-} from "icons/index";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { ProfileContext } from "contexts/profileContext";
-import { ErrorModal } from "components/modals/errorModal";
+} from "icons/index"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { ProfileContext } from "contexts/profileContext"
+import { ErrorModal } from "components/modals/errorModal"
 
-const SCREEN_WIDTH = Dimensions.get("screen").width;
+const SCREEN_WIDTH = Dimensions.get("screen").width
 
 export interface CreateAccountScreenProps {
-  pagerRef: React.RefObject<PagerView>;
+  pagerRef: React.RefObject<PagerView>
 }
 
 export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
-  const { profileType, setProfileType, setUsername } =
-    React.useContext(ProfileContext);
-  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-  const [errorType, setErrorType] = React.useState<string>("");
+  const { profileType, setProfileType, setUsername } = React.useContext(
+    ProfileContext
+  )
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false)
+  const [errorType, setErrorType] = React.useState<string>("")
 
   const onBackPress = () => {
-    setProfileType("");
-    setUsername("");
-    pagerRef.current?.setPage(1);
-  };
+    setProfileType("")
+    setUsername("")
+    pagerRef.current?.setPage(1)
+  }
 
   const onErrorCallback = (errorType: string) => {
-    setErrorType(errorType);
-    setModalVisible(true);
-  };
+    setErrorType(errorType)
+    setModalVisible(true)
+  }
 
   const onChangeCallback = () => {
-    setModalVisible(false);
-  };
+    setModalVisible(false)
+  }
 
   const errorHideCallback = () => {
-    setModalVisible(false);
-  };
+    setModalVisible(false)
+  }
 
   return (
     <>
@@ -100,8 +101,8 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
         isModalVisible={modalVisible}
       />
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -153,4 +154,4 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: -Sizing.x12,
   },
-});
+})

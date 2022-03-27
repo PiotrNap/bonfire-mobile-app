@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
 
 export const DownIcon = React.forwardRef((props: SvgProps, ref) => {
   return (
@@ -17,5 +17,5 @@ export const DownIcon = React.forwardRef((props: SvgProps, ref) => {
         d="M19 9l-7 7-7-7"
       />
     </Svg>
-  );
-});
+  )
+})

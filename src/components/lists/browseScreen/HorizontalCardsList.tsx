@@ -1,34 +1,34 @@
-import { appContext } from "contexts/contextApi";
-import * as React from "react";
-import { View, FlatList, Text, StyleSheet } from "react-native";
+import { appContext } from "contexts/contextApi"
+import * as React from "react"
+import { View, FlatList, Text, StyleSheet } from "react-native"
 
-import { Colors, Sizing, Typography } from "styles/index";
-import { HorizontalCardItem } from "./HorizontalCardItem";
-import { HorizontalProfileCardItem } from "./HorizontalProfileCardItem";
+import { Colors, Sizing, Typography } from "styles/index"
+import { HorizontalCardItem } from "./HorizontalCardItem"
+import { HorizontalProfileCardItem } from "./HorizontalProfileCardItem"
 
 export interface HorizontalCardsListProps {
-  list: any;
-  navigateTo: any;
+  list: any
+  navigateTo: any
 }
 
 export const HorizontalCardsList = ({
   list,
   navigateTo,
 }: HorizontalCardsListProps) => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
 
   const keyExtractor = (item: any, index: number) =>
-    `${item.title}-${index}-${item.type}`;
+    `${item.title}-${index}-${item.type}`
 
   const renderItem = ({ item }: any) => {
     if (list.type === "categories") {
-      return <HorizontalCardItem navigateTo={navigateTo} item={item} />;
+      return <HorizontalCardItem navigateTo={navigateTo} item={item} />
     }
     if (list.type === "profiles") {
-      return <HorizontalProfileCardItem navigateTo={navigateTo} item={item} />;
+      return <HorizontalProfileCardItem navigateTo={navigateTo} item={item} />
     }
-    return <></>;
-  };
+    return <></>
+  }
 
   return (
     <View style={styles.container}>
@@ -54,8 +54,8 @@ export const HorizontalCardsList = ({
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
     height: "100%",
     marginLeft: Sizing.x10,
   },
-});
+})

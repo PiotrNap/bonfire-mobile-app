@@ -1,5 +1,5 @@
-import * as React from "react";
-import Svg, { SvgProps, Circle } from "react-native-svg";
+import * as React from "react"
+import Svg, { SvgProps, Circle } from "react-native-svg"
 
 export const DotIcon = (props: SvgProps) => {
   return (
@@ -13,5 +13,5 @@ export const DotIcon = (props: SvgProps) => {
       {...props}>
       <Circle cx={12} cy={12} r={10} />
     </Svg>
-  );
-};
+  )
+}

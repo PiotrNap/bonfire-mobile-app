@@ -1,31 +1,31 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   Pressable,
-} from "react-native";
+} from "react-native"
 
-import { useNavigation } from "@react-navigation/native";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { applyOpacity } from "../../styles/colors";
-import { getEventCardDate } from "lib/utils";
-import tinyColor from "tinycolor2";
+import { useNavigation } from "@react-navigation/native"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { applyOpacity } from "../../styles/colors"
+import { getEventCardDate } from "lib/utils"
+import tinyColor from "tinycolor2"
 
 export interface EventsListCardProps {
-  title: string;
-  description: string;
-  id?: string;
-  organizerId?: string;
-  fromDate: Date;
-  toDate: Date;
-  image: any;
-  color: string;
-  titleColor: string;
-  isEventCardPreview?: boolean;
-  isBrowseScreenPreview?: boolean;
-  isTransparent?: boolean;
+  title: string
+  description: string
+  id?: string
+  organizerId?: string
+  fromDate: Date
+  toDate: Date
+  image: any
+  color: string
+  titleColor: string
+  isEventCardPreview?: boolean
+  isBrowseScreenPreview?: boolean
+  isTransparent?: boolean
 }
 
 export const EventsListCard = ({
@@ -41,8 +41,8 @@ export const EventsListCard = ({
   color,
   titleColor,
 }: EventsListCardProps) => {
-  const navigation = useNavigation();
-  const _color = tinyColor(color);
+  const navigation = useNavigation()
+  const _color = tinyColor(color)
 
   const onCardPress = () =>
     navigation.navigate("Event Description", {
@@ -55,7 +55,7 @@ export const EventsListCard = ({
       organizerId,
       color,
       titleColor,
-    });
+    })
 
   return (
     <Pressable
@@ -104,8 +104,8 @@ export const EventsListCard = ({
         </View>
       </ImageBackground>
     </Pressable>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   main: {
@@ -146,4 +146,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x50,
     color: Colors.primary.neutral,
   },
-});
+})

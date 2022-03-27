@@ -1,28 +1,28 @@
-import * as React from "react";
-import { ColorSchemeName } from "react-native";
+import * as React from "react"
+import { ColorSchemeName } from "react-native"
 
-import { AppContext } from "./appContext";
-import { MyCalendarContext } from "./myCalendarContext";
-import { BookingContext } from "./bookingContext";
-import { EventCreationContext } from "./eventCreationContext";
+import { AppContext } from "./appContext"
+import { MyCalendarContext } from "./myCalendarContext"
+import { BookingContext } from "./bookingContext"
+import { EventCreationContext } from "./eventCreationContext"
 import {
   Availabilities,
   CalendarHeader,
   NewCalendarMonths,
   PreviewingDayEvents,
   Event,
-} from "interfaces/myCalendarInterface";
-import { OrganizerRate } from "common/interfaces/bookingInterface";
+} from "interfaces/myCalendarInterface"
+import { OrganizerRate } from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
   SelectedWeekDays,
   TextContent,
-} from "common/interfaces/newEventInterface";
-import { EventCreationTypes } from "common/types/contextTypes";
-import { JWTPayload } from "common/interfaces/appInterface";
+} from "common/interfaces/newEventInterface"
+import { EventCreationTypes } from "common/types/contextTypes"
+import { JWTPayload } from "common/interfaces/appInterface"
 
 export const appContext = () => {
-  const { state, dispatch } = React.useContext(AppContext);
+  const { state, dispatch } = React.useContext(AppContext)
 
   return {
     auth: state.authentication,
@@ -36,22 +36,22 @@ export const appContext = () => {
     setJWT: (jwtPayload: JWTPayload) =>
       dispatch({ type: "SET_REF", payload: { jwtPayload } }),
     toggleAuth: (auth: boolean, accountType: string) => {
-      dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } });
+      dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } })
     },
     setFavoriteOrganizer: (alias: string) => {
-      dispatch({ type: "SET_FAVORITE_ORGANIZER", payload: { alias } });
+      dispatch({ type: "SET_FAVORITE_ORGANIZER", payload: { alias } })
     },
     setColorScheme: (newColorScheme: ColorSchemeName) => {
-      dispatch({ type: "SET_COLOR_SCHEME", payload: { newColorScheme } });
+      dispatch({ type: "SET_COLOR_SCHEME", payload: { newColorScheme } })
     },
     setPageIndex: (pageIndex: number) => {
-      dispatch({ type: "SET_PAGE_INDEX", payload: { pageIndex } });
+      dispatch({ type: "SET_PAGE_INDEX", payload: { pageIndex } })
     },
-  };
-};
+  }
+}
 
 export const eventCreationContext = () => {
-  const { state, dispatch } = React.useContext(EventCreationContext);
+  const { state, dispatch } = React.useContext(EventCreationContext)
 
   return {
     textContent: state.textContent,
@@ -70,7 +70,7 @@ export const eventCreationContext = () => {
       dispatch({
         type: EventCreationTypes.SetTextContent,
         payload: { textContent },
-      });
+      })
     },
     setSelectedDays: (
       selectedDays: any[],
@@ -79,80 +79,80 @@ export const eventCreationContext = () => {
       dispatch({
         type: EventCreationTypes.SetSelectedDays,
         payload: { selectedDays, isRecurringSelection },
-      });
+      })
     },
     setSelectedWeek: (selectedWeek: SelectedWeekDays) => {
       dispatch({
         type: EventCreationTypes.SetSelectedWeek,
         payload: { selectedWeek },
-      });
+      })
     },
     addAvailability: (availability: EventAvailability) => {
       dispatch({
         type: EventCreationTypes.AddAvailability,
         payload: { availability },
-      });
+      })
     },
     removeAvailability: (availability: EventAvailability) => {
       dispatch({
         type: EventCreationTypes.RemoveAvailability,
         payload: { availability },
-      });
+      })
     },
     setHourlyRate: (hourlyRate: number) => {
       dispatch({
         type: EventCreationTypes.SetHourlyRate,
         payload: { hourlyRate },
-      });
+      })
     },
     setImageUri: (imageURI: string) => {
       dispatch({
         type: EventCreationTypes.SetImageURI,
         payload: { imageURI },
-      });
+      })
     },
     setTags: (tags: string[]) => {
       dispatch({
         type: EventCreationTypes.SetTags,
         payload: { tags },
-      });
+      })
     },
     setPrivateEvent: (privateEvent: boolean) => {
       dispatch({
         type: EventCreationTypes.SetPrivateEvent,
         payload: { privateEvent },
-      });
+      })
     },
     setDateFrame: (fromDate: Date, toDate: Date) => {
       dispatch({
         type: EventCreationTypes.SetDateFrame,
         payload: { fromDate, toDate },
-      });
+      })
     },
     setEventCardColor: (color: string) => {
       dispatch({
         type: EventCreationTypes.SetEventCardColor,
         payload: { eventCardColor: color },
-      });
+      })
     },
     setEventTitleColor: (color: string) => {
       dispatch({
         type: EventCreationTypes.SetEventTitleColor,
         payload: { eventTitleColor: color },
-      });
+      })
     },
     removeSelectedDays: () =>
       dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
     removeSelectedWeeks: () =>
       dispatch({ type: EventCreationTypes.RemoveSelectedWeeks }),
     resetState: () => {
-      dispatch({ type: EventCreationTypes.ResetState });
+      dispatch({ type: EventCreationTypes.ResetState })
     },
-  };
-};
+  }
+}
 
 export const bookingContext = () => {
-  const { state, dispatch } = React.useContext(BookingContext);
+  const { state, dispatch } = React.useContext(BookingContext)
 
   return {
     duration: state.duration,
@@ -198,13 +198,13 @@ export const bookingContext = () => {
       dispatch({
         type: "RESET_STATE",
         payload: {},
-      });
+      })
     },
-  };
-};
+  }
+}
 
 export const myCalendarContext = () => {
-  const { state, dispatch } = React.useContext(MyCalendarContext);
+  const { state, dispatch } = React.useContext(MyCalendarContext)
 
   return {
     calendar: state.calendar,
@@ -218,51 +218,51 @@ export const myCalendarContext = () => {
     currentSelectedDay: state.currentSelectedDay,
     direction: state.direction,
     addEvent: (event: Event) => {
-      dispatch({ type: "ADD_EVENT", payload: event });
+      dispatch({ type: "ADD_EVENT", payload: event })
     },
     addAvailability: (availabilities: Availabilities[]) => {
-      dispatch({ type: "ADD_AVAILABILITY", payload: availabilities });
+      dispatch({ type: "ADD_AVAILABILITY", payload: availabilities })
     },
     changeMonthHeader: (calendarHeader: CalendarHeader) => {
-      dispatch({ type: "CHANGE_MONTH_HEADER", payload: { calendarHeader } });
+      dispatch({ type: "CHANGE_MONTH_HEADER", payload: { calendarHeader } })
     },
     clearPreviewDayEvents: () => {
       dispatch({
         type: "CLEAR_DAY_PREVIEW",
-      });
+      })
     },
     setCalendarDirection: (direction: null | "previous" | "next") => {
-      dispatch({ type: "SET_CALENDAR_DIRECTION", payload: { direction } });
+      dispatch({ type: "SET_CALENDAR_DIRECTION", payload: { direction } })
     },
     loadMyCalendar: (calendarArgs: NewCalendarMonths) => {
-      dispatch({ type: "LOAD_MY_CALENDAR", payload: { calendarArgs } });
+      dispatch({ type: "LOAD_MY_CALENDAR", payload: { calendarArgs } })
     },
     loadInitialMyCalendar: () => {
-      dispatch({ type: "LOAD_INITIAL_MY_CALENDAR" });
+      dispatch({ type: "LOAD_INITIAL_MY_CALENDAR" })
     },
     setAvailCalendar: (availabilities: any) => {
       dispatch({
         type: "SET_AVAIL_CALENDAR",
         payload: { availabilities: availabilities },
-      });
+      })
     },
     setCurrSelectedDay: (selectedDay: any) => {
-      dispatch({ type: "SET_CURR_SELECTED_DAY", payload: { selectedDay } });
+      dispatch({ type: "SET_CURR_SELECTED_DAY", payload: { selectedDay } })
     },
     setOrganizerAvail: (availabilities: any) => {
-      dispatch({ type: "SET_ORGANIZER_AVAIL", payload: { availabilities } });
+      dispatch({ type: "SET_ORGANIZER_AVAIL", payload: { availabilities } })
     },
     setEvents: (events: any) => {
-      dispatch({ type: "SET_EVENTS", payload: { events } });
+      dispatch({ type: "SET_EVENTS", payload: { events } })
     },
     previewDayEvents: (newPreviewingDayEvents: PreviewingDayEvents) => {
       dispatch({
         type: "PREVIEW_DAY_EVENTS",
         payload: { newPreviewingDayEvents },
-      });
+      })
     },
     updateCalendarMonth: (calendarArgs: NewCalendarMonths) => {
-      dispatch({ type: "UPDATE_CALENDAR_MONTH", payload: { calendarArgs } });
+      dispatch({ type: "UPDATE_CALENDAR_MONTH", payload: { calendarArgs } })
     },
-  };
-};
+  }
+}

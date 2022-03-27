@@ -1,20 +1,20 @@
-import * as React from "react";
+import * as React from "react"
 import {
   ImageBackground,
   Pressable,
   StyleSheet,
   Text,
   View,
-} from "react-native";
+} from "react-native"
 
-import { appContext } from "contexts/contextApi";
-import { Colors } from "styles/index";
-import { ProfileContext } from "contexts/profileContext";
+import { appContext } from "contexts/contextApi"
+import { Colors } from "styles/index"
+import { ProfileContext } from "contexts/profileContext"
 
 export const ImageSelectionSection = () => {
-  const { colorScheme } = appContext();
+  const { colorScheme } = appContext()
   // const { currImage } = ProfileContext();
-  const currImage = "";
+  const currImage = ""
 
   return (
     // <ImageBackground
@@ -43,7 +43,7 @@ export const ImageSelectionSection = () => {
     //   </Pressable>
     // </ImageBackground>
     <></>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})

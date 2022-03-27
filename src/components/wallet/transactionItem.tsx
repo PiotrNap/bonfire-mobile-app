@@ -1,26 +1,26 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Image } from "react-native"
 
 // FastImage seem not to work with static resources (?)
 // import { FastImage } from "react-native-fast-image";
-import { Typography, Colors, Sizing, Outlines } from "styles/index";
-import { Transaction } from "common/interfaces/appInterface";
+import { Typography, Colors, Sizing, Outlines } from "styles/index"
+import { Transaction } from "common/interfaces/appInterface"
 
 //@ts-ignore
-import ProfilePic from "assets/images/profilePicTwo.png";
-import { appContext } from "contexts/contextApi";
-import { getDate, getDay, getMonth } from "lib/utils";
-import { months } from "common/types/calendarTypes";
+import ProfilePic from "assets/images/profilePicTwo.png"
+import { appContext } from "contexts/contextApi"
+import { getDate, getDay, getMonth } from "lib/utils"
+import { months } from "common/types/calendarTypes"
 
 export interface TransactionItemInterface {
-  item: Transaction;
+  item: Transaction
 }
 
 export const TransactionItem = ({ item }: TransactionItemInterface) => {
-  const { colorScheme } = appContext();
-  const { withUser, oldUtxo, newUtxo, date } = item;
+  const { colorScheme } = appContext()
+  const { withUser, oldUtxo, newUtxo, date } = item
 
-  const txAmount = newUtxo - oldUtxo;
+  const txAmount = newUtxo - oldUtxo
 
   return (
     <View style={styles.container}>
@@ -52,8 +52,8 @@ export const TransactionItem = ({ item }: TransactionItemInterface) => {
         {txAmount} ₳
       </Text>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     ...Typography.header.x35,
   },
-});
+})

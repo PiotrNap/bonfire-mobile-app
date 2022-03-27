@@ -1,24 +1,24 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable, Animated } from "react-native"
 
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { Event } from "interfaces/myCalendarInterface";
-import { getDigitalTime, getLocaleTimezone } from "lib/utils";
-import { months } from "common/types/calendarTypes";
-import { RightArrowIcon } from "icons/index";
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Event } from "interfaces/myCalendarInterface"
+import { getDigitalTime, getLocaleTimezone } from "lib/utils"
+import { months } from "common/types/calendarTypes"
+import { RightArrowIcon } from "icons/index"
 
 export interface CalendarEventsDetailProps extends Event {
-  setHighlightedDay: React.Dispatch<any>;
-  highlightedDay: any;
-  listLength: number;
-  title: string;
-  description: string;
-  index: number;
-  listSection: string;
-  fromTime: number;
-  toTime: number;
-  organizer: string;
-  participants: any;
+  setHighlightedDay: React.Dispatch<any>
+  highlightedDay: any
+  listLength: number
+  title: string
+  description: string
+  index: number
+  listSection: string
+  fromTime: number
+  toTime: number
+  organizer: string
+  participants: any
 }
 
 export const CalendarEventsDetail = ({
@@ -32,20 +32,20 @@ export const CalendarEventsDetail = ({
   highlightedDay,
   listSection,
 }: CalendarEventsDetailProps) => {
-  const animatedMargin = React.useRef(new Animated.Value(-65)).current;
-  const animatedValue = parseInt(JSON.stringify(animatedMargin));
+  const animatedMargin = React.useRef(new Animated.Value(-65)).current
+  const animatedValue = parseInt(JSON.stringify(animatedMargin))
 
-  const fromTimeDigit = getDigitalTime(fromTime);
-  const toTimeDigit = getDigitalTime(toTime);
+  const fromTimeDigit = getDigitalTime(fromTime)
+  const toTimeDigit = getDigitalTime(toTime)
 
-  const eventDay = new Date(fromTime).getDate();
-  const eventMonth = months[new Date(fromTime).getMonth()];
+  const eventDay = new Date(fromTime).getDate()
+  const eventMonth = months[new Date(fromTime).getMonth()]
 
-  const even = index === 0 || index % 2 === 0;
+  const even = index === 0 || index % 2 === 0
 
   const onDateCardPress = () => {
     // when we click on the last card, return
-    if (index === listLength - 1) return;
+    if (index === listLength - 1) return
 
     if (
       highlightedDay.listSection === listSection &&
@@ -53,40 +53,40 @@ export const CalendarEventsDetail = ({
       animatedValue === -65
     ) {
       // when someone clicks on the same card, just pull it back to top
-      setHighlightedDay({ listSection: "", index: null });
+      setHighlightedDay({ listSection: "", index: null })
     } else {
       // on press, set the index of card bellow the one that was clicked,
       // because that's the one that needs to move down
-      setHighlightedDay({ listSection, index: index + 1 });
+      setHighlightedDay({ listSection, index: index + 1 })
     }
-  };
+  }
 
   const animateToTop = () => {
     Animated.timing(animatedMargin, {
       toValue: -65,
       duration: 200,
       useNativeDriver: false,
-    }).start();
-  };
+    }).start()
+  }
 
   const animateToBottom = () => {
     Animated.timing(animatedMargin, {
       toValue: 0,
       duration: 200,
       useNativeDriver: false,
-    }).start();
-  };
+    }).start()
+  }
 
   React.useEffect(() => {
     if (
       listSection === highlightedDay.listSection &&
       index === highlightedDay.index
     ) {
-      animateToBottom();
+      animateToBottom()
     } else if (Number(animatedMargin) !== 0) {
-      animateToTop();
+      animateToTop()
     }
-  }, [highlightedDay]);
+  }, [highlightedDay])
 
   return (
     <Pressable onPress={onDateCardPress} hitSlop={25}>
@@ -129,8 +129,8 @@ export const CalendarEventsDetail = ({
         </View>
       </Animated.View>
     </Pressable>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -189,4 +189,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-});
+})

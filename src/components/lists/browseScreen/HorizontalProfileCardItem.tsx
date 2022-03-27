@@ -1,25 +1,25 @@
-import * as React from "react";
+import * as React from "react"
 import {
   ImageBackground,
   Pressable,
   StyleSheet,
   Text,
   View,
-} from "react-native";
+} from "react-native"
 
-import { Sizing, Outlines, Typography, Colors } from "styles/index";
+import { Sizing, Outlines, Typography, Colors } from "styles/index"
 
 // Remove this code once we have external images.
 /* @ts-ignore */
-import profilePic_1 from "assets/images/profilePicTwo.png";
+import profilePic_1 from "assets/images/profilePicTwo.png"
 /* @ts-ignore */
-import profilePic_2 from "assets/images/profilePicThree.png";
+import profilePic_2 from "assets/images/profilePicThree.png"
 /* @ts-ignore */
-import profilePic_3 from "assets/images/profilePicFour.png";
+import profilePic_3 from "assets/images/profilePicFour.png"
 
 export interface HorizontalProfileCardItemProps {
-  item: any;
-  navigateTo: any;
+  item: any
+  navigateTo: any
 }
 
 export const HorizontalProfileCardItem = ({
@@ -27,14 +27,14 @@ export const HorizontalProfileCardItem = ({
   navigateTo,
 }: HorizontalProfileCardItemProps) => {
   const randomPlaceholder = React.useCallback(() => {
-    var images = [profilePic_1, profilePic_2, profilePic_3];
+    var images = [profilePic_1, profilePic_2, profilePic_3]
 
-    return images[Math.floor(Math.random() * images.length)];
-  }, [item]);
+    return images[Math.floor(Math.random() * images.length)]
+  }, [item])
 
   const onPress = () => {
-    navigateTo({ alias: item.alias });
-  };
+    navigateTo({ alias: item.alias })
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: item.backgroundColor }]}>
@@ -65,8 +65,8 @@ export const HorizontalProfileCardItem = ({
         </View>
       </Pressable>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     fontFamily: "Roboto-Regular",
   },
-});
+})

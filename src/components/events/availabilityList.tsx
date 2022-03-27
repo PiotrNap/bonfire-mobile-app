@@ -1,14 +1,14 @@
-import * as React from "react";
-import { View, StyleSheet, FlatList, ListRenderItemInfo } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, FlatList, ListRenderItemInfo } from "react-native"
 
-import { eventCreationContext } from "contexts/contextApi";
-import { getRandomKey } from "lib/utils";
-import { Availability } from "./availability";
+import { eventCreationContext } from "contexts/contextApi"
+import { getRandomKey } from "lib/utils"
+import { Availability } from "./availability"
 
 export interface AvailabilityListProps {}
 
 export const AvailabilityList = ({}: AvailabilityListProps) => {
-  const { availabilities, removeAvailability } = eventCreationContext();
+  const { availabilities, removeAvailability } = eventCreationContext()
 
   const renderAvailabilities = ({ item, index }: ListRenderItemInfo<any>) => {
     if (item) {
@@ -18,15 +18,15 @@ export const AvailabilityList = ({}: AvailabilityListProps) => {
           index={index}
           onRemovePress={onRemovePress}
         />
-      );
+      )
     } else {
-      return <></>;
+      return <></>
     }
-  };
+  }
 
-  const keyExtractor = (item: any, index: number) => `${getRandomKey(index)}`;
+  const keyExtractor = (item: any, index: number) => `${getRandomKey(index)}`
   const onRemovePress = (index: number) =>
-    removeAvailability(availabilities[index]);
+    removeAvailability(availabilities[index])
 
   return (
     <View style={styles.container}>
@@ -37,9 +37,9 @@ export const AvailabilityList = ({}: AvailabilityListProps) => {
         style={{ marginVertical: 8 }}
       />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, width: "100%" },
-});
+})

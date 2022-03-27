@@ -1,56 +1,56 @@
-import * as React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import * as React from "react"
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native"
 
-import PagerView from "react-native-pager-view";
-import { CheckIcon, LeftArrowIcon } from "icons/index";
-import { Colors, Sizing, Typography, Outlines, Buttons } from "styles/index";
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { SubHeaderText } from "components/rnWrappers/subHeaderText";
-import { ProfileContext } from "contexts/profileContext";
+import PagerView from "react-native-pager-view"
+import { CheckIcon, LeftArrowIcon } from "icons/index"
+import { Colors, Sizing, Typography, Outlines, Buttons } from "styles/index"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface PricingScreenProps {
-  pagerRef: React.RefObject<PagerView>;
+  pagerRef: React.RefObject<PagerView>
 }
 
 export interface Benefit {
-  text: string;
+  text: string
 }
 const ATTENDEE_BENEFITS: Benefit[] = [
   { text: "Vestibulum venenatis quam" },
   { text: "Sapiente libero doloribus modi" },
   { text: "Itaque cupiditate adipisci quibusdam" },
   { text: "Vel ipsa esse repudiandae excepturi" },
-];
+]
 
 const ORGANIZER_BENEFITS: Benefit[] = [
   { text: "Vestibulum venenatis quam" },
   { text: "Sapiente libero doloribus modi" },
   { text: "Itaque cupiditate adipisci quibusdam" },
   { text: "Vel ipsa esse repudiandae excepturi" },
-];
+]
 
 export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
-  const { setProfileType } = React.useContext(ProfileContext);
+  const { setProfileType } = React.useContext(ProfileContext)
   const renderCheckBoxes = (val: Benefit, i: number) => {
     return (
       <View key={i} style={styles.checkBox}>
         <CheckIcon width={20} height={20} stroke={Colors.neutral.s500} />
         <Text style={styles.checkBoxText}>{val.text}</Text>
       </View>
-    );
-  };
+    )
+  }
 
   const onAttendeePress = () => {
-    setProfileType("attendee");
-    pagerRef.current?.setPage(2);
-  };
+    setProfileType("attendee")
+    pagerRef.current?.setPage(2)
+  }
   const onOrganizerPress = () => {
-    setProfileType("organizer");
-    pagerRef.current?.setPage(2);
-  };
+    setProfileType("organizer")
+    pagerRef.current?.setPage(2)
+  }
   const onBackPress = () => {
-    pagerRef.current?.setPage(0);
-  };
+    pagerRef.current?.setPage(0)
+  }
 
   return (
     <View style={styles.container}>
@@ -123,8 +123,8 @@ export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -224,4 +224,4 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: -Sizing.x12,
   },
-});
+})

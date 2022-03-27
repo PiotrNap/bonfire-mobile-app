@@ -1,26 +1,26 @@
-import * as React from "react";
-import { WeekDayNames } from "./WeekDayNames";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Sizing, Colors, Outlines, Typography } from "styles/index";
-import { MonthlyWrapper } from "./MonthlyWrapper";
-import { myCalendarContext } from "contexts/contextApi";
+import * as React from "react"
+import { WeekDayNames } from "./WeekDayNames"
+import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Sizing, Colors, Outlines, Typography } from "styles/index"
+import { MonthlyWrapper } from "./MonthlyWrapper"
+import { myCalendarContext } from "contexts/contextApi"
 
 export const MainCalendar = () => {
-  const { calendar, changeMonthHeader, calendarHeader } = myCalendarContext();
+  const { calendar, changeMonthHeader, calendarHeader } = myCalendarContext()
   const onPreviousPress = () => {
     const calendarHeader = {
       month: calendar[0].name,
       year: calendar[0].year,
-    };
-    changeMonthHeader(calendarHeader);
-  };
+    }
+    changeMonthHeader(calendarHeader)
+  }
   const onNextPress = () => {
     const calendarHeader = {
       month: calendar[2].name,
       year: calendar[2].year,
-    };
-    changeMonthHeader(calendarHeader);
-  };
+    }
+    changeMonthHeader(calendarHeader)
+  }
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -54,8 +54,8 @@ export const MainCalendar = () => {
         <MonthlyWrapper />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
     color: Colors.primary.neutral,
     paddingRight: 5,
   },
-});
+})

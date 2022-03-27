@@ -10,7 +10,7 @@ type Month =
   | "September"
   | "October"
   | "November"
-  | "December";
+  | "December"
 export const months: Record<number, Month> = {
   0: "January",
   1: "February",
@@ -24,7 +24,7 @@ export const months: Record<number, Month> = {
   9: "October",
   10: "November",
   11: "December",
-};
+}
 
 // Months are indexed in JavaScript (starting at 0)
 export const monthsByName: Record<string, number> = {
@@ -40,7 +40,7 @@ export const monthsByName: Record<string, number> = {
   October: 9,
   November: 10,
   December: 11,
-};
+}
 
 type WeekDays =
   | "Monday"
@@ -49,7 +49,7 @@ type WeekDays =
   | "Thursday"
   | "Friday"
   | "Saturday"
-  | "Sunday";
+  | "Sunday"
 // days aren't indexed from 0, as months are
 export const weekDays: Record<number, WeekDays> = {
   0: "Sunday",
@@ -59,4 +59,4 @@ export const weekDays: Record<number, WeekDays> = {
   4: "Thursday",
   5: "Friday",
   6: "Saturday",
-};
+}

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Alert, Platform } from "react-native";
+import * as React from "react"
+import { Alert, Platform } from "react-native"
 import {
   check,
   PERMISSIONS,
@@ -7,33 +7,33 @@ import {
   Rationale,
   request,
   PermissionStatus,
-} from "react-native-permissions";
+} from "react-native-permissions"
 
-import { launchCamera, CameraOptions } from "react-native-image-picker";
+import { launchCamera, CameraOptions } from "react-native-image-picker"
 
 export const useCameraAccess = () => {
-  const [access, setAccess] = React.useState<boolean | null>(false);
-  const [imageObj, setImgObj] = React.useState<any>(null);
-  const os = Platform.OS;
+  const [access, setAccess] = React.useState<boolean | null>(false)
+  const [imageObj, setImgObj] = React.useState<any>(null)
+  const os = Platform.OS
 
   const checkCameraPermission = async (): Promise<void> => {
     const permission =
-      os === "android" ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+      os === "android" ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA
     try {
-      const result = await check(permission);
+      const result = await check(permission)
       if (result === RESULTS.GRANTED) {
-        setAccess(true);
+        setAccess(true)
       } else if (result === RESULTS.BLOCKED) {
-        setAccess(false);
+        setAccess(false)
       } else {
-        setAccess(null);
+        setAccess(null)
       }
     } catch (e) {}
-  };
+  }
 
   React.useEffect(() => {
-    (async () => await checkCameraPermission())();
-  }, []);
+    ;(async () => await checkCameraPermission())()
+  }, [])
 
   const requestCameraAccessAsync = async (): Promise<void> => {
     const rationale: Rationale = {
@@ -42,33 +42,33 @@ export const useCameraAccess = () => {
       buttonNegative: "Deny",
       buttonPositive: "Approve",
       buttonNeutral: "Close",
-    };
+    }
 
     const permission =
-      os === "android" ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+      os === "android" ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA
 
     try {
-      const res: PermissionStatus = await request(permission, rationale);
+      const res: PermissionStatus = await request(permission, rationale)
       if (res !== "granted") {
         Alert.alert(
           "Access needed",
           "We need access to your devices camera for uploading an image.",
           [{ text: "Close", style: "cancel", onPress: () => {} }]
-        );
+        )
       } else {
-        setAccess(true);
+        setAccess(true)
       }
     } catch {
       Alert.alert(
         "Something went wrong",
         "Please try taking a picture again. Make sure you have granted access to your devices camera.",
         [{ text: "Close", style: "cancel", onPress: () => {} }]
-      );
+      )
     }
-  };
+  }
   const _launchCamera = async () => {
     if (!access) {
-      await requestCameraAccessAsync();
+      await requestCameraAccessAsync()
     }
 
     const options: CameraOptions = {
@@ -77,18 +77,18 @@ export const useCameraAccess = () => {
       maxWidth: 768,
       maxHeight: 768,
       saveToPhotos: true,
-    };
+    }
 
     launchCamera(options, (res) => {
-      if (res.didCancel) return;
-      setImgObj(res);
-    });
-  };
+      if (res.didCancel) return
+      setImgObj(res)
+    })
+  }
   return {
     access,
     imageObj,
     setImgObj,
     requestCameraAccessAsync,
     launchCamera: _launchCamera,
-  };
-};
+  }
+}

@@ -1,11 +1,11 @@
-import * as React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react"
+import { createStackNavigator } from "@react-navigation/stack"
 
-import { UserProfileEditScreen } from "screens/profile/profileEdit/UserProfileEditScreen";
-import { UserProfileScreen } from "screens/organizer/UserProfileScreen";
-import { ProfileStackParamList } from "common/types/navigationTypes";
+import { UserProfileEditScreen } from "screens/profile/profileEdit/UserProfileEditScreen"
+import { UserProfileScreen } from "screens/organizer/UserProfileScreen"
+import { ProfileStackParamList } from "common/types/navigationTypes"
 
-const ProfileStack = createStackNavigator<ProfileStackParamList>();
+const ProfileStack = createStackNavigator<ProfileStackParamList>()
 
 export const ProfileScreenStack = () => {
   return (
@@ -16,5 +16,5 @@ export const ProfileScreenStack = () => {
         component={UserProfileEditScreen}
       />
     </ProfileStack.Navigator>
-  );
-};
+  )
+}

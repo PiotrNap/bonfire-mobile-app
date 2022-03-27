@@ -1,41 +1,41 @@
-import * as React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import * as React from "react"
+import { View, StyleSheet, Pressable, Text } from "react-native"
 
-import { Colors, Sizing, Typography } from "styles/index";
-import { OrganizerProfile } from "components/booking/index";
-import { LeftArrowIcon } from "icons/index";
+import { Colors, Sizing, Typography } from "styles/index"
+import { OrganizerProfile } from "components/booking/index"
+import { LeftArrowIcon } from "icons/index"
 import {
   appContext,
   bookingContext,
   myCalendarContext,
-} from "contexts/contextApi";
+} from "contexts/contextApi"
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { customAvailabilities } from "../../api_data/customAvailabilities";
-import { featuredOrganizers } from "../../api_data/featuredOrganizers";
-import { EventsList } from "components/booking/EventsList";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { customAvailabilities } from "../../api_data/customAvailabilities"
+import { featuredOrganizers } from "../../api_data/featuredOrganizers"
+import { EventsList } from "components/booking/EventsList"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { StackScreenProps } from "@react-navigation/stack"
 
 export interface AvailableDatesProps {}
 
-type Props = StackScreenProps<BookingStackParamList, "Available Dates">;
+type Props = StackScreenProps<BookingStackParamList, "Available Dates">
 
 export const AvailableDates = ({ navigation, route }: Props) => {
-  const { colorScheme } = appContext();
-  const { setAvailCalendar } = myCalendarContext();
-  const { setPreviewingOrganizer, previewingOrganizer } = bookingContext();
-  const alias = route.params?.alias;
-  const isLightMode = colorScheme === "light";
+  const { colorScheme } = appContext()
+  const { setAvailCalendar } = myCalendarContext()
+  const { setPreviewingOrganizer, previewingOrganizer } = bookingContext()
+  const alias = route.params?.alias
+  const isLightMode = colorScheme === "light"
 
   React.useEffect(() => {
-    let profile = featuredOrganizers.items.find((org) => org.alias === alias);
+    let profile = featuredOrganizers.items.find((org) => org.alias === alias)
 
-    setAvailCalendar(customAvailabilities);
-    setPreviewingOrganizer(profile);
-  }, [navigation, route.params]);
+    setAvailCalendar(customAvailabilities)
+    setPreviewingOrganizer(profile)
+  }, [navigation, route.params])
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
 
   return (
     <SafeAreaView
@@ -73,8 +73,8 @@ export const AvailableDates = ({ navigation, route }: Props) => {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x50,
     color: Colors.primary.neutral,
   },
-});
+})

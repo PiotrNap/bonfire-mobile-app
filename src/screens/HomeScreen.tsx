@@ -1,20 +1,20 @@
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import * as React from "react"
+import { View, StyleSheet } from "react-native"
 
-import { StackScreenProps } from "@react-navigation/stack";
-import { OrganizerTabParamList } from "common/types/navigationTypes";
-import { appContext } from "contexts/contextApi";
-import { Colors } from "styles/index";
-import { CalendarEventsList } from "components/calendar";
-import { ErrorHandler } from "components/errors/errorHandler";
-import { Calendar } from "containers/MyCalendar";
-import { MyCalendarProvider } from "contexts/myCalendarContext";
+import { StackScreenProps } from "@react-navigation/stack"
+import { OrganizerTabParamList } from "common/types/navigationTypes"
+import { appContext } from "contexts/contextApi"
+import { Colors } from "styles/index"
+import { CalendarEventsList } from "components/calendar"
+import { ErrorHandler } from "components/errors/errorHandler"
+import { Calendar } from "containers/MyCalendar"
+import { MyCalendarProvider } from "contexts/myCalendarContext"
 
 export interface HomeProps
   extends StackScreenProps<OrganizerTabParamList, "Home"> {}
 
 export const HomeScreen = ({}: HomeProps) => {
-  const { colorScheme, accountType } = appContext();
+  const { colorScheme, accountType } = appContext()
 
   return (
     <View
@@ -33,8 +33,8 @@ export const HomeScreen = ({}: HomeProps) => {
         </View>
       )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea_light: {
@@ -49,4 +49,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-});
+})

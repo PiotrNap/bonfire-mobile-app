@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   View,
   Text,
@@ -6,48 +6,45 @@ import {
   Pressable,
   ScrollView,
   ImageBackground,
-} from "react-native";
+} from "react-native"
 
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { Colors, Outlines, Sizing, Typography } from "styles/index";
-import { LeftArrowIcon } from "icons/index";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { LeftArrowIcon } from "icons/index"
 import {
   appContext,
   bookingContext,
   myCalendarContext,
-} from "contexts/contextApi";
+} from "contexts/contextApi"
 
-import { FullWidthButton } from "components/buttons/fullWidthButton";
-import { useAvailabilities } from "lib/hooks/useAvailabilities";
-import { getDigitalLocaleTime } from "lib/utils";
-import { BookingStackParamList } from "common/types/navigationTypes";
-import { StackScreenProps } from "@react-navigation/stack";
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { useAvailabilities } from "lib/hooks/useAvailabilities"
+import { getDigitalLocaleTime } from "lib/utils"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { StackScreenProps } from "@react-navigation/stack"
 
 export interface AvailableTimesProps {}
 
-type Props = StackScreenProps<BookingStackParamList, "Available Times">;
+type Props = StackScreenProps<BookingStackParamList, "Available Times">
 
 export const AvailableTimes = ({ navigation, route }: Props) => {
-  const { title, image, color, titleColor } = route.params;
+  const { title, image, color, titleColor } = route.params
   const [selectedTimeSlot, setSelectedTimeSlot] = React.useState<number | null>(
     null
-  );
+  )
   const {
     previewingEvent,
     pickedDate,
     setPickedDate,
     setMaxTimeSlotDuration,
     setMinTimeSlotDuration,
-  } = bookingContext();
-  const { colorScheme } = appContext();
-  const { availabilities } = myCalendarContext();
+  } = bookingContext()
+  const { colorScheme } = appContext()
+  const { availabilities } = myCalendarContext()
   const { currAvailabilities } = useAvailabilities(
     previewingEvent.availabilities,
     pickedDate
-  );
+  )
 
   // TODO once we want to adjust availabilities based on organizer scheduled time
   // const { scheduledTimes } = useScheduledTimes(
@@ -55,25 +52,25 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
   //   pickedDate,
   //   previewingOrganizer.timeBlock
   // );
-  const scheduledTimes: any = [];
-  const insets = useSafeAreaInsets();
+  const scheduledTimes: any = []
+  const insets = useSafeAreaInsets()
 
-  const isLightMode = colorScheme === "light";
-  const isDisabled = selectedTimeSlot === null;
+  const isLightMode = colorScheme === "light"
+  const isDisabled = selectedTimeSlot === null
 
   const setTimeDuration = () => {
     if (selectedTimeSlot && currAvailabilities != null) {
       const availability = previewingEvent.availabilities.find(
         (availability: any) => {
-          const from = new Date(availability.from).getTime();
-          const to = new Date(availability.to).getTime();
+          const from = new Date(availability.from).getTime()
+          const to = new Date(availability.to).getTime()
 
-          return from <= selectedTimeSlot && to > selectedTimeSlot;
+          return from <= selectedTimeSlot && to > selectedTimeSlot
         }
-      );
+      )
 
-      setMaxTimeSlotDuration(availability.maxDuration);
-      setMinTimeSlotDuration(availability.minDuration);
+      setMaxTimeSlotDuration(availability.maxDuration)
+      setMinTimeSlotDuration(availability.minDuration)
 
       // calculate the max time span of organizer availability
       // let timeBlockMilSec = previewingOrganizer?.timeBlock * 60 * 1000;
@@ -94,32 +91,32 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
       //   return upcomingEvent - selectedTimeSlot;
       // }
     }
-  };
+  }
 
-  const onBackNavigationPress = () => navigation.goBack();
+  const onBackNavigationPress = () => navigation.goBack()
   const onNextPress = () => {
     if (selectedTimeSlot) {
-      const hour = new Date(selectedTimeSlot).getHours() * 60 * 60 * 1000;
-      const minutes = new Date(selectedTimeSlot).getMinutes() * 60 * 1000;
+      const hour = new Date(selectedTimeSlot).getHours() * 60 * 60 * 1000
+      const minutes = new Date(selectedTimeSlot).getMinutes() * 60 * 1000
 
-      let date: number = new Date(pickedDate).getTime();
-      let newDate = new Date(date + hour + minutes).getTime();
+      let date: number = new Date(pickedDate).getTime()
+      let newDate = new Date(date + hour + minutes).getTime()
 
-      setPickedDate(newDate);
-      setTimeDuration();
-      navigation.navigate("Duration Choice", route.params);
+      setPickedDate(newDate)
+      setTimeDuration()
+      navigation.navigate("Duration Choice", route.params)
     }
-  };
+  }
 
   const onPressCallback = (item: number) => {
-    if (scheduledTimes?.includes(item)) return;
-    if (selectedTimeSlot === item) return setSelectedTimeSlot(null);
+    if (scheduledTimes?.includes(item)) return
+    if (selectedTimeSlot === item) return setSelectedTimeSlot(null)
 
-    setSelectedTimeSlot(item);
-  };
+    setSelectedTimeSlot(item)
+  }
 
   const renderTimeSlots = (item: number, index: number) => {
-    var _key = `${index}_${item}`;
+    var _key = `${index}_${item}`
     return (
       <Pressable
         onPress={() => onPressCallback(item)}
@@ -146,8 +143,8 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
           {getDigitalLocaleTime(item, "en") ?? {}}
         </Text>
       </Pressable>
-    );
-  };
+    )
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
@@ -215,8 +212,8 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   navigation: {
@@ -306,4 +303,4 @@ const styles = StyleSheet.create({
     ...Typography.header.x55,
     color: Colors.primary.neutral,
   },
-});
+})

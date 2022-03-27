@@ -1,43 +1,43 @@
-import * as React from "react";
-import { View, Animated, StyleSheet, Dimensions } from "react-native";
+import * as React from "react"
+import { View, Animated, StyleSheet, Dimensions } from "react-native"
 
 import {
   UserDetailsScreen,
   RegistrationConfirmationScreen,
-} from "screens/onboarding/index";
-import { SafeAreaView } from "react-native-safe-area-context";
-import PagerView from "react-native-pager-view";
-import { ScalingDot } from "react-native-animated-pagination-dots";
-import { Colors, Outlines } from "styles/index";
-import { appContext } from "contexts/contextApi";
+} from "screens/onboarding/index"
+import { SafeAreaView } from "react-native-safe-area-context"
+import PagerView from "react-native-pager-view"
+import { ScalingDot } from "react-native-animated-pagination-dots"
+import { Colors, Outlines } from "styles/index"
+import { appContext } from "contexts/contextApi"
 
-const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
 const SCREENS = [
   { component: UserDetailsScreen },
   // { component: WalletTopUpScreen },
   { component: RegistrationConfirmationScreen },
-];
+]
 
 export const UserRegistrationScreens = () => {
-  const { pageIndex, setRef, ref: _ref } = appContext();
-  const ref = React.useRef<PagerView>(null);
-  const screenWidth = Dimensions.get("window").width;
-  const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
-  const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
-  const inputRange = [0, SCREENS.length];
+  const { pageIndex, setRef, ref: _ref } = appContext()
+  const ref = React.useRef<PagerView>(null)
+  const screenWidth = Dimensions.get("window").width
+  const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
+  const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
+  const inputRange = [0, SCREENS.length]
   const scrollX = Animated.add(
     scrollOffsetAnimatedValue,
     positionAnimatedValue
   ).interpolate({
     inputRange,
     outputRange: [0, SCREENS.length * screenWidth],
-  });
+  })
 
   React.useEffect(() => {
     // set ref of View Pager so that we can manipulate page index
-    if (ref) setRef(ref);
-  }, []);
+    if (ref) setRef(ref)
+  }, [])
 
   // This is only working with useMemo/useCallback
   const onPageScroll = React.useMemo(
@@ -54,16 +54,16 @@ export const UserRegistrationScreens = () => {
         { useNativeDriver: false }
       ),
     []
-  );
+  )
 
   const renderScreens = ({ component }: any, i: number) => {
-    const ScreenComponent = component;
+    const ScreenComponent = component
     return (
       <View style={styles.pagerViewItem} key={i}>
         <ScreenComponent pagerRef={ref} />
       </View>
-    );
-  };
+    )
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -89,8 +89,8 @@ export const UserRegistrationScreens = () => {
         />
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary.brand,
     padding: 8,
   },
-});
+})
