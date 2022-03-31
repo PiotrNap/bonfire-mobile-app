@@ -25,10 +25,10 @@ import { applyOpacity } from "../../styles/colors"
 import { Users } from "Api/Users"
 import { getApiUrl } from "lib/helpers"
 
-export interface UserProfileScreenProps
+export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
 
-export const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
+export const UserProfile = ({ navigation }: UserProfileProps) => {
   const { username: _username } = React.useContext(ProfileContext)
   let username = "john"
   const { colorScheme, setColorScheme } = appContext()

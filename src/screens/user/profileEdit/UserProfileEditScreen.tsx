@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Sizing } from "styles/index"
 import { LeftArrowIcon } from "assets/icons"
 
-export const UserProfileEditScreen = ({ navigation }: any) => {
+export const UserProfileEdit = ({ navigation }: any) => {
   const { colorScheme } = appContext()
 
   const isLightMode = colorScheme === "light"
