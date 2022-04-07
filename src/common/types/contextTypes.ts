@@ -1,4 +1,7 @@
-import { OrganizerRate } from "common/interfaces/bookingInterface"
+import {
+  EventCardInfo,
+  OrganizerRate,
+} from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
   SelectedWeekDays,
@@ -49,6 +52,7 @@ export enum BookingTypes {
   SetOrganizerRate = "SET_ORGANIZER_RATE",
   SetPreviewingOrganizer = "SET_PREVIEWING_ORGANIZER",
   SetPreviewingEvent = "SET_PREVIEWING_EVENT",
+  SetEventCardInfo = "SET_EVENT_CARD_INFO",
   SetMaxTimeSlotDuration = "SET_MAX_TIME_SLOT_DUR",
   SetMinTimeSlotDuration = "SET_MIN_TIME_SLOT_DUR",
   ResetState = "RESET_STATE",
@@ -182,6 +186,9 @@ export type BookingPayload = {
   [BookingTypes.SetPreviewingEvent]: {
     previewingEvent: any
   }
+  [BookingTypes.SetEventCardInfo]: {
+    eventCardInfo: EventCardInfo
+  }
   [BookingTypes.ResetState]: {}
   ["unknown"]: any
 }
@@ -227,7 +234,11 @@ export type MyCalendarPaylaod = {
   ["unknown"]: any
 }
 
-export type MyCalendarActions = ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
-export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
-export type BookingActions = ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
-export type EventCreationActions = ActionMap<EventCreationPayload>[keyof ActionMap<EventCreationPayload>]
+export type MyCalendarActions =
+  ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
+export type AppActions =
+  ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
+export type BookingActions =
+  ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
+export type EventCreationActions =
+  ActionMap<EventCreationPayload>[keyof ActionMap<EventCreationPayload>]

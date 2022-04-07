@@ -11,6 +11,7 @@ const initialState: InitialState = {
   duration: 0,
   durationCost: 0,
   eventTitle: "",
+  eventCardInfo: null,
   organizerRate: null,
   maxTimeSlotDuration: 0,
   minTimeSlotDuration: 0,
@@ -65,6 +66,12 @@ const reducer = (state: InitialState, action: BookingActions) => {
         ...state,
         previewingEvent: action.payload.previewingEvent,
       }
+    case BookingTypes.SetEventCardInfo: {
+      return {
+        ...state,
+        eventCardInfo: action.payload.eventCardInfo,
+      }
+    }
     case BookingTypes.ResetState: {
       return initialState
     }

@@ -6,6 +6,7 @@ export interface InitialState {
   organizerRate: OrganizerRate | null
   previewingOrganizer: any
   previewingEvent: any
+  eventCardInfo: EventCardInfo | null
   maxTimeSlotDuration: number
   minTimeSlotDuration: number
 }
@@ -35,4 +36,11 @@ export interface EventCallbackFn {
 export interface EventLine {
   content: string
   icon?: React.ReactNode
+}
+
+export interface EventCardInfo {
+  title: string
+  image: string
+  titleColor: string
+  backgroundColor: string
 }
