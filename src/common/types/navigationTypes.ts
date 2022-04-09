@@ -62,6 +62,7 @@ export type EventCreationParamList = {
 export type ProfileStackParamList = {
   Profile: undefined
   "Edit Profile": undefined
+  "Profile Settings": undefined
 }
 
 /**

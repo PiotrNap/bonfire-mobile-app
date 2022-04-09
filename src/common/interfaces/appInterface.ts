@@ -7,7 +7,9 @@ export type ColorSchemeName = "light" | "dark"
 export interface AppState {
   authentication: boolean | null
   accountType: "attendee" | "organizer" | null
+  receivingAddr: string
   colorScheme: ColorSchemeName
+  appBgColor: string
   favoriteOrganizers: any[]
   pageIndex: number
   ref: any

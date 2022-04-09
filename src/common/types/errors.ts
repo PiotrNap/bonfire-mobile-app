@@ -4,7 +4,7 @@ export class Errors {
   public static UserNameTaken =
     "A user with a given user name already exists. Please choose a different one."
   public static GoogleOauth =
-    "Something went wrong. Either it's on our side, or you didn't granted the permission."
+    "Something went wrong. Either it's on our side, or you didn't granted us permissions."
   public static AcceptedTerms =
-    "You must first accept our Privacy Policy and Terms of Use."
+    "Please accept our Privacy Policy and Terms of Use."
 }

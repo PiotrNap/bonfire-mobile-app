@@ -21,9 +21,11 @@ export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
   SetRef = "SET_REF",
   SetJWT = "SET_JWT",
+  SetReceivingAddr = "SET_REC_ADDR",
   SetPageIndex = "SET_PAGE_INDEX",
   SetColorScheme = "SET_COLOR_SCHEME",
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
+  ResetState = "RESET_STATE",
 }
 
 export enum EventCreationTypes {
@@ -61,7 +63,6 @@ export enum BookingTypes {
 export enum MyCalendarTypes {
   AddEvent = "ADD_EVENT",
   AddAvailability = "ADD_AVAILABILITY",
-  ResetState = "RESET_STATE",
   LoadMyCalendar = "LOAD_MY_CALENDAR",
   LoadInitialMyCalendar = "LOAD_INITIAL_MY_CALENDAR",
   ChangeMonthHeader = "CHANGE_MONTH_HEADER",
@@ -72,6 +73,7 @@ export enum MyCalendarTypes {
   SetCurrentSelectedDay = "SET_CURR_SELECTED_DAY",
   SetEvents = "SET_EVENTS",
   UpdateCalendarMonth = "UPDATE_CALENDAR_MONTH",
+  ResetState = "RESET_STATE",
 }
 
 /**
@@ -104,12 +106,16 @@ export type AppPayload = {
   [AppTypes.SetPageIndex]: {
     pageIndex: number
   }
+  [AppTypes.SetReceivingAddr]: {
+    receivingAddr: string
+  }
   [AppTypes.SetFavoriteOrganizer]: {
     alias: string
   }
   [AppTypes.SetColorScheme]: {
     newColorScheme: ColorSchemeName
   }
+  [AppTypes.ResetState]: {}
   ["unknown"]: any
 }
 
@@ -236,8 +242,7 @@ export type MyCalendarPaylaod = {
 
 export type MyCalendarActions =
   ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
-export type AppActions =
-  ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
+export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
 export type BookingActions =
   ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
 export type EventCreationActions =

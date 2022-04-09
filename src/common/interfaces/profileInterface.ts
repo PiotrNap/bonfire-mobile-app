@@ -1,4 +1,4 @@
-export interface BioState {
+export interface ProfileState {
   username: string
   name: string
   publicKey: string
@@ -29,6 +29,7 @@ export interface BioState {
   setDescription: (input: string) => void
   setSkills: (input: string) => void
   setProfileType: (input: "organizer" | "attendee" | "") => void
+  resetProfileState: () => void
 }
 
 export interface UserDTO {
