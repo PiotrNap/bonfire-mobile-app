@@ -1,7 +1,7 @@
 import * as React from "react"
 import Svg, { SvgProps, Path } from "react-native-svg"
 
-export const ErrorIcon = (props: SvgProps) => {
+export const ErrorIcon = (props: SvgProps): JSX.Element => {
   return (
     <Svg fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}>
       <Path

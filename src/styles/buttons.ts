@@ -29,6 +29,8 @@ export const bar: Record<Bar, ViewStyle> = {
     justifyContent: "center",
     backgroundColor: Colors.primary.neutral,
     paddingVertical: Sizing.x10,
+    borderWidth: Sizing.x3,
+    borderColor: Colors.primary.s800,
     borderRadius: Outlines.borderRadius.base,
     marginTop: Sizing.x15,
     ...Outlines.shadow.lifted,

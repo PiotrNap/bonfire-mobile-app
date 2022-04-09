@@ -62,7 +62,7 @@ export const inputLabel: Record<InputLabel, TextStyle> = {
   primary_dark: {
     ...Typography.subHeader.x30,
     fontFamily: "Roboto-Medium",
-    color: Colors.primary.neutral,
+    color: Colors.primary.s200,
     marginLeft: Sizing.x15,
   },
   error: {
