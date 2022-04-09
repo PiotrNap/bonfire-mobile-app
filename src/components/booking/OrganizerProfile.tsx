@@ -118,7 +118,9 @@ export const OrganizerProfile = ({ profile }: OrganizerProfileProps) => {
             </View>
           </View>
           <View style={styles.descriptionContainer}>
-            <BodyText colors={[Colors.primary.s600, Colors.primary.neutral]}>
+            <BodyText
+              changingColorScheme
+              colors={[Colors.primary.s600, Colors.primary.neutral]}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Vestibulum venenatis quam sem, eget bibendum lorem convallis et.
               Donec velit ante, efficitur at ante eu, consequat hendrerit augue.

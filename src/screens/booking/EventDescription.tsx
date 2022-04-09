@@ -28,18 +28,10 @@ type Props = StackScreenProps<BookingStackParamList, "Event Description">
 
 export const EventDescription = ({ navigation, route }: Props) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const {
-    title,
-    description,
-    id,
-    fromDate,
-    toDate,
-    image,
-    color,
-    titleColor,
-  } = route.params
+  const { title, description, id, fromDate, toDate, image, color, titleColor } =
+    route.params
   const { colorScheme } = appContext()
-  const { setPreviewingEvent, resetState } = bookingContext()
+  const { setPreviewingEvent, resetBookingState } = bookingContext()
   const { setAvailCalendar } = myCalendarContext()
 
   const insets = useSafeAreaInsets()
@@ -58,7 +50,7 @@ export const EventDescription = ({ navigation, route }: Props) => {
           event.selectedDays
         )
 
-        resetState()
+        resetBookingState()
 
         setPreviewingEvent(Object.assign({}, event, route.params))
         setAvailCalendar(availableDays)
@@ -121,12 +113,13 @@ export const EventDescription = ({ navigation, route }: Props) => {
           {
             backgroundColor: isLightMode
               ? Colors.primary.neutral
-              : Colors.primary.s800,
+              : Colors.neutral.s600,
           },
         ]}>
         <View style={styles.bottomWrapper}>
           <BodyText
             customStyle={{ fontFamily: "Roboto-Regular" }}
+            changingColorScheme
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
             {description}
           </BodyText>

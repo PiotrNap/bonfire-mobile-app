@@ -22,6 +22,7 @@ import { useAvailabilities } from "lib/hooks/useAvailabilities"
 import { getDigitalLocaleTime } from "lib/utils"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
+import { EventBookingLayout } from "components/layouts/eventBookingLayout"
 
 export interface AvailableTimesProps {}
 
@@ -130,7 +131,7 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
                 ...Outlines.shadow.lifted,
               },
           selectedTimeSlot === item && {
-            backgroundColor: Colors.primary.s800,
+            backgroundColor: Colors.primary.s600,
           },
         ]}>
         <Text
@@ -147,71 +148,25 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
-      <View style={styles.topContainer}>
-        <ImageBackground
-          resizeMode="cover"
-          source={{ uri: image }}
-          style={styles.backgroundImage}>
-          <View style={[styles.topInnerContainer, { backgroundColor: color }]}>
-            <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
-              <View style={styles.navigation}>
-                <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-                  <LeftArrowIcon
-                    width={24}
-                    height={24}
-                    color={Colors.primary.neutral}
-                  />
-                </Pressable>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.eventTitleWrapper,
-                { paddingBottom: insets.bottom + Sizing.x15 },
-              ]}>
-              <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={[styles.eventTitle, { color: titleColor }]}>
-                {title}
-              </Text>
-            </View>
-          </View>
-        </ImageBackground>
+    <EventBookingLayout
+      onBackPress={onBackNavigationPress}
+      screenHeader={"Select available time"}
+      eventCardColor={color}
+      eventCardImage={image}
+      eventCardTitle={title}
+      eventCardTitleColor={titleColor}>
+      <View style={styles.timeSlotsContainer}>
+        {availabilities && currAvailabilities?.map(renderTimeSlots)}
       </View>
-      <ScrollView
-        contentContainerStyle={[
-          styles.bottomContainer,
-          {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.primary.s800,
-          },
-        ]}>
-        <View style={styles.timesHeader}>
-          <Text
-            style={
-              isLightMode
-                ? styles.timesHeaderText_light
-                : styles.timesHeaderText_dark
-            }>
-            Select available time
-          </Text>
-        </View>
-        <View style={styles.timeSlotsContainer}>
-          {availabilities && currAvailabilities?.map(renderTimeSlots)}
-        </View>
-        <View style={styles.buttonContainer}>
-          <FullWidthButton
-            onPressCallback={onNextPress}
-            text={"Next Step"}
-            colorScheme={colorScheme}
-            disabled={isDisabled}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <View style={styles.buttonContainer}>
+        <FullWidthButton
+          onPressCallback={onNextPress}
+          text={"Next Step"}
+          colorScheme={colorScheme}
+          disabled={isDisabled}
+        />
+      </View>
+    </EventBookingLayout>
   )
 }
 

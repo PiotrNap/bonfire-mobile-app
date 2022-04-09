@@ -193,7 +193,7 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
     duration && {
       label: "Reservation time",
       callbackFn: {
-        label: "Change",
+        label: "Edit",
         callbackFnScreen: "Duration Choice",
       },
       lineContent: {

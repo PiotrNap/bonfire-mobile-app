@@ -19,6 +19,7 @@ import { useDurationSlots } from "lib/hooks/useDurationSlots"
 import AnimatedNumber from "react-native-animated-number"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
+import { EventBookingLayout } from "components/layouts/eventBookingLayout"
 
 type Props = StackScreenProps<BookingStackParamList, "Duration Choice">
 
@@ -93,7 +94,7 @@ export const DurationChoice = ({ navigation, route }: Props) => {
         style={[
           styles.timeSlotButton,
           selectedDuration === time && {
-            backgroundColor: Colors.primary.s800,
+            backgroundColor: Colors.primary.s600,
           },
         ]}>
         <Text
@@ -111,96 +112,44 @@ export const DurationChoice = ({ navigation, route }: Props) => {
   )
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
-      <View style={styles.topContainer}>
-        <ImageBackground
-          resizeMode="cover"
-          source={{ uri: image }}
-          style={styles.backgroundImage}>
-          <View style={[styles.topInnerContainer, { backgroundColor: color }]}>
-            <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
-              <View style={styles.navigation}>
-                <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-                  <LeftArrowIcon
-                    width={24}
-                    height={24}
-                    color={Colors.primary.neutral}
-                  />
-                </Pressable>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.eventTitleWrapper,
-                { paddingBottom: insets.bottom + Sizing.x15 },
-              ]}>
-              <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={[styles.eventTitle, { color: titleColor }]}>
-                {title}
-              </Text>
-            </View>
-          </View>
-        </ImageBackground>
-      </View>
-      <ScrollView
-        contentContainerStyle={[
-          styles.bottomContainer,
-          {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.primary.s800,
-          },
-        ]}>
-        <View style={styles.timesHeader}>
-          <Text
-            style={
-              isLightMode
-                ? styles.timesHeaderText_light
-                : styles.timesHeaderText_dark
-            }>
-            Select duration and confirm
-          </Text>
-        </View>
-        <View style={styles.estimatedCostContainer}>
-          <View style={styles.estimatedCostWrapper}>
-            <AnimatedNumber
-              value={cost}
-              style={[
-                isLightMode ? styles.totalAda_light : styles.totalAda_dark,
-              ]}
-            />
-            <Text
-              style={
-                isLightMode ? styles.totalAda_light : styles.totalAda_dark
-              }>
-              ₳
-            </Text>
-          </View>
-          <Text
-            style={
-              isLightMode
-                ? styles.walletBalance_light
-                : styles.walletBalance_dark
-            }>
-            Available balance: {walletBalance} ₳
-          </Text>
-        </View>
-        <View style={styles.timeSlotsContainer}>
-          {timeSlots && timeSlots.map(renderTimeSlots)}
-        </View>
-        <View style={styles.buttonContainer}>
-          <FullWidthButton
-            onPressCallback={onNextPress}
-            text={buttonText}
-            colorScheme={colorScheme}
-            disabled={isDisabled}
-            loadingIndicator={isLoading}
+    <EventBookingLayout
+      onBackPress={onBackNavigationPress}
+      screenHeader={"Select duration and confirm"}
+      eventCardColor={color}
+      eventCardImage={image}
+      eventCardTitle={title}
+      eventCardTitleColor={titleColor}>
+      <View style={styles.estimatedCostContainer}>
+        <View style={styles.estimatedCostWrapper}>
+          <AnimatedNumber
+            value={cost}
+            style={[isLightMode ? styles.totalAda_light : styles.totalAda_dark]}
           />
+          <Text
+            style={isLightMode ? styles.totalAda_light : styles.totalAda_dark}>
+            ₳
+          </Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        <Text
+          style={
+            isLightMode ? styles.walletBalance_light : styles.walletBalance_dark
+          }>
+          Available balance: {walletBalance} ₳
+        </Text>
+      </View>
+      <View style={styles.timeSlotsContainer}>
+        {timeSlots && timeSlots.map(renderTimeSlots)}
+      </View>
+      <View style={styles.buttonContainer}>
+        <FullWidthButton
+          onPressCallback={onNextPress}
+          text={buttonText}
+          colorScheme={colorScheme}
+          disabled={isDisabled}
+          loadingIndicator={isLoading}
+        />
+      </View>
+    </EventBookingLayout>
   )
 }
 
@@ -271,8 +220,9 @@ const styles = StyleSheet.create({
     color: Colors.primary.s600,
   },
   totalAda_dark: {
-    fontSize: 60,
+    fontSize: Sizing.x60,
     fontFamily: "Roboto-Medium",
+    textAlignVertical: "center",
     color: Colors.primary.neutral,
   },
   walletBalance_light: {

@@ -42,8 +42,8 @@ export const EventConfirmationDetail = ({
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
               children={label}
-              colors={[Colors.primary.s600, Colors.primary.s200]}
-              customStyle={{ marginRight: "auto" }}
+              colors={[Colors.primary.s600, Colors.primary.neutral]}
+              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
             />
             {callbackFn && (
               <SubHeaderText
@@ -72,14 +72,14 @@ export const EventConfirmationDetail = ({
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
               children={label}
-              colors={[Colors.primary.s600, Colors.primary.s200]}
-              customStyle={{ marginRight: "auto" }}
+              colors={[Colors.primary.s600, Colors.primary.neutral]}
+              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
             />
             {callbackFn && (
               <SubHeaderText
-                customStyle={{ ...fontWeight.semibold }}
                 children={callbackFn.label}
                 colors={[Colors.primary.s350, Colors.primary.s200]}
+                customStyle={{ ...fontWeight.semibold }}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
               />
             )}
