@@ -1,54 +1,53 @@
-import * as React from "react"
+import * as React from "react";
+import { Linking } from "react-native";
 
-import { AxiosResponse } from "axios"
-import { MOBILE_APP_SCHEMA } from "@env"
-import * as WebBrowser from "expo-web-browser"
-import axios from "Api/base"
-import { Auth } from "Api/Auth"
+import { AxiosResponse } from "axios";
+import { InAppBrowser } from "react-native-inappbrowser-reborn";
+
+import { Auth } from "Api/Auth";
+import { getDeepLinkUri } from "lib/utils";
+import axios from "Api/base";
 
 export const useGoogleAuth = () => {
-  const [isRequesting, setIsRequesting] = React.useState<boolean>(false)
-  const [isValidOauth, setIsValidOauth] = React.useState<boolean>(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(true)
+  const [isRequesting, setIsRequesting] = React.useState<boolean>(false);
+  const [isValidOauth, setIsValidOauth] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
-        const isValid = await Auth.checkForGoogleAuth()
-        if (isValid != null) setIsValidOauth(isValid)
+        const isValid = await Auth.checkForGoogleAuth();
+        if (isValid != null) setIsValidOauth(isValid);
       } catch (e) {}
-      setIsLoading(false)
-    })()
+      setIsLoading(false);
+    })();
+  }, []);
 
-    WebBrowser.warmUpAsync()
-
-    return () => {
-      WebBrowser.coolDownAsync()
-    }
-  }, [])
-
-  const requestAccess = async () => {
-    setIsRequesting(true)
+  const startGoogleAuthentication = async (callbackPath: string) => {
+    setIsRequesting(true);
     try {
-      const res: AxiosResponse<any> = await axios.get("auth/google-oauth-url")
-      const { authUrl } = await res.data
+      const res: AxiosResponse<any> = await axios.get("auth/google-oauth-url", {
+        params: { uri: getDeepLinkUri(callbackPath), path: callbackPath },
+      });
+      const { authUrl } = await res.data;
 
-      if (authUrl) {
-        await WebBrowser.openAuthSessionAsync(authUrl, MOBILE_APP_SCHEMA)
-      }
-      setIsRequesting(false)
+      // check if device supports this
+      const inAppBrowserAvailable = await InAppBrowser.isAvailable();
 
-      return
+      if (authUrl && inAppBrowserAvailable) {
+        await InAppBrowser.open(authUrl);
+      } else Linking.openURL(authUrl);
     } catch (err) {
-      setIsRequesting(false)
-      throw new Error(err)
+      throw new Error(err);
     }
-  }
+    return setIsRequesting(false);
+  };
 
   return {
     isRequesting,
     isValidOauth,
+    setIsValidOauth,
     isLoading,
-    requestAccess,
-  }
-}
+    startGoogleAuthentication,
+  };
+};

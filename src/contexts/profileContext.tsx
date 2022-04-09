@@ -3,9 +3,9 @@
  * @desc Context container for the profile data
  */
 import React, { useState, createContext } from "react"
-import { BioState } from "interfaces/profileInterface"
+import { ProfileState } from "interfaces/profileInterface"
 
-export const initialState: BioState = {
+export const initialState: ProfileState = {
   username: "",
   name: "",
   publicKey: "",
@@ -36,13 +36,14 @@ export const initialState: BioState = {
   setJobTitle: () => {},
   setDescription: () => {},
   setSkills: () => {},
+  resetProfileState: () => {},
 }
 
 export interface ContextProviderProps {
   children: React.ReactNode
 }
 
-export const ProfileContext = createContext<BioState>(initialState)
+export const ProfileContext = createContext<ProfileState>(initialState)
 
 export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [username, setUsername] = useState<string>("")
@@ -60,10 +61,28 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [description, setDescription] = useState<string | undefined>("")
   const [skills, setSkills] = useState<string | undefined>("")
   const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
-  const [walletBalance, setWalletBalance] = useState<number>(56)
+  const [walletBalance, setWalletBalance] = useState<number>(0)
   const [profileType, setProfileType] = useState<"" | "attendee" | "organizer">(
     ""
   )
+
+  const resetProfileState = () => {
+    setUsername("")
+    setName("")
+    setId("")
+    setPublicKey("")
+    setBio("")
+    setImageURL("")
+    setTimeBlockLengthMin(0)
+    setTimeBlockCostADA(0)
+    setProfession("")
+    setJobTitle("")
+    setDescription("")
+    setSkills("")
+    setHasSyncedWallet(false)
+    setWalletBalance(0)
+    setProfileType("")
+  }
 
   return (
     <ProfileContext.Provider
@@ -98,6 +117,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setJobTitle,
         setDescription,
         setSkills,
+        resetProfileState,
       }}>
       {children}
     </ProfileContext.Provider>

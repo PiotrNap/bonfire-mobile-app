@@ -29,12 +29,17 @@ export const appContext = () => {
     accountType: state.accountType,
     colorScheme: state.colorScheme,
     pageIndex: state.pageIndex,
+    appBgColor: state.appBgColor,
     favoriteOrganizers: state.favoriteOrganizers,
+    receivingAddr: state.receivingAddr,
     ref: state.ref,
+    resetAppState: () => dispatch({ type: "RESET_STATE" }),
     setRef: (ref: React.RefObject<any>) =>
       dispatch({ type: "SET_REF", payload: { ref } }),
     setJWT: (jwtPayload: JWTPayload) =>
       dispatch({ type: "SET_REF", payload: { jwtPayload } }),
+    setReceivingAddr: (receivingAddr: string) =>
+      dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
     toggleAuth: (auth: boolean, accountType: string) => {
       dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } })
     },
@@ -42,7 +47,10 @@ export const appContext = () => {
       dispatch({ type: "SET_FAVORITE_ORGANIZER", payload: { alias } })
     },
     setColorScheme: (newColorScheme: ColorSchemeName) => {
-      dispatch({ type: "SET_COLOR_SCHEME", payload: { newColorScheme } })
+      dispatch({
+        type: "SET_COLOR_SCHEME",
+        payload: { newColorScheme },
+      })
     },
     setPageIndex: (pageIndex: number) => {
       dispatch({ type: "SET_PAGE_INDEX", payload: { pageIndex } })
@@ -145,7 +153,7 @@ export const eventCreationContext = () => {
       dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
     removeSelectedWeeks: () =>
       dispatch({ type: EventCreationTypes.RemoveSelectedWeeks }),
-    resetState: () => {
+    resetEventCreationState: () => {
       dispatch({ type: EventCreationTypes.ResetState })
     },
   }
@@ -159,6 +167,7 @@ export const bookingContext = () => {
     durationCost: state.durationCost,
     eventTitle: state.eventTitle,
     pickedDate: state.pickedDate,
+    eventCardInfo: state.eventCardInfo,
     organizerRate: state.organizerRate,
     previewingOrganizer: state.previewingOrganizer,
     previewingEvent: state.previewingEvent,
@@ -167,11 +176,17 @@ export const bookingContext = () => {
     setDuration: (duration: number) =>
       dispatch({ type: "SET_DURATION", payload: { duration } }),
     setDurationCost: (durationCost: number) =>
-      dispatch({ type: "SET_DURATION_COST", payload: { durationCost } }),
+      dispatch({
+        type: "SET_DURATION_COST",
+        payload: { durationCost },
+      }),
     setEventTitle: (title: string) =>
       dispatch({ type: "SET_EVENT_TITLE", payload: { title } }),
     setOrganizerRate: (organizerRate: OrganizerRate) =>
-      dispatch({ type: "SET_ORGANIZER_RATE", payload: { organizerRate } }),
+      dispatch({
+        type: "SET_ORGANIZER_RATE",
+        payload: { organizerRate },
+      }),
     setPickedDate: (pickedDate: number | null) =>
       dispatch({ type: "SET_PICKED_DATE", payload: { pickedDate } }),
     setMaxTimeSlotDuration: (maxTimeSlotDuration: number | undefined) =>
@@ -194,7 +209,7 @@ export const bookingContext = () => {
         type: "SET_PREVIEWING_EVENT",
         payload: { previewingEvent },
       }),
-    resetState: () => {
+    resetBookingState: () => {
       dispatch({
         type: "RESET_STATE",
         payload: {},
@@ -217,6 +232,9 @@ export const myCalendarContext = () => {
     previewingDayEvents: state.previewingDayEvents,
     currentSelectedDay: state.currentSelectedDay,
     direction: state.direction,
+    resetCalendarState: () => {
+      dispatch({ type: "RESET_STATE" })
+    },
     addEvent: (event: Event) => {
       dispatch({ type: "ADD_EVENT", payload: event })
     },
@@ -224,7 +242,10 @@ export const myCalendarContext = () => {
       dispatch({ type: "ADD_AVAILABILITY", payload: availabilities })
     },
     changeMonthHeader: (calendarHeader: CalendarHeader) => {
-      dispatch({ type: "CHANGE_MONTH_HEADER", payload: { calendarHeader } })
+      dispatch({
+        type: "CHANGE_MONTH_HEADER",
+        payload: { calendarHeader },
+      })
     },
     clearPreviewDayEvents: () => {
       dispatch({
@@ -232,7 +253,10 @@ export const myCalendarContext = () => {
       })
     },
     setCalendarDirection: (direction: null | "previous" | "next") => {
-      dispatch({ type: "SET_CALENDAR_DIRECTION", payload: { direction } })
+      dispatch({
+        type: "SET_CALENDAR_DIRECTION",
+        payload: { direction },
+      })
     },
     loadMyCalendar: (calendarArgs: NewCalendarMonths) => {
       dispatch({ type: "LOAD_MY_CALENDAR", payload: { calendarArgs } })
@@ -247,10 +271,16 @@ export const myCalendarContext = () => {
       })
     },
     setCurrSelectedDay: (selectedDay: any) => {
-      dispatch({ type: "SET_CURR_SELECTED_DAY", payload: { selectedDay } })
+      dispatch({
+        type: "SET_CURR_SELECTED_DAY",
+        payload: { selectedDay },
+      })
     },
     setOrganizerAvail: (availabilities: any) => {
-      dispatch({ type: "SET_ORGANIZER_AVAIL", payload: { availabilities } })
+      dispatch({
+        type: "SET_ORGANIZER_AVAIL",
+        payload: { availabilities },
+      })
     },
     setEvents: (events: any) => {
       dispatch({ type: "SET_EVENTS", payload: { events } })
@@ -262,7 +292,10 @@ export const myCalendarContext = () => {
       })
     },
     updateCalendarMonth: (calendarArgs: NewCalendarMonths) => {
-      dispatch({ type: "UPDATE_CALENDAR_MONTH", payload: { calendarArgs } })
+      dispatch({
+        type: "UPDATE_CALENDAR_MONTH",
+        payload: { calendarArgs },
+      })
     },
   }
 }

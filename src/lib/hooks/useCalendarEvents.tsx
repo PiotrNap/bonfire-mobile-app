@@ -7,11 +7,8 @@ import { NewCalendarMonths } from "common/interfaces/myCalendarInterface"
 
 export const useCalendarEvents = (id?: string) => {
   const [loadingEvents, setLoadingEvents] = R.useState<boolean>(false)
-  const {
-    setEvents,
-    loadInitialMyCalendar,
-    loadMyCalendar,
-  } = myCalendarContext()
+  const { setEvents, loadInitialMyCalendar, loadMyCalendar } =
+    myCalendarContext()
   const { id: userId } = R.useContext(ProfileContext)
 
   const getEvents = (
@@ -33,19 +30,17 @@ export const useCalendarEvents = (id?: string) => {
       if (events) {
         events = convertToCalendarEvents(events)
 
-        if (events && events.length) {
+        if (events.length) {
           if (withCalendarLoad) {
             setEvents(events)
             if (!setup) {
               loadInitialMyCalendar()
             } else loadMyCalendar(setup)
-            setLoadingEvents(false)
-            return true
-          } else {
-            setLoadingEvents(false)
-            return events
           }
         }
+
+        setLoadingEvents(false)
+        return events
       }
     } catch (e) {
       setLoadingEvents(false)

@@ -12,11 +12,9 @@ export const useAppLogin = () => {
   React.useEffect(() => {
     ;(async () => {
       try {
-        let at = await getFromEncryptedStorage("accessToken")
-        let sec = await getFromEncryptedStorage("secret")
-        let pub = await getFromEncryptedStorage("public")
-
-        console.log("access token :", at)
+        // let at = await getFromEncryptedStorage("auth-credentials")
+        let sec = await getFromEncryptedStorage("privKey")
+        let pub = await getFromEncryptedStorage("pubKey")
 
         /**
          * We want to make sure if user exists in database first,
@@ -34,6 +32,8 @@ export const useAppLogin = () => {
 
         if (sec && pub) {
           const accessTokenDto = await startChallengeSequence(pub, false)
+          console.log("access token? ", accessTokenDto)
+
           if (accessTokenDto) {
             setAuthorizationToken(accessTokenDto.accessToken)
             setIsAuthorized(true)
@@ -44,7 +44,7 @@ export const useAppLogin = () => {
             })
           }
         } else {
-          setIsAuthorized(false)
+          if (isAuthorized) setIsAuthorized(false)
         }
 
         setIsAuthLoaded(true)

@@ -11,6 +11,8 @@ import {
   AppContextProps,
 } from "interfaces/appInterface"
 import { AppActions, AppTypes } from "common/types/contextTypes"
+import { Colors } from "styles/index"
+import { initialState } from "./profileContext"
 
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
@@ -18,11 +20,14 @@ const colorScheme: ColorSchemeName = Appearance.getColorScheme()
 const initialAppState: AppState = {
   authentication: false,
   accountType: null,
+  receivingAddr: "",
   // JWT: {
   //   expiresIn: null,
   //   accessToken: null,
   // },
   colorScheme: colorScheme == null ? "light" : colorScheme,
+  appBgColor:
+    colorScheme === "dark" ? Colors.neutral.s600 : Colors.primary.neutral,
   favoriteOrganizers: [],
   pageIndex: 0,
   ref: null,
@@ -60,9 +65,11 @@ const reducer = (state: AppState, action: AppActions) => {
         pageIndex: action.payload.pageIndex,
       }
     case AppTypes.SetColorScheme:
+      const isDarkMode = action.payload.newColorScheme === "dark"
       return {
         ...state,
         colorScheme: action.payload.newColorScheme,
+        appBgColor: isDarkMode ? Colors.neutral.s600 : Colors.primary.neutral,
       }
     case AppTypes.SetFavoriteOrganizer:
       if (state.favoriteOrganizers.includes(action.payload.alias)) {
@@ -79,6 +86,9 @@ const reducer = (state: AppState, action: AppActions) => {
         favoriteOrganizers: [...state.favoriteOrganizers, action.payload.alias],
       }
       return newState
+    case AppTypes.ResetState: {
+      return initialState
+    }
     default:
       throw Error(`Unknown type of action: ${action.type}`)
   }

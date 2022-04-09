@@ -10,6 +10,7 @@ import {
 } from "react-native-permissions"
 
 import { launchCamera, CameraOptions } from "react-native-image-picker"
+import { requestAndroidPermission } from "lib/utils"
 
 export const useCameraAccess = () => {
   const [access, setAccess] = React.useState<boolean | null>(false)
@@ -38,7 +39,7 @@ export const useCameraAccess = () => {
   const requestCameraAccessAsync = async (): Promise<void> => {
     const rationale: Rationale = {
       title: "Camera permission needed",
-      message: "We need access to your camera in order to upload a new photo",
+      message: "We need access to your camera in order to upload a new image.",
       buttonNegative: "Deny",
       buttonPositive: "Approve",
       buttonNeutral: "Close",
@@ -52,8 +53,19 @@ export const useCameraAccess = () => {
       if (res !== "granted") {
         Alert.alert(
           "Access needed",
-          "We need access to your devices camera for uploading an image.",
-          [{ text: "Close", style: "cancel", onPress: () => {} }]
+          "We need access to your devices camera for uploading images.",
+          [
+            { text: "Close", style: "cancel", onPress: () => {} },
+            {
+              text: "Proceed",
+              style: "default",
+              onPress: async () =>
+                await requestAndroidPermission(
+                  "android.permission.CAMERA",
+                  "uploading new images."
+                ),
+            },
+          ]
         )
       } else {
         setAccess(true)
@@ -68,7 +80,7 @@ export const useCameraAccess = () => {
   }
   const _launchCamera = async () => {
     if (!access) {
-      await requestCameraAccessAsync()
+      return await requestCameraAccessAsync()
     }
 
     const options: CameraOptions = {

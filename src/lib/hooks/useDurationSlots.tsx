@@ -8,6 +8,9 @@ export const useDurationSlots = (
 
   React.useEffect(() => {
     if (minTimeSlotDuration != null && maxTimeSlotDuration != null) {
+      if (minTimeSlotDuration === maxTimeSlotDuration)
+        return setTimeSlots([minTimeSlotDuration * 60 * 1000])
+
       // create an array of accumulated time blocks based on maxTimeSlotDuration
       let newTimeSlots: number[] = []
       let totalTimeDuration = minTimeSlotDuration

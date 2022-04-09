@@ -112,8 +112,6 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       }
     }
     case MyCalendarTypes.LoadMyCalendar:
-      console.log("setting up a new calendar.")
-      console.log("... with a payload :", action.payload)
       const nextMonths = action.payload.calendarArgs.nextMonths
       const year = action.payload.calendarArgs.year
       const month = action.payload.calendarArgs.month
@@ -156,16 +154,10 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       const newCalendar: Month[] = [...state.calendar]
       const isNextMonth = action.payload.calendarArgs.nextMonths
 
-      // this may seem counter-intuitive but.............
-      // `getCalendarMonth` gives us next or previous month from
-      // where we currently are. That's why need to calculate next
-      // or previous month based on user's interaction in UI to get
-      // a month that's currently showing in calendar UI.
-      //
       // 1. User goes from March to April ->
-      //    New calenadar gets updated ->
-      //    April is now showing on calendar UI ->
-      //    We need to get next month from `getCalendarMonth` fn
+      //    ... new calenadar gets updated ->
+      //    ... April is now showing on calendar UI ->
+      //    ... we need to get next month from `getCalendarMonth`
       //    like we'd do when going from March to April.
       //    Because the new calendar is now [April, May, June].
       if (month === 0) {
@@ -219,6 +211,9 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
         ...state,
         events: action.payload.events,
       }
+    }
+    case MyCalendarTypes.ResetState: {
+      return initialState
     }
     default:
       throw Error(`Unknown type of action: ${action.type}`)

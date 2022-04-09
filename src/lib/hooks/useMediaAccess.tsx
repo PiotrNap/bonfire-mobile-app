@@ -40,11 +40,11 @@ export const useMediaAccess = () => {
     ;(async () => await checkImageLibraryPermission())()
   }, [])
 
-  const requestImageLibraryAccessAsync = async (): Promise<void> => {
+  const requestImageLibraryAccessAsync = async (): Promise<boolean> => {
     const rationale: Rationale = {
       title: "Media library permission needed",
       message:
-        "We need access to your media library in order to upload a new photo",
+        "We need access to your media library in order to upload a new image.",
       buttonNegative: "Deny",
       buttonPositive: "Approve",
       buttonNeutral: "Close",
@@ -60,11 +60,12 @@ export const useMediaAccess = () => {
       if (res !== "granted") {
         Alert.alert(
           "Access needed",
-          "We need access to your media library for uploading an image.",
+          "We need access to your media library for uploading images.",
           [{ text: "Close", style: "cancel", onPress: () => {} }]
         )
+        return false
       } else {
-        setAccess(true)
+        return true
       }
     } catch {
       Alert.alert(
@@ -72,11 +73,15 @@ export const useMediaAccess = () => {
         "Please try accessing media library again. Make sure you have granted the access.",
         [{ text: "Close", style: "cancel", onPress: () => {} }]
       )
+      return false
     }
   }
   const _launchImageLibrary = async () => {
     if (!access) {
-      await requestImageLibraryAccessAsync()
+      const _access = await requestImageLibraryAccessAsync()
+      if (!_access) return
+
+      setAccess(true)
     }
 
     const options: ImageLibraryOptions = {
