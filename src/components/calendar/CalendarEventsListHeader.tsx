@@ -25,7 +25,7 @@ export const CalendarEventsListHeader = ({
           }>
           You have{" "}
           <Text style={{ fontFamily: "Roboto-Bold" }}>{numOfEvents}</Text>{" "}
-          upcoming events
+          upcoming {numOfEvents > 1 ? "events" : "event"}
         </Text>
       </View>
     ),

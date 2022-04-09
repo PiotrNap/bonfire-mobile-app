@@ -21,6 +21,7 @@ export const initialState: ProfileState = {
   timeBlockCostADA: 0,
   walletBalance: 0,
   profileType: "",
+  hourlyRate: 0,
   setName: () => {},
   setUsername: () => {},
   setProfileType: () => {},
@@ -30,6 +31,7 @@ export const initialState: ProfileState = {
   setImageURL: () => {},
   setTimeBlockLengthMin: () => {},
   setTimeBlockCostADA: () => {},
+  setHourlyRate: () => {},
   setHasSyncedWallet: () => {},
   setWalletBalance: () => {},
   setProfession: () => {},
@@ -56,12 +58,14 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
   )
+  const [hourlyRate, setHourlyRate] = useState<number>(0)
   const [profession, setProfession] = useState<string | undefined>("")
   const [jobTitle, setJobTitle] = useState<string | undefined>("")
   const [description, setDescription] = useState<string | undefined>("")
   const [skills, setSkills] = useState<string | undefined>("")
   const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
-  const [walletBalance, setWalletBalance] = useState<number>(0)
+  //@TODO change this...
+  const [walletBalance, setWalletBalance] = useState<number>(50)
   const [profileType, setProfileType] = useState<"" | "attendee" | "organizer">(
     ""
   )
@@ -75,6 +79,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setImageURL("")
     setTimeBlockLengthMin(0)
     setTimeBlockCostADA(0)
+    setHourlyRate(0)
     setProfession("")
     setJobTitle("")
     setDescription("")
@@ -95,6 +100,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         bio,
         imageURL,
         hasSyncedWallet,
+        hourlyRate,
         timeBlockLengthMin,
         timeBlockCostADA,
         profession,
@@ -113,6 +119,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setHasSyncedWallet,
         setTimeBlockLengthMin,
         setTimeBlockCostADA,
+        setHourlyRate,
         setProfession,
         setJobTitle,
         setDescription,

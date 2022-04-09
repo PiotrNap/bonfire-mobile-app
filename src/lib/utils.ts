@@ -94,21 +94,18 @@ export function formValidationSchema() {
 
 /**
  * @description This will specify validation schema for creating a new
- * account.
+ * account or updating an existing one.
  */
-export function createAccountValidationScheme() {
+export function accountValidationScheme() {
   return yup.object().shape({
     name: yup.string().required("Name is required"),
     username: yup
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
       .required("User name is required"),
-    // email: yup.string().email().required("Email address is required"),
-    // password: yup
-    //   .string()
-    //   .required("Password is required")
-    //   .min(8, "Password is too short - should be 8 chars minimum.")
-    //   .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
+    hourlyRate: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
   })
 }
 

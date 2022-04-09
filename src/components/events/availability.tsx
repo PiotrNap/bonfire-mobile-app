@@ -26,7 +26,7 @@ export const Availability = ({
         <ClockIcon style={styles.clockIcon} strokeWidth={2} />
         <View style={styles.body}>
           <Text style={[styles.innerText, { ...fontWeight.semibold }]}>
-            From {getDigitalLocaleTime(from)} - to {getDigitalLocaleTime(to)}
+            start {getDigitalLocaleTime(from)} / end {getDigitalLocaleTime(to)}
           </Text>
           <Text style={[styles.innerText, { ...fontWeight.semibold }]}>
             min. {minDuration} min / max. {maxDuration} min
@@ -36,7 +36,7 @@ export const Availability = ({
           hitSlop={5}
           onPress={() => onRemovePress(index)}
           style={Buttons.applyOpacity(styles.removeButton)}>
-          <RemoveIcon style={styles.trashIcon} strokeWidth={1.3} />
+          <RemoveIcon style={styles.removeIcon} strokeWidth={2} />
         </Pressable>
       </View>
     </View>
@@ -55,7 +55,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: Outlines.borderRadius.max,
-    backgroundColor: Colors.primary.s400,
+    borderColor: Colors.primary.s350,
+    borderWidth: Outlines.borderWidth.base,
+    backgroundColor: Colors.primary.s200,
     ...Outlines.shadow.base,
   },
   body: {
@@ -63,22 +65,22 @@ const styles = StyleSheet.create({
     marginHorizontal: Sizing.x8,
   },
   innerText: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     color: Colors.primary.s800,
   },
   removeButton: {
     width: Sizing.x40,
     height: Sizing.x40,
-    backgroundColor: Colors.danger.s300,
     borderRadius: Outlines.borderRadius.max,
     margin: Sizing.x5,
     alignItems: "center",
     justifyContent: "center",
   },
-  trashIcon: {
+  removeIcon: {
     width: Sizing.x25,
     height: Sizing.x25,
-    color: Colors.neutral.s100,
+    color: Colors.danger.s300,
+    // color: Colors.neutral.s100,
   },
   clockIcon: {
     width: Sizing.x25,

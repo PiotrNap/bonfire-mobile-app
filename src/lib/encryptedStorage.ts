@@ -1,8 +1,8 @@
 import ES from "react-native-encrypted-storage"
 
 // Just to minimize chance of collision with other apps when
-// encryptes storage is shared among other apps.
-const generateKey = (val: any) => `${val}_onetoone`
+// encrypted storage is shared among other apps.
+const generateKey = (val: any) => `${val}_bonfire`
 
 export const setToEncryptedStorage = async (
   key: string,

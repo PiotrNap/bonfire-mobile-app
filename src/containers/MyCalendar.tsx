@@ -31,15 +31,13 @@ export const Calendar = ({
   isRegularCalendar,
 }: CalendarProps) => {
   const { colorScheme } = appContext()
-  const { resetState } = eventCreationContext()
+  const { resetEventCreationState } = eventCreationContext()
   const { id } = React.useContext(ProfileContext)
   const { events, calendarHeader } = myCalendarContext()
   const { getEvents, loadingEvents } = useCalendarEvents(id)
 
-  const [
-    currentSelectedDay,
-    setCurrentSelectedDay,
-  ] = React.useState<Date | null>(null)
+  const [currentSelectedDay, setCurrentSelectedDay] =
+    React.useState<Date | null>(null)
 
   const isLightMode = colorScheme === "light"
   const navigation = useNavigation()
@@ -78,10 +76,8 @@ export const Calendar = ({
     return unsubscribe
   }, [])
 
-  // console.log(JSON.stringify(events, null, 4));
-
   const onAddEventPress = () => {
-    resetState()
+    resetEventCreationState()
     navigation.navigate("New Event Description")
   }
 

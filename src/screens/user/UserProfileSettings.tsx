@@ -16,10 +16,7 @@ import {
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { SettingsItem } from "components/profile/settingsItem"
 import { SmallDangerButton } from "components/buttons/smallDangerButton"
-import {
-  getFromEncryptedStorage,
-  removeFromEncryptedStorage,
-} from "lib/encryptedStorage"
+import { removeFromEncryptedStorage } from "lib/encryptedStorage"
 import { ProfileContext } from "contexts/profileContext"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
@@ -78,10 +75,10 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     )
   }
 
-  const { color: _, ...textStyle } = Typography.subHeader.x20
+  const { color: _, ...textStyle } = Typography.header.x20
 
   return (
-    <Layout>
+    <Layout scrollable>
       <View style={styles.navigation}>
         <Pressable onPress={onBackNavigationPress} hitSlop={10}>
           <LeftArrowIcon

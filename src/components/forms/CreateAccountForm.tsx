@@ -10,7 +10,7 @@ import {
   Forms,
   Outlines,
 } from "styles/index"
-import { createAccountValidationScheme } from "lib/utils"
+import { accountValidationScheme } from "lib/utils"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"
 import { setAuthorizationToken } from "Api/base"
@@ -140,7 +140,7 @@ export const CreateAccountForm = ({
 
   return (
     <Formik
-      validationSchema={createAccountValidationScheme()}
+      validationSchema={accountValidationScheme()}
       validateOnChange={submitted}
       validateOnBlur={submitted}
       initialValues={{

@@ -52,6 +52,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           labelStyle={inputStyles.label}
           placeholder="Full Stack Engineer, Sr Business..."
           styles={inputStyles}
+          textContentType="jobTitle"
           onChangeCallback={(val) => _setJobTitle(val)}
         />
         {/* when handling events with multiline, use ref._lastNativeText */}

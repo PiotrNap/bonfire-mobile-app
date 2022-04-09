@@ -4,6 +4,7 @@ import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { Day } from "interfaces/myCalendarInterface"
 import { getTime } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
+import { appContext } from "contexts/contextApi"
 
 export interface AvailabilityDayProps extends Day {
   number: number
@@ -24,6 +25,21 @@ export const _AvailabilityDay = ({
   onPressCallback,
   isSelectedDay,
 }: AvailabilityDayProps) => {
+  const { colorScheme } = appContext()
+  const isDarkMode = colorScheme === "dark"
+
+  const dayButtonStyle = [
+    styles.dayButton,
+    { backgroundColor: isDarkMode ? Colors.primary.neutral : "white" },
+    {
+      borderColor: Colors.applyOpacity(
+        isDarkMode ? Colors.neutral.s800 : Colors.primary.s400,
+        0.4
+      ),
+    },
+    isSelectedDay && styles.selectedDayButton,
+  ]
+
   return (
     <Pressable
       style={[styles.dayContainer]}
@@ -31,8 +47,7 @@ export const _AvailabilityDay = ({
       onPress={() =>
         onPressCallback(getTime(year, monthsByName[month], number))
       }>
-      <View
-        style={[styles.dayButton, isSelectedDay && styles.selectedDayButton]}>
+      <View style={dayButtonStyle}>
         <Text
           style={[
             styles.dayNumber,
@@ -69,8 +84,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: Outlines.borderWidth.thin,
-    borderColor: Colors.applyOpacity(Colors.neutral.s400, 0.4),
-    backgroundColor: "white",
     ...Outlines.shadow.base,
   },
   selectedDayButton: {

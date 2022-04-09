@@ -1,4 +1,4 @@
-import { UserDTO } from "common/interfaces/profileInterface"
+import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
 import { Platform } from "react-native"
 import axios from "./base"
@@ -45,7 +45,7 @@ export class Users {
     }
   }
 
-  public static async createAccount(values: any): Promise<UserDTO | void> {
+  public static async createAccount(values: any): Promise<UserBaseDTO | void> {
     try {
       const res = await axios.post("/users/register", values)
 
@@ -62,7 +62,8 @@ export class Users {
       const res = await axios.put(`/users/${id}`, values)
       if (res) return res.data
     } catch (e: any) {
-      if (e.response) console.error(e.response.data)
+      console.log(e)
+      if (e?.response) console.error(e.response.data)
     }
   }
 
@@ -72,7 +73,7 @@ export class Users {
   ): Promise<any | void> {
     console.log("args ...", id, currCalendarDate)
     try {
-      const res = await axios.get(`/users/${id}/calendar-events`, {
+      const res = await axios.get(`/users/${id}/events`, {
         params: { date: currCalendarDate ?? new Date() },
       })
       console.log("res?", !!res)

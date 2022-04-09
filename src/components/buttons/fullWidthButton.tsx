@@ -10,7 +10,7 @@ import {
 
 import { Buttons, Colors } from "styles/index"
 
-export interface FullWidthButton {
+export interface FullWidthButtonProps {
   onPressCallback: () => any | Promise<void>
   text: string
   loadingIndicatorStyle?: ViewStyle
@@ -36,7 +36,7 @@ export const FullWidthButton = ({
   style,
   textStyle,
   lightMode,
-}: FullWidthButton) => {
+}: FullWidthButtonProps) => {
   const [textWidth, setTextWidth] = React.useState<number>(0)
   const [pressableWidth, setPressableWidth] = React.useState<number>(0)
   const isLightMode = lightMode ?? colorScheme === "light"

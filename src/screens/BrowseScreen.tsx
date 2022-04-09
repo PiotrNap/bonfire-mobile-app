@@ -11,9 +11,9 @@ import { EventsList } from "components/booking/EventsList"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { applyOpacity } from "../styles/colors"
 import { useEventsResults } from "lib/hooks/useEventsResults"
-import { EmptyDocumentsIcon, SearchIcon } from "assets/icons"
+import { SearchIcon } from "assets/icons"
 import SearchBar from "@pnap/react-native-search-bar"
-// import { browseFeatured } from "../api_data/browseFeatured";
+import LottieView from "lottie-react-native"
 
 export interface BrowseProps
   extends StackScreenProps<BookingStackParamList, "Browse"> {
@@ -48,7 +48,7 @@ export const BrowseScreen = ({ navigation }: BrowseProps) => {
     getEventsBySearchQuery(val)
   }
   const onToggleSearchBar = (val: boolean) => {
-    // user hides search bar, show the normal events list
+    // user hides search bar? show the normal events list.
     if (!val) setEvents(null)
   }
 
@@ -90,7 +90,7 @@ export const BrowseScreen = ({ navigation }: BrowseProps) => {
           onToggleSearchBar={onToggleSearchBar}
           customIcon={CustomSearchIcon}
           inputTextStyle={searchStyles.searchBarInput}
-          animationDuration={240}
+          animationDuration={200}
           //@ts-ignore
           buttonStyle={Buttons.applyOpacity(
             Object.assign(
@@ -128,13 +128,15 @@ export const BrowseScreen = ({ navigation }: BrowseProps) => {
         ) : (
           isEmptyEventsList && (
             <View style={styles.noEventsMessage}>
-              <EmptyDocumentsIcon width="30%" height="30%" />
+              <LottieView
+                style={styles.lottieAnimation}
+                source={require("../../assets/animations/not-found.json")}
+                autoPlay
+                loop={false}
+              />
               <SubHeaderText
-                customStyle={{
-                  fontFamily: "Roboto-Medium",
-                }}
                 colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                Nothing to show yet...
+                It looks empty here...
               </SubHeaderText>
             </View>
           )
@@ -162,6 +164,7 @@ const styles = StyleSheet.create({
   },
   safeaArea_dark: {
     flex: 1,
+    backgroundColor: Colors.neutral.s600,
     alignItems: "center",
   },
   topContainer: {
@@ -182,6 +185,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  lottieAnimation: {
+    width: Sizing.x140,
+    height: Sizing.x140,
   },
 })
 

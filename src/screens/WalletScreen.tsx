@@ -6,11 +6,10 @@ import {
   Pressable,
   LayoutChangeEvent,
   ActivityIndicator,
-  NativeModules,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import { LinearGradient } from "expo-linear-gradient"
+import LinearGradient from "react-native-linear-gradient"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
 import { OrganizerTabParamList } from "common/types/navigationTypes"
@@ -18,7 +17,11 @@ import { appContext } from "contexts/contextApi"
 import { RefreshIcon, RightArrowIcon, SearchIcon } from "icons/index"
 import { TransactionsList } from "components/wallet/transactionsList"
 import { ProfileContext } from "contexts/profileContext"
-import { Address } from "@emurgo/react-native-haskell-shelley"
+import {
+  Address,
+  BaseAddress,
+  Bip32PrivateKey,
+} from "@emurgo/react-native-haskell-shelley"
 
 // @TODO: Implement navigationTypes type
 export interface WalletScreenProps
@@ -30,11 +33,8 @@ function wait(ms: number): Promise<void> {
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { colorScheme } = appContext()
-  const {
-    hasSyncedWallet,
-    setHasSyncedWallet,
-    walletBalance,
-  } = React.useContext(ProfileContext)
+  const { hasSyncedWallet, setHasSyncedWallet, walletBalance } =
+    React.useContext(ProfileContext)
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
   const [isTxListLoading, setIsTxListLoading] = React.useState<boolean>(false)
@@ -43,15 +43,33 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
 
-  console.log(NativeModules.HaskellShelley)
   const getAddr = async () => {
     try {
-      const addrHex =
-        "616464725f746573743176707134356b72613075366d6c7233747261676a70323072307037756a703733356774367430676d77767466773273797a637a3378"
-      const addrBytes = Buffer.from(addrHex, "hex")
-      console.log("bytes ", addrBytes)
-      const address = await Address.from_bytes(addrBytes)
-      console.log("address is :", address)
+      const addr = await Address.from_bech32(
+        "addr1v8v3auqmw0eszza3ww29ea2pwftuqrqqyu26zvzjq9dt2ncydzvs5"
+      )
+      addr.to_bytes()
+      const toBech32 = addr.to_bech32()
+      const newAddr = await addr.to_bech32()
+
+      const bip32PrivKeyBytes =
+        "2001e30383cdb706f494829906e1d5090fcd67db66eba8c573a9e6f036161c59" +
+        "5cbcccbf3b32e9b94e9cf1dfd29270af1f242f7d0bf1344c9b8034567ac2a7e1" +
+        "15582aa9bf54e792ef62aba8ba3014c6a86c186140ad317fbfbba00929ec458b"
+
+      const pk = await Bip32PrivateKey.generate_ed25519_bip32()
+      await pk.to_bech32()
+      console.log("pk ? ", pk)
+
+      // console.log("base addr ", baseAddr);
+
+      // console.log("new addr ?", newAddr);
+
+      // const addrHex = Buffer.from(addr).toString('hex');
+      // const addrBytes = Buffer.from(addrHex, "hex");
+      // console.log("bytes ", addrBytes);
+      // const address = await Address.from_bytes(addrBytes);
+      // console.log("address is :", address);
     } catch (err) {
       console.error(err)
     }
@@ -213,7 +231,7 @@ const styles = StyleSheet.create({
   },
   safeaArea_dark: {
     flex: 1,
-    backgroundColor: Colors.primary.s600,
+    backgroundColor: Colors.neutral.s600,
     alignItems: "center",
   },
   container: {

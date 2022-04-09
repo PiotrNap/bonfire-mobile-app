@@ -36,18 +36,31 @@ export const NavigationScreens = ({ route }: any) => {
     <NavigationTabs.Navigator
       //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
-      <NavigationTabs.Screen
-        name="Home"
-        component={
-          accountType === "attendee" ? HomeScreen : OrganizerHomeScreenStack
-        }
-      />
-      <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
-      <NavigationTabs.Screen name="Wallet" component={WalletScreen} />
-      {accountType === "organizer" && (
-        <NavigationTabs.Screen name="My Events" component={MyEvents} />
+      {accountType === "attendee" ? (
+        <>
+          <NavigationTabs.Screen name="Home" component={HomeScreen} />
+          <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
+          <NavigationTabs.Screen name="Wallet" component={WalletScreen} />
+          <NavigationTabs.Screen
+            name="Profile"
+            component={ProfileScreenStack}
+          />
+        </>
+      ) : (
+        <>
+          <NavigationTabs.Screen
+            name="Home"
+            component={OrganizerHomeScreenStack}
+          />
+          <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
+          <NavigationTabs.Screen name="Wallet" component={WalletScreen} />
+          <NavigationTabs.Screen name="My Events" component={MyEvents} />
+          <NavigationTabs.Screen
+            name="Profile"
+            component={ProfileScreenStack}
+          />
+        </>
       )}
-      <NavigationTabs.Screen name="Profile" component={ProfileScreenStack} />
     </NavigationTabs.Navigator>
   )
 }

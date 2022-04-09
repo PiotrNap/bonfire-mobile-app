@@ -48,11 +48,22 @@ export const WeekDayNames = ({
     if (week) return week
     return null
   }, [month, year])
+
   const currMonthSelectedWeekIndex = React.useCallback(() => {
     return selectedWeekDays.findIndex(
       (week) => week.date === getTime(year, monthsByName[month])
     )
   }, [month, year])
+
+  const dayButtonStyle = [
+    {
+      backgroundColor: isDarkMode ? Colors.primary.neutral : "white",
+      borderColor: Colors.applyOpacity(
+        isDarkMode ? Colors.neutral.s800 : Colors.primary.s400,
+        0.4
+      ),
+    },
+  ]
 
   const onPress = (index: number): void => {
     const arrOfDays = getRecurringMonthDays(index, year, month)
@@ -83,15 +94,7 @@ export const WeekDayNames = ({
         {weekDays.map((day, i) =>
           !isNewEventCalendar ? (
             <View key={`day-${i}`} style={[styles.dayContainer]}>
-              <View
-                style={[
-                  styles.dayPlaceholder,
-                  {
-                    backgroundColor: isDarkMode
-                      ? Colors.primary.neutral
-                      : "white",
-                  },
-                ]}>
+              <View style={styles.dayPlaceholder}>
                 <Text
                   style={[
                     styles.dayTitle,
@@ -112,6 +115,7 @@ export const WeekDayNames = ({
               <View
                 style={[
                   styles.dayButton,
+                  dayButtonStyle,
                   isSelectedDay(i) && styles.selectedDayButton,
                 ]}>
                 <Text
@@ -165,10 +169,8 @@ const styles = StyleSheet.create({
     height: 33,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
     borderRadius: 999,
     borderWidth: Outlines.borderWidth.thin,
-    borderColor: Colors.applyOpacity(Colors.neutral.s400, 0.4),
     ...Outlines.shadow.base,
   },
   selectedDayButton: {
