@@ -54,7 +54,7 @@ export const WalletSetUpModal = ({
             styles.container,
             isLightMode
               ? { backgroundColor: Colors.primary.neutral }
-              : { backgroundColor: Colors.primary.s800 },
+              : { backgroundColor: Colors.neutral.s600 },
           ]}>
           <View style={styles.main}>
             <View
@@ -73,7 +73,9 @@ export const WalletSetUpModal = ({
                 }>
                 It looks like you have not yet linked up a wallet
               </Text>
-              <BodyText colors={[Colors.primary.s600, Colors.primary.neutral]}>
+              <BodyText
+                changingColorScheme
+                colors={[Colors.primary.s600, Colors.primary.neutral]}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Vestibulum venenatis quam sem, eget bibendum lorem convallis et.
                 Donec velit ante.

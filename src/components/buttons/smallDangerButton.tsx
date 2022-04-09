@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
   },
   button_light: {
     backgroundColor: applyOpacity(Colors.danger.s300, 0.2),
-    color: Colors.danger.s400,
     borderColor: Colors.danger.s400,
     borderWidth: Outlines.borderWidth.base,
   },
@@ -64,5 +63,7 @@ const styles = StyleSheet.create({
   buttonText_light: {
     color: Colors.danger.s400,
   },
-  buttonText_dark: {},
+  buttonText_dark: {
+    color: Colors.primary.neutral,
+  },
 })

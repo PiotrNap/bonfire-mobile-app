@@ -1,23 +1,23 @@
 import * as React from "react"
 import { View, StyleSheet, useWindowDimensions } from "react-native"
 
-import { ErrorIcon } from "assets/icons"
-import { Errors } from "common/types/errors"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Colors, Outlines, Sizing } from "styles/index"
 import Modal from "react-native-modal"
 
-export interface ErrorModalProps {
+export interface SlideTopModalProps {
   isModalVisible: boolean
-  errorType: string
+  icon: any
+  modalContent: string
   errorHideCallback?: () => void
 }
 
-export const ErrorModal = ({
+export const SlideTopModal = ({
   isModalVisible,
   errorHideCallback,
-  errorType,
-}: ErrorModalProps) => {
+  modalContent,
+  icon,
+}: SlideTopModalProps) => {
   const [isVisible, setIsVisible] = React.useState<boolean>(isModalVisible)
   const { width, height } = useWindowDimensions()
 
@@ -50,15 +50,8 @@ export const ErrorModal = ({
       onSwipeComplete={() => setIsVisible(false)}
       style={styles.modal}>
       <View style={styles.main}>
-        <ErrorIcon
-          stroke={Colors.primary.neutral}
-          width={Sizing.x60}
-          height={Sizing.x60}
-          strokeWidth={1.5}
-        />
-        <SubHeaderText customStyle={styles.text}>
-          {Errors[`${errorType}`]}
-        </SubHeaderText>
+        {icon}
+        <SubHeaderText customStyle={styles.text}>{modalContent}</SubHeaderText>
       </View>
     </Modal>
   )

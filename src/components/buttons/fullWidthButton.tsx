@@ -5,6 +5,7 @@ import {
   StyleProp,
   ActivityIndicator,
   LayoutChangeEvent,
+  ViewStyle,
 } from "react-native"
 
 import { Buttons, Colors } from "styles/index"
@@ -12,7 +13,9 @@ import { Buttons, Colors } from "styles/index"
 export interface FullWidthButton {
   onPressCallback: () => any | Promise<void>
   text: string
+  loadingIndicatorStyle?: ViewStyle
   loadingIndicator?: boolean
+  isOnboarding?: boolean
   colorScheme?: "light" | "dark"
   disabled?: boolean
   buttonType?: "filled" | "transparent"
@@ -25,9 +28,11 @@ export const FullWidthButton = ({
   colorScheme,
   onPressCallback,
   loadingIndicator,
+  loadingIndicatorStyle,
   text,
   disabled,
   buttonType = "filled",
+  isOnboarding = false,
   style,
   textStyle,
   lightMode,
@@ -92,12 +97,19 @@ export const FullWidthButton = ({
       </Text>
       {loadingIndicator && pressableWidth && textWidth && (
         <ActivityIndicator
-          color={Colors.primary.neutral}
+          color={
+            isOnboarding
+              ? Colors.primary.neutral
+              : isLightMode
+              ? Colors.primary.neutral
+              : Colors.primary.s800
+          }
           size="small"
           animating={true}
           style={{
             position: "absolute",
             right: pressableWidth / 2 - textWidth / 2 - 25,
+            ...loadingIndicatorStyle,
           }}
         />
       )}
