@@ -1,4 +1,9 @@
-import { Dimensions, Platform } from "react-native"
+import {
+  Dimensions,
+  Platform,
+  PermissionsAndroid,
+  Permission,
+} from "react-native"
 import { randomBytes } from "react-native-randombytes"
 import * as yup from "yup"
 import {
@@ -10,15 +15,6 @@ import {
 } from "interfaces/myCalendarInterface"
 import { months, monthsByName, weekDays } from "common/types/calendarTypes"
 import { AnyObject } from "yup/lib/types"
-
-/**
- *  TODO
- *  In the future we would want to fetch the scheduled events and user
- *  availabilities from an API and build our calendar base on the data
- *  received. For now, we'll be using a dummy object data.
- */
-// import { customScheduledEvents } from "../api_data/customScheduledEvents.js";
-// import { customAvailabilities } from "../api_data/customAvailabilities.js";
 
 const IS_ANDROID = Platform.OS === "android"
 const IS_IOS = Platform.OS === "ios"
@@ -35,6 +31,28 @@ export function getDeepLinkUri(path: String = ""): String {
     return path ? dl + "/" + path : dl
   } else {
     return path ? scheme + path : scheme
+  }
+}
+
+export const requestAndroidPermission = async (
+  permission: Permission,
+  reason: string
+) => {
+  try {
+    const isGranted = await PermissionsAndroid.request(permission, {
+      title: "Bonfire app needs your permission",
+      message: `We need you permission for ` + reason,
+      buttonNeutral: "Ask me later",
+      buttonPositive: "OK",
+      buttonNegative: "Cancel",
+    })
+
+    if (IS_ANDROID && isGranted !== PermissionsAndroid.RESULTS.GRANTED) {
+      return false
+    }
+    return true
+  } catch (err) {
+    return false
   }
 }
 
@@ -451,7 +469,6 @@ export function getCalendarMonth(
     monthsWithDays.reverse()
     return monthsWithDays
   }
-
   return monthsWithDays
 }
 
