@@ -73,6 +73,7 @@ export const MonthlyWrapper = ({
   var animatedTranslateX = React.useRef(new Animated.Value(0)).current
   var animatedTranslateXSlideIn = React.useRef(new Animated.Value(0)).current
 
+  const isDarkMode = colorScheme === "dark"
   const isNotNextYear =
     calendar[currIndex + 1]?.year !== new Date().getFullYear()
   const isNotPreviousYear =
@@ -125,7 +126,6 @@ export const MonthlyWrapper = ({
       easing: Easing.sin,
       useNativeDriver: true,
     }).start()
-    console.log("after initial animation")
     setInitialHasLoaded(true)
   }
 
@@ -141,18 +141,12 @@ export const MonthlyWrapper = ({
     if (direction === "next") onNextStartAnimation()
   }
 
-  // React.useEffect(
-  //   () => console.log("dimensions changed", dimensions),
-  //   [dimensions]
-  // );
-
   const WeekComponent = React.useCallback(() => {
     return <WeekDayNames isNewEventCalendar={isNewEventCalendar} />
   }, [monthsArray, selectedWeekDays])
 
   const CurrMonth = React.useCallback(
     ({ item, position }: { item: Month; position: string }) => {
-      console.log("dimensions are: ", dimensions)
       return (
         <Animated.View
           style={[
@@ -286,29 +280,30 @@ export const MonthlyWrapper = ({
   }
 
   React.useEffect(() => {
-    console.log(isLoading, fetchedEventsFrom)
     // if we've fetched new events but user has already
     // changed to another month, just return.
     if (!isRegularCalendar || isLoading || !fetchedEventsFrom) return
 
-    const month = monthsByName[monthsArray[currIndex].name]
-    const year = monthsArray[currIndex].year
     const isNextMonth = fetchedEventsFrom.direction === "right"
+    const index = isNextMonth ? currIndex + 1 : currIndex - 1
+    const month = monthsByName[monthsArray[index].name]
+    const year = monthsArray[currIndex].year
     const isSameMonth =
       fetchedEventsFrom.month === month && fetchedEventsFrom.year === year
 
     if (!isSameMonth) return
 
-    console.log("updating calendar month after events fetching")
-    setEvents(tempEvents)
-    setFetchedEventsFrom(null)
-    updateCalendarMonth({
+    const newCalendarSettings = {
       nextMonths: isNextMonth,
       month,
       year,
       isBookingCalendar,
       isRegularCalendar,
-    })
+    }
+
+    setEvents(tempEvents)
+    setFetchedEventsFrom(null)
+    updateCalendarMonth(newCalendarSettings)
   }, [tempEvents])
 
   React.useEffect(() => {
@@ -317,7 +312,6 @@ export const MonthlyWrapper = ({
         const month = monthsByName[monthsArray[currIndex].name]
         const year = monthsArray[currIndex].year
 
-        console.log("fetching new events")
         try {
           const _events = await fetchEvents(new Date(year, month), false)
 
@@ -328,16 +322,14 @@ export const MonthlyWrapper = ({
           }
 
           setEventsLoading(false)
-          console.log("setting direction to null")
         } catch (err) {
           return
         }
-        console.log("after fetching")
       })()
   }, [eventsLoading])
 
   React.useEffect(() => {
-    if (!initialHasLoaded && isRegularCalendar) {
+    if (!initialHasLoaded) {
       setMonthsArray(calendar)
       setInitialHasLoaded(true)
     }
@@ -347,12 +339,10 @@ export const MonthlyWrapper = ({
         setDirection(null)
       } else setEventsLoading(true)
 
-      console.log("calendar has changed")
       setIsLoading(false)
       setMonthsArray(calendar)
       setCurrIndex(1)
     } else if (!fetchedEventsFrom && tempEvents) {
-      console.log("changing months array finally")
       setMonthsArray(calendar)
       setTempEvents(null)
     }
@@ -393,7 +383,11 @@ export const MonthlyWrapper = ({
             />
           </View>
         </View>
-        <View style={styles.calendar}>
+        <View
+          style={[
+            styles.calendar,
+            { backgroundColor: isDarkMode ? Colors.primary.neutral : "white" },
+          ]}>
           <WeekComponent />
           <View style={styles.calendarContainer} onLayout={onLayout}>
             {dimensions && calendar && (
@@ -448,7 +442,6 @@ const styles = StyleSheet.create({
     marginTop: Sizing.x5,
     paddingVertical: Sizing.x10,
     paddingHorizontal: Sizing.x10,
-    backgroundColor: "white",
     borderRadius: Outlines.borderRadius.base,
     ...Outlines.shadow.lifted,
   },

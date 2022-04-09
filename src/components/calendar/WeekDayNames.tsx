@@ -1,7 +1,11 @@
 import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { eventCreationContext, myCalendarContext } from "contexts/contextApi"
+import {
+  appContext,
+  eventCreationContext,
+  myCalendarContext,
+} from "contexts/contextApi"
 import { Typography, Colors, Sizing, Outlines } from "../../styles"
 import { getRecurringMonthDays } from "lib/helpers"
 import { getTime } from "lib/utils"
@@ -28,13 +32,11 @@ export const WeekDayNames = ({
   customCallback?: (arg: boolean) => void
 }) => {
   const { calendarHeader } = myCalendarContext()
-  const {
-    setSelectedDays,
-    selectedDays,
-    setSelectedWeek,
-    selectedWeekDays,
-  } = eventCreationContext()
+  const { setSelectedDays, selectedDays, setSelectedWeek, selectedWeekDays } =
+    eventCreationContext()
+  const { colorScheme } = appContext()
   const { month, year } = calendarHeader
+  const isDarkMode = colorScheme === "dark"
   const isSelectedDay = (index: number) =>
     !!selectedWeekDays.length &&
     !!selectedWeekDays[currMonthSelectedWeekIndex()]?.[index]
@@ -81,7 +83,15 @@ export const WeekDayNames = ({
         {weekDays.map((day, i) =>
           !isNewEventCalendar ? (
             <View key={`day-${i}`} style={[styles.dayContainer]}>
-              <View style={[styles.dayPlaceholder]}>
+              <View
+                style={[
+                  styles.dayPlaceholder,
+                  {
+                    backgroundColor: isDarkMode
+                      ? Colors.primary.neutral
+                      : "white",
+                  },
+                ]}>
                 <Text
                   style={[
                     styles.dayTitle,
@@ -149,7 +159,6 @@ const styles = StyleSheet.create({
     height: 33,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
   },
   dayButton: {
     width: 33,

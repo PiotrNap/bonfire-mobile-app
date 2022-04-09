@@ -46,6 +46,8 @@ export const CalendarLegend = ({
               Limited availability
             </Text>
           </View>
+          {/*
+          // TODO Do our organizers want people to know if they're fully booked?
           <View style={styles.dotLine}>
             <SingleColorDot style={styles.dot} color={"#FECACA"} />
             <Text
@@ -56,6 +58,7 @@ export const CalendarLegend = ({
               Fully booked
             </Text>
           </View>
+          */}
         </>
       ) : isRegularCalendar ? (
         <>
