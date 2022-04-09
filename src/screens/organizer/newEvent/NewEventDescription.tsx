@@ -41,7 +41,7 @@ export const NewEventDescription = ({ navigation, route }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <KeyboardAwareScrollView

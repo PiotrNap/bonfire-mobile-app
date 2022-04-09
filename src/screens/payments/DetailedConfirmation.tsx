@@ -105,7 +105,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <View style={styles.container}>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   headerText_dark: {
     ...Typography.header.x50,
-    color: Colors.primary.s600,
+    color: Colors.primary.neutral,
   },
   detailsWrapper: {
     flex: 1,

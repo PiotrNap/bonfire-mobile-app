@@ -172,7 +172,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <ScrollView
@@ -334,6 +334,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
         <View style={styles.enableColorsWrapper}>
           <BodyText
             customStyle={{ ...fontWeight.semibold, marginRight: Sizing.x5 }}
+            changingColorScheme={true}
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
             Colors {!transparent ? "enabled" : "disabled"}
           </BodyText>
@@ -343,7 +344,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               true: Colors.neutral.s800,
             }}
             thumbColor={
-              !isLightMode ? Colors.primary.s800 : Colors.primary.neutral
+              !isLightMode ? Colors.primary.s600 : Colors.primary.neutral
             }
             ios_backgroundColor={Colors.primary.brand}
             onValueChange={() => setTransparent((prev) => !prev)}

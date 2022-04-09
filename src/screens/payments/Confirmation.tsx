@@ -42,7 +42,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <View style={styles.navigation}>
@@ -63,7 +63,9 @@ export const Confirmation = ({ navigation, route }: Props) => {
             }>
             You're all set!
           </Text>
-          <BodyText colors={[Colors.primary.s600, Colors.primary.neutral]}>
+          <BodyText
+            changingColorScheme
+            colors={[Colors.primary.s600, Colors.primary.neutral]}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
             venenatis quam sem, eget bibendum lorem convallis et. Donec velit
             ante.

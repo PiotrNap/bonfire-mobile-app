@@ -143,7 +143,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <View style={{ height: "100%", width: "90%", alignItems: "center" }}>
@@ -259,14 +259,21 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
               marginLeft: "auto",
               marginRight: Sizing.x20,
             }}>
-            <Text style={{ ...fontWeight.bold, textAlign: "center" }}>
+            <Text
+              style={{
+                ...fontWeight.bold,
+                textAlign: "center",
+                color: isLightMode ? Colors.neutral.s600 : Colors.primary.s200,
+              }}>
               Select your time frame &{"\n"} add a new time slot!
             </Text>
             <CurvedArrow
               style={[
                 styles.arrowIcon,
                 //@ts-ignore
-                { fill: Colors.primary.s350 },
+                {
+                  fill: isLightMode ? Colors.primary.s350 : Colors.primary.s350,
+                },
               ]}
             />
           </View>

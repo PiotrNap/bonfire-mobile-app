@@ -33,8 +33,9 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
   const { setImageUri, imageURI } = eventCreationContext()
 
   const mainPositionAnimation = React.useRef<any>(new Animated.Value(0)).current
-  const secondPositionAnimation = React.useRef<any>(new Animated.Value(200))
-    .current
+  const secondPositionAnimation = React.useRef<any>(
+    new Animated.Value(200)
+  ).current
   const isLightMode = colorScheme === "light"
 
   React.useEffect(() => {
@@ -89,7 +90,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <View style={{ width: "100%", height: "100%", alignItems: "center" }}>
@@ -150,7 +151,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
               {
                 backgroundColor: isLightMode
                   ? Colors.primary.neutral
-                  : Colors.primary.s800,
+                  : Colors.neutral.s600,
               },
             ]}>
             <Animated.View

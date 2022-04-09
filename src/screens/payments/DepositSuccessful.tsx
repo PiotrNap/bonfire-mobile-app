@@ -11,8 +11,6 @@ import { BodyText } from "components/rnWrappers/bodyText"
 import { DepositSuccessfulIcon, LeftArrowIcon } from "assets/icons"
 import { AppStackParamList } from "common/types/navigationTypes"
 
-export interface DepositSuccessfulProps {}
-
 type Props = StackScreenProps<AppStackParamList, "Deposit Successful">
 
 export const DepositSuccessful = ({ navigation, route }: Props) => {
@@ -20,16 +18,17 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
   const buttonTitle = route.params?.isBookingWalletTopUp
     ? "Proceed to booking"
     : "Go back"
-
   const isLightMode = colorScheme === "light"
 
   const navigateBack = async () => {
-    if (route.params?.fromScreen != null) {
+    const { params } = route
+
+    if (params?.fromScreen != null) {
       // This will set the index of page on "User Registration Screens"
       if (ref) await ref.current.setPage(2)
 
-      if (route.params?.fromScreen) {
-        const fromScreen = route.params.fromScreen
+      if (params?.fromScreen) {
+        const fromScreen = params.fromScreen
         navigation.navigate(fromScreen)
       }
     } else {
@@ -47,7 +46,7 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
         {
           backgroundColor: isLightMode
             ? Colors.primary.neutral
-            : Colors.primary.s600,
+            : Colors.neutral.s600,
         },
       ]}>
       <View style={styles.navigation}>
@@ -70,6 +69,7 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
           </Text>
           <BodyText
             customStyle={styles.bodyText}
+            changingColorScheme={true}
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
             venenatis quam sem, eget bibendum lorem convallis et. Donec velit

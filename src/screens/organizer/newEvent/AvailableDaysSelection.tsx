@@ -4,8 +4,8 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
-  Linking,
   Text,
+  Linking,
 } from "react-native"
 
 import { CheckIcon, LeftArrowIcon } from "assets/icons"
@@ -14,22 +14,28 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Outlines, Sizing } from "styles/index"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { StackScreenProps } from "@react-navigation/stack"
-import { EventCreationParamList } from "common/types/navigationTypes"
+import {
+  DEEP_LINKING_PATHS,
+  EventCreationParamList,
+} from "common/types/navigationTypes"
 import { MonthlyWrapper } from "components/calendar"
 import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
-import { ErrorModal } from "components/modals/errorModal"
+import { SlideTopModal } from "components/modals/errorModal"
+import { createNestedPath } from "lib/navigation"
+import { HintBox } from "components/modals/HintBox"
+import { ErrorIcon } from "assets/icons"
 import * as qs from "qs"
-import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<
   EventCreationParamList,
   "Available Days Selection"
 >
 
-export const AvailableDaysSelection = ({ navigation }: Props) => {
+export const AvailableDaysSelection = (props: Props) => {
+  const navigation = props.navigation
   const { colorScheme } = appContext()
   const {
     selectedDays,
@@ -40,34 +46,28 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
   const {
     isRequesting,
     isValidOauth,
+    setIsValidOauth,
     isLoading,
-    requestAccess,
+    startGoogleAuthentication,
   } = useGoogleAuth()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
 
-  const listener = {
-    start: function () {
-      Linking.addEventListener("url", (event) => {
-        const query = qs.parse(event.url.split("?")[1])
-        const { success } = query
+  const eventListener = React.useCallback((event: { url: string }) => {
+    const query = qs.parse(event.url.split("?")[1])
+    const { success } = query
 
-        if (success === "false") {
-          setError({ isVisible: true, type: "GoogleOauth" })
-        }
+    if (success === "false") {
+      setError({ isVisible: true, type: "GoogleOauth" })
+    }
 
-        if (success === "true") navigation.navigate("Available Time Selection")
-      })
-    },
-    remove: function () {
-      Linking.removeEventListener("url", this.start)
-    },
-  }
+    setIsValidOauth(true)
+    if (success === "true") navigation.navigate("Available Time Selection")
+  }, [])
 
   React.useEffect(() => {
-    listener.start()
-
-    return () => listener.remove()
+    Linking.addEventListener("url", eventListener)
+    return () => Linking.removeEventListener("url", eventListener)
   }, [])
 
   const isLightMode = colorScheme === "light"
@@ -88,7 +88,12 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
 
     if (acceptedCheckbox)
       try {
-        await requestAccess()
+        await startGoogleAuthentication(
+          createNestedPath([
+            DEEP_LINKING_PATHS.NAVIGATION,
+            DEEP_LINKING_PATHS.AVAILABLE_DAYS_SELECTION,
+          ])
+        )
       } catch (e) {}
 
     const selectedDaysKeys = Object.keys(selectedDays)
@@ -100,6 +105,15 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
     if (!acceptedCheckbox) navigation.navigate("Available Time Selection")
   }
 
+  const ErrorModalIcon = React.memo(() => (
+    <ErrorIcon
+      stroke={Colors.primary.neutral}
+      width={Sizing.x60}
+      height={Sizing.x60}
+      strokeWidth={1.5}
+    />
+  ))
+
   return (
     <>
       <SafeAreaView
@@ -108,7 +122,7 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
           {
             backgroundColor: isLightMode
               ? Colors.primary.neutral
-              : Colors.primary.s600,
+              : Colors.neutral.s600,
           },
         ]}>
         <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
@@ -130,22 +144,16 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
               Select dates you are available to host event
             </HeaderText>
           </View>
+          <HintBox
+            text="Press on a day to
+        select one, or tap on a day name to select them all."
+            closeable={true}
+          />
+          <View style={styles.messageWrapper}></View>
           <ScrollView showsVerticalScrollIndicator={false}>
             <CalendarWrapperSimple>
               <MonthlyWrapper isNewEventCalendar={true} />
             </CalendarWrapperSimple>
-            <View style={styles.messageWrapper}>
-              <BodyText
-                customStyle={{
-                  fontFamily: "Roboto-Regular",
-                  fontSize: Sizing.x14,
-                  width: "90%",
-                }}
-                colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                * <Text style={{ ...fontWeight.bold }}>Hint:</Text> Press on a
-                day to select it or tap on a day name to select them all.
-              </BodyText>
-            </View>
             {!isValidOauth && !isLoading && (
               <View style={styles.messageWrapper}>
                 <Pressable
@@ -184,10 +192,11 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
                     fontSize: Sizing.x14,
                     width: "90%",
                   }}
+                  changingColorScheme
                   colors={[Colors.primary.s800, Colors.primary.neutral]}>
                   Attendees schedule time on my Google calendar
                   {"\n"}
-                  Next: grant access
+                  <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant access
                 </BodyText>
               </View>
             )}
@@ -203,7 +212,11 @@ export const AvailableDaysSelection = ({ navigation }: Props) => {
           />
         </View>
       </SafeAreaView>
-      <ErrorModal isModalVisible={error.isVisible} errorType={error.type} />
+      <SlideTopModal
+        icon={ErrorModalIcon}
+        isModalVisible={error.isVisible}
+        modalContent={error.type}
+      />
     </>
   )
 }
