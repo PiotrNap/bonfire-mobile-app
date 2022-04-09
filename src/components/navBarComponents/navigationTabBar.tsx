@@ -92,13 +92,13 @@ export const NavigationTabBar = ({
       if (colorScheme == "dark" && isFocused) {
         return [
           styles.navBarButton_dark,
-          { backgroundColor: Colors.primary.neutral },
+          { backgroundColor: Colors.primary.brand },
         ]
       }
       if (colorScheme == "dark" && !isFocused) {
         return [
           styles.navBarButton_dark,
-          { backgroundColor: Colors.primary.brand },
+          { backgroundColor: Colors.primary.neutral },
         ]
       }
     }
@@ -111,10 +111,10 @@ export const NavigationTabBar = ({
         return Colors.primary.s600
       }
       if (colorScheme == "dark" && isFocused) {
-        return Colors.primary.s600
+        return Colors.neutral.s100
       }
       if (colorScheme == "dark" && !isFocused) {
-        return Colors.primary.s200
+        return Colors.primary.s600
       }
     }
 
@@ -163,9 +163,9 @@ const styles = StyleSheet.create({
   },
   container_dark: {
     flexDirection: "row",
-    borderTopWidth: Outlines.borderWidth.hairline,
-    borderTopColor: Colors.primary.brand,
-    backgroundColor: Colors.primary.s600,
+    borderTopWidth: Outlines.borderWidth.thin,
+    borderTopColor: Colors.neutral.s400,
+    backgroundColor: Colors.neutral.s600,
   },
   navBarButtonWrapper: {
     flex: 1,
