@@ -55,6 +55,7 @@
     "react-native-randombytes": "^3.6.1",
     "react-native-reanimated": "^2.2.1",
     "react-native-responsive-screen": "^1.4.2",
+    "react-native-restart": "^0.0.24",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.0.0",
     "react-native-slider-color-picker": "^2.2.2",

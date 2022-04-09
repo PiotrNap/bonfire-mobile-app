@@ -1,20 +1,36 @@
 import * as React from "react"
 import { Alert, Platform, Pressable, StyleSheet, View } from "react-native"
+import { StackScreenProps } from "@react-navigation/stack"
+import RNRestart from "react-native-restart"
+
 import { LeftArrowIcon } from "assets/icons"
-import { Layout } from "screens/layouts/basicLayout"
+import { Layout } from "components/layouts/basicLayout"
 
 import { Colors, Sizing, Typography } from "styles/index"
-import { appContext } from "contexts/contextApi"
-import { StackScreenProps } from "@react-navigation/stack"
+import {
+  appContext,
+  bookingContext,
+  eventCreationContext,
+  myCalendarContext,
+} from "contexts/contextApi"
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { SettingsItem } from "components/profile/settingsItem"
 import { SmallDangerButton } from "components/buttons/smallDangerButton"
-import { removeFromEncryptedStorage } from "lib/encryptedStorage"
+import {
+  getFromEncryptedStorage,
+  removeFromEncryptedStorage,
+} from "lib/encryptedStorage"
+import { ProfileContext } from "contexts/profileContext"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
 export const UserProfileSettings = ({ navigation }: ScreenProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, resetAppState } = appContext()
+  const { resetCalendarState } = myCalendarContext()
+  const { resetBookingState } = bookingContext()
+  const { resetEventCreationState } = eventCreationContext()
+
+  const { resetProfileState } = React.useContext(ProfileContext)
   const isLightMode = colorScheme === "light"
   const isAndroid = Platform.OS === "android"
 
@@ -26,7 +42,18 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     await removeFromEncryptedStorage("pubKey")
     // TODO uncomment this once wallet is implemented
     // await removeFromEncryptedStorage("seedPhrase")
+
+    RNRestart.Restart()
+
+    // clear state
+    resetAppState()
+    resetCalendarState()
+    resetBookingState()
+    resetEventCreationState()
+    // user profile context has different structure..
+    resetProfileState()
   }
+
   const showWarningModal = () => {
     Alert.alert(
       "Beware!",
@@ -43,7 +70,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           onPress: () =>
             Alert.alert(
               "You are safe",
-              "None of your credentials were removed. You can continue using the application."
+              "None of your credentials were removed. You can continue enjoying this application."
             ),
         },
       ],
@@ -67,7 +94,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       <SettingsItem
         titleStyle={textStyle}
         title={
-          "Remove all application data \n(includes private & public keys)"
+          "Remove all stored application data \n(includes private & public keys)."
         }>
         <SmallDangerButton onPressCallback={showWarningModal} text="Delete" />
       </SettingsItem>
