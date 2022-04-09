@@ -13,6 +13,7 @@ import {
 import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
 import { Picker } from "@react-native-picker/picker"
 import { DownIcon } from "assets/icons"
+import { appContext } from "contexts/contextApi"
 
 export interface PlainInputPickerProps {
   label: string
@@ -20,7 +21,6 @@ export interface PlainInputPickerProps {
   maxTime?: number
   inputRange: any[]
   styles?: any
-  isLightMode?: boolean
   enabledPicker: boolean
   openPicker: string | null
   onValueChange: (val: number) => void
@@ -28,21 +28,20 @@ export interface PlainInputPickerProps {
 }
 
 export const PlainInputPicker = (props: PlainInputPickerProps) => {
+  const { colorScheme } = appContext()
   const [, setIconAnimationValue] = React.useState<number>(0)
-  const [
-    dropDownAnimationValue,
-    setDropDownAnimationValue,
-  ] = React.useState<number>(0)
+  const [dropDownAnimationValue, setDropDownAnimationValue] =
+    React.useState<number>(0)
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
     null
   )
   const [showPicker, setShowPicker] = React.useState<boolean>(false)
   const [inputValue, setInputValue] = React.useState<any>(null)
+  const isLightMode = colorScheme === "light"
   var {
     label,
     inputRange,
     styles,
-    isLightMode = true,
     minTime,
     maxTime,
     openPicker,

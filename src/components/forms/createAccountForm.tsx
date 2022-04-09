@@ -35,9 +35,8 @@ export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,
 }: CreateAccountFormProps) => {
-  const { profileType, setUsername, setId, setName } = React.useContext(
-    ProfileContext
-  )
+  const { profileType, setUsername, setId, setName } =
+    React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [submitted, setSubmitted] = React.useState<boolean>(false)
@@ -88,8 +87,8 @@ export const CreateAccountForm = ({
 
     if (publicKey && secretKey) {
       // store private key in encrypted storage as base64
-      setToEncryptedStorage("secret", base64.fromByteArray(secretKey))
-      setToEncryptedStorage("public", base64.fromByteArray(publicKey))
+      setToEncryptedStorage("privKey", base64.fromByteArray(secretKey))
+      setToEncryptedStorage("pubKey", base64.fromByteArray(publicKey))
 
       try {
         values.publicKey = base64.fromByteArray(publicKey)
@@ -106,12 +105,12 @@ export const CreateAccountForm = ({
           setName(name)
 
           // start challenge and get JWT
-          const loginResponseDTO = await startChallengeSequence(id, true)
+          const authResponseDTO = await startChallengeSequence(id, true)
 
-          if (loginResponseDTO) {
-            const { accessToken } = loginResponseDTO
+          if (authResponseDTO) {
+            const { accessToken } = authResponseDTO
             setAuthorizationToken(accessToken)
-            setToEncryptedStorage("accessToken", accessToken)
+            setToEncryptedStorage("auth-credentials", authResponseDTO)
           }
 
           setSubmitted(true)
@@ -189,7 +188,7 @@ export const CreateAccountForm = ({
                   opacity={animatedOpacity}
                   width="15"
                   height="15"
-                  strokeWidth="3.5"
+                  strokeWidth="4"
                   stroke={Colors.primary.s600}
                 />
               </View>
@@ -212,6 +211,7 @@ export const CreateAccountForm = ({
             text={"Create account"}
             textStyle={styles.submitButtonText}
             disabled={!isValid}
+            isOnboarding
           />
         </>
       )}

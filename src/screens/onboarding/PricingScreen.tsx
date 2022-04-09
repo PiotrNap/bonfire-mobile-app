@@ -116,7 +116,7 @@ export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
               color={Colors.primary.neutral}
               width={18}
               height={18}
-              strokeWidth={3}
+              strokeWidth={4}
               style={styles.backButtonIcon}
             />
           </Pressable>

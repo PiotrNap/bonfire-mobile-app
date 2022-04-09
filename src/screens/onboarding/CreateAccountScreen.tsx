@@ -11,7 +11,9 @@ import {
 } from "icons/index"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { ProfileContext } from "contexts/profileContext"
-import { ErrorModal } from "components/modals/errorModal"
+import { SlideTopModal } from "components/modals/errorModal"
+import { ErrorIcon } from "assets/icons"
+import { Errors } from "common/types/errors"
 
 const SCREEN_WIDTH = Dimensions.get("screen").width
 
@@ -20,9 +22,8 @@ export interface CreateAccountScreenProps {
 }
 
 export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
-  const { profileType, setProfileType, setUsername } = React.useContext(
-    ProfileContext
-  )
+  const { profileType, setProfileType, setUsername } =
+    React.useContext(ProfileContext)
   const [modalVisible, setModalVisible] = React.useState<boolean>(false)
   const [errorType, setErrorType] = React.useState<string>("")
 
@@ -44,6 +45,15 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
   const errorHideCallback = () => {
     setModalVisible(false)
   }
+
+  const ErrorModalIcon = React.memo(() => (
+    <ErrorIcon
+      stroke={Colors.primary.neutral}
+      width={Sizing.x60}
+      height={Sizing.x60}
+      strokeWidth={1.5}
+    />
+  ))
 
   return (
     <>
@@ -89,15 +99,16 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
               color={Colors.primary.neutral}
               width={18}
               height={18}
-              strokeWidth={3}
+              strokeWidth={4}
               style={styles.backButtonIcon}
             />
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
-      <ErrorModal
+      <SlideTopModal
+        icon={<ErrorModalIcon />}
+        modalContent={Errors[`${errorType}`]}
         errorHideCallback={errorHideCallback}
-        errorType={errorType}
         isModalVisible={modalVisible}
       />
     </>

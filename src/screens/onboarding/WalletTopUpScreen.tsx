@@ -34,18 +34,16 @@ export const WalletTopUpScreen = ({
   pagerRef,
 }: WalletTopUpScreenProps) => {
   const navigation = useNavigation()
-  const { colorScheme } = appContext()
+  const { colorScheme, receivingAddr } = appContext()
   const [isLightMode, setIsLightMode] = React.useState<boolean>(false)
   const [address, setAddress] = React.useState<string>("")
   const [amount, setAmount] = React.useState<string>("")
   const [copyMsgActive, setCopyMsgActive] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false)
-  const { hasSyncedWallet, walletBalance, setWalletBalance } = React.useContext(
-    ProfileContext
-  )
+  const { hasSyncedWallet, walletBalance, setWalletBalance } =
+    React.useContext(ProfileContext)
   const windowWidth = useWindowDimensions().width
-  const { fromScreen } = route.params
 
   const isRegistrationScreen = pagerRef?.current instanceof ViewPager
   const isBookingScreen = route != null && route.params?.isBookingScreen
@@ -151,10 +149,12 @@ export const WalletTopUpScreen = ({
               style={[
                 isLightMode ? styles.headerText_light : styles.headerText_dark,
               ]}>
-              {isBookingScreen ? "Add funds" : "Set up your wallet"}
+              {"Fund your wallet"}
             </Text>
             {isBookingScreen ? (
-              <BodyText colors={[Colors.primary.s600, Colors.primary.neutral]}>
+              <BodyText
+                changingColorScheme
+                colors={[Colors.primary.s600, Colors.primary.neutral]}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Vestibulum venenatis quam sem, eget bibendum lorem convallis et.
                 Donec velit ante, efficitur at ante eu, consequat hendrerit
@@ -175,14 +175,14 @@ export const WalletTopUpScreen = ({
           <View style={styles.main}>
             <View style={styles.qrCodeContainer}>
               <QRCode
-                value="https://gimbalabs.com"
+                value={receivingAddr || "addr9czf30t9"}
                 size={windowWidth / 2}
                 backgroundColor={Colors.primary.neutral}
               />
             </View>
             <CustomPlainInput
               label="Address"
-              placeholder="addr9czf30t9dzbdsxe79a2vtf8io"
+              placeholder="addr9czf30t9..."
               icon={DuplicateIcon}
               labelStyle={!isBookingScreen && { color: Colors.primary.neutral }}
               onChangeCallback={onTextChangeCallback}
@@ -191,7 +191,7 @@ export const WalletTopUpScreen = ({
             />
             <CustomPlainInput
               label="Amount"
-              placeholder="50 ₳"
+              placeholder="50"
               keyboardType="numeric"
               labelStyle={!isBookingScreen && { color: Colors.primary.neutral }}
               onChangeCallback={onAmountChangeCallback}
@@ -203,26 +203,10 @@ export const WalletTopUpScreen = ({
                 colorScheme={colorScheme}
                 disabled={isDisabled}
                 loadingIndicator={isLoading}
-                buttonType={!isLightMode ? "transparent" : "filled"}
+                buttonType={isLightMode ? "transparent" : "filled"}
                 lightMode={isLightMode}
               />
             </View>
-            {isRegistrationScreen && (
-              <View style={styles.backButtonSection}>
-                <Pressable
-                  onPress={onBackPress}
-                  style={Buttons.applyOpacity(styles.backButton)}>
-                  <Text style={styles.backButtonText}>Back</Text>
-                  <LeftArrowIcon
-                    color={Colors.primary.neutral}
-                    width={18}
-                    height={18}
-                    strokeWidth={3}
-                    style={styles.backButtonIcon}
-                  />
-                </Pressable>
-              </View>
-            )}
           </View>
         </KeyboardAwareScrollView>
         {isVisibleModal && WalletTopUpModal}
@@ -237,7 +221,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   safeArea_dark: {
-    backgroundColor: Colors.primary.s600,
+    backgroundColor: Colors.neutral.s600,
     alignItems: "center",
   },
   mainContainer: {
@@ -265,7 +249,7 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x25,
   },
   qrCodeContainer: {
-    padding: Sizing.x25,
+    padding: Sizing.x20,
     backgroundColor: Colors.primary.neutral,
     borderRadius: Outlines.borderRadius.base,
   },

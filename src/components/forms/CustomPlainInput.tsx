@@ -1,3 +1,4 @@
+import { appContext } from "contexts/contextApi"
 import * as React from "react"
 import {
   View,
@@ -17,7 +18,6 @@ export interface CustomPlainInputProps {
   label: string
   placeholder: string
   styles?: any
-  isLightMode?: boolean
   onPressHandler?: () => void
   icon?: any
   customChild?: React.ReactNode
@@ -33,6 +33,8 @@ export interface CustomPlainInputProps {
 
 export const CustomPlainInput = (props: CustomPlainInputProps) => {
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
+  const { colorScheme } = appContext()
+  const isLightMode = colorScheme === "light"
   var {
     icon,
     placeholder,
@@ -41,7 +43,6 @@ export const CustomPlainInput = (props: CustomPlainInputProps) => {
     customChild,
     onPressHandler,
     styles,
-    isLightMode = true,
     multiline,
     numberOfLines,
     maxChar,
@@ -92,7 +93,7 @@ export const CustomPlainInput = (props: CustomPlainInputProps) => {
         <TextInput
           style={[
             styles.input,
-            multiline != null ? { height: 90, textAlignVertical: "top" } : {},
+            multiline != null ? { height: 120, textAlignVertical: "top" } : {},
           ]}
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}

@@ -23,18 +23,10 @@ const SCREEN_WIDTH = Dimensions.get("screen").width
 
 export const RegistrationConfirmationScreen = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const {
-    profession,
-    jobTitle,
-    bio,
-    timeBlockCostADA,
-    skills,
-    id,
-  } = React.useContext(ProfileContext)
+  const { profession, jobTitle, bio, timeBlockCostADA, skills, id } =
+    React.useContext(ProfileContext)
   const { ref } = appContext()
   const { navigate } = useNavigation()
-
-  const { accountType, toggleAuth } = appContext()
 
   const onChangePress = () => ref.current.setPage(0)
   const emptyDetails =
@@ -43,8 +35,8 @@ export const RegistrationConfirmationScreen = () => {
   const onConfirm = async () => {
     setIsLoading(true)
     try {
-      const publicKey = await getFromEncryptedStorage("public")
-      const secretKey = await getFromEncryptedStorage("secret")
+      const publicKey = await getFromEncryptedStorage("pubKey")
+      const secretKey = await getFromEncryptedStorage("privKey")
 
       if (publicKey && secretKey) {
         var organizerProfileDto = new OrganizerProfileDto(
@@ -59,8 +51,8 @@ export const RegistrationConfirmationScreen = () => {
 
         if (res.status === 201) {
           // get challenge from server
-          const accessToken = await startChallengeSequence(id, true)
-          await setToEncryptedStorage("accessToken", accessToken)
+          const authResponseDTO = await startChallengeSequence(id, true)
+          await setToEncryptedStorage("auth-credentials", authResponseDTO)
           navigate("Navigation Screens", {
             profileType: "organizer",
           })
@@ -157,6 +149,7 @@ export const RegistrationConfirmationScreen = () => {
         buttonType="transparent"
         loadingIndicator={isLoading}
         text="Confirm"
+        isOnboarding
       />
     </KeyboardAwareScrollView>
   )

@@ -10,13 +10,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef }: any) => {
-  const {
-    setProfession,
-    setJobTitle,
-    setBio,
-    setSkills,
-    setTimeBlockCostADA,
-  } = React.useContext(ProfileContext)
+  const { setProfession, setJobTitle, setBio, setSkills, setTimeBlockCostADA } =
+    React.useContext(ProfileContext)
   const [_profession, _setProfession] = React.useState<string>("")
   const [_jobTitle, _setJobTitle] = React.useState<string>("")
   const [_bio, _setBio] = React.useState<string>("")
@@ -24,11 +19,11 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
   const [_skills, _setSkills] = React.useState<string>("")
 
   const submitBioState = () => {
-    setProfession(_profession)
-    setJobTitle(_jobTitle)
-    setBio(_bio)
+    setProfession(_profession.trim())
+    setJobTitle(_jobTitle.trim())
+    setBio(_bio.trim())
     setTimeBlockCostADA(_timeBlockCostAda)
-    setSkills(_skills)
+    setSkills(_skills.trim())
     pagerRef.current.setPage(1)
   }
 
@@ -44,43 +39,37 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
         </Text>
       </View>
       <View style={styles.formContainer}>
+        {/* we have to include 'labelStyle' due to StyleSheet inconsistency */}
         <CustomPlainInput
           label="Profession"
+          labelStyle={inputStyles.label}
           placeholder="Doctor, therapist, developer..."
           styles={inputStyles}
-          isLightMode={false}
           onChangeCallback={(val) => _setProfession(val)}
         />
         <CustomPlainInput
           label="Job Title"
+          labelStyle={inputStyles.label}
           placeholder="Full Stack Engineer, Sr Business..."
           styles={inputStyles}
-          isLightMode={false}
           onChangeCallback={(val) => _setJobTitle(val)}
         />
         {/* when handling events with multiline, use ref._lastNativeText */}
         <CustomPlainInput
           label="About yourself"
+          labelStyle={inputStyles.label}
           multiline={true}
           numberOfLines={8}
           maxChar={250}
           placeholder="Passionate in helping others draw business goals and needs..."
           styles={inputStyles}
-          isLightMode={false}
           onChangeCallback={(val) => _setBio(val)}
         />
-        {/*<CustomPlainInput
-          label="Availability"
-          placeholder="weekly, weekends, mornings, e..."
-          styles={styles}
-          isLightMode={false}
-          onChangeCallback={() => {}}
-        />*/}
         <CustomPlainInput
           label="Skills"
+          labelStyle={inputStyles.label}
           placeholder="Organized, Motivated, Critical Th..."
           styles={inputStyles}
-          isLightMode={false}
           onChangeCallback={(val) => _setSkills(val)}
         />
       </View>
@@ -144,7 +133,7 @@ const inputStyles = StyleSheet.create({
     width: "100%",
   },
   label: {
-    ...Forms.inputLabel.primary,
+    ...Forms.inputLabel.primary_dark,
   },
   textInputWrapper: {
     width: "100%",

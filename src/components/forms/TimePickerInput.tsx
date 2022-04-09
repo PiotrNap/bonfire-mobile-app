@@ -14,6 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
 import { DownIcon } from "assets/icons"
 import { getDigitalTime } from "lib/utils"
+import { appContext } from "contexts/contextApi"
 
 export interface TimePickerInputProps {
   label: string
@@ -28,22 +29,21 @@ export interface TimePickerInputProps {
 export const TimePickerInput = (props: TimePickerInputProps) => {
   const [showTimePicker, setShowTimePicker] = React.useState<boolean>(false)
   const [iconAnimationValue, setIconAnimationValue] = React.useState<number>(0)
-  const [
-    dropDownAnimationValue,
-    setDropDownAnimationValue,
-  ] = React.useState<number>(0)
+  const [dropDownAnimationValue, setDropDownAnimationValue] =
+    React.useState<number>(0)
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
     null
   )
+  const { colorScheme } = appContext()
   var {
     label,
     styles,
-    isLightMode = true,
     timeValue,
     onValueChange,
     onOpenChange,
     openPicker,
   }: TimePickerInputProps = props
+  const isLightMode = colorScheme === "light"
   const iconRotationRef = React.useRef(new Animated.Value(0)).current
   const dropDownHeightRef = React.useRef(new Animated.Value(0)).current
   const os = Platform.OS
