@@ -4,31 +4,31 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { HomeScreen } from "screens/index"
 import { OrganizerTabParamList } from "common/types/navigationTypes"
 import { WalletScreen } from "screens/index"
-import { Calendar } from "containers/MyCalendar"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
 import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
 import { OrganizerHomeScreenStack } from "stacks/OrganizerHomeScreenStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
+import { MyEvents } from "screens/organizer/MyEvents"
 
 const NavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
 
 export const NavigationScreens = ({ route }: any) => {
-  const { setId, setUsername, setProfileType } = React.useContext(
-    ProfileContext
-  )
+  const { setId, setUsername, setProfileType } =
+    React.useContext(ProfileContext)
   const { accountType, toggleAuth } = appContext()
 
   React.useEffect(() => {
-    // if the params aren't empty, we are redirected from main App during login
-    if (route.params) {
+    // if the params aren't empty, we are redirected from
+    // main screens stack during login
+    if (Object.entries(route.params).length != 0) {
       const { profileType, username, id } = route.params
 
-      toggleAuth(true, profileType)
-      setId(id)
-      setProfileType(profileType)
-      setUsername(username)
+      profileType && toggleAuth(true, profileType)
+      id && setId(id)
+      profileType && setProfileType(profileType)
+      username && setUsername(username)
     }
   }, [])
 
@@ -44,7 +44,9 @@ export const NavigationScreens = ({ route }: any) => {
       />
       <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
       <NavigationTabs.Screen name="Wallet" component={WalletScreen} />
-      <NavigationTabs.Screen name="My Events" component={Calendar} />
+      {accountType === "organizer" && (
+        <NavigationTabs.Screen name="My Events" component={MyEvents} />
+      )}
       <NavigationTabs.Screen name="Profile" component={ProfileScreenStack} />
     </NavigationTabs.Navigator>
   )
