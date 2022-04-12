@@ -16,10 +16,7 @@ import {
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { SettingsItem } from "components/profile/settingsItem"
 import { SmallDangerButton } from "components/buttons/smallDangerButton"
-import {
-  getFromEncryptedStorage,
-  removeFromEncryptedStorage,
-} from "lib/encryptedStorage"
+import { clearEncryptedStorage } from "lib/encryptedStorage"
 import { ProfileContext } from "contexts/profileContext"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
@@ -36,12 +33,10 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
 
   const onBackNavigationPress = () => navigation.goBack()
   const removeStorageData = async () => {
-    // deletes: auth-credentials, privKey, pubKey, mnemonics(?)
-    await removeFromEncryptedStorage("auth-credentials")
-    await removeFromEncryptedStorage("privKey")
-    await removeFromEncryptedStorage("pubKey")
-    // TODO uncomment this once wallet is implemented
-    // await removeFromEncryptedStorage("seedPhrase")
+    // removes everything from encrypted storage
+    const success = await clearEncryptedStorage()
+
+    if (!success) return showFailedModal()
 
     RNRestart.Restart()
 
@@ -52,6 +47,21 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     resetEventCreationState()
     // user profile context has different structure..
     resetProfileState()
+  }
+
+  const showFailedModal = () => {
+    Alert.alert(
+      "Something went wrong",
+      "We were unable to remove Bonfire data stored on this device. Please try again. If the problem persists please contact our support.",
+      [
+        {
+          text: "Close",
+          style: "cancel",
+          onPress: () => {},
+        },
+      ],
+      isAndroid ? { cancelable: true } : {}
+    )
   }
 
   const showWarningModal = () => {
@@ -78,10 +88,10 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     )
   }
 
-  const { color: _, ...textStyle } = Typography.subHeader.x20
+  const { color: _, ...textStyle } = Typography.header.x20
 
   return (
-    <Layout>
+    <Layout scrollable>
       <View style={styles.navigation}>
         <Pressable onPress={onBackNavigationPress} hitSlop={10}>
           <LeftArrowIcon

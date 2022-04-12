@@ -12,6 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
+import ContentLoader, { Circle } from "react-content-loader/native"
+import Avatar from "react-native-boring-avatars"
 
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
@@ -23,40 +25,41 @@ import { useMediaAccess } from "lib/hooks/useMediaAccess"
 import { ProfileContext } from "contexts/profileContext"
 import { applyOpacity } from "../../styles/colors"
 import { Users } from "Api/Users"
-import { getApiUrl } from "lib/helpers"
 import { SettingsNavigationItem } from "components/profile/settingsNavigationItem"
 import { SettingsItem } from "components/profile/settingsItem"
+import { useUserInfo } from "lib/hooks/useUserInfo"
+import { convertBufferToBase } from "lib/utils"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
 
 export const UserProfile = ({ navigation }: UserProfileProps) => {
-  const { username: _username } = React.useContext(ProfileContext)
-  let username = "john"
+  const { isLoading } = useUserInfo() // fetch new user informations
+  const { getUserProfile } = React.useContext(ProfileContext)
   const { colorScheme, setColorScheme } = appContext()
+  const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
+  const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
-  const [currImage, setCurrImage] = React.useState<string>("")
-  const { mediaObj, launchImageLibrary } = useMediaAccess()
-  const { imageObj, launchCamera } = useCameraAccess()
+
+  const userInfo = getUserProfile()
+  const [currImage, setCurrImage] = React.useState<any>(userInfo.imageBase64)
+
+  console.log("user info ", userInfo)
 
   React.useEffect(() => {
-    /**
-     *  @TODO send the user selected image to our back end
-     */
-    if (mediaObj) {
-      //we only allow user to select one image, so take the first in array
-      const { uri } = mediaObj.assets[0]
+    const obj = mediaObj?.assets[0] || imageObj?.assets[0]
 
-      if (uri !== currImage) {
-        ;(async () => await Users.uploadUserImage(uri))()
-        setCurrImage(uri)
-      }
-    }
-    if (imageObj) {
-      const { uri } = imageObj.assets[0]
-      if (uri !== currImage) setCurrImage(uri)
-    }
-  }, [mediaObj, imageObj])
+    if (!obj && userInfo.imageBase64) return setCurrImage(userInfo.imageBase64)
+
+    if (obj)
+      (async () => {
+        const { uri } = obj
+        const { data } = await Users.uploadUserImage(uri)
+        if (data) setCurrImage(convertBufferToBase(data))
+      })()
+    setMediaObj(null)
+    setImgObj(null)
+  }, [mediaObj, imageObj, userInfo.imageBase64])
 
   const darkMode = colorScheme === "dark"
 
@@ -72,8 +75,8 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
   }
 
   const onImagePress = () => setImagePressed(true)
-
   const onImagePressOut = () => setImagePressed(false)
+  const updateCurrImage = () => setCurrImage("")
 
   return (
     <SafeAreaView
@@ -84,25 +87,16 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
         <NativeModal
           cameraAccessCb={launchCamera}
           mediaLibraryCb={launchImageLibrary}
+          onImageDeleted={updateCurrImage}
           child={
-            true ? (
+            currImage ? (
               <ImageBackground
                 source={{
-                  uri: getApiUrl(
-                    `/users/files/profile-image/d06c3a18-7093-44ee-8772-e7cc61ed9508`
-                  ),
+                  uri: `data:image/png;base64,${userInfo.imageBase64}`,
                 }}
                 onLoadEnd={() => console.log("finished loading image")}
                 imageStyle={styles.profilePicImage}
-                style={[
-                  styles.profilePic,
-                  darkMode
-                    ? {
-                        borderColor: Colors.primary.neutral,
-                        borderWidth: Outlines.borderWidth.base,
-                      }
-                    : {},
-                ]}>
+                style={styles.profilePic}>
                 <Pressable
                   onPressIn={onImagePress}
                   onPressOut={onImagePressOut}
@@ -119,29 +113,37 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
                 </Pressable>
               </ImageBackground>
             ) : (
-              <View
-                style={[
-                  styles.profilePicPlaceholder,
-                  {
-                    backgroundColor: Colors.neutral.s300,
-                  },
-                  darkMode && {
-                    borderColor: Colors.primary.neutral,
-                    borderWidth: Outlines.borderWidth.base,
-                  },
-                ]}>
+              <View style={styles.profilePicPlaceholder}>
                 <Pressable
                   onPressIn={onImagePress}
                   onPressOut={onImagePressOut}
                   onLongPress={onImageLongPress}
                   hitSlop={5}
                   pressRetentionOffset={5}
-                  style={[
-                    styles.profilePicWrapper,
-                    imagePressed ? { backgroundColor: "rgba(0,0,0,.15)" } : {},
-                  ]}>
-                  <Text style={styles.profilePicLetter}>{username[0]}</Text>
-                  <View style={styles.profilePicEdit}>
+                  style={styles.profilePicWrapper}>
+                  {!isLoading ? (
+                    <Avatar
+                      size={"100%"}
+                      name={userInfo.username}
+                      variant="beam"
+                      colors={[
+                        Colors.primary.s600,
+                        Colors.primary.s200,
+                        Colors.neutral.s100,
+                      ]}
+                    />
+                  ) : (
+                    <ContentLoader
+                      speed={0.5}
+                      width={Sizing.x85}
+                      height={Sizing.x85}
+                      viewBox={`0 0 ${Sizing.x85} ${Sizing.x85}`}
+                      foregroundColor={Colors.neutral.s150}
+                      backgroundColor={Colors.neutral.s100}>
+                      <Circle cx="50%" cy="50%" r={Sizing.x85 / 2} />
+                    </ContentLoader>
+                  )}
+                  <View style={[styles.profilePicEdit, {}]}>
                     <Text style={styles.profilePicEditText}>Edit</Text>
                   </View>
                 </Pressable>
@@ -150,17 +152,25 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
           }></NativeModal>
         <Text
           style={[
+            styles.headerText,
             colorScheme == "light"
               ? styles.headerText_ligth
               : styles.headerText_dark,
-          ]}>
-          {username}
+          ]}
+          numberOfLines={1}
+          ellipsizeMode="tail">
+          {userInfo.username}
         </Text>
         <Pressable
           style={Buttons.applyOpacity(
             colorScheme === "light" ? styles.button_light : styles.button_dark
           )}
-          onPress={() => navigation.navigate("Edit Profile")}>
+          onPress={() =>
+            navigation.navigate<"Edit Profile">({
+              name: "Edit Profile",
+              params: { userInfo },
+            })
+          }>
           <Text
             style={
               colorScheme === "light"
@@ -188,11 +198,11 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
           customStyle={{ marginTop: "auto" }}>
           <Switch
             trackColor={{
-              false: Colors.primary.brand,
-              true: Colors.primary.neutral,
+              false: Colors.neutral.s400,
+              true: Colors.primary.brand,
             }}
-            thumbColor={darkMode ? Colors.primary.s600 : Colors.primary.neutral}
-            ios_backgroundColor={Colors.primary.brand}
+            thumbColor={Colors.primary.neutral}
+            ios_backgroundColor={Colors.neutral.s400}
             onValueChange={setDarkMode}
             value={darkMode}
             style={{ marginLeft: "auto" }}
@@ -218,15 +228,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: Sizing.x30,
   },
-  headerText_ligth: {
+  headerText: {
     ...Typography.header.x45,
-    color: Colors.primary.s600,
     marginVertical: Sizing.x8,
+    maxWidth: "60%",
+  },
+  headerText_ligth: {
+    color: Colors.primary.s600,
   },
   headerText_dark: {
-    ...Typography.header.x45,
     color: Colors.primary.neutral,
-    marginVertical: Sizing.x8,
   },
   mainNavigation: {
     flex: 1,
@@ -273,7 +284,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   profilePic: {
+    backgroundColor: Colors.neutral.s200,
     borderRadius: Outlines.borderRadius.max,
+    borderColor: Colors.primary.neutral,
+    borderWidth: Outlines.borderWidth.base,
     width: Sizing.x85,
     height: Sizing.x85,
     overflow: "hidden",
@@ -283,6 +297,9 @@ const styles = StyleSheet.create({
     width: Sizing.x85,
     height: Sizing.x85,
     overflow: "hidden",
+    backgroundColor: Colors.neutral.s300,
+    borderColor: Colors.primary.neutral,
+    borderWidth: Outlines.borderWidth.base,
   },
   profilePicLetter: {
     alignSelf: "center",
