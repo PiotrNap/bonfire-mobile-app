@@ -10,7 +10,7 @@ import {
   Forms,
   Outlines,
 } from "styles/index"
-import { createAccountValidationScheme } from "lib/utils"
+import { accountValidationScheme } from "lib/utils"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"
 import { setAuthorizationToken } from "Api/base"
@@ -117,7 +117,7 @@ export const CreateAccountForm = ({
           toggleAuth(true, profileType)
 
           if (profileType === "attendee") {
-            navigation.navigate("Navigation Screens")
+            navigation.navigate("Attendee Navigation Screens")
           } else if (profileType === "organizer") {
             navigation.navigate("User Registration Screens")
           }
@@ -140,7 +140,7 @@ export const CreateAccountForm = ({
 
   return (
     <Formik
-      validationSchema={createAccountValidationScheme()}
+      validationSchema={accountValidationScheme()}
       validateOnChange={submitted}
       validateOnBlur={submitted}
       initialValues={{
@@ -316,16 +316,13 @@ const inputStyles = StyleSheet.create({
     borderColor: Colors.danger.s300,
   },
   errorWrapper: {
-    alignSelf: "center",
-    height: 22, // inspect element in expo to see how much pixels it needs
-    paddingHorizontal: Sizing.x8,
-    marginTop: Sizing.x5,
     justifyContent: "center",
-    backgroundColor: Colors.danger.s300,
-    borderRadius: Outlines.borderRadius.base,
+    alignItems: "center",
+    alignSelf: "center",
+    height: Sizing.x20,
   },
   error: {
-    ...Forms.inputLabel.error,
-    color: Colors.primary.neutral,
+    color: Colors.danger.s400,
+    ...Typography.header.x20,
   },
 })
