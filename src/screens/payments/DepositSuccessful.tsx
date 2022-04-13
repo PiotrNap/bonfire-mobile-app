@@ -6,7 +6,7 @@ import { StackScreenProps } from "@react-navigation/stack"
 
 import { Colors, Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
-import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { FullWidthButtonProps } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { DepositSuccessfulIcon, LeftArrowIcon } from "assets/icons"
 import { AppStackParamList } from "common/types/navigationTypes"

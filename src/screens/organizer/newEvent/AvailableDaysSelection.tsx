@@ -23,7 +23,7 @@ import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
-import { SlideTopModal } from "components/modals/errorModal"
+import { SlideTopModal } from "components/modals/slideTopModal"
 import { createNestedPath } from "lib/navigation"
 import { HintBox } from "components/modals/HintBox"
 import { ErrorIcon } from "assets/icons"
@@ -216,6 +216,7 @@ export const AvailableDaysSelection = (props: Props) => {
         icon={ErrorModalIcon}
         isModalVisible={error.isVisible}
         modalContent={error.type}
+        backgroundColor={Colors.danger.s300}
       />
     </>
   )

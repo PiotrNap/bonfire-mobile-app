@@ -52,11 +52,12 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           labelStyle={inputStyles.label}
           placeholder="Full Stack Engineer, Sr Business..."
           styles={inputStyles}
+          textContentType="jobTitle"
           onChangeCallback={(val) => _setJobTitle(val)}
         />
         {/* when handling events with multiline, use ref._lastNativeText */}
         <CustomPlainInput
-          label="About yourself"
+          label="About Yourself"
           labelStyle={inputStyles.label}
           multiline={true}
           numberOfLines={8}
@@ -75,7 +76,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
       </View>
       <View style={inputStyles.inputContainer}>
         <View style={inputStyles.labelContainer}>
-          <Text style={inputStyles.label}>Hourly rate</Text>
+          <Text style={inputStyles.label}>Hourly Rate (ADA)</Text>
         </View>
         <View style={inputStyles.textInputWrapper}>
           <TextInput

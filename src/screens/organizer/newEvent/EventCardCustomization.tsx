@@ -22,7 +22,7 @@ import {
   SliderSaturationPicker,
   SliderValuePicker,
 } from "react-native-slider-color-picker"
-import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { FullWidthButtonProps } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { applyOpacity } from "../../../styles/colors"
 import tinyColor from "tinycolor2"

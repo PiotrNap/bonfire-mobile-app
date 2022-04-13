@@ -16,7 +16,7 @@ export interface ConfirmationProps {}
 type Props = StackScreenProps<AppStackParamList, "Confirmation">
 
 export const Confirmation = ({ navigation, route }: Props) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, accountType } = appContext()
 
   const isLightMode = colorScheme === "light"
 
@@ -27,7 +27,14 @@ export const Confirmation = ({ navigation, route }: Props) => {
     if (route.params?.isBookingConfirmation != null) {
       navigation.reset({
         index: 0,
-        routes: [{ name: "Navigation Screens" }],
+        routes: [
+          {
+            name:
+              accountType === "organizer"
+                ? "Organizer Navigation Screens"
+                : "Attendee Navigation Screens",
+          },
+        ],
       })
     }
   }

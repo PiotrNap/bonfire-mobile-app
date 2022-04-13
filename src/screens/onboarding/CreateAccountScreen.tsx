@@ -2,7 +2,7 @@ import * as React from "react"
 import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native"
 
 import PagerView from "react-native-pager-view"
-import { CreateAccountForm } from "components/forms/createAccountForm"
+import { CreateAccountForm } from "components/forms/CreateAccountForm"
 import { Buttons, Colors, Sizing, Typography } from "styles/index"
 import {
   BusinessDecisionsIcon,
@@ -11,7 +11,7 @@ import {
 } from "icons/index"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { ProfileContext } from "contexts/profileContext"
-import { SlideTopModal } from "components/modals/errorModal"
+import { SlideTopModal } from "components/modals/slideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { Errors } from "common/types/errors"
 
@@ -108,8 +108,9 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
       <SlideTopModal
         icon={<ErrorModalIcon />}
         modalContent={Errors[`${errorType}`]}
-        errorHideCallback={errorHideCallback}
+        hideCallback={errorHideCallback}
         isModalVisible={modalVisible}
+        backgroundColor={Colors.danger.s300}
       />
     </>
   )

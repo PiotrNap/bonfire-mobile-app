@@ -53,9 +53,8 @@ export const RegistrationConfirmationScreen = () => {
           // get challenge from server
           const authResponseDTO = await startChallengeSequence(id, true)
           await setToEncryptedStorage("auth-credentials", authResponseDTO)
-          navigate("Navigation Screens", {
-            profileType: "organizer",
-          })
+
+          navigate("Organizer Navigation Screens")
         }
       } else {
         throw new Error("Occured problems while accessing keys from storage")
@@ -104,21 +103,21 @@ export const RegistrationConfirmationScreen = () => {
         ) : null}
         {jobTitle ? (
           <>
-            <Text style={styles.userDetailsHeader}>Job title</Text>
+            <Text style={styles.userDetailsHeader}>Job Title</Text>
             <Text style={styles.userDetailsText}>{jobTitle}</Text>
           </>
         ) : null}
         {bio ? (
           <>
-            <Text style={styles.userDetailsHeader}>About yourself</Text>
+            <Text style={styles.userDetailsHeader}>About Yourself</Text>
             <Text style={styles.userDetailsText}>{bio}</Text>
           </>
         ) : null}
         {timeBlockCostADA ? (
           <>
-            <Text style={styles.userDetailsHeader}>Hourly rate</Text>
+            <Text style={styles.userDetailsHeader}>Hourly Rate (ADA)</Text>
             <Text style={styles.userDetailsText}>
-              {timeBlockCostADA} ₳ an hour
+              {timeBlockCostADA} an hour
             </Text>
           </>
         ) : null}

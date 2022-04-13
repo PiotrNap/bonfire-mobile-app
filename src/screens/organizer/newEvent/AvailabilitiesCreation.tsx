@@ -2,7 +2,7 @@ import * as React from "react"
 import { Pressable, StyleSheet, View } from "react-native"
 
 import { LeftArrowIcon } from "assets/icons"
-import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { FullWidthButtonProps } from "components/buttons/fullWidthButton"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext } from "contexts/contextApi"
 import { SafeAreaView } from "react-native-safe-area-context"

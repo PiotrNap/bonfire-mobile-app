@@ -45,9 +45,10 @@ export const EventDescription = ({ navigation, route }: Props) => {
     try {
       const event = await Events.getEventById(id)
       if (event) {
-        // convert to calendar-ready data model
+        //TODO let organizers decide what's the 'good until' booking window period
         const availableDays = convertToCalendarAvailabilities(
-          event.selectedDays
+          event.selectedDays,
+          event.availabilities
         )
 
         resetBookingState()

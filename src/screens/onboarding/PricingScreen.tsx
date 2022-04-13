@@ -5,7 +5,6 @@ import PagerView from "react-native-pager-view"
 import { CheckIcon, LeftArrowIcon } from "icons/index"
 import { Colors, Sizing, Typography, Outlines, Buttons } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { ProfileContext } from "contexts/profileContext"
 
 export interface PricingScreenProps {

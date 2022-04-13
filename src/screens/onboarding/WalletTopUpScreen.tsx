@@ -12,9 +12,8 @@ import ViewPager from "react-native-pager-view"
 import QRCode from "react-native-qrcode-svg"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { DuplicateIcon, LeftArrowIcon } from "icons/index"
-import { Typography, Colors, Sizing, Outlines, Buttons } from "styles/index"
+import { Typography, Colors, Sizing, Outlines } from "styles/index"
 import { appContext } from "contexts/contextApi"
-import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
 import { WalletSetUpModal } from "components/modals/walletSetUpModal"
@@ -47,7 +46,6 @@ export const WalletTopUpScreen = ({
 
   const isRegistrationScreen = pagerRef?.current instanceof ViewPager
   const isBookingScreen = route != null && route.params?.isBookingScreen
-  const isDisabled = !address || !amount
 
   const onTextChangeCallback = (value: any) => setAddress(value)
   const onAmountChangeCallback = (value: any) => setAmount(value)
@@ -188,6 +186,7 @@ export const WalletTopUpScreen = ({
               onChangeCallback={onTextChangeCallback}
               onPressHandler={onCopyPress}
               customChild={<CopyMessage isActive={copyMsgActive} />}
+              editable={false}
             />
             <CustomPlainInput
               label="Amount"
@@ -196,17 +195,6 @@ export const WalletTopUpScreen = ({
               labelStyle={!isBookingScreen && { color: Colors.primary.neutral }}
               onChangeCallback={onAmountChangeCallback}
             />
-            <View style={styles.buttonWrapper}>
-              <FullWidthButton
-                onPressCallback={processPayment}
-                text={"Deposit"}
-                colorScheme={colorScheme}
-                disabled={isDisabled}
-                loadingIndicator={isLoading}
-                buttonType={isLightMode ? "transparent" : "filled"}
-                lightMode={isLightMode}
-              />
-            </View>
           </View>
         </KeyboardAwareScrollView>
         {isVisibleModal && WalletTopUpModal}
@@ -219,10 +207,12 @@ const styles = StyleSheet.create({
   safeArea_light: {
     backgroundColor: Colors.primary.neutral,
     alignItems: "center",
+    flex: 1,
   },
   safeArea_dark: {
     backgroundColor: Colors.neutral.s600,
     alignItems: "center",
+    flex: 1,
   },
   mainContainer: {
     alignItems: "center",
@@ -234,12 +224,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   headerText_light: {
-    ...Typography.header.x65,
+    ...Typography.header.x60,
     color: Colors.primary.s800,
     marginBottom: Sizing.x5,
   },
   headerText_dark: {
-    ...Typography.header.x65,
+    ...Typography.header.x60,
     color: Colors.primary.neutral,
     marginBottom: Sizing.x5,
   },
@@ -249,17 +239,18 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x25,
   },
   qrCodeContainer: {
-    padding: Sizing.x20,
+    padding: Sizing.x15,
+    margin: Sizing.x10,
     backgroundColor: Colors.primary.neutral,
     borderRadius: Outlines.borderRadius.base,
   },
   subHeaderText_light: {
-    ...Typography.subHeader.x35,
+    ...Typography.subHeader.x30,
     fontFamily: "Roboto-Regular",
     color: Colors.primary.s600,
   },
   subHeaderText_dark: {
-    ...Typography.subHeader.x35,
+    ...Typography.subHeader.x30,
     fontFamily: "Roboto-Regular",
     color: Colors.primary.neutral,
   },

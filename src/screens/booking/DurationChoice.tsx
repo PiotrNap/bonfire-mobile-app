@@ -1,16 +1,7 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ImageBackground,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { LeftArrowIcon } from "icons/index"
 import { appContext, bookingContext } from "contexts/contextApi"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { getTimeSpanLength } from "lib/utils"
@@ -30,18 +21,11 @@ export const DurationChoice = ({ navigation, route }: Props) => {
   const [selectedDuration, setSelectedDuration] = React.useState<number>(0)
   const [cost, setCost] = React.useState<number>(0)
   const { walletBalance } = React.useContext(ProfileContext)
-
   const { setDuration, setDurationCost } = bookingContext()
   const { colorScheme } = appContext()
 
-  const insets = useSafeAreaInsets()
   const isLightMode = colorScheme === "light"
   const isDisabled = selectedDuration === 0
-  //@TODO: insert check for auth state
-  //    !auth
-  // ? "Sign up"
-  // :
-  //
   const buttonText =
     walletBalance != null && walletBalance < cost
       ? "Deposit Funds"
