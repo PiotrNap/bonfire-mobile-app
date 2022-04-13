@@ -23,6 +23,10 @@ export function scale(size: number, factor = 1) {
   return +((Dimensions.get("window").width / 390) * size * factor).toFixed(2)
 }
 
+export const convertBufferToBase = (val: Buffer) => {
+  return !val ? val : Buffer.from(val).toString("base64")
+}
+
 export function getDeepLinkUri(path: String = ""): String {
   const scheme = "bonfire://"
   const host = "gimbalabs.bonfire.com"
@@ -94,27 +98,24 @@ export function formValidationSchema() {
 
 /**
  * @description This will specify validation schema for creating a new
- * account.
+ * account or updating an existing one.
  */
-export function createAccountValidationScheme() {
+export function accountValidationScheme() {
   return yup.object().shape({
     name: yup.string().required("Name is required"),
     username: yup
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
-      .required("User name is required"),
-    // email: yup.string().email().required("Email address is required"),
-    // password: yup
-    //   .string()
-    //   .required("Password is required")
-    //   .min(8, "Password is too short - should be 8 chars minimum.")
-    //   .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
+      .required("Username is required"),
+    hourlyRate: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
   })
 }
 
 /**
- * @description A bunch of helpers to use across the app for working with Date
- * @name day, month, year, time
+ * @description Returns a day with value provided as argument, otherwise it returns current day.
+ * @name getDay
  * @param val (any valid value for Date js object)
  */
 export function getDay(val?: any): number {
@@ -122,16 +123,31 @@ export function getDay(val?: any): number {
   return new Date().getDay()
 }
 
+/**
+ * @description Returns a date with value provided as argument, otherwise it returns current date.
+ * @name getDate
+ * @param val (any valid value for Date js object)
+ */
 export function getDate(val?: any): number {
   if (val != null) return new Date(val).getDate()
   return new Date().getDate()
 }
 
+/**
+ * @description Returns a month with value provided as argument, otherwise it returns current month.
+ * @name getMonth
+ * @param val (any valid value for Date js object)
+ */
 export function getMonth(val?: any): number {
   if (val != null) return new Date(val).getMonth()
   return new Date().getMonth()
 }
 
+/**
+ * @description Returns a month name with value provided as argument, otherwise it returns current month name.
+ * @name getMonthName
+ * @param val (any valid value for Date js object)
+ */
 export function getMonthName(val?: any): string {
   var month
   if (val != null) {
@@ -142,6 +158,11 @@ export function getMonthName(val?: any): string {
   return month
 }
 
+/**
+ * @description Returns a month number with value provided as argument, otherwise it returns current month.
+ * @name getMonthByName
+ * @param val (any valid value for Date js object)
+ */
 export function getMonthByName(val?: any): number {
   var month
   if (val != null) {
@@ -201,19 +222,28 @@ export function areEqualDates(val1: number, val2: number): boolean {
 }
 
 /**
+ * @description Returns false if the given date is a past date or it is a current day
+ * @param year
+ * @param month
+ * @param day
+ */
+export const isPastDate = (year: number, month: string, day: number) => {
+  const sameYear = getYear() === year
+  const sameMonth = getMonthName() === month
+  const sameDay = getDate() === day
+  return (
+    (sameYear && sameMonth && sameDay) ||
+    (sameYear && sameMonth && day < getDate())
+  )
+}
+
+/**
  *   @description This will return an array with next/previous month/s with
  *    number of total days, name of the first day (eg. 'Monday'), and
  *    names of the months.
  *
  *    Next months are starting from current month (or passed as fromMonth),
  *    while previous months will omit current month.
- *
- *   @param nextMonths
- *          previousMonths
- *          fromMonth
- *          fromYear
- *          availabilites (organizer availabilities)
- *          scheduledEvents
  */
 export function getCalendarMonth(
   nextMonths = false,
@@ -226,16 +256,6 @@ export function getCalendarMonth(
   var month = fromMonth != null ? fromMonth : new Date().getMonth()
   var year = fromYear != null ? fromYear : new Date().getFullYear()
   var currMonthIndex = fromMonth != null ? month + 1 : month
-
-  // console.log(`
-  //              nextMonths: ${nextMonths}
-  //              previousMonths: ${previousMonths}
-  //              currentMonthIndex: ${currMonthIndex}
-  //              fromMonth: ${fromMonth}
-  //              fromYear: ${fromYear}
-  //              month: ${month}
-  //              year: ${year}
-  //       `);
 
   // if current month is December and fromYear isn't specified, meaning
   // we are at the last month of the current year
@@ -283,6 +303,7 @@ export function getCalendarMonth(
         var availableDays = availableYear.months.find(
           (month: any) => month.month === months[i]
         )
+
         availableDays?.days.map((availDay: AvailabilitiesDay) =>
           availableSlots.push(availDay)
         )
@@ -304,7 +325,10 @@ export function getCalendarMonth(
 
       for (let j = 1; isValidDate(j, currMonthIndex, currYear); j++) {
         let availableDay = availableSlots.find((s) => s.day === j)
+
         let dayEvents = events.find((e) => e.day === j)?.events
+        let currIndexDate = new Date(currYear, currMonthIndex, j).getDate()
+        let isPastDate = currIndexDate < new Date().getDate()
 
         let day: Day = {
           name: weekDays[currDayIndex],
@@ -314,8 +338,7 @@ export function getCalendarMonth(
         if (isLastWeek(j, firstDay)) {
           day.isLastWeek = true
         }
-        if (availableDay != null) {
-          // day.availabilities = [...dayAvailabilities];
+        if (availableDay != null && !isPastDate) {
           day.isAvailable = true
         }
         if (dayEvents != null) {
@@ -414,6 +437,8 @@ export function getCalendarMonth(
       for (let j = 1; isValidDate(j, currMonthIndex, currYear); j++) {
         let availableDay = availableSlots.find((s) => s.day === j)
         let dayEvents = events.find((e) => e.day === j)?.events
+        let isPastDate =
+          new Date(currYear, currMonthIndex, j).getDate() < new Date().getDate()
 
         let day: Day = {
           name: weekDays[currDayIndex],
@@ -423,7 +448,7 @@ export function getCalendarMonth(
         if (isLastWeek(j, firstDay)) {
           day.isLastWeek = true
         }
-        if (availableDay != null) {
+        if (availableDay != null && !isPastDate) {
           day.isAvailable = true
         }
         if (dayEvents != null) {
@@ -588,21 +613,17 @@ export function getDigitalLocaleTime(
   locale: string = "en"
 ): string | void {
   var timeString: any = new Date(time).toLocaleTimeString(locale)
+  var abbreviation: string = ""
 
   timeString = timeString.split(" ")
   if (timeString == null || timeString.length === 0) return
 
-  // `toLocaleTimeString` doesn't work on Android
-  if (!IS_ANDROID) {
-    var abbreviation = timeString[1]?.toLocaleLowerCase()
-
-    timeString.pop()
-  }
+  abbreviation = timeString[1]
+  timeString.pop()
   timeString = timeString[0].split(":")
   timeString.pop()
   timeString = timeString.join(":")
 
-  if (IS_ANDROID) return timeString
   return timeString + " " + abbreviation
 }
 
@@ -682,7 +703,7 @@ export function getLocaleTimezone(): string {
  * Uses randomBytes method from react-native-randombytes to
  * generate array of random bytes
  *
- * @param number - number of bytes
+ * @param bytes - number of bytes
  */
 export function getRandomKey(bytes: number): string {
   return randomBytes(bytes).join("")
@@ -695,10 +716,24 @@ export const roundDateMinutes = (date: Date): Date => {
 /**
  * @description Helper function to convert the event-selected-days into calendar ready availabilities
  */
-export const convertToCalendarAvailabilities = (selectedDays: {
-  [index: string]: number
-}) => {
+export const convertToCalendarAvailabilities = (
+  selectedDays: {
+    [index: string]: number
+  },
+  availableDayTimeSlots: any[]
+) => {
   const timesInMill: number[] = Object.values(selectedDays)
+  const sortedAvailableSlots = availableDayTimeSlots.sort((a, b) => {
+    if (a.to > b.to || (a.to === b.to && a.maxDuration > b.maxDuration))
+      return 1
+    return -1
+  })
+  const lastAvailableDayTimeSlot =
+    sortedAvailableSlots[sortedAvailableSlots.length - 1]
+  // TODO this will eventually be allowed to change by organizers when creating a new event
+  const availableUntil =
+    new Date(lastAvailableDayTimeSlot.to).getTime() -
+    lastAvailableDayTimeSlot.maxDuration * 60000
 
   let calendarAvailabilities = []
   let currentYear, currentMonth, currentDay
@@ -716,7 +751,7 @@ export const convertToCalendarAvailabilities = (selectedDays: {
 
       calendarAvailabilities.push({
         year,
-        months: [{ month, days: [{ day }] }],
+        months: [{ month, days: [{ day, availableUntil }] }],
       })
       continue
     }
@@ -732,7 +767,7 @@ export const convertToCalendarAvailabilities = (selectedDays: {
 
       calendarAvailabilities[yearToPushIndex].months.push({
         month,
-        days: [{ day }],
+        days: [{ day, availableUntil }],
       })
       continue
     }
@@ -752,6 +787,7 @@ export const convertToCalendarAvailabilities = (selectedDays: {
         monthToPushIndex
       ].days.push({
         day,
+        availableUntil,
       })
       continue
     }
