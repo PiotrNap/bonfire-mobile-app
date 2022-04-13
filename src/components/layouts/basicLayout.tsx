@@ -1,37 +1,53 @@
 import * as React from "react"
-import { StyleSheet, View } from "react-native"
+import { StyleSheet } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import { appContext } from "contexts/contextApi"
 import { Colors } from "styles/index"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 interface Props {
   children: React.ReactNode
+  scrollable?: boolean
 }
 
-export const Layout = ({ children }: Props) => {
+export const Layout = ({ children, scrollable = true }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
 
-  return (
+  return !scrollable ? (
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        isLightMode ? styles.safeArea_light : styles.safeaArea_dark,
+      ]}>
+      {children}
+    </SafeAreaView>
+  ) : (
     <SafeAreaView
       style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
-      <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
+        style={{ width: "100%", height: "100%" }}
+        contentContainerStyle={{ alignItems: "center" }}>
         {children}
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  safeArea_light: {
+  safeArea: {
     flex: 1,
-    backgroundColor: Colors.primary.neutral,
+    width: "100%",
     alignItems: "center",
   },
+  safeArea_light: {
+    backgroundColor: Colors.primary.neutral,
+  },
   safeaArea_dark: {
-    flex: 1,
     backgroundColor: Colors.neutral.s600,
-    alignItems: "center",
   },
 })

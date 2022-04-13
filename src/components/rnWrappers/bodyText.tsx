@@ -5,24 +5,35 @@
  */
 
 import * as React from "react"
-import { Text, StyleSheet, StyleProp, TextStyle } from "react-native"
+import { Text, StyleSheet, StyleProp } from "react-native"
 
 import { appContext } from "contexts/contextApi"
-import { Typography } from "styles/index"
+import { Colors, Typography } from "styles/index"
 
 export interface BodyTextProps {
   children?: React.ReactNode
-  colors: string[]
-  customStyle?: StyleProp<TextStyle>
+  colors?: string[]
+  changingColorScheme?: boolean
+  customStyle?: StyleProp<any> | Array<StyleProp<any>>
 }
 
-export const BodyText = ({ children, colors, customStyle }: BodyTextProps) => {
+export const BodyText = ({
+  children,
+  colors,
+  customStyle,
+  changingColorScheme,
+}: BodyTextProps) => {
   const { colorScheme } = appContext()
 
   const textColor =
-    colorScheme != null && colorScheme === "light"
-      ? { color: colors[0] }
-      : { color: colors[1] }
+    changingColorScheme && colorScheme != null && colors
+      ? colorScheme === "light"
+        ? { color: colors[0] }
+        : { color: colors[1] }
+      : {
+          color:
+            colorScheme === "light" ? Colors.primary.s600 : Colors.primary.s800,
+        }
 
   return <Text style={[styles.text, textColor, customStyle]}>{children}</Text>
 }

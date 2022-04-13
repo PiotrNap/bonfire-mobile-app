@@ -7,53 +7,50 @@ import {
   TextInput,
   StyleSheet,
   TextInputProps,
-  KeyboardType,
   TextStyle,
   StyleProp,
 } from "react-native"
 
 import { Colors, Forms, Outlines, Sizing } from "styles/index"
 
-export interface CustomPlainInputProps {
+export type CustomPlainInputProps = TextInputProps & {
   label: string
-  placeholder: string
   styles?: any
   onPressHandler?: () => void
   icon?: any
   customChild?: React.ReactNode
-  multiline?: boolean
-  numberOfLines?: number
   maxChar?: number
   labelStyle?: StyleProp<TextStyle>
-  keyboardType?: KeyboardType
   onChangeCallback?: (e: any) => void
   onPressInCallback?: (e: any) => void
   onBlurCallback?: (e: any) => void
 }
 
-export const CustomPlainInput = (props: CustomPlainInputProps) => {
+export const CustomPlainInput = ({
+  icon,
+  placeholder,
+  label,
+  labelStyle,
+  customChild,
+  onPressHandler,
+  styles,
+  multiline,
+  numberOfLines,
+  maxChar,
+  keyboardType,
+  onBlurCallback,
+  onChangeCallback,
+  textContentType,
+  defaultValue,
+}: CustomPlainInputProps) => {
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
-  var {
-    icon,
-    placeholder,
-    label,
-    labelStyle,
-    customChild,
-    onPressHandler,
-    styles,
-    multiline,
-    numberOfLines,
-    maxChar,
-    keyboardType,
-    onBlurCallback,
-    onChangeCallback,
-  }: CustomPlainInputProps = props
   const Icon = icon
 
   const additionalProps: TextInputProps = {
     keyboardType: keyboardType ?? "default",
+    textContentType: textContentType ?? "none",
   }
 
   if (multiline && numberOfLines) {
@@ -100,12 +97,15 @@ export const CustomPlainInput = (props: CustomPlainInputProps) => {
           onChangeText={onChangeText}
           onBlur={onBlurCallback}
           placeholderTextColor={styles.placeholderText.color}
+          defaultValue={defaultValue}
           {...additionalProps}
         />
-        {customChild && customChild}
-        <Pressable onPress={onPressHandler} style={styles.iconWrapper}>
-          {Icon && <Icon style={styles.icon} stroke={Colors.primary.s350} />}
-        </Pressable>
+        {customChild}
+        {Icon && (
+          <Pressable onPress={onPressHandler} style={styles.iconWrapper}>
+            <Icon style={styles.icon} stroke={Colors.primary.s350} />
+          </Pressable>
+        )}
       </View>
     </View>
   )

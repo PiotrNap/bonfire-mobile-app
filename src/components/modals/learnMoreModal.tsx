@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native"
 
 import Modal from "react-native-modal"
 import { IdeaIcon } from "icons/index"
-import { Buttons, Colors, Typography, Sizing, Outlines } from "styles/index"
+import { Colors, Typography, Sizing, Outlines } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 
 export interface LearnMoreModalProps {

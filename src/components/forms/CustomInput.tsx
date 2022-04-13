@@ -4,26 +4,22 @@
  *
  *               This file doesn't hold any styles declared, as to
  *               provide flexibility on passing custom styles.
+ *
+ *               This component works with Formik.
  */
-
 import * as React from "react"
 import { TextInput, Text, View } from "react-native"
-import { Colors } from "styles/index"
-
-export interface CustomInputProps {}
 
 export const CustomInput = (props: any) => {
   const {
     field: { onChange, name, onBlur, value },
     form: { errors, touched, setFieldTouched },
     styles,
-    iconState,
-    customHandler,
     validateForm,
     ...inputProps
   } = props
-
   const hasError = errors[name] && touched[name]
+  const isNumeric = props.field.name === "hourlyRate"
 
   return (
     <>
@@ -33,8 +29,15 @@ export const CustomInput = (props: any) => {
       <View style={styles.textInputWrapper}>
         <TextInput
           name={props.name}
-          style={[styles.input, hasError && styles.errorInput]}
-          value={value}
+          style={[
+            styles.input,
+            hasError && styles.errorInput,
+            inputProps.multiline && {
+              height: 100,
+              textAlignVertical: "top",
+            },
+          ]}
+          value={String(value ?? (isNumeric ? 0 : ""))}
           placeholderTextColor={styles.placeholderText.color}
           onEndEditing={() => validateForm()}
           onChange={() => validateForm()}
@@ -48,13 +51,7 @@ export const CustomInput = (props: any) => {
           {...inputProps}
         />
       </View>
-      <View
-        style={[
-          styles.errorWrapper,
-          {
-            backgroundColor: !hasError ? "transparent" : Colors.danger.s300,
-          },
-        ]}>
+      <View style={styles.errorWrapper}>
         {hasError && <Text style={styles.error}>{errors[name]}</Text>}
       </View>
     </>

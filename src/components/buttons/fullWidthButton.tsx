@@ -10,7 +10,7 @@ import {
 
 import { Buttons, Colors } from "styles/index"
 
-export interface FullWidthButton {
+export interface FullWidthButtonProps {
   onPressCallback: () => any | Promise<void>
   text: string
   loadingIndicatorStyle?: ViewStyle
@@ -36,7 +36,7 @@ export const FullWidthButton = ({
   style,
   textStyle,
   lightMode,
-}: FullWidthButton) => {
+}: FullWidthButtonProps) => {
   const [textWidth, setTextWidth] = React.useState<number>(0)
   const [pressableWidth, setPressableWidth] = React.useState<number>(0)
   const isLightMode = lightMode ?? colorScheme === "light"
@@ -45,18 +45,12 @@ export const FullWidthButton = ({
     style = Object.assign({}, ...style)
   }
 
-  const disabledStyle =
-    buttonType === "filled"
-      ? { backgroundColor: Colors.neutral.s400 }
-      : { opacity: 0.65 }
-
-  const buttonStyleFilled = [
-    isLightMode ? Buttons.bar.primary_light : Buttons.bar.primary_dark,
-  ]
-  const buttonStyleTransparent = [
-    isLightMode ? Buttons.bar.transparent_light : Buttons.bar.transparent_dark,
-  ]
-
+  const buttonStyleFilled = isLightMode
+    ? Buttons.bar.primary_light
+    : Buttons.bar.primary_dark
+  const buttonStyleTransparent = isLightMode
+    ? Buttons.bar.transparent_light
+    : Buttons.bar.transparent_dark
   const textStyleFilled = [
     isLightMode ? Buttons.barText.primary_light : Buttons.barText.primary_dark,
   ]
@@ -65,16 +59,15 @@ export const FullWidthButton = ({
       ? Buttons.barText.transparent_light
       : Buttons.barText.transparent_dark,
   ]
-
   const customButtonStyle =
     buttonType === "filled" ? buttonStyleFilled : buttonStyleTransparent
   const customTextStyle =
     buttonType === "filled" ? textStyleFilled : textStyleTransparent
+  const disabledStyle = { opacity: 0.75 }
 
   const onLayoutText = (e: LayoutChangeEvent) => {
     setTextWidth(e.nativeEvent?.layout?.width)
   }
-
   const onLayoutPressable = (e: LayoutChangeEvent) => {
     setPressableWidth(e.nativeEvent?.layout?.width)
   }
@@ -87,10 +80,8 @@ export const FullWidthButton = ({
       hitSlop={5}
       style={
         disabled
-          ? Object.assign({}, ...customButtonStyle, style, disabledStyle)
-          : Buttons.applyOpacity([
-              Object.assign({}, ...customButtonStyle, style),
-            ])
+          ? [customButtonStyle, style, disabledStyle]
+          : Buttons.applyOpacity([customButtonStyle, style])
       }>
       <Text onLayout={onLayoutText} style={textStyle ?? customTextStyle}>
         {text}
