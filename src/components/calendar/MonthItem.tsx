@@ -6,7 +6,7 @@ import { MonthlyDay } from "./days/MonthlyDay"
 import { Month } from "interfaces/myCalendarInterface"
 import { BookingDay } from "./days/BookingDay"
 import { AvailabilityDay } from "./days/AvailabilityDay"
-import { getTime } from "lib/utils"
+import { getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
 import { eventCreationContext } from "contexts/contextApi"
 
@@ -94,6 +94,7 @@ export const MonthItem = ({
             isAvailable={day.isAvailable}
             activeDay={activeDay}
             setActiveDay={setActiveDay}
+            isPastDate={isPastDate(year, month, day.number)}
           />
         ) : isNewEventCalendar ? (
           <AvailabilityDay

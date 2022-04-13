@@ -68,7 +68,7 @@ export const CalendarTopNavigation = ({
       (direction === "next" && disabledNextButton) ||
       (direction === "prev" && disabledPreviousButton)
         ? {
-            backgroundColor: Colors.neutral.s400,
+            backgroundColor: Colors.neutral.s300,
           }
         : {}
 

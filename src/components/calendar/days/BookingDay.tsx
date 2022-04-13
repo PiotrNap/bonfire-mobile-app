@@ -12,8 +12,10 @@ export interface BookingDayProps extends Day {
   year?: number
   month: string
   activeDay: number | null
-  isAvailable?: boolean
   setActiveDay: React.Dispatch<React.SetStateAction<number | null>>
+  isPastDate: boolean
+  scheduledEvents?: any[]
+  isAvailable?: boolean
   setSelectedDay?: (arg: any) => any
 }
 
@@ -28,6 +30,7 @@ export const _BookingDay = ({
   year,
   month,
   activeDay,
+  isPastDate,
   scheduledEvents,
   availabilities,
   isAvailable,
@@ -53,12 +56,13 @@ export const _BookingDay = ({
   const isPartiallyBooked = !isFullyBooked && scheduledEvents != null
   const isFullyAvailable = React.useCallback(
     () =>
-      isAvailable ||
-      (availabilities != null &&
-        availabilities.length > 0 &&
-        scheduledEvents == null) ||
-      (scheduledEvents != null && scheduledEvents.length === 0),
-    [availabilities, scheduledEvents]
+      !isPastDate &&
+      (isAvailable ||
+        (availabilities != null &&
+          availabilities.length > 0 &&
+          scheduledEvents == null) ||
+        (scheduledEvents != null && scheduledEvents.length === 0)),
+    [availabilities, scheduledEvents, isPastDate]
   )
   const isNonAvailableDay =
     !isFullyBooked && !isFullyAvailable && !isPartiallyBooked
@@ -77,8 +81,7 @@ export const _BookingDay = ({
       setPickedDate(dayInTime)
     }
   }
-
-  return (
+  return isAvailable && !isPastDate ? (
     <Pressable style={[styles.dayContainer]} hitSlop={5} onPress={onPress}>
       <View
         style={[
@@ -112,6 +115,40 @@ export const _BookingDay = ({
         )}
       </View>
     </Pressable>
+  ) : (
+    <View style={styles.dayContainer}>
+      <View
+        style={[
+          styles.dayButton,
+          {
+            backgroundColor: isActiveDay
+              ? Colors.primary.s600
+              : isFullyBooked()
+              ? Colors.booked
+              : isFullyAvailable()
+              ? Colors.available
+              : "transparent",
+          },
+          !isFullyBooked && availabilities && { ...Outlines.shadow.base },
+        ]}>
+        <Text
+          style={[
+            styles.dayNumber,
+            {
+              color: isActiveDay ? Colors.primary.neutral : Colors.primary.s600,
+            },
+          ]}>
+          {number}
+        </Text>
+        {isPartiallyBooked && !isActiveDay && (
+          <PartiallyBookedDay
+            width={34}
+            height={34}
+            style={styles.partiallyBookedDay}
+          />
+        )}
+      </View>
+    </View>
   )
 }
 
@@ -120,14 +157,12 @@ const styles = StyleSheet.create({
     ...Typography.body.x30,
     ...Typography.roboto.medium,
     zIndex: 2,
-    // looks like the font is slightly moved to left
-    textAlign: "center",
     marginLeft: Sizing.x1,
   },
   dayContainer: {
     width: `${100 / 7}%`,
     height: `${100 / 6}%`,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
   },
   dayButton: {

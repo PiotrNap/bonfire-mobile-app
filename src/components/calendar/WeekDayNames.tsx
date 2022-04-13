@@ -8,7 +8,7 @@ import {
 } from "contexts/contextApi"
 import { Typography, Colors, Sizing, Outlines } from "../../styles"
 import { getRecurringMonthDays } from "lib/helpers"
-import { getTime } from "lib/utils"
+import { getDate, getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
 
 const weekDays: string[] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
@@ -53,14 +53,28 @@ export const WeekDayNames = ({
       (week) => week.date === getTime(year, monthsByName[month])
     )
   }, [month, year])
+  const isUnavailableWeek = (i: number) => !recurringAvailableDays(i).length
 
+  const dayButtonStyle = [
+    {
+      backgroundColor: isDarkMode ? Colors.primary.neutral : "white",
+      borderColor: Colors.applyOpacity(
+        isDarkMode ? Colors.neutral.s800 : Colors.primary.s350,
+        0.4
+      ),
+    },
+  ]
+  const recurringAvailableDays = (i: number) => {
+    var arrOfDays: number[] = getRecurringMonthDays(i, year, month)
+    return arrOfDays.filter((date) => !isPastDate(year, month, getDate(date)))
+  }
+  // we don't want to select days in the past
   const onPress = (index: number): void => {
-    const arrOfDays = getRecurringMonthDays(index, year, month)
-    let selectRecurring: boolean = arrOfDays
+    let selectRecurring: boolean = recurringAvailableDays(index)
       .map((num: number) => !!selectedDays?.[num])
       .includes(false)
 
-    setSelectedDays(arrOfDays, selectRecurring)
+    setSelectedDays(recurringAvailableDays(index), selectRecurring)
 
     let newSelectedWeek = currentMonthSelectedWeek()
 
@@ -81,17 +95,9 @@ export const WeekDayNames = ({
     <View style={styles.container}>
       <View style={styles.weekDays}>
         {weekDays.map((day, i) =>
-          !isNewEventCalendar ? (
+          !isNewEventCalendar || isUnavailableWeek(i) ? (
             <View key={`day-${i}`} style={[styles.dayContainer]}>
-              <View
-                style={[
-                  styles.dayPlaceholder,
-                  {
-                    backgroundColor: isDarkMode
-                      ? Colors.primary.neutral
-                      : "white",
-                  },
-                ]}>
+              <View style={styles.dayPlaceholder}>
                 <Text
                   style={[
                     styles.dayTitle,
@@ -112,7 +118,11 @@ export const WeekDayNames = ({
               <View
                 style={[
                   styles.dayButton,
-                  isSelectedDay(i) && styles.selectedDayButton,
+                  dayButtonStyle,
+                  isSelectedDay(i) && {
+                    ...styles.selectedDayButton,
+                    borderColor: Colors.primary.s600,
+                  },
                 ]}>
                 <Text
                   style={[
@@ -165,10 +175,8 @@ const styles = StyleSheet.create({
     height: 33,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
     borderRadius: 999,
     borderWidth: Outlines.borderWidth.thin,
-    borderColor: Colors.applyOpacity(Colors.neutral.s400, 0.4),
     ...Outlines.shadow.base,
   },
   selectedDayButton: {

@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Pressable, StyleSheet, Text } from "react-native"
-import { Colors, Typography } from "styles/index"
+import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Colors, Sizing, Typography } from "styles/index"
 
 export interface PlaceholderDayProps {
   number: number
@@ -19,9 +19,11 @@ const _PlaceholderDay = ({
   }
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
-      <Text style={styles.placeholderNumber}>{number}</Text>
-    </Pressable>
+    <View style={styles.container}>
+      <Pressable onPress={onPress} hitSlop={Sizing.x5} style={styles.dayButton}>
+        <Text style={styles.placeholderNumber}>{number}</Text>
+      </Pressable>
+    </View>
   )
 }
 
@@ -31,6 +33,12 @@ const styles = StyleSheet.create({
     height: `${100 / 6}%`,
     justifyContent: "center",
     alignItems: "center",
+  },
+  dayButton: {
+    width: 33,
+    height: 33,
+    alignItems: "center",
+    justifyContent: "center",
   },
   placeholderNumber: {
     ...Typography.body.x30,
