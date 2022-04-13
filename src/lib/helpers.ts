@@ -18,7 +18,7 @@ import { Auth } from "../services/Api/Auth"
  *
  *  @param index - the selected index of a week day
  *  @param year
- *  @param string
+ *  @param month
  *  @returns elected days array in milliseconds
  */
 export const getRecurringMonthDays = (
