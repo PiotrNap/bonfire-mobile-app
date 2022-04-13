@@ -76,7 +76,7 @@ export class Events {
     [key: string]: string | number
   }): Promise<any[] | void> {
     try {
-      const res = await axios.get("auth/google-calendar-events", query)
+      const res = await axios.get("auth/google-cal-events", query)
       if (res) return res.data
     } catch (e) {
       if (e.response) console.error(e.response.data)

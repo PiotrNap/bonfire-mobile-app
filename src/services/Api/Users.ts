@@ -1,4 +1,4 @@
-import { UserDTO } from "common/interfaces/profileInterface"
+import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
 import { Platform } from "react-native"
 import axios from "./base"
@@ -6,10 +6,11 @@ import axios from "./base"
 export class Users {
   public static async getUser(id: string): Promise<any> {
     try {
-      const res = await axios.get(`user/${id}`)
+      const res = await axios.get(`users/${id}`)
       const data = res.data
       return data
     } catch (e: any) {
+      console.error(e)
       if (e.response) {
         if (e.status === 401) {
           throw new Error("User not authorized")
@@ -45,7 +46,7 @@ export class Users {
     }
   }
 
-  public static async createAccount(values: any): Promise<UserDTO | void> {
+  public static async createAccount(values: any): Promise<UserBaseDTO | void> {
     try {
       const res = await axios.post("/users/register", values)
 
@@ -62,7 +63,7 @@ export class Users {
       const res = await axios.put(`/users/${id}`, values)
       if (res) return res.data
     } catch (e: any) {
-      if (e.response) console.error(e.response.data)
+      throw new Error(e.response.data.message)
     }
   }
 
@@ -72,7 +73,7 @@ export class Users {
   ): Promise<any | void> {
     console.log("args ...", id, currCalendarDate)
     try {
-      const res = await axios.get(`/users/${id}/calendar-events`, {
+      const res = await axios.get(`/users/${id}/events`, {
         params: { date: currCalendarDate ?? new Date() },
       })
       console.log("res?", !!res)
@@ -83,12 +84,10 @@ export class Users {
     }
   }
 
-  public static async uploadUserImage(filePath: string) {
+  public static async uploadUserImage(filePath: string): Promise<any> {
     const fileChunks = filePath.split(".")
     const fileType = fileChunks[fileChunks.length - 1]
     const formData = new FormData()
-
-    console.log("file type :", fileType, fileChunks)
 
     formData.append("file", {
       uri: Platform.OS === "ios" ? filePath.replace("file://", "") : filePath,
@@ -97,25 +96,31 @@ export class Users {
     })
 
     try {
-      // console.log(JSON.stringify(axios.defaults, null, 4));
       const res = await axios.post("/users/files/profile-image", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-      console.log("res :", res)
+      return res
     } catch (e) {
-      console.error("Error: ", e)
-      console.error("Error Message: ", e.response.data.message)
+      console.error(e)
     }
   }
 
   public static async getUserImage(id: string) {
     try {
       const profileImage = await axios.get(`/users/files/profile-image/${id}`)
-      console.log(profileImage)
 
-      return
+      return profileImage
+    } catch (e) {
+      console.error(e.response.data.message)
+    }
+  }
+
+  public static async deleteUserImage(id: string) {
+    try {
+      const res = await axios.delete(`/users/files/profile-image/${id}`)
+      return res
     } catch (e) {
       console.error(e.response.data.message)
     }
