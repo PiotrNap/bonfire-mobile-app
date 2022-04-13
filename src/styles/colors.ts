@@ -89,10 +89,7 @@ export const warning: Record<Warning, string> = {
   s400: "#cf9700",
 }
 
-export const applyOpacity = (
-  hexColor: string,
-  opacity: number = 0.8
-): string => {
+export const applyOpacity = (hexColor: any, opacity: number = 0.8): string => {
   const red: number = parseInt(hexColor.slice(1, 3), 16),
     green: number = parseInt(hexColor.slice(3, 5), 16),
     blue: number = parseInt(hexColor.slice(5, 7), 16)

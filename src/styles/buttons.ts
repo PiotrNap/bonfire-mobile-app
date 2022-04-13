@@ -1,4 +1,5 @@
 import { TextStyle, ViewStyle, PressableStateCallbackType } from "react-native"
+import { applyOpacity as applyColorOpacity } from "./colors"
 
 import * as Colors from "./colors"
 import * as Outlines from "./outlines"
@@ -50,7 +51,7 @@ export const bar: Record<Bar, ViewStyle> = {
     backgroundColor: Colors.primary.neutral,
     paddingVertical: Sizing.x7,
     borderRadius: Outlines.borderRadius.base,
-    borderWidth: 3,
+    borderWidth: Sizing.x3,
     borderColor: Colors.primary.s800,
     marginTop: Sizing.x15,
     ...Outlines.shadow.lifted,
@@ -62,7 +63,7 @@ export const bar: Record<Bar, ViewStyle> = {
     backgroundColor: Colors.primary.s600,
     paddingVertical: Sizing.x7,
     borderRadius: Outlines.borderRadius.base,
-    borderWidth: 3,
+    borderWidth: Sizing.x3,
     borderColor: Colors.primary.neutral,
     marginTop: Sizing.x15,
     ...Outlines.shadow.lifted,
@@ -130,9 +131,15 @@ export const circular: Record<Circular, ViewStyle> = {
   },
 }
 
-const opacity = (state: PressableStateCallbackType): ViewStyle => {
-  var opacity = state.pressed ? 0.65 : 1
-  return { opacity }
+const opacity = (state: PressableStateCallbackType, style: any): ViewStyle => {
+  if (!state.pressed) return { opacity: 1 }
+
+  return {
+    opacity: 0.8,
+    borderColor: style.borderColor
+      ? applyColorOpacity(style.borderColor, 0.65)
+      : "none",
+  }
 }
 
 export const applyOpacity = (style: ViewStyle | ViewStyle[]) => {
@@ -141,7 +148,7 @@ export const applyOpacity = (style: ViewStyle | ViewStyle[]) => {
   return (state: PressableStateCallbackType): ViewStyle => {
     return {
       ...style,
-      ...opacity(state),
+      ...opacity(state, style),
     }
   }
 }
