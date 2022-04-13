@@ -36,7 +36,7 @@ export const useCameraAccess = () => {
     ;(async () => await checkCameraPermission())()
   }, [])
 
-  const requestCameraAccessAsync = async (): Promise<void> => {
+  const requestCameraAccessAsync = async (): Promise<boolean> => {
     const rationale: Rationale = {
       title: "Camera permission needed",
       message: "We need access to your camera in order to upload a new image.",
@@ -67,8 +67,9 @@ export const useCameraAccess = () => {
             },
           ]
         )
+        return false
       } else {
-        setAccess(true)
+        return true
       }
     } catch {
       Alert.alert(
@@ -76,11 +77,14 @@ export const useCameraAccess = () => {
         "Please try taking a picture again. Make sure you have granted access to your devices camera.",
         [{ text: "Close", style: "cancel", onPress: () => {} }]
       )
+      return false
     }
   }
   const _launchCamera = async () => {
     if (!access) {
-      return await requestCameraAccessAsync()
+      const _access = await requestCameraAccessAsync()
+      if (!_access) return
+      setAccess(true)
     }
 
     const options: CameraOptions = {

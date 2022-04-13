@@ -20,7 +20,6 @@ export const useUserInfo = () => {
   } = R.useContext(ProfileContext)
 
   const updateOrganizer = (val: any) => {
-    console.log("updating organizer", val)
     setName(val.name)
     setUsername(val.username)
     setImageBase64(convertBufferToBase(val.profileImage?.data))
@@ -32,7 +31,6 @@ export const useUserInfo = () => {
     setHourlyRate(val.hourlyRate)
   }
   const updateAttendee = (val: any) => {
-    console.log("updating attendee")
     setName(val.name)
     setUsername(val.username)
     setImageBase64(convertBufferToBase(val.profileImage?.data))

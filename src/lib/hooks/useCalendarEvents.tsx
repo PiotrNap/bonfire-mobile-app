@@ -27,6 +27,7 @@ export const useCalendarEvents = (id?: string) => {
   ) => {
     try {
       let events = await Users.getUserCalendarEvents(id || userId, date)
+
       if (events) {
         events = convertToCalendarEvents(events)
 

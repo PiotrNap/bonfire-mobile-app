@@ -80,8 +80,6 @@ export const useMediaAccess = () => {
     if (!access) {
       const _access = await requestImageLibraryAccessAsync()
       if (!_access) return
-
-      setAccess(true)
     }
 
     const options: ImageLibraryOptions = {

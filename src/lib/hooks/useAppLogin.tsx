@@ -35,13 +35,13 @@ export const useAppLogin = () => {
           console.log("access token? ", accessTokenDto)
 
           if (accessTokenDto) {
-            setAuthorizationToken(accessTokenDto.accessToken)
-            setIsAuthorized(true)
             setUser({
               username: accessTokenDto.username,
               profileType: accessTokenDto.profileType,
               id: accessTokenDto.id,
             })
+            setAuthorizationToken(accessTokenDto.accessToken)
+            setIsAuthorized(true)
           }
         } else {
           if (isAuthorized) setIsAuthorized(false)
