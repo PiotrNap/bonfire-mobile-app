@@ -24,6 +24,7 @@ export interface AvailabilitiesMonth {
 export interface AvailabilitiesDay {
   day: number
   timeSlots: AvailabilitySlot[]
+  availableUntil?: number
 }
 
 export interface AvailabilitySlot {

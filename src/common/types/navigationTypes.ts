@@ -1,3 +1,8 @@
+import {
+  UserBaseDTO,
+  UserOrganizerDTO,
+} from "common/interfaces/profileInterface"
+
 export type AppStackParamList = {
   "Log In": undefined
   Initial: undefined
@@ -16,20 +21,24 @@ export type AppStackParamList = {
       }
     | undefined
   "Add Funds": { fromScreen: string }
-  "Navigation Screens": undefined
+  "Attendee Navigation Screens": undefined
+  "Organizer Navigation Screens": undefined
   "User Registration Screens": undefined
   "Onboarding Screens": undefined
   "Duration Choice": any
   Wallet: undefined
 }
 
-export type OrganizerTabParamList = {
+export type AttendeeTabParamList = {
   Home: { id: string }
   Browse: any
   Wallet: undefined
   "Add Funds": { fromScreen: string }
-  "My Events": undefined
   Profile: undefined
+}
+
+export type OrganizerTabParamList = AttendeeTabParamList & {
+  "My Events": undefined
 }
 
 export type BookingStackParamList = {
@@ -61,7 +70,7 @@ export type EventCreationParamList = {
 
 export type ProfileStackParamList = {
   Profile: undefined
-  "Edit Profile": undefined
+  "Edit Profile": { userInfo: UserBaseDTO | UserOrganizerDTO }
   "Profile Settings": undefined
 }
 
