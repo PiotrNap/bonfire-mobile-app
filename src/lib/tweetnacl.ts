@@ -20,7 +20,7 @@ export const signChallenge = async (
   challenge: string | Uint8Array
 ): Promise<string | void> => {
   var secretKey, signedChallenge
-  secretKey = await getFromEncryptedStorage("secret")
+  secretKey = await getFromEncryptedStorage("privKey")
 
   // convert to Uint8Array
   if (typeof challenge === "string" && typeof secretKey === "string") {
@@ -32,8 +32,10 @@ export const signChallenge = async (
   try {
     signedChallenge = await nacl.sign.detached(challenge, secretKey)
 
+    secretKey = null
     return signedChallenge
   } catch (e) {
+    secretKey = null
     console.error(e)
   }
 }
