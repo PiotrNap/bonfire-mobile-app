@@ -87,7 +87,15 @@ const reducer = (state: AppState, action: AppActions) => {
       }
       return newState
     case AppTypes.ResetState: {
-      return initialState
+      return {
+        ...state,
+        authentication: false,
+        receivingAddr: "",
+        // JWT: null,
+        favoriteOrganizers: [],
+        pageIndex: 0,
+        ref: null,
+      }
     }
     default:
       throw Error(`Unknown type of action: ${action.type}`)

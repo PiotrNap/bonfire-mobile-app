@@ -11,7 +11,7 @@ export const initialState: ProfileState = {
   publicKey: "",
   id: "",
   bio: "",
-  imageURL: "",
+  imageBase64: "",
   profession: "",
   jobTitle: "",
   description: "",
@@ -21,15 +21,18 @@ export const initialState: ProfileState = {
   timeBlockCostADA: 0,
   walletBalance: 0,
   profileType: "",
+  hourlyRate: 0,
+  getUserProfile: () => {},
   setName: () => {},
   setUsername: () => {},
   setProfileType: () => {},
   setId: () => {},
   setPublicKey: () => {},
   setBio: () => {},
-  setImageURL: () => {},
+  setImageBase64: () => {},
   setTimeBlockLengthMin: () => {},
   setTimeBlockCostADA: () => {},
+  setHourlyRate: () => {},
   setHasSyncedWallet: () => {},
   setWalletBalance: () => {},
   setProfession: () => {},
@@ -51,20 +54,43 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [id, setId] = useState<string>("")
   const [publicKey, setPublicKey] = useState<string>("")
   const [bio, setBio] = useState<string>("")
-  const [imageURL, setImageURL] = useState<string>("")
+  const [imageBase64, setImageBase64] = useState<string>("")
   const [timeBlockLengthMin, setTimeBlockLengthMin] = useState<number | null>(0)
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
   )
+  const [hourlyRate, setHourlyRate] = useState<number>(0)
   const [profession, setProfession] = useState<string | undefined>("")
   const [jobTitle, setJobTitle] = useState<string | undefined>("")
   const [description, setDescription] = useState<string | undefined>("")
   const [skills, setSkills] = useState<string | undefined>("")
   const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
-  const [walletBalance, setWalletBalance] = useState<number>(0)
+  //@TODO change this...
+  const [walletBalance, setWalletBalance] = useState<number>(50)
   const [profileType, setProfileType] = useState<"" | "attendee" | "organizer">(
     ""
   )
+
+  const userProfile = {
+    username,
+    name,
+    id,
+    publicKey,
+    walletBalance,
+    bio,
+    imageBase64,
+    hasSyncedWallet,
+    hourlyRate,
+    timeBlockLengthMin,
+    timeBlockCostADA,
+    profession,
+    jobTitle,
+    description,
+    skills,
+    profileType,
+  }
+
+  const getUserProfile = () => userProfile
 
   const resetProfileState = () => {
     setUsername("")
@@ -72,9 +98,10 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setId("")
     setPublicKey("")
     setBio("")
-    setImageURL("")
+    setImageBase64("")
     setTimeBlockLengthMin(0)
     setTimeBlockCostADA(0)
+    setHourlyRate(0)
     setProfession("")
     setJobTitle("")
     setDescription("")
@@ -87,32 +114,20 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   return (
     <ProfileContext.Provider
       value={{
-        username,
-        name,
-        id,
-        publicKey,
-        walletBalance,
-        bio,
-        imageURL,
-        hasSyncedWallet,
-        timeBlockLengthMin,
-        timeBlockCostADA,
-        profession,
-        jobTitle,
-        description,
-        skills,
-        profileType,
+        ...userProfile,
+        getUserProfile,
         setProfileType,
         setUsername,
         setName,
         setId,
         setPublicKey,
         setBio,
-        setImageURL,
+        setImageBase64,
         setWalletBalance,
         setHasSyncedWallet,
         setTimeBlockLengthMin,
         setTimeBlockCostADA,
+        setHourlyRate,
         setProfession,
         setJobTitle,
         setDescription,
