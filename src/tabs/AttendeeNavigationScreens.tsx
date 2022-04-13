@@ -6,18 +6,16 @@ import { OrganizerTabParamList } from "common/types/navigationTypes"
 import { WalletScreen } from "screens/index"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
 import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
-import { OrganizerHomeScreenStack } from "stacks/OrganizerHomeScreenStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
-import { MyEvents } from "screens/organizer/MyEvents"
 
-const NavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
+const AttendeeNavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
 
-export const NavigationScreens = ({ route }: any) => {
+export const AttendeeNavigationScreens = ({ route }: any) => {
   const { setId, setUsername, setProfileType } =
     React.useContext(ProfileContext)
-  const { accountType, toggleAuth } = appContext()
+  const { toggleAuth } = appContext()
 
   React.useEffect(() => {
     // if the params aren't empty, we are redirected from
@@ -33,21 +31,19 @@ export const NavigationScreens = ({ route }: any) => {
   }, [])
 
   return (
-    <NavigationTabs.Navigator
+    <AttendeeNavigationTabs.Navigator
       //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
-      <NavigationTabs.Screen
-        name="Home"
-        component={
-          accountType === "attendee" ? HomeScreen : OrganizerHomeScreenStack
-        }
+      <AttendeeNavigationTabs.Screen name="Home" component={HomeScreen} />
+      <AttendeeNavigationTabs.Screen
+        name="Browse"
+        component={BrowseScreensStack}
       />
-      <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
-      <NavigationTabs.Screen name="Wallet" component={WalletScreen} />
-      {accountType === "organizer" && (
-        <NavigationTabs.Screen name="My Events" component={MyEvents} />
-      )}
-      <NavigationTabs.Screen name="Profile" component={ProfileScreenStack} />
-    </NavigationTabs.Navigator>
+      <AttendeeNavigationTabs.Screen name="Wallet" component={WalletScreen} />
+      <AttendeeNavigationTabs.Screen
+        name="Profile"
+        component={ProfileScreenStack}
+      />
+    </AttendeeNavigationTabs.Navigator>
   )
 }

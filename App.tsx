@@ -13,7 +13,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { enableScreens } from "react-native-screens"
 import { WalletTopUpScreen } from "screens/onboarding"
 import { Confirmation, DepositSuccessful } from "screens/payments"
-import { NavigationScreens } from "tabs/NavigationScreens"
+import { AttendeeNavigationScreens } from "tabs/AttendeeNavigationScreens"
+import { OrganizerNavigationScreens } from "tabs/OrganizerNavigationScreens"
 import { OnboardingScreens } from "tabs/OnboardingScreens"
 import { UserRegistrationScreens } from "tabs/UserRegistrationScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
@@ -38,7 +39,6 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
-
   const onNavigationReady = () => SplashScreen.hide()
 
   if (!isAuthLoaded) {
@@ -57,7 +57,11 @@ function App() {
               onReady={onNavigationReady}>
               <Stack.Navigator
                 initialRouteName={
-                  isAuthorized ? "Navigation Screens" : "Onboarding Screens"
+                  isAuthorized
+                    ? user.profileType === "organizer"
+                      ? "Organizer Navigation Screens"
+                      : "Attendee Navigation Screens"
+                    : "Onboarding Screens"
                 }
                 headerMode="screen">
                 <Stack.Screen
@@ -75,8 +79,14 @@ function App() {
                   }}
                 />
                 <Stack.Screen
-                  name="Navigation Screens"
-                  component={NavigationScreens}
+                  name="Attendee Navigation Screens"
+                  component={AttendeeNavigationScreens}
+                  options={{ headerShown: false }}
+                  initialParams={user}
+                />
+                <Stack.Screen
+                  name="Organizer Navigation Screens"
+                  component={OrganizerNavigationScreens}
                   options={{ headerShown: false }}
                   initialParams={user}
                 />
