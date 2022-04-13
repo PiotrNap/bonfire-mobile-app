@@ -35,7 +35,7 @@ export interface UserProfileProps
 
 export const UserProfile = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
-  const { getUserProfile } = React.useContext(ProfileContext)
+  const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
   const { colorScheme, setColorScheme } = appContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
@@ -43,8 +43,6 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
 
   const userInfo = getUserProfile()
   const [currImage, setCurrImage] = React.useState<any>(userInfo.imageBase64)
-
-  console.log("user info ", userInfo)
 
   React.useEffect(() => {
     const obj = mediaObj?.assets[0] || imageObj?.assets[0]
@@ -54,12 +52,13 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
     if (obj)
       (async () => {
         const { uri } = obj
-        const { data } = await Users.uploadUserImage(uri)
-        if (data) setCurrImage(convertBufferToBase(data))
+        const res = await Users.uploadUserImage(uri)
+
+        if (res.data) setImageBase64(convertBufferToBase(res.data))
       })()
     setMediaObj(null)
     setImgObj(null)
-  }, [mediaObj, imageObj, userInfo.imageBase64])
+  }, [mediaObj, imageObj, userInfo])
 
   const darkMode = colorScheme === "dark"
 
@@ -94,7 +93,7 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
                 source={{
                   uri: `data:image/png;base64,${userInfo.imageBase64}`,
                 }}
-                onLoadEnd={() => console.log("finished loading image")}
+                // onLoadEnd={() => console.log("finished loading image")}
                 imageStyle={styles.profilePicImage}
                 style={styles.profilePic}>
                 <Pressable

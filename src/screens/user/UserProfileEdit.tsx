@@ -42,7 +42,6 @@ export const UserProfileEdit = ({ navigation, route }: any) => {
     )
   )
   const updateResponseMsg = (val: any) => {
-    console.log("updating wiht ", val)
     setUpdateResponse(val)
     setIsModalVisible(true)
   }
