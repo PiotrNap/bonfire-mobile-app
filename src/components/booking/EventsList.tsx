@@ -5,6 +5,7 @@ import {
   View,
   VirtualizedList,
 } from "react-native"
+import LottieView from "lottie-react-native"
 
 import { EventsListCard } from "./EventsListCard"
 import { getRandomKey } from "lib/utils"
@@ -12,20 +13,40 @@ import { useEventsPagination } from "lib/hooks/useEventsPagination"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Colors, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface EventsListProps {
   customEvents?: any[] | null
+  customIsLoading?: boolean
 }
 
-export const EventsList = ({ customEvents }: EventsListProps) => {
+export const EventsList = ({
+  customEvents,
+  customIsLoading,
+}: EventsListProps) => {
+  const { id } = React.useContext(ProfileContext)
+  const { colorScheme, accountType } = appContext()
   const {
     events,
-    isLoading,
+    isLoading: isPaginationLoading,
     getEventsPaginated,
     eventsPage,
   } = useEventsPagination()
-  const { colorScheme } = appContext()
+
+  // we aren't showing organizers own events on browse-screen
+  const filterOrganizerEvents = React.useCallback(
+    (_events: any[]) => {
+      return _events.filter((event) => event.organizerId !== id)
+    },
+    [customEvents, events, id]
+  )
+  const eventsList = () => {
+    if (accountType === "attendee") return customEvents ?? events
+    return filterOrganizerEvents(customEvents ?? events)
+  }
   const isLightMode = colorScheme !== "dark"
+  const isEmptyEventsList = !eventsList().length
+  const isLoading = customIsLoading || isPaginationLoading
 
   const renderEventCard = React.useCallback(({ item }: any) => {
     const {
@@ -34,15 +55,11 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
       description,
       fromDate,
       toDate,
-      // selectedDays,
       imageURI,
       eventCardColor,
-      id,
+      id: eventId,
       organizerId,
     } = item
-    // const selectedDaysArr: number[] = Object.values(selectedDays ?? {});
-    // const fromDate = Math.min(...selectedDaysArr);
-    // const toDate = Math.max(...selectedDaysArr);
 
     return (
       <EventsListCard
@@ -51,7 +68,7 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
         description={description}
         fromDate={fromDate}
         toDate={toDate}
-        id={id}
+        eventId={eventId}
         organizerId={organizerId}
         image={imageURI}
         color={eventCardColor}
@@ -85,14 +102,13 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
     }),
     []
   )
-
   return (
     <>
-      {!!events.length && !isLoading ? (
+      {!isEmptyEventsList && !isLoading ? (
         <VirtualizedList
           style={{ flex: 1, width: "100%" }}
           contentContainerStyle={{ width: "95%", alignSelf: "center" }}
-          data={customEvents ?? events}
+          data={eventsList}
           getItem={getItem}
           refreshing={isLoading}
           initialNumToRender={4}
@@ -111,12 +127,18 @@ export const EventsList = ({ customEvents }: EventsListProps) => {
           updateCellsBatchingPeriod={30}
           removeClippedSubviews
         />
-      ) : !events.length && isLoading ? (
+      ) : isEmptyEventsList && isLoading ? (
         <_ActivityIndicator />
       ) : (
         <View style={styles.noEventsMessage}>
+          <LottieView
+            style={styles.lottieAnimation}
+            source={require("../../../assets/animations/not-found.json")}
+            autoPlay
+            loop={false}
+          />
           <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Nothing yet to show...
+            It looks empty here...
           </SubHeaderText>
         </View>
       )}
@@ -130,5 +152,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+  },
+  lottieAnimation: {
+    width: Sizing.x140,
+    height: Sizing.x140,
   },
 })

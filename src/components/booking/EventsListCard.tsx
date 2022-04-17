@@ -16,7 +16,7 @@ import tinyColor from "tinycolor2"
 export interface EventsListCardProps {
   title: string
   description: string
-  id?: string
+  eventId?: string
   organizerId?: string
   fromDate: Date
   toDate: Date
@@ -31,7 +31,7 @@ export interface EventsListCardProps {
 export const EventsListCard = ({
   isEventCardPreview,
   isTransparent,
-  id,
+  eventId,
   organizerId,
   title,
   description,
@@ -51,7 +51,7 @@ export const EventsListCard = ({
       fromDate,
       toDate,
       image,
-      id,
+      eventId,
       organizerId,
       color,
       titleColor,

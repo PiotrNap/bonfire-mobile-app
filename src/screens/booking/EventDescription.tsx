@@ -23,16 +23,29 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
+import { ProfileContext } from "contexts/profileContext"
 
 type Props = StackScreenProps<BookingStackParamList, "Event Description">
 
 export const EventDescription = ({ navigation, route }: Props) => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { title, description, id, fromDate, toDate, image, color, titleColor } =
-    route.params
+  const {
+    title,
+    description,
+    eventId,
+    organizerId,
+    fromDate,
+    toDate,
+    image,
+    color,
+    titleColor,
+  } = route.params
   const { colorScheme } = appContext()
   const { setPreviewingEvent, resetBookingState } = bookingContext()
   const { setAvailCalendar } = myCalendarContext()
+  const { id } = React.useContext(ProfileContext)
+
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isEventOwner, setIsEventOwner] = React.useState<boolean>(false)
 
   const insets = useSafeAreaInsets()
   const isLightMode = colorScheme === "light"
@@ -43,7 +56,7 @@ export const EventDescription = ({ navigation, route }: Props) => {
     setIsLoading(true)
 
     try {
-      const event = await Events.getEventById(id)
+      const event = await Events.getEventById(eventId)
       if (event) {
         //TODO let organizers decide what's the 'good until' booking window period
         const availableDays = convertToCalendarAvailabilities(
@@ -67,6 +80,10 @@ export const EventDescription = ({ navigation, route }: Props) => {
       setIsLoading(false)
     }
   }
+
+  React.useEffect(() => {
+    if (id && organizerId && id === organizerId) setIsEventOwner(true)
+  }, [])
 
   return (
     <View style={{ flex: 1, paddingBottom: insets.bottom }}>
@@ -124,12 +141,22 @@ export const EventDescription = ({ navigation, route }: Props) => {
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
             {description}
           </BodyText>
-          <FullWidthButton
-            onPressCallback={onBookEventPress}
-            text="Book event"
-            colorScheme={colorScheme}
-            loadingIndicator={isLoading}
-          />
+          {isEventOwner ? (
+            <FullWidthButton
+              onPressCallback={onBookEventPress}
+              text="Delete Event"
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+              style={{ backgroundColor: Colors.danger.s300 }}
+            />
+          ) : (
+            <FullWidthButton
+              onPressCallback={onBookEventPress}
+              text="Book Event"
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+            />
+          )}
         </View>
       </View>
     </View>
