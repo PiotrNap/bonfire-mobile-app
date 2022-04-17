@@ -36,3 +36,7 @@ export interface Transaction {
   newUtxo: number
   date: number
 }
+
+export interface UserSettings {
+  eventCreationHintHidden: boolean
+}

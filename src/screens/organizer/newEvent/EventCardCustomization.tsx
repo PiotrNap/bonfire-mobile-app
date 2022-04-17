@@ -12,21 +12,22 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Colors, Sizing, Outlines, Buttons, Typography } from "styles/index"
-import { LeftArrowIcon } from "assets/icons"
-import { HeaderText } from "components/rnWrappers/headerText"
-import { SubHeaderText } from "components/rnWrappers/subHeaderText"
-import { EventsListCard } from "components/booking/EventsListCard"
 import {
   SliderHuePicker,
   SliderSaturationPicker,
   SliderValuePicker,
 } from "react-native-slider-color-picker"
-import { FullWidthButtonProps } from "components/buttons/fullWidthButton"
-import { BodyText } from "components/rnWrappers/bodyText"
-import { applyOpacity } from "../../../styles/colors"
 import tinyColor from "tinycolor2"
 import Slider from "react-native-smooth-slider"
+
+import { Colors, Sizing, Outlines, Buttons, Typography } from "styles/index"
+import { LeftArrowIcon } from "assets/icons"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { EventsListCard } from "components/booking/EventsListCard"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { applyOpacity } from "../../../styles/colors"
 import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<

@@ -9,10 +9,16 @@ import { RemoveIcon } from "assets/icons"
 interface Props {
   text: string
   closeable: boolean
+  closeCallback: () => {}
 }
 
-export const HintBox = ({ text, closeable }: Props) => {
+export const HintBox = ({ text, closeable, closeCallback }: Props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true)
+
+  const closeHintBox = async () => {
+    closeCallback()
+    setIsOpen(false)
+  }
 
   return isOpen ? (
     <View style={styles.container}>
@@ -28,7 +34,7 @@ export const HintBox = ({ text, closeable }: Props) => {
         <Pressable
           style={styles.closeButton}
           hitSlop={Sizing.x2}
-          onPress={() => setIsOpen(false)}>
+          onPress={closeHintBox}>
           <RemoveIcon style={styles.closeIcon} strokeWidth={2.4} />
         </Pressable>
       )}

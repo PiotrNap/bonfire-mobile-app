@@ -27,6 +27,11 @@ import { SlideTopModal } from "components/modals/slideTopModal"
 import { createNestedPath } from "lib/navigation"
 import { HintBox } from "components/modals/HintBox"
 import { ErrorIcon } from "assets/icons"
+import {
+  getFromEncryptedStorage,
+  setToEncryptedStorage,
+} from "lib/encryptedStorage"
+import { UserSettings } from "common/interfaces/appInterface"
 import * as qs from "qs"
 
 type Props = StackScreenProps<
@@ -51,6 +56,7 @@ export const AvailableDaysSelection = (props: Props) => {
     startGoogleAuthentication,
   } = useGoogleAuth()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
+  const [hintBoxVisible, setHintBoxVisible] = React.useState<boolean>(false)
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
 
   const eventListener = React.useCallback((event: { url: string }) => {
@@ -66,6 +72,13 @@ export const AvailableDaysSelection = (props: Props) => {
   }, [])
 
   React.useEffect(() => {
+    ;(async () => {
+      const userSettings: UserSettings = await getFromEncryptedStorage(
+        "user-settings"
+      )
+      if (!userSettings?.eventCreationHintHidden) setHintBoxVisible(true)
+    })()
+
     Linking.addEventListener("url", eventListener)
     return () => Linking.removeEventListener("url", eventListener)
   }, [])
@@ -114,6 +127,18 @@ export const AvailableDaysSelection = (props: Props) => {
     />
   ))
 
+  const onHintClose = async () => {
+    try {
+      const userSettings: UserSettings = await getFromEncryptedStorage(
+        "user-settings"
+      )
+      await setToEncryptedStorage("user-settings", {
+        ...userSettings,
+        eventCreationHintHidden: true,
+      })
+    } catch (e) {}
+  }
+
   return (
     <>
       <SafeAreaView
@@ -144,11 +169,14 @@ export const AvailableDaysSelection = (props: Props) => {
               Select dates you are available to host event
             </HeaderText>
           </View>
-          <HintBox
-            text="Press on a day to
+          {hintBoxVisible && (
+            <HintBox
+              text="Press on a day to
         select one, or tap on a day name to select them all."
-            closeable={true}
-          />
+              closeable={true}
+              closeCallback={onHintClose}
+            />
+          )}
           <View style={styles.messageWrapper}></View>
           <ScrollView showsVerticalScrollIndicator={false}>
             <CalendarWrapperSimple>

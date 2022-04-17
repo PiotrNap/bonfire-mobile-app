@@ -19,7 +19,7 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { useMediaAccess } from "lib/hooks/useMediaAccess"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
-import { FullWidthButtonProps } from "components/buttons/fullWidthButton"
+import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { fontWeight } from "../../../styles/typography"
 
 type Props = StackScreenProps<EventCreationParamList, "Image Cover Selection">
