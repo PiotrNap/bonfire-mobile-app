@@ -12,22 +12,23 @@ export const useAppLogin = () => {
   React.useEffect(() => {
     ;(async () => {
       try {
-        // let at = await getFromEncryptedStorage("auth-credentials")
+        let at = await getFromEncryptedStorage("auth-credentials")
         let sec = await getFromEncryptedStorage("privKey")
         let pub = await getFromEncryptedStorage("pubKey")
+        console.log(at)
 
         /**
          * We want to make sure if user exists in database first,
          * TODO set the TTL for JWT and test it
          */
         // if (at && !isExpired(at.expiresAt)) {
-        //   setAuthorizationToken(at.accessToken);
-        //   setIsAuthorized(true);
+        //   setAuthorizationToken(at.accessToken)
+        //   setIsAuthorized(true)
         //   setUser({
         //     username: at.username,
         //     profileType: at.profileType,
         //     id: at.id,
-        //   });
+        //   })
         // }
 
         if (sec && pub) {

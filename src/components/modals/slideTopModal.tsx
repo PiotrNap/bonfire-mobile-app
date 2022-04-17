@@ -31,7 +31,7 @@ export const SlideTopModal = ({
       let timeout = setTimeout(() => {
         setIsVisible(false)
         hideCallback && hideCallback()
-      }, 10000)
+      }, 2500)
       return () => clearTimeout(timeout)
     } else {
       setIsVisible(false)

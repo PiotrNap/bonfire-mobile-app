@@ -1,5 +1,6 @@
 import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
+import { getFormDataFromFilePath } from "lib/helpers"
 import { Platform } from "react-native"
 import axios from "./base"
 
@@ -76,7 +77,6 @@ export class Users {
       const res = await axios.get(`/users/${id}/events`, {
         params: { date: currCalendarDate ?? new Date() },
       })
-      console.log("res?", !!res)
 
       if (res) return res.data
     } catch (e) {
@@ -85,22 +85,16 @@ export class Users {
   }
 
   public static async uploadUserImage(filePath: string): Promise<any> {
-    const fileChunks = filePath.split(".")
-    const fileType = fileChunks[fileChunks.length - 1]
-    const formData = new FormData()
-
-    formData.append("file", {
-      uri: Platform.OS === "ios" ? filePath.replace("file://", "") : filePath,
-      name: `photo.${fileType}`,
-      type: `image/${fileType}`,
-    })
-
     try {
-      const res = await axios.post("/users/files/profile-image", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      const res = await axios.post(
+        "/users/files/profile-image",
+        getFormDataFromFilePath(filePath),
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
       return res
     } catch (e) {
       console.error(e)
@@ -120,6 +114,15 @@ export class Users {
   public static async deleteUserImage(id: string) {
     try {
       const res = await axios.delete(`/users/files/profile-image/${id}`)
+      return res
+    } catch (e) {
+      console.error(e.response.data.message)
+    }
+  }
+
+  public static async deleteUserAccount(id: string) {
+    try {
+      const res = await axios.delete(`/users/${id}`)
       return res
     } catch (e) {
       console.error(e.response.data.message)

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Alert, Platform, Pressable, StyleSheet, View } from "react-native"
+import { Pressable, StyleSheet, View } from "react-native"
 import { StackScreenProps } from "@react-navigation/stack"
 import RNRestart from "react-native-restart"
 
@@ -18,10 +18,21 @@ import { SettingsItem } from "components/profile/settingsItem"
 import { SmallDangerButton } from "components/buttons/smallDangerButton"
 import { clearEncryptedStorage } from "lib/encryptedStorage"
 import { ProfileContext } from "contexts/profileContext"
+import {
+  showAccountDeletionWarningModal,
+  showCredentialsWarningModal,
+  showFailedModal,
+} from "lib/modalAlertsHelpers"
+import {
+  FAILED_ACCOUNT_DELETION_MSG,
+  FAILED_CREDENTIALS_DELETION_MSG,
+} from "lib/errors"
+import { Users } from "Api/Users"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
 export const UserProfileSettings = ({ navigation }: ScreenProps) => {
+  const { id } = React.useContext(ProfileContext)
   const { colorScheme, resetAppState } = appContext()
   const { resetCalendarState } = myCalendarContext()
   const { resetBookingState } = bookingContext()
@@ -29,14 +40,13 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
 
   const { resetProfileState } = React.useContext(ProfileContext)
   const isLightMode = colorScheme === "light"
-  const isAndroid = Platform.OS === "android"
 
   const onBackNavigationPress = () => navigation.goBack()
+
   const removeStorageData = async () => {
     // removes everything from encrypted storage
     const success = await clearEncryptedStorage()
-
-    if (!success) return showFailedModal()
+    if (!success) return showFailedModal(FAILED_CREDENTIALS_DELETION_MSG)
 
     RNRestart.Restart()
 
@@ -49,43 +59,16 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     resetProfileState()
   }
 
-  const showFailedModal = () => {
-    Alert.alert(
-      "Something went wrong",
-      "We were unable to remove Bonfire data stored on this device. Please try again. If the problem persists please contact our support.",
-      [
-        {
-          text: "Close",
-          style: "cancel",
-          onPress: () => {},
-        },
-      ],
-      isAndroid ? { cancelable: true } : {}
-    )
-  }
+  const deleteUserAccount = async () => {
+    if (!id) return
+    try {
+      const success = await Users.deleteUserAccount(id)
+      if (!success) showFailedModal(FAILED_ACCOUNT_DELETION_MSG)
 
-  const showWarningModal = () => {
-    Alert.alert(
-      "Beware!",
-      "This action is irreversible, you will loose access to your current wallet and account credentials on this device.",
-      [
-        {
-          text: "Yes, I understand",
-          style: "destructive",
-          onPress: async () => await removeStorageData(),
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: () =>
-            Alert.alert(
-              "You are safe",
-              "None of your credentials were removed. You can continue enjoying this application."
-            ),
-        },
-      ],
-      isAndroid ? { cancelable: true } : {}
-    )
+      removeStorageData()
+    } catch (e) {
+      showFailedModal(FAILED_ACCOUNT_DELETION_MSG)
+    }
   }
 
   const { color: _, ...textStyle } = Typography.header.x20
@@ -104,9 +87,22 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       <SettingsItem
         titleStyle={textStyle}
         title={
-          "Remove all stored application data \n(includes private & public keys)."
+          "Clear all stored application data \n(includes private & public keys)."
         }>
-        <SmallDangerButton onPressCallback={showWarningModal} text="Delete" />
+        <SmallDangerButton
+          onPressCallback={() => showCredentialsWarningModal(removeStorageData)}
+          text="Clear"
+        />
+      </SettingsItem>
+      <SettingsItem
+        titleStyle={textStyle}
+        title={"Delete my account and all data associated with it."}>
+        <SmallDangerButton
+          onPressCallback={() =>
+            showAccountDeletionWarningModal(deleteUserAccount)
+          }
+          text="Delete"
+        />
       </SettingsItem>
     </Layout>
   )
