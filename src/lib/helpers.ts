@@ -91,3 +91,17 @@ export const getApiUrl = (url: string): string => {
 
   return baseUrl + url
 }
+
+export const getFormDataFromFilePath = (filePath: string) => {
+  const fileChunks = filePath.split(".")
+  const fileType = fileChunks[fileChunks.length - 1]
+  const formData = new FormData()
+
+  formData.append("file", {
+    uri: Platform.OS === "ios" ? filePath.replace("file://", "") : filePath,
+    name: `photo.${fileType}`,
+    type: `image/${fileType}`,
+  })
+
+  return formData
+}

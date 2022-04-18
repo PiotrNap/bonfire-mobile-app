@@ -18,11 +18,13 @@ import { ProfileContext } from "contexts/profileContext"
 export interface EventsListProps {
   customEvents?: any[] | null
   customIsLoading?: boolean
+  isOrganizerOwnEvents?: boolean
 }
 
 export const EventsList = ({
   customEvents,
   customIsLoading,
+  isOrganizerOwnEvents,
 }: EventsListProps) => {
   const { id } = React.useContext(ProfileContext)
   const { colorScheme, accountType } = appContext()
@@ -41,7 +43,8 @@ export const EventsList = ({
     [customEvents, events, id]
   )
   const eventsList = () => {
-    if (accountType === "attendee") return customEvents ?? events
+    if (accountType === "attendee" || isOrganizerOwnEvents)
+      return customEvents ?? events
     return filterOrganizerEvents(customEvents ?? events)
   }
   const isLightMode = colorScheme !== "dark"
@@ -108,7 +111,7 @@ export const EventsList = ({
         <VirtualizedList
           style={{ flex: 1, width: "100%" }}
           contentContainerStyle={{ width: "95%", alignSelf: "center" }}
-          data={eventsList}
+          data={eventsList()}
           getItem={getItem}
           refreshing={isLoading}
           initialNumToRender={4}

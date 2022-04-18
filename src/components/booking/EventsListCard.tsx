@@ -8,10 +8,11 @@ import {
 } from "react-native"
 
 import { useNavigation } from "@react-navigation/native"
+import tinyColor from "tinycolor2"
+
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
 import { getEventCardDate } from "lib/utils"
-import tinyColor from "tinycolor2"
 
 export interface EventsListCardProps {
   title: string

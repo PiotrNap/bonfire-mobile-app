@@ -19,15 +19,12 @@ import {
 } from "contexts/contextApi"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { StackScreenProps } from "@react-navigation/stack"
-import { BookingStackParamList } from "common/types/navigationTypes"
 import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
 import { ProfileContext } from "contexts/profileContext"
+import { EventStatistics } from "components/events/eventDescription/EventStatistics"
 
-type Props = StackScreenProps<BookingStackParamList, "Event Description">
-
-export const EventDescription = ({ navigation, route }: Props) => {
+export const EventDescription = ({ navigation, route }: any) => {
   const {
     title,
     description,
@@ -75,11 +72,16 @@ export const EventDescription = ({ navigation, route }: Props) => {
         ...route.params,
       })
     } catch (e) {
-      // TODO Implement better error handling
+      // TODO Implement better error handling *error modal?*
       console.error(e)
       setIsLoading(false)
     }
   }
+  const onEventDetailPreview = () =>
+    navigation.navigate("Event Details", {
+      header: "Details",
+      organizerEvent: { ...route.params },
+    })
 
   React.useEffect(() => {
     if (id && organizerId && id === organizerId) setIsEventOwner(true)
@@ -142,13 +144,15 @@ export const EventDescription = ({ navigation, route }: Props) => {
             {description}
           </BodyText>
           {isEventOwner ? (
-            <FullWidthButton
-              onPressCallback={onBookEventPress}
-              text="Delete Event"
-              colorScheme={colorScheme}
-              loadingIndicator={isLoading}
-              style={{ backgroundColor: Colors.danger.s300 }}
-            />
+            <View>
+              <EventStatistics views={0} bookings={0} likes={0} />
+              <FullWidthButton
+                onPressCallback={onEventDetailPreview}
+                text="Preview"
+                colorScheme={colorScheme}
+                loadingIndicator={isLoading}
+              />
+            </View>
           ) : (
             <FullWidthButton
               onPressCallback={onBookEventPress}

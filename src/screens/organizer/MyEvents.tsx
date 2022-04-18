@@ -1,22 +1,45 @@
 import * as React from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, Animated } from "react-native"
 
 import { Layout } from "components/layouts/basicLayout"
 import SearchBar from "@pnap/react-native-search-bar"
 import { SearchIcon } from "assets/icons"
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography, Buttons } from "styles/index"
-import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { useEventsResults } from "lib/hooks/useEventsResults"
+import { EventsList } from "components/booking/EventsList"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface Props {}
 
 export const MyEvents = ({}: Props) => {
+  const { id } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
-  const isLightMode = colorScheme === "light"
+  const {
+    events: searchEvents,
+    isLoading,
+    getEventsBySearchQuery,
+    setEvents,
+  } = useEventsResults(id)
 
-  const onSubmitSearch = () => {}
-  const onActiveSearch = () => {}
-  const onToggleSearchBar = () => {}
+  const isLightMode = colorScheme === "light"
+  const animatedOpacity = React.useRef(new Animated.Value(0)).current
+
+  const onActiveSearch = (active: boolean) => {
+    Animated.timing(animatedOpacity, {
+      useNativeDriver: true,
+      toValue: active ? 1 : 0,
+      duration: 140,
+    }).start()
+  }
+  const onSubmitSearch = (val: string) => {
+    onActiveSearch(false)
+    getEventsBySearchQuery(val)
+  }
+  const onToggleSearchBar = (val: boolean) => {
+    // user hides search bar? show the normal events list.
+    if (!val) setEvents(null)
+  }
 
   const CustomSearchIcon = React.useCallback(
     () => (
@@ -33,7 +56,7 @@ export const MyEvents = ({}: Props) => {
     []
   )
   return (
-    <Layout>
+    <Layout scrollable={false}>
       <View style={styles.topContainer}>
         <SearchBar
           onSubmitSearch={onSubmitSearch}
@@ -68,9 +91,11 @@ export const MyEvents = ({}: Props) => {
         />
       </View>
       <View style={styles.main}>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-          Show organizers events here...
-        </SubHeaderText>
+        <EventsList
+          isOrganizerOwnEvents
+          customIsLoading={isLoading}
+          customEvents={searchEvents}
+        />
       </View>
     </Layout>
   )

@@ -9,7 +9,7 @@ import { OrganizerHomeScreenStack } from "stacks/OrganizerHomeScreenStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
-import { MyEvents } from "screens/organizer/MyEvents"
+import { MyEventsStack } from "stacks/MyEventsStack"
 
 const OrganizerNavigationTabs =
   createBottomTabNavigator<OrganizerTabParamList>()
@@ -45,7 +45,10 @@ export const OrganizerNavigationScreens = ({ route }: any) => {
         component={BrowseScreensStack}
       />
       <OrganizerNavigationTabs.Screen name="Wallet" component={WalletScreen} />
-      <OrganizerNavigationTabs.Screen name="My Events" component={MyEvents} />
+      <OrganizerNavigationTabs.Screen
+        name="My Events"
+        component={MyEventsStack}
+      />
       <OrganizerNavigationTabs.Screen
         name="Profile"
         component={ProfileScreenStack}

@@ -11,6 +11,7 @@ import { applyOpacity } from "../styles/colors"
 import { useEventsResults } from "lib/hooks/useEventsResults"
 import { SearchIcon } from "assets/icons"
 import SearchBar from "@pnap/react-native-search-bar"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface BrowseProps
   extends StackScreenProps<BookingStackParamList, "Browse"> {
@@ -18,13 +19,14 @@ export interface BrowseProps
 }
 
 export const BrowseScreen = ({}: BrowseProps) => {
+  const { id } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
   const {
     events: searchEvents,
     isLoading,
     getEventsBySearchQuery,
     setEvents,
-  } = useEventsResults()
+  } = useEventsResults(id)
 
   const animatedOpacity = React.useRef(new Animated.Value(0)).current
   const isLightMode = colorScheme !== "dark"

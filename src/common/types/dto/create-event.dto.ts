@@ -17,7 +17,6 @@ export interface CreateEventDto {
   fromDate: Date | null
   toDate: Date | null
   hourlyRate: number
-  imageURI: string
   privateEvent: boolean
   eventCardColor: string
   eventTitleColor: string

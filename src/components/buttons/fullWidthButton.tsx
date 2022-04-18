@@ -83,7 +83,7 @@ export const FullWidthButton = ({
           ? [customButtonStyle, style, disabledStyle]
           : Buttons.applyOpacity([customButtonStyle, style])
       }>
-      <Text onLayout={onLayoutText} style={textStyle ?? customTextStyle}>
+      <Text onLayout={onLayoutText} style={[customTextStyle, textStyle]}>
         {text}
       </Text>
       {loadingIndicator && pressableWidth && textWidth && (

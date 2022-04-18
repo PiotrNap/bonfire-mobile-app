@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, StyleSheet, FlatList } from "react-native"
+import { FlatList } from "react-native"
 
 import {
   appContext,
@@ -29,7 +29,10 @@ import {
 } from "lib/utils"
 import { ProfileContext } from "contexts/profileContext"
 
-export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
+export const EventConfirmationDetails = ({
+  isNewEvent = false,
+  organizerEvent,
+}: any) => {
   const { colorScheme } = appContext()
   const {
     duration = null,
@@ -76,6 +79,49 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
     placeholder: <PlaceholderIcon {...iconStyles} />,
     colorsPallete: <ColorsPalleteIcon {...iconStyles} />,
   }
+
+  const organizerEventSections: any[] = [
+    organizerEvent.title && {
+      label: "Title",
+      lineContent: {
+        content: organizerEvent.title,
+        icon: sectionsIcons.presentation,
+      },
+    },
+
+    organizerEvent.description && {
+      label: "Description",
+      lineContent: {
+        content: organizerEvent.description,
+        icon: sectionsIcons.description,
+      },
+    },
+    organizerEvent.fromDate && {
+      label: "Date & time",
+      lineContent: [
+        {
+          content: `Start: ${weekDays[getDay(organizerEvent.fromDate)]} - ${
+            months[getMonth(organizerEvent.fromDate)]
+          } ${getDate(organizerEvent.fromDate)}`,
+          icon: sectionsIcons.calendar,
+        },
+        {
+          content: `End: ${weekDays[getDay(organizerEvent.toDate)]} - ${
+            months[getMonth(organizerEvent.toDate)]
+          } ${getDate(organizerEvent.toDate)}`,
+          icon: sectionsIcons.calendar,
+        },
+      ],
+    },
+    {
+      label: "Hourly Rate",
+      lineContent: {
+        //@TODO we should have this set up when somebody's creating an event
+        content: `${organizerEvent.hourlyRate ?? 0} ADA`,
+        icon: sectionsIcons.ada,
+      },
+    },
+  ]
 
   const newEventSections: any[] = [
     textContent?.title && {
@@ -212,6 +258,8 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
   const isLastItem = (index: number) =>
     isNewEvent
       ? index === newEventSections.length - 1
+      : organizerEvent
+      ? index === organizerEventSections.length - 1
       : index === bookingEventSections.length - 1
 
   const renderSections = ({
@@ -220,25 +268,27 @@ export const EventConfirmationDetails = ({ isNewEvent = false }: any) => {
   }: {
     item: SectionDetail
     index: number
-  }) => {
-    return (
-      <EventConfirmationDetail
-        key={index}
-        label={item.label}
-        lineContent={item.lineContent}
-        callbackFn={item.callbackFn}
-        isLastItem={isLastItem(index)}
-      />
-    )
-  }
+  }) => (
+    <EventConfirmationDetail
+      key={index}
+      label={item.label}
+      lineContent={item.lineContent}
+      callbackFn={item.callbackFn}
+      isLastItem={isLastItem(index)}
+    />
+  )
 
-  const keyExtractor = (item: any, index: number) => {
-    return `${item.label}_${index}`
-  }
+  const keyExtractor = (item: any, index: number) => `${item.label}_${index}`
 
   return (
     <FlatList
-      data={isNewEvent ? newEventSections : bookingEventSections}
+      data={
+        isNewEvent
+          ? newEventSections
+          : organizerEvent
+          ? organizerEventSections
+          : bookingEventSections
+      }
       renderItem={renderSections}
       keyExtractor={keyExtractor}
     />

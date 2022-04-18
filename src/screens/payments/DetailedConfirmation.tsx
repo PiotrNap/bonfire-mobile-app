@@ -51,7 +51,6 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         fromDate,
         toDate,
         hourlyRate: hourlyRate ?? eventHourlyRate,
-        imageURI,
         privateEvent,
         eventCardColor,
         eventTitleColor,
@@ -65,11 +64,16 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         const eventId = await Events.createEvent(newEvent)
 
         if (eventId) {
-          setIsLoading(false)
+          // update img as we cant send multiple content-type headers
+          const success = await Events.uploadEventImage(imageURI, eventId)
 
-          navigation.navigate("Confirmation", {
-            isBookingConfirmation: false,
-          })
+          if (success) {
+            setIsLoading(false)
+
+            navigation.navigate("Confirmation", {
+              isBookingConfirmation: false,
+            })
+          }
         }
       } catch (e) {
         setIsLoading(false)
@@ -94,8 +98,15 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       }
 
       //@TODO submit transaction to blockchain
-      // setWalletBalance(walletBalance - durationCost);
     }
+  }
+  const onDeleteEvent = async () => {
+    if (!params.organizerEvent.eventId) return
+    try {
+      const success = await Events.deleteEvent(params.organizerEvent.eventId)
+      //TODO show success modal
+      console.log(success)
+    } catch (e) {}
   }
 
   return (
@@ -123,17 +134,35 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             style={
               isLightMode ? styles.headerText_light : styles.headerText_dark
             }>
-            Confirmation
+            {params?.header || "Confirmation"}
           </Text>
         </View>
-        <EventConfirmationDetails isNewEvent={params?.isNewEvent} />
+        <EventConfirmationDetails
+          organizerEvent={params?.organizerEvent}
+          isNewEvent={params?.isNewEvent}
+        />
         <View style={styles.buttonContainer}>
-          <FullWidthButton
-            onPressCallback={onButtonPress}
-            text={"Confirm"}
-            colorScheme={colorScheme}
-            loadingIndicator={isLoading}
-          />
+          {params?.organizerEvent ? (
+            // @TODO this should only be possible if there're no bookings
+            <FullWidthButton
+              onPressCallback={onDeleteEvent}
+              text="Close"
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+              textStyle={{ color: Colors.primary.neutral }}
+              style={{
+                backgroundColor: Colors.danger.s400,
+                borderColor: Colors.danger.s400,
+              }}
+            />
+          ) : (
+            <FullWidthButton
+              onPressCallback={onButtonPress}
+              text={"Confirm"}
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+            />
+          )}
         </View>
       </View>
     </SafeAreaView>

@@ -68,6 +68,12 @@ export type EventCreationParamList = {
   "Event Confirmation Details": { isNewEvent: boolean } | undefined
 }
 
+export type MyEventsStackParamList = {
+  "My Events": undefined
+  "Event Description": EventDescription
+  "Event Details": EventDescription
+}
+
 export type ProfileStackParamList = {
   Profile: undefined
   "Edit Profile": { userInfo: UserBaseDTO | UserOrganizerDTO }
