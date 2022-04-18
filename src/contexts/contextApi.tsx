@@ -107,6 +107,12 @@ export const eventCreationContext = () => {
         payload: { availability },
       })
     },
+    removeAvailabilities: () => {
+      dispatch({
+        type: EventCreationTypes.RemoveAvailabilities,
+        payload: {},
+      })
+    },
     setHourlyRate: (hourlyRate: number) => {
       dispatch({
         type: EventCreationTypes.SetHourlyRate,

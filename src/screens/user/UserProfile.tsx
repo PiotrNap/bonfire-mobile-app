@@ -6,7 +6,6 @@ import {
   Pressable,
   Switch,
   Platform,
-  ImageBackground,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -28,7 +27,8 @@ import { Users } from "Api/Users"
 import { SettingsNavigationItem } from "components/profile/settingsNavigationItem"
 import { SettingsItem } from "components/profile/settingsItem"
 import { useUserInfo } from "lib/hooks/useUserInfo"
-import { convertBufferToBase } from "lib/utils"
+import { bufferToBase64 } from "lib/utils"
+import FastImage from "react-native-fast-image"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
@@ -54,7 +54,7 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
         const { uri } = obj
         const res = await Users.uploadUserImage(uri)
 
-        if (res.data) setImageBase64(convertBufferToBase(res.data))
+        if (res.data) setImageBase64(bufferToBase64(res.data))
       })()
     setMediaObj(null)
     setImgObj(null)
@@ -89,12 +89,10 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
           onImageDeleted={updateCurrImage}
           child={
             currImage ? (
-              <ImageBackground
+              <FastImage
                 source={{
                   uri: `data:image/png;base64,${userInfo.imageBase64}`,
                 }}
-                // onLoadEnd={() => console.log("finished loading image")}
-                imageStyle={styles.profilePicImage}
                 style={styles.profilePic}>
                 <Pressable
                   onPressIn={onImagePress}
@@ -110,7 +108,7 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
                     <Text style={styles.profilePicEditText}>Edit</Text>
                   </View>
                 </Pressable>
-              </ImageBackground>
+              </FastImage>
             ) : (
               <View style={styles.profilePicPlaceholder}>
                 <Pressable
@@ -277,10 +275,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 999,
     ...Outlines.shadow.lifted_noElevation,
-  },
-  profilePicImage: {
-    borderRadius: 999,
-    resizeMode: "cover",
   },
   profilePic: {
     backgroundColor: Colors.neutral.s200,

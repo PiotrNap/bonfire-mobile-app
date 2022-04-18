@@ -1,17 +1,11 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ImageBackground,
-  ScrollView,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native"
 
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { appContext } from "contexts/contextApi"
 import { LeftArrowIcon } from "assets/icons"
+import FastImage from "react-native-fast-image"
 
 interface EventBookingLayoutProps {
   children: React.ReactNode
@@ -40,9 +34,8 @@ export const EventBookingLayout = ({
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
       <View style={styles.topContainer}>
-        <ImageBackground
-          resizeMode="cover"
-          source={{ uri: eventCardImage }}
+        <FastImage
+          source={{ uri: `data:image/png;base64,${eventCardImage}` }}
           style={styles.backgroundImage}>
           <View
             style={[
@@ -73,7 +66,7 @@ export const EventBookingLayout = ({
               </Text>
             </View>
           </View>
-        </ImageBackground>
+        </FastImage>
       </View>
       <ScrollView
         contentContainerStyle={[

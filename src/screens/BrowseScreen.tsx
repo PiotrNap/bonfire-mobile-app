@@ -59,7 +59,7 @@ export const BrowseScreen = ({}: BrowseProps) => {
         style={{ marginRight: Sizing.x10 }}
       />
     ),
-    []
+    [colorScheme]
   )
 
   /**

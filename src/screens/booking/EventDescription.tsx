@@ -1,11 +1,5 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  Pressable,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { applyOpacity } from "../../styles/colors"
@@ -23,6 +17,7 @@ import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
 import { ProfileContext } from "contexts/profileContext"
 import { EventStatistics } from "components/events/eventDescription/EventStatistics"
+import FastImage from "react-native-fast-image"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {
@@ -90,9 +85,8 @@ export const EventDescription = ({ navigation, route }: any) => {
   return (
     <View style={{ flex: 1, paddingBottom: insets.bottom }}>
       <View style={styles.topContainer}>
-        <ImageBackground
-          resizeMode="cover"
-          source={{ uri: image }}
+        <FastImage
+          source={{ uri: `data:image/png;base64,${image}` }}
           style={styles.backgroundImage}>
           <View style={[styles.topInnerContainer, { backgroundColor: color }]}>
             <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
@@ -125,7 +119,7 @@ export const EventDescription = ({ navigation, route }: any) => {
               </Text>
             </View>
           </View>
-        </ImageBackground>
+        </FastImage>
       </View>
       <View
         style={[

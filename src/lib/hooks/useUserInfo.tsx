@@ -2,7 +2,7 @@ import * as R from "react"
 
 import { Users } from "Api/Users"
 import { ProfileContext } from "contexts/profileContext"
-import { convertBufferToBase } from "lib/utils"
+import { bufferToBase64 } from "lib/utils"
 
 export const useUserInfo = () => {
   const [isLoading, setIsLoading] = R.useState<boolean>(true)
@@ -22,7 +22,7 @@ export const useUserInfo = () => {
   const updateOrganizer = (val: any) => {
     setName(val.name)
     setUsername(val.username)
-    setImageBase64(convertBufferToBase(val.profileImage?.data))
+    setImageBase64(bufferToBase64(val.profileImage?.data))
     setId(val.id)
     setBio(val.bio)
     setSkills(val.skills)
@@ -33,7 +33,7 @@ export const useUserInfo = () => {
   const updateAttendee = (val: any) => {
     setName(val.name)
     setUsername(val.username)
-    setImageBase64(convertBufferToBase(val.profileImage?.data))
+    setImageBase64(bufferToBase64(val.profileImage?.data))
     setId(val.id)
   }
 

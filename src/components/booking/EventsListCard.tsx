@@ -13,6 +13,7 @@ import tinyColor from "tinycolor2"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
 import { getEventCardDate } from "lib/utils"
+import FastImage from "react-native-fast-image"
 
 export interface EventsListCardProps {
   title: string
@@ -63,9 +64,7 @@ export const EventsListCard = ({
       disabled={isEventCardPreview ?? false}
       onPress={onCardPress}
       style={styles.main}>
-      <ImageBackground
-        imageStyle={styles.image}
-        resizeMode="cover"
+      <FastImage
         source={{
           uri: image,
         }}
@@ -103,7 +102,7 @@ export const EventsListCard = ({
             {title}
           </Text>
         </View>
-      </ImageBackground>
+      </FastImage>
     </Pressable>
   )
 }
@@ -119,8 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: Sizing.x120,
-  },
-  image: {
     borderRadius: Outlines.borderRadius.base,
   },
   container: {

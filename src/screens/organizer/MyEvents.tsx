@@ -53,7 +53,7 @@ export const MyEvents = ({}: Props) => {
         style={{ marginRight: Sizing.x10 }}
       />
     ),
-    []
+    [colorScheme]
   )
   return (
     <Layout scrollable={false}>

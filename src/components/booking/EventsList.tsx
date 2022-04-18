@@ -8,7 +8,7 @@ import {
 import LottieView from "lottie-react-native"
 
 import { EventsListCard } from "./EventsListCard"
-import { getRandomKey } from "lib/utils"
+import { bufferToBase64, getRandomKey } from "lib/utils"
 import { useEventsPagination } from "lib/hooks/useEventsPagination"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Colors, Sizing } from "styles/index"
@@ -58,7 +58,7 @@ export const EventsList = ({
       description,
       fromDate,
       toDate,
-      imageURI,
+      eventCardImage,
       eventCardColor,
       id: eventId,
       organizerId,
@@ -73,7 +73,7 @@ export const EventsList = ({
         toDate={toDate}
         eventId={eventId}
         organizerId={organizerId}
-        image={imageURI}
+        image={bufferToBase64(eventCardImage?.data)}
         color={eventCardColor}
         isTransparent={eventCardColor === "transparent"}
       />

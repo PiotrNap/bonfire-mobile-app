@@ -17,13 +17,12 @@ import { months, monthsByName, weekDays } from "common/types/calendarTypes"
 import { AnyObject } from "yup/lib/types"
 
 const IS_ANDROID = Platform.OS === "android"
-const IS_IOS = Platform.OS === "ios"
 
 export function scale(size: number, factor = 1) {
   return +((Dimensions.get("window").width / 390) * size * factor).toFixed(2)
 }
 
-export const convertBufferToBase = (val: Buffer) => {
+export const bufferToBase64 = (val: Buffer) => {
   return !val ? val : Buffer.from(val).toString("base64")
 }
 

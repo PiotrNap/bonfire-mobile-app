@@ -12,7 +12,6 @@ import {
 } from "interfaces/appInterface"
 import { AppActions, AppTypes } from "common/types/contextTypes"
 import { Colors } from "styles/index"
-import { initialState } from "./profileContext"
 
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
