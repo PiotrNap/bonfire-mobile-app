@@ -10,19 +10,19 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef }: any) => {
-  const { setProfession, setJobTitle, setBio, setSkills, setTimeBlockCostADA } =
+  const { setProfession, setJobTitle, setBio, setSkills, setHourlyRate } =
     React.useContext(ProfileContext)
   const [_profession, _setProfession] = React.useState<string>("")
   const [_jobTitle, _setJobTitle] = React.useState<string>("")
   const [_bio, _setBio] = React.useState<string>("")
-  const [_timeBlockCostAda, _setTimeBlockCostAda] = React.useState<number>(0)
+  const [_hourlyRate, _setHourlyRate] = React.useState<number>(0)
   const [_skills, _setSkills] = React.useState<string>("")
 
   const submitBioState = () => {
     setProfession(_profession.trim())
     setJobTitle(_jobTitle.trim())
     setBio(_bio.trim())
-    setTimeBlockCostADA(_timeBlockCostAda)
+    setHourlyRate(_hourlyRate)
     setSkills(_skills.trim())
     pagerRef.current.setPage(1)
   }
@@ -45,7 +45,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           labelStyle={inputStyles.label}
           placeholder="Doctor, therapist, developer..."
           styles={inputStyles}
-          onChangeCallback={(val) => _setProfession(val)}
+          onEndEditingCallback={(val) => _setProfession(val)}
         />
         <CustomPlainInput
           label="Job Title"
@@ -53,7 +53,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           placeholder="Full Stack Engineer, Sr Business..."
           styles={inputStyles}
           textContentType="jobTitle"
-          onChangeCallback={(val) => _setJobTitle(val)}
+          onEndEditingCallback={(val) => _setJobTitle(val)}
         />
         {/* when handling events with multiline, use ref._lastNativeText */}
         <CustomPlainInput
@@ -64,14 +64,14 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           maxChar={250}
           placeholder="Passionate in helping others draw business goals and needs..."
           styles={inputStyles}
-          onChangeCallback={(val) => _setBio(val)}
+          onEndEditingCallback={(val) => _setBio(val)}
         />
         <CustomPlainInput
           label="Skills"
           labelStyle={inputStyles.label}
           placeholder="Organized, Motivated, Critical Th..."
           styles={inputStyles}
-          onChangeCallback={(val) => _setSkills(val)}
+          onEndEditingCallback={(val) => _setSkills(val)}
         />
       </View>
       <View style={inputStyles.inputContainer}>
@@ -85,7 +85,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
             textContentType="none"
             placeholder="35 ₳ an hour"
             placeholderTextColor={inputStyles.placeholderText.color}
-            onChangeText={(val) => _setTimeBlockCostAda(Number(val))}
+            onChangeText={(val) => _setHourlyRate(Number(val))}
           />
         </View>
       </View>

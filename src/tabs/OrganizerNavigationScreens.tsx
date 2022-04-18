@@ -15,7 +15,7 @@ const OrganizerNavigationTabs =
   createBottomTabNavigator<OrganizerTabParamList>()
 
 export const OrganizerNavigationScreens = ({ route }: any) => {
-  const { setId, setUsername, setProfileType } =
+  const { setId, setHourlyRate, setUsername, setProfileType } =
     React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
 
@@ -23,12 +23,13 @@ export const OrganizerNavigationScreens = ({ route }: any) => {
     // if the params aren't empty, we are redirected from
     // main screens stack during login
     if (Object.entries(route.params).length != 0) {
-      const { profileType, username, id } = route.params
+      const { profileType, username, id, hourlyRate } = route.params
 
       profileType && toggleAuth(true, profileType)
       id && setId(id)
       profileType && setProfileType(profileType)
       username && setUsername(username)
+      setHourlyRate(hourlyRate)
     }
   }, [])
 

@@ -1,11 +1,5 @@
 import * as React from "react"
-import {
-  StyleProp,
-  StyleSheet,
-  StyleSheetProperties,
-  View,
-  ViewStyle,
-} from "react-native"
+import { StyleProp, StyleSheet, View } from "react-native"
 
 import { Formik, Field } from "formik"
 
@@ -25,7 +19,6 @@ interface Props {
 
 export const UpdateAccountForm = ({
   accountType,
-  onInfoHasChanged,
   onUpdateResponse,
   userInfo,
 }: Props) => {

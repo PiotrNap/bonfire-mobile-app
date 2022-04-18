@@ -1,16 +1,8 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ImageBackground,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { LeftArrowIcon } from "icons/index"
 import {
   appContext,
   bookingContext,
@@ -54,9 +46,6 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
   //   previewingOrganizer.timeBlock
   // );
   const scheduledTimes: any = []
-  const insets = useSafeAreaInsets()
-
-  const isLightMode = colorScheme === "light"
   const isDisabled = selectedTimeSlot === null
 
   const setTimeDuration = () => {

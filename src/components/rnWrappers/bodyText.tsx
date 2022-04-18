@@ -40,6 +40,6 @@ export const BodyText = ({
 
 const styles = StyleSheet.create({
   text: {
-    ...Typography.body.x25,
+    ...Typography.body.x30,
   },
 })

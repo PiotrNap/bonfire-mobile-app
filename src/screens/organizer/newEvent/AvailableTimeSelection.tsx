@@ -40,7 +40,8 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
   const [openPicker, setOpenPicker] = React.useState<string | null>(null)
   const [alreadyCreated, setAlreadyCreated] = React.useState<boolean>(false)
   const { colorScheme } = appContext()
-  const { addAvailability, availabilities } = eventCreationContext()
+  const { addAvailability, availabilities, removeAvailabilities } =
+    eventCreationContext()
 
   React.useEffect(() => {
     setMinInputRange(calculateMinRange())
@@ -92,14 +93,14 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
     return arr
   }
 
-  const hasExistingAvailability = !!availabilities.find(
-    (el) =>
-      el &&
-      el.from === fromTime &&
-      el.to === toTime &&
-      el.maxDuration === maxTime &&
-      el.minDuration === minTime
-  )
+  // const hasExistingAvailability = !!availabilities.find(
+  //   (el) =>
+  //     el &&
+  //     el.from === fromTime &&
+  //     el.to === toTime &&
+  //     el.maxDuration === maxTime &&
+  //     el.minDuration === minTime
+  // )
   const hasAvailabilities = !!availabilities.length
 
   const isLightMode = colorScheme === "light"
@@ -130,10 +131,11 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
 
     setAlreadyCreated(true)
   }
-  /**
-   * Navigation handlers
-   */
-  const onBackNavigationPress = () => navigation.goBack()
+
+  const onBackNavigationPress = () => {
+    removeAvailabilities()
+    navigation.goBack()
+  }
   const onNextPress = () => navigation.navigate("Image Cover Selection")
 
   return (

@@ -23,14 +23,14 @@ const SCREEN_WIDTH = Dimensions.get("screen").width
 
 export const RegistrationConfirmationScreen = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { profession, jobTitle, bio, timeBlockCostADA, skills, id } =
+  const { profession, jobTitle, bio, hourlyRate, skills, id } =
     React.useContext(ProfileContext)
   const { ref } = appContext()
   const { navigate } = useNavigation()
 
   const onChangePress = () => ref.current.setPage(0)
   const emptyDetails =
-    !profession && !jobTitle && !bio && !timeBlockCostADA && !skills
+    !profession && !jobTitle && !bio && !hourlyRate && !skills
 
   const onConfirm = async () => {
     setIsLoading(true)
@@ -41,7 +41,7 @@ export const RegistrationConfirmationScreen = () => {
       if (publicKey && secretKey) {
         var organizerProfileDto = new OrganizerProfileDto(
           bio,
-          timeBlockCostADA ?? 0,
+          hourlyRate ?? 0,
           profession,
           jobTitle,
           skills
@@ -113,12 +113,10 @@ export const RegistrationConfirmationScreen = () => {
             <Text style={styles.userDetailsText}>{bio}</Text>
           </>
         ) : null}
-        {timeBlockCostADA ? (
+        {hourlyRate ? (
           <>
             <Text style={styles.userDetailsHeader}>Hourly Rate (ADA)</Text>
-            <Text style={styles.userDetailsText}>
-              {timeBlockCostADA} an hour
-            </Text>
+            <Text style={styles.userDetailsText}>{hourlyRate} an hour</Text>
           </>
         ) : null}
         {skills ? (

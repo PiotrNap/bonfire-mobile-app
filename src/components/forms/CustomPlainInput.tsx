@@ -20,10 +20,11 @@ export type CustomPlainInputProps = TextInputProps & {
   icon?: any
   customChild?: React.ReactNode
   maxChar?: number
+  isDisabled?: boolean
   labelStyle?: StyleProp<TextStyle>
   onChangeCallback?: (e: any) => void
   onPressInCallback?: (e: any) => void
-  onBlurCallback?: (e: any) => void
+  onEndEditingCallback?: (e: any) => void
 }
 
 export const CustomPlainInput = ({
@@ -38,10 +39,11 @@ export const CustomPlainInput = ({
   numberOfLines,
   maxChar,
   keyboardType,
-  onBlurCallback,
   onChangeCallback,
+  onEndEditingCallback,
   textContentType,
   defaultValue,
+  isDisabled,
 }: CustomPlainInputProps) => {
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
   const { colorScheme } = appContext()
@@ -90,14 +92,18 @@ export const CustomPlainInput = ({
         <TextInput
           style={[
             styles.input,
-            multiline != null ? { height: 120, textAlignVertical: "top" } : {},
+            multiline != null && { height: 120, textAlignVertical: "top" },
+            isDisabled && { backgroundColor: Colors.neutral.s200 },
           ]}
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          onBlur={onBlurCallback}
+          onEndEditing={(e) =>
+            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text)
+          }
           placeholderTextColor={styles.placeholderText.color}
           defaultValue={defaultValue}
+          editable={!isDisabled}
           {...additionalProps}
         />
         {customChild}

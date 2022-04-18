@@ -17,7 +17,6 @@ import { CreateEventDto } from "common/types/dto/create-event.dto"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
   const {
     textContent,
@@ -25,7 +24,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     tags,
     fromDate,
     toDate,
-    hourlyRate: eventHourlyRate,
+    hourlyRate,
     imageURI,
     privateEvent,
     eventCardColor,
@@ -50,7 +49,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         tags,
         fromDate,
         toDate,
-        hourlyRate: hourlyRate ?? eventHourlyRate,
+        hourlyRate,
         privateEvent,
         eventCardColor,
         eventTitleColor,

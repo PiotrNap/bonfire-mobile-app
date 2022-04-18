@@ -20,7 +20,7 @@ export class Events {
   ): Promise<any> {
     try {
       return await axios.post(
-        `events/${eventId}/upload-image`,
+        `events/${eventId}/image`,
         getFormDataFromFilePath(filePath),
         {
           headers: {

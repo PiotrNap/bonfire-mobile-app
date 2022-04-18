@@ -81,34 +81,34 @@ export const EventConfirmationDetails = ({
   }
 
   const organizerEventSections: any[] = [
-    organizerEvent.title && {
+    organizerEvent?.title && {
       label: "Title",
       lineContent: {
-        content: organizerEvent.title,
+        content: organizerEvent?.title,
         icon: sectionsIcons.presentation,
       },
     },
 
-    organizerEvent.description && {
+    organizerEvent?.description && {
       label: "Description",
       lineContent: {
-        content: organizerEvent.description,
+        content: organizerEvent?.description,
         icon: sectionsIcons.description,
       },
     },
-    organizerEvent.fromDate && {
+    organizerEvent?.fromDate && {
       label: "Date & time",
       lineContent: [
         {
-          content: `Start: ${weekDays[getDay(organizerEvent.fromDate)]} - ${
-            months[getMonth(organizerEvent.fromDate)]
-          } ${getDate(organizerEvent.fromDate)}`,
+          content: `Start: ${weekDays[getDay(organizerEvent?.fromDate)]} - ${
+            months[getMonth(organizerEvent?.fromDate)]
+          } ${getDate(organizerEvent?.fromDate)}`,
           icon: sectionsIcons.calendar,
         },
         {
-          content: `End: ${weekDays[getDay(organizerEvent.toDate)]} - ${
-            months[getMonth(organizerEvent.toDate)]
-          } ${getDate(organizerEvent.toDate)}`,
+          content: `End: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
+            months[getMonth(organizerEvent?.toDate)]
+          } ${getDate(organizerEvent?.toDate)}`,
           icon: sectionsIcons.calendar,
         },
       ],
@@ -117,7 +117,7 @@ export const EventConfirmationDetails = ({
       label: "Hourly Rate",
       lineContent: {
         //@TODO we should have this set up when somebody's creating an event
-        content: `${organizerEvent.hourlyRate ?? 0} ADA`,
+        content: `${organizerEvent?.hourlyRate ?? 0} ADA`,
         icon: sectionsIcons.ada,
       },
     },
@@ -170,7 +170,7 @@ export const EventConfirmationDetails = ({
     {
       label: "Hourly Rate",
       lineContent: {
-        content: `${hourlyRate ?? eventHourlyRate} ADA`,
+        content: `${eventHourlyRate} ADA`,
         icon: sectionsIcons.ada,
       },
     },

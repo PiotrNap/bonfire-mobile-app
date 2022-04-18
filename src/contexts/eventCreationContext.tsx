@@ -75,6 +75,12 @@ const reducer = (
         availabilities: newAvailabilities,
       }
     }
+    case EventCreationTypes.RemoveAvailabilities: {
+      return {
+        ...state,
+        availabilities: [],
+      }
+    }
     case EventCreationTypes.SetSelectedDays: {
       let newSelectedDays: any = state.selectedDays || {}
 

@@ -31,7 +31,8 @@ export enum AppTypes {
 export enum EventCreationTypes {
   SetTextContent = "SET_TEXT_CONTENT",
   AddAvailability = "SET_AVAILABILITIES",
-  RemoveAvailability = "REMOVE_AVAILABILITIES",
+  RemoveAvailability = "REMOVE_AVAILABILITY",
+  RemoveAvailabilities = "REMOVE_AVAILABILITIES",
   SetSelectedDays = "SET_SELECTED_DAYS",
   RemoveSelectedDays = "REMOVE_SELECTED_DAYS",
   SetSelectedWeek = "SET_SELECTED_WEEKS",
@@ -126,6 +127,7 @@ export type EventCreationPayload = {
   [EventCreationTypes.RemoveAvailability]: {
     availability: EventAvailability
   }
+  [EventCreationTypes.RemoveAvailabilities]: {}
   [EventCreationTypes.SetSelectedDays]: {
     selectedDays: number[]
     isRecurringSelection: boolean
