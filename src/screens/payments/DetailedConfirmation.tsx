@@ -7,16 +7,19 @@ import {
   bookingContext,
   eventCreationContext,
 } from "contexts/contextApi"
-import { LeftArrowIcon } from "assets/icons"
+import { CheckIcon, ErrorIcon, LeftArrowIcon } from "assets/icons"
 import { Colors, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventConfirmationDetails } from "components/booking"
 import { ProfileContext } from "contexts/profileContext"
-import { Events } from "Api/Events"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
+import { SlideTopModal } from "components/modals/slideTopModal"
+import { useEventDeletion } from "lib/hooks/useEventDeletion"
+import { Events } from "Api/Events"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const params = route?.params
+
   const { colorScheme } = appContext()
   const {
     textContent,
@@ -33,9 +36,31 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   } = eventCreationContext()
   const { duration, pickedDate, previewingEvent } = bookingContext()
   const { username, id } = React.useContext(ProfileContext)
-  const params = route?.params
-  const isLightMode = colorScheme === "light"
+  const {
+    errorMsg,
+    successMsg,
+    isLoading: isEventDeletionLoading,
+    deleteEvent,
+  } = useEventDeletion(params.organizerEvent?.eventId)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
 
+  const isLightMode = colorScheme === "light"
+  const ModalIcon = errorMsg ? (
+    <ErrorIcon
+      stroke={Colors.primary.neutral}
+      width={Sizing.x60}
+      height={Sizing.x60}
+      strokeWidth={1.5}
+    />
+  ) : (
+    <CheckIcon
+      stroke={Colors.success.s400}
+      width={Sizing.x60}
+      height={Sizing.x60}
+      strokeWidth={1.5}
+    />
+  )
   const onBackNavigationPress = () => navigation.goBack()
   const onButtonPress = async () => {
     setIsLoading(true)
@@ -81,7 +106,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     } else {
       try {
         const res = await Events.bookEvent({
-          eventId: previewingEvent.id,
+          eventId: previewingEvent.eventId,
+          durationCost: previewingEvent.durationCost,
           bookedDate: new Date(pickedDate),
           bookedDuration: duration,
         })
@@ -101,70 +127,86 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   }
   const onDeleteEvent = async () => {
     if (!params.organizerEvent.eventId) return
-    try {
-      const success = await Events.deleteEvent(params.organizerEvent.eventId)
-      //TODO show success modal
-      console.log(success)
-    } catch (e) {}
+    await deleteEvent()
+    setIsModalVisible(true)
   }
+  const modalHideCallback = () => setIsModalVisible(false)
 
   return (
-    <SafeAreaView
-      style={[
-        styles.safeArea,
-        {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
-        },
-      ]}>
-      <View style={styles.container}>
-        <View style={styles.navigation}>
-          <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-            <LeftArrowIcon
-              width={24}
-              height={24}
-              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
-            />
-          </Pressable>
+    <>
+      <SafeAreaView
+        style={[
+          styles.safeArea,
+          {
+            backgroundColor: isLightMode
+              ? Colors.primary.neutral
+              : Colors.neutral.s600,
+          },
+        ]}>
+        <View style={styles.container}>
+          <View style={styles.navigation}>
+            <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+              <LeftArrowIcon
+                width={24}
+                height={24}
+                color={
+                  isLightMode ? Colors.primary.s600 : Colors.primary.neutral
+                }
+              />
+            </Pressable>
+          </View>
+          <View style={styles.header}>
+            <Text
+              style={
+                isLightMode ? styles.headerText_light : styles.headerText_dark
+              }>
+              {params?.header || "Confirmation"}
+            </Text>
+          </View>
+          <EventConfirmationDetails
+            organizerEvent={params?.organizerEvent}
+            isNewEvent={params?.isNewEvent}
+          />
+          <View style={styles.buttonContainer}>
+            {params?.organizerEvent ? (
+              !successMsg ? (
+                // @TODO this should only be possible if there're no bookings
+                <FullWidthButton
+                  onPressCallback={onDeleteEvent}
+                  text="Close Event"
+                  colorScheme={colorScheme}
+                  loadingIndicator={isEventDeletionLoading}
+                  textStyle={{ color: Colors.primary.neutral }}
+                  style={{
+                    backgroundColor: Colors.danger.s400,
+                    borderColor: Colors.danger.s400,
+                  }}
+                />
+              ) : (
+                <></>
+              )
+            ) : (
+              <FullWidthButton
+                onPressCallback={onButtonPress}
+                text={"Confirm"}
+                colorScheme={colorScheme}
+                loadingIndicator={isLoading}
+              />
+            )}
+          </View>
         </View>
-        <View style={styles.header}>
-          <Text
-            style={
-              isLightMode ? styles.headerText_light : styles.headerText_dark
-            }>
-            {params?.header || "Confirmation"}
-          </Text>
-        </View>
-        <EventConfirmationDetails
-          organizerEvent={params?.organizerEvent}
-          isNewEvent={params?.isNewEvent}
+      </SafeAreaView>
+      {params?.organizerEvent && isModalVisible && (
+        <SlideTopModal
+          icon={ModalIcon}
+          isModalVisible={isModalVisible}
+          modalContent={errorMsg ?? successMsg}
+          backgroundColor={errorMsg ? Colors.danger.s300 : Colors.primary.s180}
+          contentStyle={successMsg ? { color: Colors.success.s400 } : {}}
+          hideCallback={modalHideCallback}
         />
-        <View style={styles.buttonContainer}>
-          {params?.organizerEvent ? (
-            // @TODO this should only be possible if there're no bookings
-            <FullWidthButton
-              onPressCallback={onDeleteEvent}
-              text="Close"
-              colorScheme={colorScheme}
-              loadingIndicator={isLoading}
-              textStyle={{ color: Colors.primary.neutral }}
-              style={{
-                backgroundColor: Colors.danger.s400,
-                borderColor: Colors.danger.s400,
-              }}
-            />
-          ) : (
-            <FullWidthButton
-              onPressCallback={onButtonPress}
-              text={"Confirm"}
-              colorScheme={colorScheme}
-              loadingIndicator={isLoading}
-            />
-          )}
-        </View>
-      </View>
-    </SafeAreaView>
+      )}
+    </>
   )
 }
 

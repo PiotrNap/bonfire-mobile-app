@@ -2,6 +2,7 @@ import { PaginationRequestDto } from "common/types/dto"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
 import { EventBookingDto } from "common/types/dto/event-booking.dto"
 import { getFormDataFromFilePath } from "lib/helpers"
+import { AnyObject } from "yup/lib/types"
 import axios from "./base"
 
 export class Events {
@@ -112,12 +113,12 @@ export class Events {
     }
   }
 
-  public static async deleteEvent(id: string): Promise<string | void> {
+  public static async deleteEvent(id: string): Promise<AnyObject | void> {
     try {
       const res = await axios.delete(`events/${id}`)
       if (res) return res.data
     } catch (e) {
-      if (e.response) console.error(e.response.data)
+      if (e.response.data) throw e.response.data
     }
   }
 }
