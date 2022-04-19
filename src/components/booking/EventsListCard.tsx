@@ -1,11 +1,5 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  Pressable,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { useNavigation } from "@react-navigation/native"
 import tinyColor from "tinycolor2"
@@ -66,7 +60,7 @@ export const EventsListCard = ({
       style={styles.main}>
       <FastImage
         source={{
-          uri: image,
+          uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
         }}
         style={styles.backgroundImage}>
         <View

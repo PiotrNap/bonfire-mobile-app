@@ -11,7 +11,7 @@ interface Props {
   scrollable?: boolean
 }
 
-export const Layout = ({ children, scrollable = true }: Props) => {
+export const Layout = ({ children, scrollable }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
 

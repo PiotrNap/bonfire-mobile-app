@@ -27,7 +27,7 @@ import {
   getMonth,
   getTimeSpanLength,
 } from "lib/utils"
-import { ProfileContext } from "contexts/profileContext"
+import { useAuthCredentials } from "lib/hooks/useAuthCredentials"
 
 export const EventConfirmationDetails = ({
   isNewEvent = false,
@@ -48,7 +48,7 @@ export const EventConfirmationDetails = ({
     eventCardColor,
     eventTitleColor,
   } = eventCreationContext()
-  const { timeBlockCostADA: hourlyRate } = React.useContext(ProfileContext)
+  const credentials = useAuthCredentials()
 
   var selectedDaysArr: number[] = []
   var fromDate, toDate
@@ -116,8 +116,9 @@ export const EventConfirmationDetails = ({
     {
       label: "Hourly Rate",
       lineContent: {
-        //@TODO we should have this set up when somebody's creating an event
-        content: `${organizerEvent?.hourlyRate ?? 0} ADA`,
+        //if event has hourly rate of 0 take the rate from user info
+        //stored on device's encrypted storage
+        content: `${organizerEvent?.hourlyRate ?? credentials?.hourlyRate}`,
         icon: sectionsIcons.ada,
       },
     },
@@ -170,7 +171,7 @@ export const EventConfirmationDetails = ({
     {
       label: "Hourly Rate",
       lineContent: {
-        content: `${eventHourlyRate} ADA`,
+        content: `${eventHourlyRate}`,
         icon: sectionsIcons.ada,
       },
     },
@@ -249,7 +250,7 @@ export const EventConfirmationDetails = ({
     durationCost && {
       label: "Total amount",
       lineContent: {
-        content: `${durationCost} ADA`,
+        content: `${durationCost}`,
         icon: sectionsIcons.ada,
       },
     },

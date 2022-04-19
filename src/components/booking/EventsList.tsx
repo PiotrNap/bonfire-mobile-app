@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   lottieAnimation: {
-    width: Sizing.x140,
-    height: Sizing.x140,
+    width: Sizing.x120,
+    height: Sizing.x120,
   },
 })

@@ -2,14 +2,7 @@ import * as React from "react"
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native"
 
 import { Formik, Field } from "formik"
-import {
-  Buttons,
-  Typography,
-  Colors,
-  Sizing,
-  Forms,
-  Outlines,
-} from "styles/index"
+import { Buttons, Typography, Colors, Sizing, Forms } from "styles/index"
 import { accountValidationScheme } from "lib/utils"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"

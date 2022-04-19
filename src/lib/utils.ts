@@ -858,7 +858,6 @@ export const convertToCalendarEvents = (organizerEvents: {
         organizerAlias: val.organizerAlias,
         attendeeId: val?.attendeeId,
         attendeeAlias: val?.attendeeAlias,
-        eventId: val?.eventId,
         eventTitle: val.eventTitle || val.title,
         eventDescription: val.eventDescription || val.description,
         bookedDuration: val?.bookedDuration,

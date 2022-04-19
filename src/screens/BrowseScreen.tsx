@@ -84,7 +84,9 @@ export const BrowseScreen = ({}: BrowseProps) => {
           onActiveSearch={onActiveSearch}
           onToggleSearchBar={onToggleSearchBar}
           customIcon={CustomSearchIcon}
-          inputTextStyle={searchStyles.searchBarInput}
+          inputTextStyle={Object.assign({}, searchStyles.searchBarInput, {
+            color: isLightMode ? Colors.primary.s600 : Colors.primary.neutral,
+          })}
           animationDuration={200}
           //@ts-ignore
           buttonStyle={Buttons.applyOpacity(
@@ -169,7 +171,6 @@ const searchStyles = StyleSheet.create({
   searchBarInput: {
     ...Typography.subHeader.x30,
     fontFamily: "Roboto-Regular",
-    color: Colors.primary.s600,
     width: "0%",
     borderBottomWidth: Outlines.borderWidth.base,
     paddingVertical: Sizing.x2,

@@ -51,7 +51,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
   }
 
   return (
-    <Layout>
+    <Layout scrollable>
       <KeyboardAwareScrollView
         contentContainerStyle={{ height: "100%" }}
         style={{ width: "90%" }}>

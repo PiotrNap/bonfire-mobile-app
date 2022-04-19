@@ -2,16 +2,7 @@ import * as React from "react"
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import { Colors, Outlines, Typography } from "styles/index"
 import { Day } from "interfaces/myCalendarInterface"
-import {
-  getDate,
-  getDay,
-  getMonth,
-  getMonthByName,
-  getMonthName,
-  getTime,
-  getYear,
-  isPastDate,
-} from "lib/utils"
+import { getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
 import { appContext } from "contexts/contextApi"
 
@@ -37,8 +28,6 @@ export const _AvailabilityDay = ({
   const { colorScheme } = appContext()
   const isDarkMode = colorScheme === "dark"
 
-  // disable past days and the current one
-
   const dayButtonStyle = [
     styles.dayButton,
     {
@@ -54,6 +43,8 @@ export const _AvailabilityDay = ({
     },
     isSelectedDay && styles.selectedDayButton,
   ]
+
+  // disable past days and the current one
   return isPastDate(year, month, number) ? (
     <View style={styles.dayContainer}>
       <View

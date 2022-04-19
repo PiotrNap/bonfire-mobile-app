@@ -1263,10 +1263,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pnap/react-native-search-bar@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@pnap/react-native-search-bar/-/react-native-search-bar-1.0.4.tgz#278ab5757325d08f8b8e8a4a36001b18120dd759"
-  integrity sha512-91G9264avmLQPLyP2M7IVnMI6+hxNqrN/+YwLOoUYtcYKHbNoE8019aR7ynTNUvySXD9HfD/s9F8QQPE9vk0Fg==
+"@pnap/react-native-search-bar@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@pnap/react-native-search-bar/-/react-native-search-bar-1.0.5.tgz#3578e652dbbc17718ab1b9d76911cb482c434a9d"
+  integrity sha512-cyLr9jmyHVAhRy7RmyVuRuwJwDloVxtssWzOW8hjF91aRIh00eCPdwWgv+WBYZ/cLYpuWHUIUmfjvc/HwCuQJA==
 
 "@react-native-async-storage/async-storage@^1.13.0":
   version "1.17.0"

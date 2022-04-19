@@ -244,7 +244,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
                     //@ts-ignore
                     color: isDisabledAddBtn
                       ? Colors.neutral.s500
-                      : Colors.primary.s200,
+                      : Colors.primary.neutral,
                   },
                 ]}
                 strokeWidth={3}

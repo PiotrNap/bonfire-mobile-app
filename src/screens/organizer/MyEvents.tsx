@@ -9,6 +9,7 @@ import { Colors, Outlines, Sizing, Typography, Buttons } from "styles/index"
 import { useEventsResults } from "lib/hooks/useEventsResults"
 import { EventsList } from "components/booking/EventsList"
 import { ProfileContext } from "contexts/profileContext"
+import { applyOpacity } from "../../styles/colors"
 
 export interface Props {}
 
@@ -56,14 +57,16 @@ export const MyEvents = ({}: Props) => {
     [colorScheme]
   )
   return (
-    <Layout scrollable={false}>
+    <Layout>
       <View style={styles.topContainer}>
         <SearchBar
           onSubmitSearch={onSubmitSearch}
           onActiveSearch={onActiveSearch}
           onToggleSearchBar={onToggleSearchBar}
           customIcon={CustomSearchIcon}
-          inputTextStyle={searchStyles.searchBarInput}
+          inputTextStyle={Object.assign({}, searchStyles.searchBarInput, {
+            color: isLightMode ? Colors.primary.s600 : Colors.primary.neutral,
+          })}
           animationDuration={200}
           //@ts-ignore
           buttonStyle={Buttons.applyOpacity(
@@ -96,6 +99,16 @@ export const MyEvents = ({}: Props) => {
           customIsLoading={isLoading}
           customEvents={searchEvents}
         />
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.overlay,
+            {
+              opacity: animatedOpacity,
+              zIndex: 20,
+            },
+          ]}
+        />
       </View>
     </Layout>
   )
@@ -105,12 +118,17 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   main: {
     flex: 1,
-    alignSelf: "center",
     width: "100%",
-    height: "100%",
   },
   topContainer: {
     width: "90%",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: applyOpacity(Colors.neutral.s500, 0.5),
   },
 })
 
