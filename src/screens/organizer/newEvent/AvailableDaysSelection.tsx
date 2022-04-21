@@ -109,10 +109,10 @@ export const AvailableDaysSelection = (props: Props) => {
         )
       } catch (e) {}
 
-    const selectedDaysKeys = Object.keys(selectedDays)
+    const selectedDaysVal = Object.values(selectedDays).sort()
     setDateFrame(
-      new Date(Number(selectedDaysKeys[0])),
-      new Date(Number(selectedDaysKeys[selectedDaysKeys.length - 1]))
+      new Date(selectedDaysVal[0]),
+      new Date(selectedDaysVal[selectedDaysVal.length - 1])
     )
 
     if (!acceptedCheckbox) navigation.navigate("Available Time Selection")
