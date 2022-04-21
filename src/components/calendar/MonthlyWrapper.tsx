@@ -29,6 +29,7 @@ export interface MonthlyWrapperProps {
   isRegularCalendar?: boolean
   customCallback?: () => Promise<void>
   secondCustomCallback?: (arg: Date | null) => void
+  initialEventsLoaded?: boolean
 }
 
 export const MonthlyWrapper = ({
@@ -36,6 +37,7 @@ export const MonthlyWrapper = ({
   isNewEventCalendar,
   isRegularCalendar,
   secondCustomCallback,
+  initialEventsLoaded,
 }: MonthlyWrapperProps) => {
   const {
     calendar,
@@ -59,6 +61,10 @@ export const MonthlyWrapper = ({
   )
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [initialHasLoaded, setInitialHasLoaded] = React.useState<boolean>(false)
+  const [initialAnimationLoaded, setInitialAnimationLoaded] =
+    React.useState<boolean>(false)
+  const [_initialEventsLoaded, _setInitialEventsLoaded] =
+    React.useState<boolean>(false)
   const [eventsLoading, setEventsLoading] = React.useState<boolean>(false)
   const [fetchedEventsFrom, setFetchedEventsFrom] = React.useState<{
     month: number
@@ -69,9 +75,7 @@ export const MonthlyWrapper = ({
 
   var animatedOpacity = React.useRef(new Animated.Value(1)).current
   var animatedInitialOpacity = React.useRef(new Animated.Value(0)).current
-  var animatedOpacitySlideIn = React.useRef(new Animated.Value(0)).current
   var animatedTranslateX = React.useRef(new Animated.Value(0)).current
-  var animatedTranslateXSlideIn = React.useRef(new Animated.Value(0)).current
 
   const isDarkMode = colorScheme === "dark"
   const isNotNextYear =
@@ -97,43 +101,10 @@ export const MonthlyWrapper = ({
         useNativeDriver: true,
         easing: Easing.sin,
       }),
-      Animated.timing(animatedOpacitySlideIn, {
-        toValue: 1,
-        duration: 80,
-        useNativeDriver: true,
-        easing: Easing.sin,
-      }),
-      Animated.timing(animatedTranslateXSlideIn, {
-        toValue: 0,
-        duration: 80,
-        useNativeDriver: true,
-        easing: Easing.sin,
-      }),
-    ]).start(({ finished }) => {
-      setCurrIndex(fadeOutPrevious ? 0 : 2)
+    ]).start(() => {
       animatedTranslateX.setValue(0)
-      animatedTranslateXSlideIn.setValue(0)
       animatedOpacity.setValue(1)
-      animatedOpacitySlideIn.setValue(0)
-      fadeOutPrevious ? onPreviousLoadCalendar() : onNextLoadCalendar()
     })
-  }
-
-  const startInitialCalendarAnimation = () => {
-    Animated.timing(animatedInitialOpacity, {
-      toValue: 1,
-      duration: 200,
-      easing: Easing.sin,
-      useNativeDriver: true,
-    }).start()
-    setInitialHasLoaded(true)
-  }
-
-  const onLayout = (event: LayoutChangeEvent) => {
-    setDimensions(event.nativeEvent.layout)
-    // if (!direction && !initialHasLoaded) {
-    //   startInitialCalendarAnimation();
-    // }
   }
 
   const onPlaceholderPress = (direction: string) => {
@@ -146,51 +117,39 @@ export const MonthlyWrapper = ({
   }, [monthsArray, selectedWeekDays])
 
   const CurrMonth = React.useCallback(
-    ({ item, position }: { item: Month; position: string }) => {
-      return (
-        <Animated.View
-          style={[
-            styles.monthContainer,
-            position !== "current" && {
-              position: "absolute",
-              top: 0,
-              right: 0,
-            },
-            {
-              opacity: !initialHasLoaded
-                ? animatedInitialOpacity
-                : position !== "current"
-                ? animatedOpacitySlideIn
-                : animatedOpacity,
-              transform: [
-                {
-                  translateX:
-                    position !== "current"
-                      ? animatedTranslateXSlideIn
-                      : animatedTranslateX,
-                },
-              ],
-              width: dimensions ? dimensions.width : 0,
-              height: dimensions ? dimensions.height : 0,
-            },
-          ]}>
-          <MonthItem
-            days={item.days}
-            year={item.year}
-            month={item.name}
-            firstDayName={item.firstDayName}
-            numOfDays={item.numOfDays}
-            name={item.name}
-            dimensions={dimensions}
-            onPlaceholderPress={onPlaceholderPress}
-            isBookingCalendar={isBookingCalendar}
-            isNewEventCalendar={isNewEventCalendar}
-            secondCustomCallback={secondCustomCallback}
-          />
-        </Animated.View>
-      )
-    },
-    [!!dimensions]
+    ({ item }: { item: Month }) => (
+      <Animated.View
+        style={[
+          styles.monthContainer,
+          {
+            opacity: !initialAnimationLoaded
+              ? animatedInitialOpacity
+              : animatedOpacity,
+            transform: [
+              {
+                translateX: animatedTranslateX,
+              },
+            ],
+            width: dimensions ? dimensions.width : 0,
+            height: dimensions ? dimensions.height : 0,
+          },
+        ]}>
+        <MonthItem
+          days={item.days}
+          year={item.year}
+          month={item.name}
+          firstDayName={item.firstDayName}
+          numOfDays={item.numOfDays}
+          name={item.name}
+          dimensions={dimensions}
+          onPlaceholderPress={onPlaceholderPress}
+          isBookingCalendar={isBookingCalendar}
+          isNewEventCalendar={isNewEventCalendar}
+          secondCustomCallback={secondCustomCallback}
+        />
+      </Animated.View>
+    ),
+    [!!dimensions, initialAnimationLoaded]
   )
 
   const loadNewMonths = (nextMonths: boolean, month: number, year?: number) => {
@@ -207,7 +166,6 @@ export const MonthlyWrapper = ({
   const onPreviousStartAnimation = () => {
     if (isLoading) return
     setIsLoading(true)
-    // setNewEventsFetched(false);
     setDirection("left")
 
     const calendarHeader: CalendarHeader = {
@@ -215,15 +173,15 @@ export const MonthlyWrapper = ({
       year: prevYear,
       numOfEvents: calendar[currIndex - 1]?.numOfEvents,
     }
-    animatedTranslateXSlideIn.setValue(-20)
     changeMonthHeader(calendarHeader)
     startCalendarAnimation(true)
+    setCurrIndex(0)
+    onPreviousLoadCalendar()
   }
 
   const onNextStartAnimation = () => {
     if (isLoading) return
     setIsLoading(true)
-    // setNewEventsFetched(false);
     setDirection("right")
 
     const calendarHeader = {
@@ -232,10 +190,26 @@ export const MonthlyWrapper = ({
       numOfEvents: calendar[currIndex + 1]?.numOfEvents,
     }
 
-    animatedTranslateXSlideIn.setValue(-20)
-
     changeMonthHeader(calendarHeader)
     startCalendarAnimation(false)
+    setCurrIndex(2)
+    onNextLoadCalendar()
+  }
+
+  const startInitialCalendarAnimation = () => {
+    Animated.timing(animatedInitialOpacity, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.sin,
+      useNativeDriver: true,
+    }).start(({ finished }) => finished && setInitialAnimationLoaded(true))
+  }
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    setDimensions(event.nativeEvent.layout)
+    if (!direction && !initialAnimationLoaded) {
+      startInitialCalendarAnimation()
+    }
   }
 
   const onPreviousLoadCalendar = () => {
@@ -307,15 +281,17 @@ export const MonthlyWrapper = ({
   }, [tempEvents])
 
   React.useEffect(() => {
-    if (eventsLoading && !fetchedEventsFrom && direction)
-      (async () => {
+    if (eventsLoading && !fetchedEventsFrom && direction) {
+      ;(async () => {
         const month = monthsByName[monthsArray[currIndex].name]
         const year = monthsArray[currIndex].year
 
         try {
           const _events = await fetchEvents(new Date(year, month), false)
 
-          if (_events) {
+          if (_events && _events.length) {
+            // this will set our temporary events, and fire useeffect above
+            // to check if they're from currently previewing month
             setDirection(null)
             setFetchedEventsFrom({ month, year, direction })
             setTempEvents(_events)
@@ -326,12 +302,18 @@ export const MonthlyWrapper = ({
           return
         }
       })()
+    }
   }, [eventsLoading])
 
   React.useEffect(() => {
     if (!initialHasLoaded) {
-      setMonthsArray(calendar)
       setInitialHasLoaded(true)
+      return setMonthsArray(calendar)
+    }
+
+    if (initialEventsLoaded && !_initialEventsLoaded) {
+      setMonthsArray(calendar)
+      return _setInitialEventsLoaded(true)
     }
 
     if (direction) {
@@ -391,22 +373,7 @@ export const MonthlyWrapper = ({
           <WeekComponent />
           <View style={styles.calendarContainer} onLayout={onLayout}>
             {dimensions && calendar && (
-              <>
-                {direction === "left" && monthsArray[currIndex - 1] && (
-                  <CurrMonth
-                    position="previous"
-                    item={monthsArray[currIndex - 1]}
-                  />
-                )}
-
-                <CurrMonth position="current" item={monthsArray[currIndex]} />
-                {direction === "right" && monthsArray[currIndex + 1] && (
-                  <CurrMonth
-                    position="next"
-                    item={monthsArray[currIndex + 1]}
-                  />
-                )}
-              </>
+              <CurrMonth item={monthsArray[currIndex]} />
             )}
           </View>
         </View>
@@ -429,6 +396,7 @@ const styles = StyleSheet.create({
   },
   legendWrapper: {
     marginTop: Sizing.x10,
+    marginLeft: Sizing.x5,
     alignSelf: "flex-start",
   },
   calendarContainer: {
