@@ -12,7 +12,7 @@ export interface BookingDayProps extends Day {
   year?: number
   month: string
   activeDay: number | null
-  setActiveDay: React.Dispatch<React.SetStateAction<number | null>>
+  setActiveDay: React.Dispatch<React.SetStateAction<Date | null>>
   isPastDate: boolean
   scheduledEvents?: any[]
   isAvailable?: boolean

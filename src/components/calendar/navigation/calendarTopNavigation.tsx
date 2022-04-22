@@ -7,6 +7,8 @@ import { CalendarHeader } from "common/interfaces/myCalendarInterface"
 import { monthsByName } from "common/types/calendarTypes"
 import { useRoute } from "@react-navigation/native"
 import { isSixMonthsLater } from "lib/utils"
+import { bookingContext } from "contexts/contextApi"
+import dayjs from "dayjs"
 
 export interface CalendarTopNavigationProps {
   onPreviousPress: () => void
@@ -27,6 +29,7 @@ export const CalendarTopNavigation = ({
   isBookingCalendar,
   isNewEventCalendar,
 }: CalendarTopNavigationProps) => {
+  const { previewingEvent } = bookingContext()
   const [currentPressed, setCurrentPressed] = React.useState<null | Direction>(
     null
   )
@@ -44,17 +47,24 @@ export const CalendarTopNavigation = ({
   var disabledNextButton = false
   var disabledPreviousButton = false
 
+  const hasAvailabilitiesInCurrMonthOnly = React.useCallback(
+    () =>
+      !Object.values(previewingEvent?.selectedDays).find(
+        (date: any) => dayjs(date).month() !== monthsByName[month]
+      ),
+    [previewingEvent]
+  )
+
   if (isBookingCalendar || isNewEventCalendar) {
-    disabledPreviousButton =
-      year === new Date().getFullYear() &&
-      monthsByName[month] === new Date().getMonth()
+    disabledPreviousButton = true
 
     if (isBookingCalendar) {
       var { toDate }: any = useRoute().params
 
       disabledNextButton =
-        year === new Date(toDate).getFullYear() &&
-        monthsByName[month] === new Date(toDate).getMonth()
+        (year === new Date(toDate).getFullYear() &&
+          monthsByName[month] === new Date(toDate).getMonth()) ||
+        hasAvailabilitiesInCurrMonthOnly()
     } else {
       disabledNextButton = isSixMonthsLater(
         calendarHeader.year,
@@ -93,7 +103,9 @@ export const CalendarTopNavigation = ({
   }
   const onPressOut = () => setCurrentPressed(null)
 
-  return (
+  return disabledPreviousButton && disabledNextButton ? (
+    <></>
+  ) : (
     <>
       <Pressable
         style={Buttons.applyOpacity(navigationButtonStyle("prev"))}

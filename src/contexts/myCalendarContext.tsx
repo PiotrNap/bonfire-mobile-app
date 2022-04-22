@@ -155,7 +155,7 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       const isNextMonth = action.payload.calendarArgs.nextMonths
 
       // 1. User goes from March to April ->
-      //    ... new calenadar gets updated ->
+      //    ... new calendar gets updated ->
       //    ... April is now showing on calendar UI ->
       //    ... we need to get next month from `getCalendarMonth`
       //    like we'd do when going from March to April.

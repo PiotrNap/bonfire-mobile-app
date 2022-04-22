@@ -4,7 +4,11 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { applyOpacity } from "../../styles/colors"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { convertToCalendarAvailabilities, getEventCardDate } from "lib/utils"
+import {
+  availableDaysLeftInCurrMonth,
+  convertToCalendarAvailabilities,
+  getEventCardDate,
+} from "lib/utils"
 import { LeftArrowIcon } from "assets/icons"
 import {
   appContext,
@@ -17,7 +21,9 @@ import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
 import { ProfileContext } from "contexts/profileContext"
 import { EventStatistics } from "components/events/eventDescription/EventStatistics"
+import dayjs from "dayjs"
 import FastImage from "react-native-fast-image"
+import { months } from "common/types/calendarTypes"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {
@@ -33,7 +39,8 @@ export const EventDescription = ({ navigation, route }: any) => {
   } = route.params
   const { colorScheme } = appContext()
   const { setPreviewingEvent, resetBookingState } = bookingContext()
-  const { setAvailCalendar } = myCalendarContext()
+  const { setAvailCalendar, loadMyCalendar, changeMonthHeader } =
+    myCalendarContext()
   const { id } = React.useContext(ProfileContext)
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -63,6 +70,22 @@ export const EventDescription = ({ navigation, route }: any) => {
       }
       setIsLoading(false)
 
+      if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
+        const eventDate = dayjs(event.fromDate)
+        const calendarSetup = {
+          nextMonths: true,
+          month: eventDate.add(1, "month").month(),
+          year: eventDate.year(),
+          isBookingCalendar: true,
+          isRegularCalendar: false,
+        }
+        loadMyCalendar(calendarSetup)
+        changeMonthHeader({
+          month: months[eventDate.add(1, "month").month()],
+          year: eventDate.year(),
+          numOfEvents: 0,
+        })
+      }
       navigation.navigate("Available Event Days Selection", {
         ...route.params,
       })
@@ -72,6 +95,7 @@ export const EventDescription = ({ navigation, route }: any) => {
       setIsLoading(false)
     }
   }
+
   const onEventDetailPreview = () =>
     navigation.navigate("Event Details", {
       header: "Details",

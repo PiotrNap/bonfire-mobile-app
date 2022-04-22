@@ -29,7 +29,7 @@ export const Availability = ({
             Start {getDigitalLocaleTime(from)} / End {getDigitalLocaleTime(to)}
           </Text>
           <Text style={[styles.innerText, { ...fontWeight.semibold }]}>
-            min. {minDuration} min / max. {maxDuration} min
+            Min. {minDuration} min / Max. {maxDuration} min
           </Text>
         </View>
         <Pressable

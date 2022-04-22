@@ -12,9 +12,11 @@ import {
   Month,
   Events,
   EventsDay,
+  Availability,
 } from "interfaces/myCalendarInterface"
 import { months, monthsByName, weekDays } from "common/types/calendarTypes"
 import { AnyObject } from "yup/lib/types"
+import dayjs from "dayjs"
 
 const IS_ANDROID = Platform.OS === "android"
 
@@ -233,6 +235,15 @@ export const isPastDate = (year: number, month: string, day: number) => {
   return (
     (sameYear && sameMonth && sameDay) ||
     (sameYear && sameMonth && day < getDate())
+  )
+}
+
+export const availableDaysLeftInCurrMonth = (
+  availabilities: number[]
+): boolean => {
+  return !!availabilities.find(
+    (date) =>
+      dayjs(date).month === dayjs().month && dayjs(date).date < dayjs().date
   )
 }
 
