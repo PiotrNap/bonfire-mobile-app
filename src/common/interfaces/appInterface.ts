@@ -14,6 +14,7 @@ export interface AppState {
   pageIndex: number
   ref: any
   JWT?: JWTPayload | null
+  userSettings: UserSettings | null
 }
 
 export interface JWTPayload {
@@ -38,5 +39,6 @@ export interface Transaction {
 }
 
 export interface UserSettings {
-  eventCreationHintHidden: boolean
+  eventCreationHintHidden?: boolean
+  showPastCalendarEvents?: boolean
 }

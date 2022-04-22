@@ -29,6 +29,7 @@ import { SettingsItem } from "components/profile/settingsItem"
 import { useUserInfo } from "lib/hooks/useUserInfo"
 import { bufferToBase64 } from "lib/utils"
 import FastImage from "react-native-fast-image"
+import { CustomSwitch } from "components/rnWrappers/customSwitch"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
@@ -193,13 +194,7 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
           icon={LightBulbIcon}
           title="Dark Mode"
           customStyle={{ marginTop: "auto" }}>
-          <Switch
-            trackColor={{
-              false: Colors.neutral.s400,
-              true: Colors.primary.brand,
-            }}
-            thumbColor={Colors.primary.neutral}
-            ios_backgroundColor={Colors.neutral.s400}
+          <CustomSwitch
             onValueChange={setDarkMode}
             value={darkMode}
             style={{ marginLeft: "auto" }}

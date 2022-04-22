@@ -5,7 +5,7 @@ import ES from "react-native-encrypted-storage"
 const generateKey = (val: any) => `${val}_bonfire`
 
 export const setToEncryptedStorage = async (
-  key: string,
+  key: StoragePropertyKeys,
   value: any
 ): Promise<void> => {
   try {
@@ -18,7 +18,7 @@ export const setToEncryptedStorage = async (
   }
 }
 
-export const removeFromEncryptedStorage = async (key: string) => {
+export const removeFromEncryptedStorage = async (key: StoragePropertyKeys) => {
   try {
     await ES.removeItem(generateKey(key))
   } catch (e) {
@@ -36,7 +36,9 @@ export const isAvailableEncryptedStorage = async (): Promise<boolean> => {
   }
 }
 
-export const getFromEncryptedStorage = async (key: string): Promise<any> => {
+export const getFromEncryptedStorage = async (
+  key: StoragePropertyKeys
+): Promise<any> => {
   try {
     const val = await ES.getItem(generateKey(key))
 
@@ -58,3 +60,10 @@ export const clearEncryptedStorage = async (): Promise<boolean> => {
     return false
   }
 }
+
+export type StoragePropertyKeys =
+  | "user-settings"
+  | "auth-credentials"
+  | "pubKey"
+  | "privKey"
+  | "test"

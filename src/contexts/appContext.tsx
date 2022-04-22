@@ -30,6 +30,7 @@ const initialAppState: AppState = {
   favoriteOrganizers: [],
   pageIndex: 0,
   ref: null,
+  userSettings: null,
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -62,6 +63,11 @@ const reducer = (state: AppState, action: AppActions) => {
       return {
         ...state,
         pageIndex: action.payload.pageIndex,
+      }
+    case AppTypes.SetUserSettings:
+      return {
+        ...state,
+        userSettings: action.payload.userSettings,
       }
     case AppTypes.SetColorScheme:
       const isDarkMode = action.payload.newColorScheme === "dark"

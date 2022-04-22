@@ -15,6 +15,7 @@ export const useAppLogin = () => {
         let at = await getFromEncryptedStorage("auth-credentials")
         let sec = await getFromEncryptedStorage("privKey")
         let pub = await getFromEncryptedStorage("pubKey")
+        let userSettings = await getFromEncryptedStorage("user-settings")
         /**
          * We want to make sure if user exists in database first,
          * TODO set the TTL for JWT and test it
@@ -44,6 +45,7 @@ export const useAppLogin = () => {
               profileType: accessTokenDto.profileType,
               id: accessTokenDto.id,
               hourlyRate: accessTokenDto?.hourlyRate,
+              userSettings,
             })
             setAuthorizationToken(accessTokenDto.accessToken)
             setIsAuthorized(true)

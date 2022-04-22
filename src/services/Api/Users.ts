@@ -1,7 +1,8 @@
+import { AxiosRequestConfig, Method } from "axios"
 import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
 import { getFormDataFromFilePath } from "lib/helpers"
-import { Platform } from "react-native"
+import { AnyObject } from "yup/lib/types"
 import axios from "./base"
 
 export class Users {
@@ -126,6 +127,19 @@ export class Users {
       return res
     } catch (e) {
       console.error(e.response.data.message)
+    }
+  }
+
+  public static async _(
+    method: Method,
+    url: string,
+    data?: AnyObject,
+    config?: AxiosRequestConfig
+  ) {
+    try {
+      return await axios[method](url, data || {}, config)
+    } catch (e) {
+      throw e.response.data
     }
   }
 }

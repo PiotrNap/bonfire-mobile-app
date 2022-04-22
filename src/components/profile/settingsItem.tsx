@@ -39,7 +39,7 @@ export const SettingsItem = ({
       )}
       <Text
         style={[
-          styles.navigationItemText,
+          styles.settingsItemTitle,
           {
             color:
               colorScheme === "light"
@@ -50,7 +50,7 @@ export const SettingsItem = ({
         ]}>
         {title}
       </Text>
-      {children}
+      <View style={styles.actionableWrapper}>{children}</View>
     </View>
   )
 }
@@ -62,11 +62,16 @@ const styles = StyleSheet.create({
     width: "85%",
     marginBottom: Sizing.x20,
   },
-  navigationItemText: {
+  settingsItemTitle: {
     ...Typography.subHeader.x30,
-    width: "80%",
+    width: "75%",
   },
   icon: {
     marginRight: Sizing.x10,
+  },
+  actionableWrapper: {
+    alignItems: "center",
+    flexDirection: "row",
+    flex: 1,
   },
 })

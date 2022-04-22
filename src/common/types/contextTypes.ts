@@ -7,7 +7,11 @@ import {
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
-import { ColorSchemeName, JWTPayload } from "interfaces/appInterface"
+import {
+  ColorSchemeName,
+  JWTPayload,
+  UserSettings,
+} from "interfaces/appInterface"
 import {
   Availabilities,
   CalendarHeader,
@@ -23,6 +27,7 @@ export enum AppTypes {
   SetJWT = "SET_JWT",
   SetReceivingAddr = "SET_REC_ADDR",
   SetPageIndex = "SET_PAGE_INDEX",
+  SetUserSettings = "SET_USER_SETTINGS",
   SetColorScheme = "SET_COLOR_SCHEME",
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
   ResetState = "RESET_STATE",
@@ -106,6 +111,9 @@ export type AppPayload = {
   }
   [AppTypes.SetPageIndex]: {
     pageIndex: number
+  }
+  [AppTypes.SetUserSettings]: {
+    userSettings: UserSettings
   }
   [AppTypes.SetReceivingAddr]: {
     receivingAddr: string

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Pressable, StyleSheet, View } from "react-native"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 import { StackScreenProps } from "@react-navigation/stack"
 import RNRestart from "react-native-restart"
 
@@ -16,7 +16,10 @@ import {
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { SettingsItem } from "components/profile/settingsItem"
 import { SmallDangerButton } from "components/buttons/smallDangerButton"
-import { clearEncryptedStorage } from "lib/encryptedStorage"
+import {
+  clearEncryptedStorage,
+  setToEncryptedStorage,
+} from "lib/encryptedStorage"
 import { ProfileContext } from "contexts/profileContext"
 import {
   showAccountDeletionWarningModal,
@@ -28,17 +31,20 @@ import {
   FAILED_CREDENTIALS_DELETION_MSG,
 } from "lib/errors"
 import { Users } from "Api/Users"
+import { CustomSwitch } from "components/rnWrappers/customSwitch"
+import { UserSettings } from "common/interfaces/appInterface"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
 export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   const { id } = React.useContext(ProfileContext)
-  const { colorScheme, resetAppState } = appContext()
+  const { colorScheme, resetAppState, userSettings, setUserSettings } =
+    appContext()
   const { resetCalendarState } = myCalendarContext()
   const { resetBookingState } = bookingContext()
   const { resetEventCreationState } = eventCreationContext()
-
   const { resetProfileState } = React.useContext(ProfileContext)
+
   const isLightMode = colorScheme === "light"
 
   const onBackNavigationPress = () => navigation.goBack()
@@ -71,6 +77,22 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
     }
   }
 
+  const onShowPastCalendarEvents = async () => {
+    const newSettings: UserSettings = {
+      ...userSettings,
+      showPastCalendarEvents: !userSettings?.showPastCalendarEvents,
+    }
+    setUserSettings(newSettings)
+    try {
+      await setToEncryptedStorage("user-settings", newSettings)
+      await Users._("put", `users/${id}/settings`, newSettings)
+    } catch (e) {
+      showFailedModal(
+        "We weren't able to update your preferences in our Database."
+      )
+    }
+  }
+
   const { color: _, ...textStyle } = Typography.header.x20
 
   return (
@@ -84,6 +106,16 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           />
         </Pressable>
       </View>
+      <SettingsItem
+        titleStyle={textStyle}
+        title={"Show past events on the calendar."}>
+        <Text>No</Text>
+        <CustomSwitch
+          onValueChange={onShowPastCalendarEvents}
+          value={userSettings?.showPastCalendarEvents || false}
+        />
+        <Text>Yes</Text>
+      </SettingsItem>
       <SettingsItem
         titleStyle={textStyle}
         title={

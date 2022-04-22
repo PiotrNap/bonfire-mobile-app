@@ -19,7 +19,7 @@ import {
   TextContent,
 } from "common/interfaces/newEventInterface"
 import { EventCreationTypes } from "common/types/contextTypes"
-import { JWTPayload } from "common/interfaces/appInterface"
+import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -33,7 +33,10 @@ export const appContext = () => {
     favoriteOrganizers: state.favoriteOrganizers,
     receivingAddr: state.receivingAddr,
     ref: state.ref,
+    userSettings: state.userSettings,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
+    setUserSettings: (userSettings: UserSettings) =>
+      dispatch({ type: "SET_USER_SETTINGS", payload: { userSettings } }),
     setRef: (ref: React.RefObject<any>) =>
       dispatch({ type: "SET_REF", payload: { ref } }),
     setJWT: (jwtPayload: JWTPayload) =>
