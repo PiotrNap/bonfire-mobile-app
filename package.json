@@ -24,6 +24,7 @@
     "@tradle/react-native-http": "^2.0.0",
     "axios": "^0.21.1",
     "base64-js": "^1.5.1",
+    "dayjs": "^1.11.1",
     "fb-watchman": "^2.0.1",
     "formik": "^2.2.9",
     "lottie-ios": "3.2.3",
