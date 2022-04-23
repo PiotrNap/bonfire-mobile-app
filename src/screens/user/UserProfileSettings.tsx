@@ -94,6 +94,9 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   }
 
   const { color: _, ...textStyle } = Typography.header.x20
+  const switchTextStyle = {
+    color: isLightMode ? Colors.primary.s600 : Colors.primary.neutral,
+  }
 
   return (
     <Layout scrollable>
@@ -109,12 +112,12 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       <SettingsItem
         titleStyle={textStyle}
         title={"Show past events on the calendar."}>
-        <Text>No</Text>
+        <Text style={switchTextStyle}>No</Text>
         <CustomSwitch
           onValueChange={onShowPastCalendarEvents}
           value={userSettings?.showPastCalendarEvents || false}
         />
-        <Text>Yes</Text>
+        <Text style={switchTextStyle}>Yes</Text>
       </SettingsItem>
       <SettingsItem
         titleStyle={textStyle}

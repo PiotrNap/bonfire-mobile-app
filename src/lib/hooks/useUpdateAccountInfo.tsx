@@ -4,6 +4,10 @@ import { Users } from "Api/Users"
 import { UserBaseDTO, UserOrganizerDTO } from "interfaces/profileInterface"
 import { ProfileContext } from "contexts/profileContext"
 import { bufferToBase64 } from "lib/utils"
+import {
+  getFromEncryptedStorage,
+  setToEncryptedStorage,
+} from "lib/encryptedStorage"
 
 type AttendeeInfo = UserBaseDTO
 type OrganizerInfo = AttendeeInfo & UserOrganizerDTO
@@ -52,6 +56,17 @@ export const useUpdateAccountInfo = () => {
     setIsUpdated(false)
 
     try {
+      const oldAuthCred = await getFromEncryptedStorage("auth-credentials")
+      let newAuthCred = {
+        ...oldAuthCred,
+        username: values.username || oldAuthCred.username,
+        name: values.name || oldAuthCred.name,
+      }
+
+      if ((values as OrganizerInfo).hourlyRate)
+        newAuthCred.hourlyRate = (values as OrganizerInfo).hourlyRate
+      await setToEncryptedStorage("auth-credentials", newAuthCred)
+
       const data = await Users.updateUser(values, id)
       setMsg(data.message)
 
