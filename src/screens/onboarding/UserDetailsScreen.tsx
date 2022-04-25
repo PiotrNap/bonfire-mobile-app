@@ -1,11 +1,14 @@
 import * as React from "react"
 import { View, StyleSheet, Text, TextInput } from "react-native"
 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import Filter from "bad-words"
+
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { Typography, Colors, Sizing, Forms } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { ProfileContext } from "contexts/profileContext"
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { showInappropiateContentModal } from "lib/modalAlertsHelpers"
 
 export interface UserDetailScreenProps {}
 
@@ -19,6 +22,11 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
   const [_skills, _setSkills] = React.useState<string>("")
 
   const submitBioState = () => {
+    const badWords = new Filter().isProfane(
+      [_profession, _jobTitle, _bio, _skills].join(" ")
+    )
+    if (badWords) return showInappropiateContentModal()
+
     setProfession(_profession.trim())
     setJobTitle(_jobTitle.trim())
     setBio(_bio.trim())

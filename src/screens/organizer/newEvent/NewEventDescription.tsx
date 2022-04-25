@@ -1,18 +1,21 @@
 import * as React from "react"
 import { StyleSheet, View, Pressable } from "react-native"
 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { StackScreenProps } from "@react-navigation/stack"
+import Filter from "bad-words"
+
 import { CheckIcon, LeftArrowIcon } from "assets/icons"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing } from "styles/index"
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { Layout } from "components/layouts/basicLayout"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
+import { showInappropiateContentModal } from "lib/modalAlertsHelpers"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
@@ -42,6 +45,9 @@ export const NewEventDescription = ({ navigation }: Props) => {
   // navigation handlers
   const onBackNavigationPress = () => navigation.goBack()
   const onNextPress = () => {
+    const bw = new Filter()
+    if (bw.isProfane([eventTitle, eventDescription].join(" ")))
+      return showInappropiateContentModal()
     setTextContent({ title: eventTitle, description: eventDescription })
     navigation.navigate("Available Days Selection")
   }

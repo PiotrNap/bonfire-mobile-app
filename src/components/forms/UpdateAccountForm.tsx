@@ -2,6 +2,7 @@ import * as React from "react"
 import { StyleProp, StyleSheet, View } from "react-native"
 
 import { Formik, Field } from "formik"
+import Filter from "bad-words"
 
 import { accountValidationScheme } from "lib/utils"
 import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
@@ -9,6 +10,10 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { useUpdateAccountInfo } from "lib/hooks/useUpdateAccountInfo"
 import { appContext } from "contexts/contextApi"
 import { CustomInput } from "./CustomInput"
+import {
+  showFailedModal,
+  showInappropiateContentModal,
+} from "lib/modalAlertsHelpers"
 
 interface Props {
   accountType: "organizer" | "attendee"
@@ -30,6 +35,10 @@ export const UpdateAccountForm = ({
   const isLightMode = colorScheme === "light"
   const isAttendee = accountType === "attendee"
   const handleSubmit = async (newValues: any) => {
+    const bw = new Filter()
+    const words = Object.values(newValues).join(" ")
+    if (bw.isProfane(words)) return showInappropiateContentModal()
+
     var hasChanged: boolean = false
 
     if (accountType === "organizer") {
