@@ -2,11 +2,18 @@ import { Alert, Platform } from "react-native"
 
 const isAndroid = Platform.OS === "android"
 
-export const showInappropiateContentModal = () =>
+export const showInappropriateContentModal = () =>
   showFailedModal(
-    "Looks like some of the fields contain inappropiate content. Please edit those.",
-    "Cannot proceed"
+    "Looks like some of the fields contain inappropriate content. Please edit those.",
+    "Couldn't proceed"
   )
+
+export const showNSFWImageModal = () => {
+  showFailedModal(
+    "The image that you've provided was deemed as inappropriate by us. Please try a different one.",
+    "Couldn't proceed"
+  )
+}
 
 export const showFailedModal = (message: string, title?: string) => {
   Alert.alert(

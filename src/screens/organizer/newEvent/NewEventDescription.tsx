@@ -15,7 +15,7 @@ import { EventCreationParamList } from "common/types/navigationTypes"
 import { Layout } from "components/layouts/basicLayout"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
-import { showInappropiateContentModal } from "lib/modalAlertsHelpers"
+import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
@@ -47,7 +47,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const onNextPress = () => {
     const bw = new Filter()
     if (bw.isProfane([eventTitle, eventDescription].join(" ")))
-      return showInappropiateContentModal()
+      return showInappropriateContentModal()
     setTextContent({ title: eventTitle, description: eventDescription })
     navigation.navigate("Available Days Selection")
   }

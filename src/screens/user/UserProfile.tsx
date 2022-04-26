@@ -1,12 +1,5 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Switch,
-  Platform,
-} from "react-native"
+import { View, Text, StyleSheet, Pressable, Platform } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
@@ -16,7 +9,7 @@ import Avatar from "react-native-boring-avatars"
 
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
-import { CogIcon, HearthIcon, LightBulbIcon } from "icons/index"
+import { CogIcon, ErrorIcon, HearthIcon, LightBulbIcon } from "icons/index"
 
 import { NativeModal } from "components/modals/nativeModal"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
@@ -27,9 +20,10 @@ import { Users } from "Api/Users"
 import { SettingsNavigationItem } from "components/profile/settingsNavigationItem"
 import { SettingsItem } from "components/profile/settingsItem"
 import { useUserInfo } from "lib/hooks/useUserInfo"
-import { bufferToBase64 } from "lib/utils"
 import FastImage from "react-native-fast-image"
 import { CustomSwitch } from "components/rnWrappers/customSwitch"
+import { showNSFWImageModal } from "lib/modalAlertsHelpers"
+import { SlideTopModal } from "components/modals/slideTopModal"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
@@ -41,27 +35,41 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
 
   const userInfo = getUserProfile()
   const [currImage, setCurrImage] = React.useState<any>(userInfo.imageBase64)
 
   React.useEffect(() => {
     const obj = mediaObj?.assets[0] || imageObj?.assets[0]
-
     if (!obj && userInfo.imageBase64) return setCurrImage(userInfo.imageBase64)
 
     if (obj)
       (async () => {
-        const { uri } = obj
-        const res = await Users.uploadUserImage(uri)
+        const { uri, base64 } = obj
 
-        if (res.data) setImageBase64(bufferToBase64(res.data))
+        try {
+          await Users.uploadUserImage(uri)
+          setImageBase64(base64)
+        } catch (e) {
+          if (e.response.status === 422) return showNSFWImageModal()
+          setErrorMessage("Something went wrong while updating profile image.")
+        }
       })()
     setMediaObj(null)
     setImgObj(null)
-  }, [mediaObj, imageObj, userInfo])
+  }, [mediaObj?.assets[0].uri, imageObj?.assets[0].uri, userInfo])
 
   const darkMode = colorScheme === "dark"
+  const ModalIcon = (
+    <ErrorIcon
+      stroke={Colors.primary.neutral}
+      width={Sizing.x60}
+      height={Sizing.x60}
+      strokeWidth={1.5}
+    />
+  )
 
   const setDarkMode = () => {
     setColorScheme(darkMode ? "light" : "dark")
@@ -77,131 +85,149 @@ export const UserProfile = ({ navigation }: UserProfileProps) => {
   const onImagePress = () => setImagePressed(true)
   const onImagePressOut = () => setImagePressed(false)
   const updateCurrImage = () => setCurrImage("")
+  const modalHideCallback = () => setIsModalVisible(false)
 
   return (
-    <SafeAreaView
-      style={[
-        colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark,
-      ]}>
-      <View style={styles.headerNavigation}>
-        <NativeModal
-          cameraAccessCb={launchCamera}
-          mediaLibraryCb={launchImageLibrary}
-          onImageDeleted={updateCurrImage}
-          child={
-            currImage ? (
-              <FastImage
-                source={{
-                  uri: `data:image/png;base64,${userInfo.imageBase64}`,
-                }}
-                style={styles.profilePic}>
-                <Pressable
-                  onPressIn={onImagePress}
-                  onPressOut={onImagePressOut}
-                  onLongPress={onImageLongPress}
-                  hitSlop={5}
-                  pressRetentionOffset={5}
-                  style={[
-                    styles.profilePicWrapper,
-                    imagePressed ? { backgroundColor: "rgba(0,0,0,.15)" } : {},
-                  ]}>
-                  <View style={styles.profilePicEdit}>
-                    <Text style={styles.profilePicEditText}>Edit</Text>
-                  </View>
-                </Pressable>
-              </FastImage>
-            ) : (
-              <View style={styles.profilePicPlaceholder}>
-                <Pressable
-                  onPressIn={onImagePress}
-                  onPressOut={onImagePressOut}
-                  onLongPress={onImageLongPress}
-                  hitSlop={5}
-                  pressRetentionOffset={5}
-                  style={styles.profilePicWrapper}>
-                  {!isLoading ? (
-                    <Avatar
-                      size={"100%"}
-                      name={userInfo.username}
-                      variant="beam"
-                      colors={[
-                        Colors.primary.s600,
-                        Colors.primary.s200,
-                        Colors.neutral.s100,
-                      ]}
-                    />
-                  ) : (
-                    <ContentLoader
-                      speed={0.5}
-                      width={Sizing.x85}
-                      height={Sizing.x85}
-                      viewBox={`0 0 ${Sizing.x85} ${Sizing.x85}`}
-                      foregroundColor={Colors.neutral.s150}
-                      backgroundColor={Colors.neutral.s100}>
-                      <Circle cx="50%" cy="50%" r={Sizing.x85 / 2} />
-                    </ContentLoader>
-                  )}
-                  <View style={[styles.profilePicEdit, {}]}>
-                    <Text style={styles.profilePicEditText}>Edit</Text>
-                  </View>
-                </Pressable>
-              </View>
-            )
-          }></NativeModal>
-        <Text
-          style={[
-            styles.headerText,
-            colorScheme == "light"
-              ? styles.headerText_ligth
-              : styles.headerText_dark,
-          ]}
-          numberOfLines={1}
-          ellipsizeMode="tail">
-          {userInfo.username}
-        </Text>
-        <Pressable
-          style={Buttons.applyOpacity(
-            colorScheme === "light" ? styles.button_light : styles.button_dark
-          )}
-          onPress={() =>
-            navigation.navigate<"Edit Profile">({
-              name: "Edit Profile",
-              params: { userInfo },
-            })
-          }>
+    <>
+      <SafeAreaView
+        style={[
+          colorScheme == "light"
+            ? styles.safeArea_light
+            : styles.safeaArea_dark,
+        ]}>
+        <View style={styles.headerNavigation}>
+          <NativeModal
+            cameraAccessCb={launchCamera}
+            mediaLibraryCb={launchImageLibrary}
+            onImageDeleted={updateCurrImage}
+            child={
+              currImage ? (
+                //@ts-ignore
+                <FastImage
+                  source={{
+                    uri: `data:image/png;base64,${userInfo.imageBase64}`,
+                  }}
+                  style={styles.profilePic}>
+                  <Pressable
+                    onPressIn={onImagePress}
+                    onPressOut={onImagePressOut}
+                    onLongPress={onImageLongPress}
+                    hitSlop={5}
+                    pressRetentionOffset={5}
+                    style={[
+                      styles.profilePicWrapper,
+                      imagePressed
+                        ? { backgroundColor: "rgba(0,0,0,.15)" }
+                        : {},
+                    ]}>
+                    <View style={styles.profilePicEdit}>
+                      <Text style={styles.profilePicEditText}>Edit</Text>
+                    </View>
+                  </Pressable>
+                </FastImage>
+              ) : (
+                <View style={styles.profilePicPlaceholder}>
+                  <Pressable
+                    onPressIn={onImagePress}
+                    onPressOut={onImagePressOut}
+                    onLongPress={onImageLongPress}
+                    hitSlop={5}
+                    pressRetentionOffset={5}
+                    style={styles.profilePicWrapper}>
+                    {!isLoading ? (
+                      <Avatar
+                        size={"100%"}
+                        name={userInfo.username}
+                        variant="beam"
+                        colors={[
+                          Colors.primary.s600,
+                          Colors.primary.s200,
+                          Colors.neutral.s100,
+                        ]}
+                      />
+                    ) : (
+                      <ContentLoader
+                        speed={0.5}
+                        width={Sizing.x85}
+                        height={Sizing.x85}
+                        viewBox={`0 0 ${Sizing.x85} ${Sizing.x85}`}
+                        foregroundColor={Colors.neutral.s150}
+                        backgroundColor={Colors.neutral.s100}>
+                        {/*@ts-ignore*/}
+                        <Circle cx="50%" cy="50%" r={Sizing.x85 / 2} />
+                      </ContentLoader>
+                    )}
+                    <View style={[styles.profilePicEdit, {}]}>
+                      <Text style={styles.profilePicEditText}>Edit</Text>
+                    </View>
+                  </Pressable>
+                </View>
+              )
+            }></NativeModal>
           <Text
-            style={
-              colorScheme === "light"
-                ? styles.buttonText_light
-                : styles.buttonText_dark
-            }>
-            Edit Profile
+            style={[
+              styles.headerText,
+              colorScheme == "light"
+                ? styles.headerText_ligth
+                : styles.headerText_dark,
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail">
+            {userInfo.username}
           </Text>
-        </Pressable>
-      </View>
-      <View style={styles.mainNavigation}>
-        <SettingsNavigationItem
-          icon={HearthIcon}
-          onPressCallback={() => {}}
-          title="Favorites"
-        />
-        <SettingsNavigationItem
-          icon={CogIcon}
-          onPressCallback={() => navigation.navigate("Profile Settings")}
-          title="Settings"
-        />
-        <SettingsItem
-          icon={LightBulbIcon}
-          title="Dark Mode"
-          customStyle={{ marginTop: "auto" }}>
-          <CustomSwitch
-            onValueChange={setDarkMode}
-            value={darkMode}
-            style={{ marginLeft: "auto" }}
+          <Pressable
+            style={Buttons.applyOpacity(
+              colorScheme === "light" ? styles.button_light : styles.button_dark
+            )}
+            onPress={() =>
+              navigation.navigate<"Edit Profile">({
+                name: "Edit Profile",
+                params: { userInfo },
+              })
+            }>
+            <Text
+              style={
+                colorScheme === "light"
+                  ? styles.buttonText_light
+                  : styles.buttonText_dark
+              }>
+              Edit Profile
+            </Text>
+          </Pressable>
+        </View>
+        <View style={styles.mainNavigation}>
+          <SettingsNavigationItem
+            icon={HearthIcon}
+            onPressCallback={() => {}}
+            title="Favorites"
           />
-        </SettingsItem>
-      </View>
-    </SafeAreaView>
+          <SettingsNavigationItem
+            icon={CogIcon}
+            onPressCallback={() => navigation.navigate("Profile Settings")}
+            title="Settings"
+          />
+          <SettingsItem
+            icon={LightBulbIcon}
+            title="Dark Mode"
+            customStyle={{ marginTop: "auto" }}>
+            <CustomSwitch
+              onValueChange={setDarkMode}
+              value={darkMode}
+              style={{ marginLeft: "auto" }}
+            />
+          </SettingsItem>
+        </View>
+      </SafeAreaView>
+      {isModalVisible && (
+        <SlideTopModal
+          icon={ModalIcon}
+          isModalVisible={isModalVisible}
+          modalContent={errorMessage}
+          backgroundColor={Colors.danger.s300}
+          hideCallback={modalHideCallback}
+        />
+      )}
+    </>
   )
 }
 

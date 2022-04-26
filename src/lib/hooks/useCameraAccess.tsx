@@ -93,6 +93,7 @@ export const useCameraAccess = () => {
       maxWidth: 768,
       maxHeight: 768,
       saveToPhotos: true,
+      includeBase64: true,
     }
 
     launchCamera(options, (res) => {

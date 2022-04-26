@@ -16,6 +16,7 @@ import { CreateEventDto } from "common/types/dto/create-event.dto"
 import { SlideTopModal } from "components/modals/slideTopModal"
 import { useEventDeletion } from "lib/hooks/useEventDeletion"
 import { Events } from "Api/Events"
+import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -44,6 +45,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   } = useEventDeletion(params.organizerEvent?.eventId)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
+  const [_errMsg, setErrMsg] = React.useState<string>("")
 
   const isLightMode = colorScheme === "light"
   const ModalIcon = errorMsg ? (
@@ -101,7 +103,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         }
       } catch (e) {
         setIsLoading(false)
-        console.error(e)
+        if (e.response.status === 422) return showNSFWImageModal()
+
+        setErrMsg("Something went wrong while creating a new event.")
       }
     } else {
       try {
@@ -200,8 +204,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         <SlideTopModal
           icon={ModalIcon}
           isModalVisible={isModalVisible}
-          modalContent={errorMsg ?? successMsg}
-          backgroundColor={errorMsg ? Colors.danger.s300 : Colors.primary.s180}
+          modalContent={errorMsg ?? _errMsg ?? successMsg}
+          backgroundColor={
+            errorMsg || _errMsg ? Colors.danger.s300 : Colors.primary.s180
+          }
           contentStyle={successMsg ? { color: Colors.success.s400 } : {}}
           hideCallback={modalHideCallback}
         />

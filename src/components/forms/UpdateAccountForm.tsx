@@ -12,7 +12,7 @@ import { appContext } from "contexts/contextApi"
 import { CustomInput } from "./CustomInput"
 import {
   showFailedModal,
-  showInappropiateContentModal,
+  showInappropriateContentModal,
 } from "lib/modalAlertsHelpers"
 
 interface Props {
@@ -37,7 +37,7 @@ export const UpdateAccountForm = ({
   const handleSubmit = async (newValues: any) => {
     const bw = new Filter()
     const words = Object.values(newValues).join(" ")
-    if (bw.isProfane(words)) return showInappropiateContentModal()
+    if (bw.isProfane(words)) return showInappropriateContentModal()
 
     var hasChanged: boolean = false
 

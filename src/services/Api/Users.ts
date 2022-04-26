@@ -98,7 +98,7 @@ export class Users {
       )
       return res
     } catch (e) {
-      console.error(e)
+      throw e
     }
   }
 

@@ -88,6 +88,7 @@ export const useMediaAccess = () => {
       maxHeight: 768,
       quality: 0.5,
       selectionLimit: 1,
+      includeBase64: true,
     }
 
     launchImageLibrary(options, (res) => {
