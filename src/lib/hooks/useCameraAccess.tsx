@@ -80,7 +80,7 @@ export const useCameraAccess = () => {
       return false
     }
   }
-  const _launchCamera = async () => {
+  const _launchCamera = async (modalRef: any) => {
     if (!access) {
       const _access = await requestCameraAccessAsync()
       if (!_access) return
@@ -97,8 +97,8 @@ export const useCameraAccess = () => {
     }
 
     launchCamera(options, (res) => {
-      if (res.didCancel) return
-      setImgObj(res)
+      if (res.didCancel) setImgObj(res)
+      modalRef?.close()
     })
   }
   return {

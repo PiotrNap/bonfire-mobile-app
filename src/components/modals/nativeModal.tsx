@@ -7,8 +7,8 @@ import ModalSelector from "react-native-modal-selector"
 import { Buttons, Sizing, Typography } from "styles/index"
 
 export interface NativeModalProps {
-  cameraAccessCb: () => any
-  mediaLibraryCb: () => any
+  cameraAccessCb: (ref: any) => any
+  mediaLibraryCb: (ref: any) => any
   onImageDeleted: () => void
   child: React.ReactNode
 }
@@ -60,7 +60,7 @@ export const NativeModal = ({
             height: Sizing.x35,
           })}
           hitSlop={10}
-          onPress={cameraAccessCb}>
+          onPress={() => cameraAccessCb(selector)}>
           <Text
             style={{
               ...Typography.subHeader.x25,
@@ -85,7 +85,7 @@ export const NativeModal = ({
             height: Sizing.x30,
           })}
           hitSlop={10}
-          onPress={mediaLibraryCb}>
+          onPress={() => mediaLibraryCb(selector)}>
           <Text
             style={{
               ...Typography.subHeader.x25,

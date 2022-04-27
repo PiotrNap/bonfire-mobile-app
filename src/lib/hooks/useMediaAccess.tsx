@@ -76,7 +76,7 @@ export const useMediaAccess = () => {
       return false
     }
   }
-  const _launchImageLibrary = async () => {
+  const _launchImageLibrary = async (modalRef: any) => {
     if (!access) {
       const _access = await requestImageLibraryAccessAsync()
       if (!_access) return
@@ -92,8 +92,8 @@ export const useMediaAccess = () => {
     }
 
     launchImageLibrary(options, (res) => {
-      if (res.didCancel) return
-      setMediaObj(res)
+      if (!res.didCancel) setMediaObj(res)
+      modalRef?.close()
     })
   }
 
