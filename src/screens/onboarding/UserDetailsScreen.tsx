@@ -8,7 +8,7 @@ import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { Typography, Colors, Sizing, Forms } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { ProfileContext } from "contexts/profileContext"
-import { showInappropiateContentModal } from "lib/modalAlertsHelpers"
+import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
 
 export interface UserDetailScreenProps {}
 
@@ -25,7 +25,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
     const badWords = new Filter().isProfane(
       [_profession, _jobTitle, _bio, _skills].join(" ")
     )
-    if (badWords) return showInappropiateContentModal()
+    if (badWords) return showInappropriateContentModal()
 
     setProfession(_profession.trim())
     setJobTitle(_jobTitle.trim())

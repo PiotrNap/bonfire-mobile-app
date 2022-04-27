@@ -1,8 +1,6 @@
 import * as React from "react"
 import {
   View,
-  LayoutChangeEvent,
-  LayoutRectangle,
   StyleSheet,
   SectionList,
   Text,
@@ -13,90 +11,73 @@ import { CalendarEventsDetail } from "./CalendarEventsDetail"
 import { appContext, myCalendarContext } from "contexts/contextApi"
 import { getDate, getYear } from "lib/utils"
 import { Sizing, Colors, Outlines, Typography } from "styles/index"
-import { Event } from "common/interfaces/myCalendarInterface"
+import {
+  CalendarSectionTitles,
+  Event,
+} from "common/interfaces/myCalendarInterface"
 import { CalendarEventsListHeader } from "./CalendarEventsListHeader"
 import { months, monthsByName } from "common/types/calendarTypes"
 
 export interface CalendarEventsListProps {
   isHomeScreen?: boolean
-  isBookingCalendar?: boolean
   isRegularCalendar?: boolean
-  currentSelectedDay?: Date | null
+  currentSelectedDay?: string | null
 }
 
 export const CalendarEventsList = ({
   isHomeScreen,
-  isBookingCalendar,
   isRegularCalendar,
   currentSelectedDay,
 }: CalendarEventsListProps) => {
   const { events, calendarHeader } = myCalendarContext()
-  const { colorScheme, accountType } = appContext()
-  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
-    null
-  )
-  // console.log(JSON.stringify(events, null, 4));
-  // console.log(currentSelectedDay);
+  const { colorScheme, accountType, userSettings } = appContext()
   const [highlightedDay, setHighlightedDay] = React.useState<any>({
     listSection: "",
     index: null,
   })
-  const [currMonthEvents, setCurrMonthEvents] = React.useState<any[]>([])
+  const isCurrMonth: boolean =
+    new Date().getMonth() === monthsByName[calendarHeader.month] &&
+    new Date().getFullYear() === calendarHeader.year
+  const isSelectedDayAtViewMonth =
+    currentSelectedDay &&
+    new Date(currentSelectedDay).getMonth() ===
+      monthsByName[calendarHeader.month] &&
+    new Date(currentSelectedDay).getFullYear() === calendarHeader.year
 
-  // console.log("current selected day is :", currentSelectedDay);
-
-  const renderItem = ({ item, index, section }: any) => {
-    const {
-      title,
-      description,
-      fromTime,
-      toTime,
-      participants,
-      organizer,
-    } = item
-
-    return <Text>{item.id}</Text>
-
-    // return (
-    //   <CalendarEventsDetail
-    //     key={`${item.fromTime}_${item.toTime}`}
-    //     index={index}
-    //     title={title}
-    //     description={description}
-    //     fromTime={fromTime}
-    //     toTime={toTime}
-    //     participants={participants}
-    //     organizer={organizer}
-    //     listLength={section.data.length}
-    //     listSection={section.title}
-    //     highlightedDay={highlightedDay}
-    //     setHighlightedDay={setHighlightedDay}
-    //   />
-    // );
-  }
+  const renderItem = React.useCallback(
+    ({ item, index, section }: any) => (
+      <CalendarEventsDetail
+        key={item.id}
+        index={index}
+        highlightedDay={highlightedDay}
+        setHighlightedDay={setHighlightedDay}
+        listLength={section?.data.length}
+        listSection={section?.title}
+        currentSelectedDay={currentSelectedDay}
+        {...item}
+      />
+    ),
+    [events, highlightedDay, currentSelectedDay]
+  )
 
   const keyExtractor = (item: any, index: number) =>
     `${index}_${item.fromTime}_${item.toTime}`
 
-  const onLayout = (event: LayoutChangeEvent) => {
-    setDimensions(event.nativeEvent.layout)
-  }
-
-  const getCurrMonthEvents = React.useCallback((): {
+  const getMonthEvents = React.useCallback((): {
     monthlyEvents?: Event[]
     dayEvents?: Event[]
+    todayEvents?: Event[]
   } => {
     var monthlyEvents: Event[] = []
     var dayEvents: Event[] = []
-
-    // merge two arrays,
-    // based on the event type ('booked event' or 'scheduled event') display the right color/info,
+    var todayEvents: Event[] = []
+    const showPastEvents = userSettings?.showPastCalendarEvents || false
 
     if (events) {
-      for (let scheduledYear of events) {
-        if (scheduledYear.year === getYear()) {
-          if (scheduledYear.months) {
-            var monthObj = scheduledYear.months.find((obj) => {
+      for (let eventsYear of events) {
+        if (eventsYear.year === getYear()) {
+          if (eventsYear.months) {
+            var monthObj = eventsYear.months.find((obj) => {
               if (isHomeScreen && accountType === "attendee") {
                 return obj.month === months[new Date().getMonth()]
               }
@@ -104,44 +85,46 @@ export const CalendarEventsList = ({
             })
 
             if (monthObj != null) {
-              monthObj.days.forEach((day: any) =>
+              monthObj.days.forEach((day: any) => {
+                // if (!showPastEvents && day.day < getDate()) return
                 day.events.forEach((evt: Event) => {
-                  if (isHomeScreen && day.day === new Date().getDate()) {
+                  if (isHomeScreen && day.day === getDate(currentSelectedDay)) {
                     dayEvents.push(evt)
                   } else if (day.day === getDate()) {
-                    dayEvents.push(evt)
-                  } else {
+                    todayEvents.push(evt)
+                  } else if (
+                    monthlyEvents.findIndex((mEvt) => mEvt.id === evt.id) === -1
+                  ) {
                     monthlyEvents.push(evt)
                   }
                 })
-              )
+              })
             }
           }
         }
       }
     }
-
-    return { monthlyEvents, dayEvents }
-  }, [calendarHeader.month, events])
+    return { monthlyEvents, dayEvents, todayEvents }
+  }, [calendarHeader.month, events, currentSelectedDay])
 
   const getSections = () => {
-    const { monthlyEvents, dayEvents } = getCurrMonthEvents()
-    const sections: any[] = []
+    const { monthlyEvents, dayEvents } = getMonthEvents()
+    const sections: { title: CalendarSectionTitles; data: any[] }[] = []
 
-    if (dayEvents.length) {
-      sections.push({ title: "Today", data: [...dayEvents] })
-    }
-    if (monthlyEvents.length) {
+    if (dayEvents?.length) {
       sections.push({
-        title: "This month",
+        title: CalendarSectionTitles.today,
+        data: [...dayEvents],
+      })
+    }
+    if (monthlyEvents?.length) {
+      sections.push({
+        title: CalendarSectionTitles.thisMonth,
         data: [...monthlyEvents],
       })
     }
-
     return sections
   }
-
-  // console.log("data is ", JSON.stringify(data(), null, 4));
 
   const sectionHeader = ({ section }: any) => {
     const { title } = section
@@ -149,11 +132,15 @@ export const CalendarEventsList = ({
     return (
       <View style={styles.sectionHeaderWrapper}>
         <Text
-          style={
-            colorScheme === "light"
-              ? styles.sectionHeader_light
-              : styles.sectionHeader_dark
-          }>
+          style={[
+            styles.sectionHeader,
+            {
+              color:
+                colorScheme === "light"
+                  ? Colors.primary.s600
+                  : Colors.primary.neutral,
+            },
+          ]}>
           {title}
         </Text>
       </View>
@@ -194,27 +181,22 @@ export const CalendarEventsList = ({
   const getItemCount = (data: any) => data.length
   const getItem = (data: any, index: number) => ({
     id: Math.random().toString(12).substring(0),
-    ...data,
+    ...data[index],
   })
-  // console.log(JSON.stringify(getSections(), null, 4));
 
   return (
-    <View style={styles.eventsHolder} onLayout={onLayout}>
-      {numOfEvents ? (
+    <View style={styles.eventsHolder}>
+      {numOfEvents && accountType === "attendee" ? (
         <CalendarEventsListHeader numOfEvents={numOfEvents} />
       ) : (
         <></>
       )}
-      {(isBookingCalendar || isHomeScreen) &&
+      {isCurrMonth &&
       getSections().length > 0 &&
-      !isRegularCalendar ? (
+      isRegularCalendar &&
+      !currentSelectedDay ? (
         <SectionList
-          contentContainerStyle={[
-            {
-              width: dimensions ? dimensions.width : "100%",
-              paddingBottom: Sizing.x5,
-            },
-          ]}
+          contentContainerStyle={[styles.list, styles.sectionList]}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           scrollEventThrottle={500}
@@ -228,18 +210,13 @@ export const CalendarEventsList = ({
         />
       ) : (
         <VirtualizedList
-          contentContainerStyle={[
-            {
-              width: dimensions ? dimensions.width : "100%",
-              paddingBottom: Sizing.x5,
-            },
-          ]}
+          contentContainerStyle={[styles.list, styles.virtualizedList]}
           getItem={getItem}
           getItemCount={getItemCount}
           data={
-            currentSelectedDay !== null
-              ? getCurrMonthEvents().dayEvents
-              : getCurrMonthEvents().monthlyEvents
+            currentSelectedDay
+              ? getMonthEvents().dayEvents
+              : getMonthEvents().monthlyEvents
           }
           renderItem={renderItem}
           keyExtractor={keyExtractor}
@@ -247,6 +224,7 @@ export const CalendarEventsList = ({
           maxToRenderPerBatch={5}
           updateCellsBatchingPeriod={5}
           progressViewOffset={15}
+          initialNumToRender={10}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -257,24 +235,27 @@ export const CalendarEventsList = ({
 const styles = StyleSheet.create({
   eventsHolder: {
     flex: 1,
-    width: "95%",
     alignItems: "center",
     borderRadius: Outlines.borderRadius.small,
+    marginVertical: Sizing.x5,
+  },
+  list: {
+    minWidth: "95%",
+    maxWidth: "95%",
+  },
+  sectionList: {
+    paddingBottom: Sizing.x5,
+  },
+  virtualizedList: {
+    paddingTop: Sizing.x20,
+    paddingBottom: Sizing.x5,
   },
   sectionHeaderWrapper: {
     marginVertical: Sizing.x7,
   },
-  sectionHeader_light: {
-    width: "50%",
-    alignSelf: "baseline",
-    marginLeft: Sizing.x20,
-    ...Typography.subHeader.x30,
-    color: Colors.primary.s600,
-  },
-  sectionHeader_dark: {
+  sectionHeader: {
     width: "50%",
     marginLeft: Sizing.x20,
-    ...Typography.header.x30,
-    color: Colors.primary.neutral,
+    ...Typography.header.x25,
   },
 })

@@ -48,7 +48,10 @@ export const NewEventDescription = ({ navigation }: Props) => {
     const bw = new Filter()
     if (bw.isProfane([eventTitle, eventDescription].join(" ")))
       return showInappropriateContentModal()
+
     setTextContent({ title: eventTitle, description: eventDescription })
+    if (!markedCheckbox) setHourlyRate(Number(_hourlyRate))
+
     navigation.navigate("Available Days Selection")
   }
   const onCheckBoxPress = () => {

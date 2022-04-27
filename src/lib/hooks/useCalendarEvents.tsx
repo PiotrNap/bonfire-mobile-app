@@ -6,7 +6,7 @@ import { convertToCalendarEvents } from "lib/utils"
 import { NewCalendarMonths } from "common/interfaces/myCalendarInterface"
 
 export const useCalendarEvents = (id?: string) => {
-  const [loadingEvents, setLoadingEvents] = R.useState<boolean>(false)
+  const [loadingEvents, setLoadingEvents] = R.useState<boolean>(true)
   const { setEvents, loadInitialMyCalendar, loadMyCalendar } =
     myCalendarContext()
   const { id: userId } = R.useContext(ProfileContext)

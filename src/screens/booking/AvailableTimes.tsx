@@ -1,7 +1,6 @@
 import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import {
   appContext,

@@ -723,6 +723,16 @@ export const roundDateMinutes = (date: Date): Date => {
   return new Date(date.setMinutes(Math.round(date.getMinutes() / 10) * 10))
 }
 
+export const sortEventAvailabilities = (
+  availabilities: Availability[],
+  sortType: "asc" | "desc"
+) =>
+  availabilities.sort((a, b) => {
+    if (a.to > b.to || (a.to === b.to && a.maxDuration > b.maxDuration))
+      return sortType === "asc" ? 1 : -1
+    return sortType === "asc" ? -1 : 1
+  })
+
 /**
  * @description Helper function to convert the event-selected-days into calendar ready availabilities
  */
@@ -733,11 +743,10 @@ export const convertToCalendarAvailabilities = (
   availableDayTimeSlots: any[]
 ) => {
   const timesInMill: number[] = Object.values(selectedDays)
-  const sortedAvailableSlots = availableDayTimeSlots.sort((a, b) => {
-    if (a.to > b.to || (a.to === b.to && a.maxDuration > b.maxDuration))
-      return 1
-    return -1
-  })
+  const sortedAvailableSlots = sortEventAvailabilities(
+    availableDayTimeSlots,
+    "asc"
+  )
   const lastAvailableDayTimeSlot =
     sortedAvailableSlots[sortedAvailableSlots.length - 1]
   // TODO this will eventually be allowed to change by organizers when creating a new event
@@ -821,6 +830,7 @@ export const convertToCalendarEvents = (organizerEvents: {
     type: "booked slot" | "scheduled slot" | "active slot"
   ) => {
     if (!arr.length) return
+    var eventsInEachMonth: any[] = []
 
     // Because we want to show each available day for an ongoing
     // event of our organizers, we have to create separate slots
@@ -830,15 +840,26 @@ export const convertToCalendarEvents = (organizerEvents: {
       for (const event of arr) {
         for (const day of Object.values(event.selectedDays)) {
           newArr.push(Object.assign({ availableAt: day }, event))
+
+          // this will let us know how many days are in current month
+          if (!eventsInEachMonth.find((m) => m?.month === getMonthName(day))) {
+            eventsInEachMonth.push({
+              month: getMonthName(day),
+              events: Object.values(event.selectedDays)
+                .filter((sd: any) => getMonthName(sd) === getMonthName(day))
+                .sort(),
+            })
+          }
         }
       }
 
       if (newArr.length) arr = newArr
     }
 
+    var currEventId: string = ""
+    var sortedAvailabilites: Availability[] = []
+
     for (const val of arr) {
-      // if it's active ongoing event take the available day for
-      // this is event, otherwise the start from the booked date
       const fromDate = type === "active slot" ? val.availableAt : val.bookedDate
       const year = new Date(fromDate).getFullYear()
       const month = months[new Date(fromDate).getMonth()]
@@ -873,11 +894,38 @@ export const convertToCalendarEvents = (organizerEvents: {
         eventDescription: val.eventDescription || val.description,
         bookedDuration: val?.bookedDuration,
         bookedDate: val?.bookedDate,
-        txHash: val.txHash || null,
+        txHash: val?.txHash,
+        fromDate: val?.fromDate,
+        toDate: val?.toDate,
         type,
       }
 
-      if (type === "active slot") slotObject.availabilities = val.availabilities
+      if (type === "active slot") {
+        if (currEventId != val.id) {
+          sortedAvailabilites = sortEventAvailabilities(
+            val.availabilities,
+            "desc"
+          )
+          currEventId = val.id
+        }
+        // we need to know what's the max available day in this month
+
+        slotObject.toTimeSlot = sortedAvailabilites[0].to
+        slotObject.fromTimeSlot =
+          sortedAvailabilites[sortedAvailabilites.length - 1].from
+        slotObject.availabilities = val.availabilities
+        slotObject.availableAt = val.availableAt
+
+        // return max day for active event in a given month
+        const eventsInMonth = eventsInEachMonth.find(
+          (m) => m.month === month
+        )?.events
+        if (eventsInMonth && eventsInMonth.length) {
+          slotObject.maxAvailableMonthDate =
+            eventsInMonth[eventsInMonth.length - 1]
+          slotObject.minAvailableMonthDate = eventsInMonth[0]
+        }
+      }
 
       // Case when it's the first time or the year has changed
       if (

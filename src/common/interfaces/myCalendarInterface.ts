@@ -50,14 +50,28 @@ export interface EventsDay {
 
 export interface Event {
   id: string
+  fromTimeSlot: string | number
+  toTimeSlot: string | number
   title: string
   fromTime: number | string
   toTime: number | string
   description: string
   participants: string[]
   type: "booked slot" | "scheduled slot" | "active slot"
+  fromDate?: string
+  toDate?: string
   organizerAlias?: string
   organizerId?: string
+  attendeeAlias?: string
+  availabilities?: Availability[]
+  availabilityDate?: number | string
+}
+
+export interface Availability {
+  from: string | number
+  to: string | number
+  maxDuration: number
+  minDuration: number
 }
 
 export interface MyCalendarContextProps {
@@ -105,8 +119,13 @@ export interface Day {
   direction?: "previous" | "next" | undefined
 }
 
-export interface Date {
+export interface Date extends Day {
   year?: number
   month?: number
   day: number
+}
+
+export enum CalendarSectionTitles {
+  today = "Today",
+  thisMonth = "This month",
 }

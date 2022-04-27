@@ -5,9 +5,13 @@ import { Buttons, Colors, Sizing, Typography } from "styles/index"
 import { DotIcon } from "icons/index"
 import { Day } from "interfaces/myCalendarInterface"
 import { applyOpacity } from "../../../styles/colors"
+import { getTime } from "lib/utils"
+import { monthsByName } from "common/types/calendarTypes"
 
 export interface MonthlyDayProps extends Day {
   activeDay: number | null
+  year: number
+  month: string
   updateActiveDay: (arg: number | null) => void
   setSelectedDay?: (arg: any) => any
 }
@@ -19,6 +23,8 @@ export interface MonthlyDayProps extends Day {
 
 export const MonthlyDay = ({
   number,
+  year,
+  month,
   activeDay,
   updateActiveDay,
   events,
@@ -26,11 +32,12 @@ export const MonthlyDay = ({
   const hasActiveEvents = !!events?.find((e) => e.type === "active slot")
   const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot")
 
-  // Whenever someone has pressed a day or it's a current day
-  const isActiveDay = activeDay === number
+  const dayInTime =
+    year && month && number && getTime(year, monthsByName[month], number)
+  const isActiveDay = activeDay === dayInTime
 
   const onPress = () => {
-    updateActiveDay(activeDay === number ? null : number)
+    updateActiveDay(isActiveDay ? null : number)
   }
 
   const TextComponent = () => <Text style={styles.dayButtonText}>{number}</Text>

@@ -18,6 +18,7 @@ import { PlusIcon } from "assets/icons"
 import { ProfileContext } from "contexts/profileContext"
 import { useCalendarEvents } from "lib/hooks/useCalendarEvents"
 import { monthsByName } from "common/types/calendarTypes"
+import { Events, EventsMonth } from "common/interfaces/myCalendarInterface"
 
 export interface CalendarProps {
   isBookingCalendar?: boolean
@@ -31,24 +32,23 @@ export const Calendar = ({
   isRegularCalendar,
 }: CalendarProps) => {
   const { colorScheme } = appContext()
-  const { resetState } = eventCreationContext()
+  const { resetEventCreationState } = eventCreationContext()
   const { id } = React.useContext(ProfileContext)
   const { events, calendarHeader } = myCalendarContext()
   const { getEvents, loadingEvents } = useCalendarEvents(id)
 
-  const [
-    currentSelectedDay,
-    setCurrentSelectedDay,
-  ] = React.useState<Date | null>(null)
+  const [currentSelectedDay, setCurrentSelectedDay] = React.useState<
+    undefined | string | null
+  >(null)
 
   const isLightMode = colorScheme === "light"
   const navigation = useNavigation()
 
-  React.useEffect(() => {
-    if (monthsByName[calendarHeader.month] === new Date().getMonth()) {
-      setCurrentSelectedDay(new Date())
-    } else setCurrentSelectedDay(null)
-  }, [calendarHeader])
+  // React.useEffect(() => {
+  //   if (monthsByName[calendarHeader.month] === new Date().getMonth()) {
+  //     setCurrentSelectedDay(new Date())
+  //   } else setCurrentSelectedDay(null)
+  // }, [calendarHeader])
 
   React.useEffect(() => {
     if (events === null) {
@@ -78,29 +78,26 @@ export const Calendar = ({
     return unsubscribe
   }, [])
 
-  // console.log(JSON.stringify(events, null, 4));
-
   const onAddEventPress = () => {
-    resetState()
+    resetEventCreationState()
     navigation.navigate("New Event Description")
   }
 
-  // const onMonthChange = async () => {
-  //     getEvents(false,
-  //       new Date(calendarHeader.year, monthsByName[calendarHeader.month])
-  //     );
-  //   }
-  // };
-
-  const onSelectedDayChange = (day: Date | null) => setCurrentSelectedDay(day)
+  const onSelectedDayChange = (day: string | null) => setCurrentSelectedDay(day)
+  const isMonthWithEvents = !!events?.map((eventsYear: Events) =>
+    eventsYear.months.find(
+      (eventsMonth: EventsMonth) => eventsMonth.month === calendarHeader.month
+    )
+  )[0]
 
   return (
     <>
       <MonthlyWrapper
         secondCustomCallback={onSelectedDayChange}
         isRegularCalendar={isRegularCalendar}
+        initialEventsLoaded={!!loadingEvents}
       />
-      {(isBookingCalendar == null || isHomeScreen) &&
+      {(!isBookingCalendar || isRegularCalendar) &&
         (loadingEvents ? (
           <View style={styles.buttonWrapper}>
             <ActivityIndicator
@@ -110,10 +107,9 @@ export const Calendar = ({
               style={{ paddingTop: Sizing.x35 }}
             />
           </View>
-        ) : events && events.length ? (
+        ) : isMonthWithEvents ? (
           <CalendarEventsList
             currentSelectedDay={currentSelectedDay}
-            isBookingCalendar={isBookingCalendar}
             isRegularCalendar={isRegularCalendar}
             isHomeScreen={isHomeScreen}
           />

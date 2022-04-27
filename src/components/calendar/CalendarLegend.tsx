@@ -32,7 +32,7 @@ export const CalendarLegend = ({
               Available dates
             </Text>
           </View>
-          <View style={styles.dotLine}>
+          {/*<View style={styles.dotLine}>
             <DoubleColorDot
               firstColor={"#DBEAFE"}
               secondColor={"#FECACA"}
@@ -45,20 +45,7 @@ export const CalendarLegend = ({
               ]}>
               Limited availability
             </Text>
-          </View>
-          {/*
-          // TODO Do our organizers want people to know if they're fully booked?
-          <View style={styles.dotLine}>
-            <SingleColorDot style={styles.dot} color={"#FECACA"} />
-            <Text
-              style={[
-                styles.text,
-                isLightMode && { color: Colors.primary.s800 },
-              ]}>
-              Fully booked
-            </Text>
-          </View>
-          */}
+          </View>*/}
         </>
       ) : isRegularCalendar ? (
         <>

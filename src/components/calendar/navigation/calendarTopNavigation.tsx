@@ -6,7 +6,6 @@ import { Buttons, Colors, Outlines, Sizing } from "styles/index"
 import { CalendarHeader } from "common/interfaces/myCalendarInterface"
 import { monthsByName } from "common/types/calendarTypes"
 import { useRoute } from "@react-navigation/native"
-import { isSixMonthsLater } from "lib/utils"
 import { bookingContext } from "contexts/contextApi"
 import dayjs from "dayjs"
 
@@ -56,7 +55,9 @@ export const CalendarTopNavigation = ({
   )
 
   if (isBookingCalendar || isNewEventCalendar) {
-    disabledPreviousButton = true
+    disabledPreviousButton =
+      new Date().getFullYear() === calendarHeader.year &&
+      new Date().getMonth() === monthsByName[calendarHeader.month]
 
     if (isBookingCalendar) {
       var { toDate }: any = useRoute().params
@@ -65,12 +66,13 @@ export const CalendarTopNavigation = ({
         (year === new Date(toDate).getFullYear() &&
           monthsByName[month] === new Date(toDate).getMonth()) ||
         hasAvailabilitiesInCurrMonthOnly()
-    } else {
-      disabledNextButton = isSixMonthsLater(
-        calendarHeader.year,
-        monthsByName[calendarHeader.month]
-      )
     }
+    // } else {
+    //   disabledNextButton = isSixMonthsLater(
+    //     calendarHeader.year,
+    //     monthsByName[calendarHeader.month]
+    //   )
+    // }
   }
 
   const navigationButtonStyle = (direction: Direction): ViewStyle => {

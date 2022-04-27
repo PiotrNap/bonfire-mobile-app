@@ -28,7 +28,7 @@ export interface MonthlyWrapperProps {
   isNewEventCalendar?: boolean
   isRegularCalendar?: boolean
   customCallback?: () => Promise<void>
-  secondCustomCallback?: (arg: Date | null) => void
+  secondCustomCallback?: (arg: string | null) => void
   initialEventsLoaded?: boolean
 }
 
@@ -378,13 +378,16 @@ export const MonthlyWrapper = ({
           </View>
         </View>
       </View>
-      <View style={styles.legendWrapper}>
-        <CalendarLegend
-          colorScheme={colorScheme}
-          isBookingCalendar={isBookingCalendar}
-          isRegularCalendar={isRegularCalendar}
-        />
-      </View>
+      {isRegularCalendar ||
+        (isBookingCalendar && (
+          <View style={styles.legendWrapper}>
+            <CalendarLegend
+              colorScheme={colorScheme}
+              isBookingCalendar={isBookingCalendar}
+              isRegularCalendar={isRegularCalendar}
+            />
+          </View>
+        ))}
     </View>
   )
 }

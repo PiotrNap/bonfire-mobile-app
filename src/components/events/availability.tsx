@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: Outlines.borderRadius.max,
-    borderColor: Colors.primary.s350,
-    borderWidth: Outlines.borderWidth.base,
-    backgroundColor: Colors.primary.s200,
+    borderColor: Colors.primary.s300,
+    borderWidth: Outlines.borderWidth.thick,
+    backgroundColor: Colors.primary.s180,
     ...Outlines.shadow.base,
   },
   body: {

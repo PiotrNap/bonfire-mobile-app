@@ -57,10 +57,17 @@ export const primary: Record<Primary, string> = {
   s800: "#4c1d95",
 }
 
-type CalendarCard = "blue" | "yellow"
-export const calendarCard: Record<CalendarCard, string> = {
-  blue: "#DBEAFE",
-  yellow: "#FEF3C7",
+type YellowCalendarCard = "s300" | "s400" | "s500"
+export const yellowCalendarCard: Record<YellowCalendarCard, string> = {
+  s300: "#FEF3C7",
+  s400: "#D97706",
+  s500: "#92400E",
+}
+type BlueCalendarCard = "s300" | "s400" | "s500"
+export const blueCalendarCard: Record<BlueCalendarCard, string> = {
+  s300: "#DBEAFE",
+  s400: "#2563EB",
+  s500: "#1E40AF",
 }
 
 export const booked = "#FECACA"
