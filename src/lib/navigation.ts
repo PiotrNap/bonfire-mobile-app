@@ -1,55 +1,66 @@
 import { LinkingOptions } from "@react-navigation/native"
 import { DEEP_LINKING_PATHS } from "common/types/navigationTypes"
 
+const APP_PREFIXES = ["bonfire://gimbalabs.bonfire.com", "bonfire://"]
+
 /**
- * Return config for deep linking to be used by react-natvigation.
+ * Return config for deep linking to be used by react-navigation.
  * This will allow users navigate back to our app from mobile browser.
+ *
+ * config screen keys are NAMES of screens, values can be custom paths
  */
 export const getAthorizedLinkingConfig = (
   profileType: "organizer" | "attendee"
-): LinkingOptions => {
-  return {
-    config: {
-      screens: {
-        "Onboarding Screens": DEEP_LINKING_PATHS.ONBOARDING,
-        "Navigation Screens": {
-          path: DEEP_LINKING_PATHS.NAVIGATION,
-          screens: {
-            Home:
-              profileType === "attendee"
-                ? DEEP_LINKING_PATHS.HOME
-                : {
-                    screens: {
-                      "Available Days Selection":
-                        DEEP_LINKING_PATHS.AVAILABLE_DAYS_SELECTION,
-                      "New Event Description":
-                        DEEP_LINKING_PATHS.NEW_EVENT_DESCRIPTION,
-                    },
-                  },
-            Browse: {
+): LinkingOptions => ({
+  config: {
+    screens: {
+      "Onboarding Screens": DEEP_LINKING_PATHS.ONBOARDING,
+      ...(profileType === "organizer"
+        ? {
+            "Organizer Navigation Screens": {
+              path: DEEP_LINKING_PATHS.NAVIGATION,
               screens: {
-                "Available Event Days Selection":
-                  DEEP_LINKING_PATHS.AVAILABLE_EVENTS_DAYS_SELECTION,
-                Browse: DEEP_LINKING_PATHS.BROWSE,
+                HomeStack: {
+                  path: "home",
+                  screens: {
+                    "Available Days Selection":
+                      DEEP_LINKING_PATHS.AVAILABLE_DAYS_SELECTION,
+                    "New Event Description":
+                      DEEP_LINKING_PATHS.NEW_EVENT_DESCRIPTION,
+                  },
+                },
+                "Browse Stack": {
+                  screens: {
+                    Browse: DEEP_LINKING_PATHS.BROWSE,
+                  },
+                },
               },
             },
-          },
-        },
-        "Add Funds": DEEP_LINKING_PATHS.ADD_FUNDS,
-      },
+          }
+        : {
+            "Attendee Navigation Screens": {
+              path: DEEP_LINKING_PATHS.NAVIGATION,
+              screens: {
+                "Browse Stack": {
+                  screens: {
+                    Browse: DEEP_LINKING_PATHS.BROWSE,
+                  },
+                },
+              },
+            },
+          }),
+      "Add Funds": DEEP_LINKING_PATHS.ADD_FUNDS,
     },
-    prefixes: ["bonfire://gimbalabs.bonfire.com", "bonfire://"],
-  }
-}
+  },
+  prefixes: APP_PREFIXES,
+})
 
-export const getUnauthorizedLinkingConfig = (): LinkingOptions => {
-  return {
-    config: {
-      screens: { "Onboarding Screens": DEEP_LINKING_PATHS.ONBOARDING },
-    },
-    prefixes: ["bonfire://gimbalabs.bonfire.com", "bonfire://"],
-  }
-}
+export const getUnauthorizedLinkingConfig = (): LinkingOptions => ({
+  config: {
+    screens: { "Onboarding Screens": DEEP_LINKING_PATHS.ONBOARDING },
+  },
+  prefixes: APP_PREFIXES,
+})
 
 export const createNestedPath = (pathsArray: string[]): string => {
   return pathsArray.join("/")

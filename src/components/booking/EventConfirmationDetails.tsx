@@ -28,17 +28,27 @@ import {
   getTimeSpanLength,
 } from "lib/utils"
 import { useAuthCredentials } from "lib/hooks/useAuthCredentials"
+import { AnyObject } from "yup/lib/types"
+
+interface EventConfirmationDetails {
+  isNewEvent: boolean
+  isCalendarEventPreview: boolean
+  organizerEvent?: AnyObject
+  bookedEvent?: AnyObject
+}
 
 export const EventConfirmationDetails = ({
   isNewEvent = false,
+  isCalendarEventPreview,
   organizerEvent,
+  bookedEvent,
 }: any) => {
   const { colorScheme } = appContext()
-  const {
+  var {
     duration = null,
     durationCost = null,
     pickedDate = null,
-    previewingEvent,
+    previewingEvent: bookingPreviewingEvent,
   } = bookingContext()
   const {
     textContent,
@@ -49,7 +59,7 @@ export const EventConfirmationDetails = ({
     eventTitleColor,
   } = eventCreationContext()
   const credentials = useAuthCredentials()
-
+  const previewingEvent = bookingPreviewingEvent || bookedEvent
   var selectedDaysArr: number[] = []
   var fromDate, toDate
 
@@ -88,7 +98,6 @@ export const EventConfirmationDetails = ({
         icon: sectionsIcons.presentation,
       },
     },
-
     organizerEvent?.description && {
       label: "Description",
       lineContent: {
@@ -113,16 +122,23 @@ export const EventConfirmationDetails = ({
         },
       ],
     },
-    {
+    organizerEvent?.availableAt && {
+      label: "Date & time",
+      lineContent: {
+        content: `Start: ${weekDays[getDay(organizerEvent?.availableAt)]} - ${
+          months[getMonth(organizerEvent?.availableAt)]
+        } ${getDate(organizerEvent?.availableAt)}`,
+        icon: sectionsIcons.calendar,
+      },
+    },
+    organizerEvent?.hourlyRate && {
       label: "Hourly Rate",
       lineContent: {
-        //if event has hourly rate of 0 take the rate from user info
-        //stored on device's encrypted storage
         content: `${organizerEvent?.hourlyRate ?? credentials?.hourlyRate}`,
         icon: sectionsIcons.ada,
       },
     },
-  ]
+  ].filter((s) => !!s)
 
   const newEventSections: any[] = [
     textContent?.title && {
@@ -196,7 +212,7 @@ export const EventConfirmationDetails = ({
         },
       ],
     },
-  ]
+  ].filter((s) => !!s)
 
   const bookingEventSections: SectionDetail[] = [
     previewingEvent?.title && {
@@ -213,13 +229,23 @@ export const EventConfirmationDetails = ({
         icon: sectionsIcons.user,
       },
     },
-    pickedDate &&
-      duration && {
+    previewingEvent?.attendeeAlias && {
+      label: "Attendee",
+      lineContent: {
+        content: previewingEvent.attendeeAlias,
+        icon: sectionsIcons.user,
+      },
+    },
+    (previewingEvent?.pickedDate || pickedDate) &&
+      (previewingEvent?.duration || duration) && {
         label: "Date & time",
-        callbackFn: {
-          label: "Edit",
-          callbackFnScreen: "Available Event Days Selection",
-        },
+        ...(pickedDate &&
+          duration && {
+            callbackFn: {
+              label: "Edit",
+              callbackFnScreen: "Available Event Days Selection",
+            },
+          }),
         lineContent: [
           {
             content: `${weekDays[getDay(pickedDate)]} - ${
@@ -229,9 +255,10 @@ export const EventConfirmationDetails = ({
           },
           {
             content: `${getDigitalLocaleTime(
-              pickedDate
+              previewingEvent?.pickedDate || pickedDate
             )} - ${getDigitalLocaleTime(
-              new Date(pickedDate).getTime() + duration
+              new Date(previewingEvent?.pickedDate || pickedDate).getTime() +
+                (previewingEvent?.duration || duration)
             )}`,
             icon: sectionsIcons.time,
           },
@@ -254,7 +281,7 @@ export const EventConfirmationDetails = ({
         icon: sectionsIcons.ada,
       },
     },
-  ]
+  ].filter((s) => !!s)
 
   const isLastItem = (index: number) =>
     isNewEvent
@@ -272,21 +299,21 @@ export const EventConfirmationDetails = ({
   }) => (
     <EventConfirmationDetail
       key={index}
-      label={item.label}
-      lineContent={item.lineContent}
-      callbackFn={item.callbackFn}
+      label={item?.label}
+      lineContent={item?.lineContent}
+      callbackFn={item?.callbackFn}
       isLastItem={isLastItem(index)}
     />
   )
 
-  const keyExtractor = (item: any, index: number) => `${item.label}_${index}`
+  const keyExtractor = (item: any, index: number) => `${item?.label}_${index}`
 
   return (
     <FlatList
       data={
         isNewEvent
           ? newEventSections
-          : organizerEvent
+          : organizerEvent || isCalendarEventPreview
           ? organizerEventSections
           : bookingEventSections
       }

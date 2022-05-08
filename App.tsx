@@ -54,7 +54,8 @@ function App() {
                   ? getAthorizedLinkingConfig(user.profileType)
                   : getUnauthorizedLinkingConfig()
               }
-              onReady={onNavigationReady}>
+              onReady={onNavigationReady}
+              >
               <Stack.Navigator
                 initialRouteName={
                   isAuthorized

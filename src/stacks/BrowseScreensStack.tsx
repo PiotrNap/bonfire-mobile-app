@@ -20,7 +20,9 @@ const Stack = createStackNavigator<BookingStackParamList>()
 export const BrowseScreensStack = () => (
   <BookingContextProvider>
     <MyCalendarProvider>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="Browse">
         <Stack.Screen name="Browse" component={BrowseScreen} />
         <Stack.Screen name="Event Description" component={EventDescription} />
         <Stack.Screen

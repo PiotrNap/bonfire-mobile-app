@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, StyleSheet, Pressable } from "react-native"
+import { View, Text, StyleSheet, Pressable, Share } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import {
@@ -7,8 +7,8 @@ import {
   bookingContext,
   eventCreationContext,
 } from "contexts/contextApi"
-import { CheckIcon, ErrorIcon, LeftArrowIcon } from "assets/icons"
-import { Colors, Sizing, Typography } from "styles/index"
+import { CheckIcon, ErrorIcon, LeftArrowIcon, ShareIcon } from "assets/icons"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventConfirmationDetails } from "components/booking"
 import { ProfileContext } from "contexts/profileContext"
@@ -17,6 +17,8 @@ import { SlideTopModal } from "components/modals/slideTopModal"
 import { useEventDeletion } from "lib/hooks/useEventDeletion"
 import { Events } from "Api/Events"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
+import { SmallButton } from "components/buttons/smallButton"
+import { shareEvent } from "lib/helpers"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -134,6 +136,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     await deleteEvent()
     setIsModalVisible(true)
   }
+  const onSharePress = async () =>
+    await shareEvent(params?.organizerCalendarEvent.id)
   const modalHideCallback = () => setIsModalVisible(false)
 
   return (
@@ -147,7 +151,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
               : Colors.neutral.s600,
           },
         ]}>
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.container,
+            !params?.organizerCalendarEvent && { flex: 1 },
+          ]}>
           <View style={styles.navigation}>
             <Pressable onPress={onBackNavigationPress} hitSlop={10}>
               <LeftArrowIcon
@@ -168,13 +176,35 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             </Text>
           </View>
           <EventConfirmationDetails
-            organizerEvent={params?.organizerEvent}
+            isCalendarEventPreview={params?.isCalendarEventPreview}
+            organizerEvent={
+              params?.organizerEvent || params?.organizerCalendarEvent
+            }
+            bookedEvent={params?.bookedEvent}
             isNewEvent={params?.isNewEvent}
           />
+          {params?.organizerCalendarEvent && (
+            <View style={styles.shareButtonWrapper}>
+              <SmallButton
+                title="Share Event"
+                icon={
+                  <ShareIcon
+                    color={
+                      isLightMode ? Colors.primary.neutral : Colors.primary.s800
+                    }
+                    width={Sizing.x14}
+                    height={Sizing.x14}
+                    strokeWidth={4}
+                  />
+                }
+                onPress={onSharePress}
+              />
+            </View>
+          )}
           <View style={styles.buttonContainer}>
             {params?.organizerEvent ? (
               !successMsg ? (
-                // @TODO this should only be possible if there're no bookings
+                // @TODO this should only be possible if this event hasn't been booked yet
                 <FullWidthButton
                   onPressCallback={onDeleteEvent}
                   text="Close Event"
@@ -182,20 +212,23 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
                   loadingIndicator={isEventDeletionLoading}
                   textStyle={{ color: Colors.primary.neutral }}
                   style={{
-                    backgroundColor: Colors.danger.s400,
-                    borderColor: Colors.danger.s400,
+                    backgroundColor: Colors.danger.s300,
+                    borderColor: Colors.danger.s300,
                   }}
                 />
               ) : (
                 <></>
               )
-            ) : (
+            ) : !params?.isCalendarEventPreview &&
+              !params?.organizerCalendarEvent ? (
               <FullWidthButton
                 onPressCallback={onButtonPress}
                 text={"Confirm"}
                 colorScheme={colorScheme}
                 loadingIndicator={isLoading}
               />
+            ) : (
+              <></>
             )}
           </View>
         </View>
@@ -223,7 +256,6 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "90%",
-    flex: 1,
   },
   navigation: {
     flexDirection: "row",
@@ -249,5 +281,23 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: "auto",
     marginBottom: Sizing.x15,
+  },
+  shareButtonWrapper: {
+    marginTop: "auto",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  shareEventButton: {
+    borderRadius: Outlines.borderRadius.base,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Sizing.x5,
+    paddingHorizontal: Sizing.x10,
+    ...Outlines.shadow.base,
+  },
+  shareEventButtonText: {
+    ...Typography.header.x20,
+    marginRight: Sizing.x5,
   },
 })

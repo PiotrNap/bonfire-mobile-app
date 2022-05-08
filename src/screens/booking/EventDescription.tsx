@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { applyOpacity } from "../../styles/colors"
-import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import {
   availableDaysLeftInCurrMonth,
   convertToCalendarAvailabilities,
   getEventCardDate,
 } from "lib/utils"
-import { LeftArrowIcon } from "assets/icons"
+import { LeftArrowIcon, ShareIcon, UserIcon } from "assets/icons"
 import {
   appContext,
   bookingContext,
@@ -24,6 +24,8 @@ import { EventStatistics } from "components/events/eventDescription/EventStatist
 import dayjs from "dayjs"
 import FastImage from "react-native-fast-image"
 import { months } from "common/types/calendarTypes"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { shareEvent } from "lib/helpers"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {
@@ -31,6 +33,7 @@ export const EventDescription = ({ navigation, route }: any) => {
     description,
     eventId,
     organizerId,
+    organizerAlias,
     fromDate,
     toDate,
     image,
@@ -101,6 +104,7 @@ export const EventDescription = ({ navigation, route }: any) => {
       header: "Details",
       organizerEvent: { ...route.params },
     })
+  const onSharePress = async () => await shareEvent(eventId)
 
   React.useEffect(() => {
     if (id && organizerId && id === organizerId) setIsEventOwner(true)
@@ -135,12 +139,28 @@ export const EventDescription = ({ navigation, route }: any) => {
             </View>
             <View
               style={[
-                styles.eventTitleWrapper,
+                styles.eventCardBodyWrapper,
                 { paddingBottom: insets.bottom + Sizing.x15 },
               ]}>
               <Text style={[styles.eventTitle, { color: titleColor }]}>
                 {title}
               </Text>
+              <View
+                style={[
+                  styles.shareButtonWrapper,
+                  { backgroundColor: applyOpacity(_color, 0.5) },
+                ]}>
+                <Pressable
+                  style={Buttons.applyOpacity(styles.shareButton)}
+                  onPress={onSharePress}>
+                  <ShareIcon
+                    style={styles.icon}
+                    strokeWidth={0.5}
+                    stroke={Colors.primary.s800}
+                    fill={Colors.primary.s800}
+                  />
+                </Pressable>
+              </View>
             </View>
           </View>
         </FastImage>
@@ -155,6 +175,22 @@ export const EventDescription = ({ navigation, route }: any) => {
           },
         ]}>
         <View style={styles.bottomWrapper}>
+          {!isEventOwner ? (
+            <View style={styles.eventOrganizer}>
+              <UserIcon
+                style={styles.icon}
+                strokeWidth={1.8}
+                stroke={isLightMode ? Colors.primary.s600 : Colors.primary.s200}
+              />
+              <SubHeaderText
+                customStyle={{ marginBottom: Sizing.x5 }}
+                colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                {organizerAlias}
+              </SubHeaderText>
+            </View>
+          ) : (
+            <></>
+          )}
           <BodyText
             customStyle={{ fontFamily: "Roboto-Regular" }}
             changingColorScheme
@@ -162,7 +198,7 @@ export const EventDescription = ({ navigation, route }: any) => {
             {description}
           </BodyText>
           {isEventOwner ? (
-            <View>
+            <View style={{ marginTop: "auto" }}>
               <EventStatistics views={0} bookings={0} likes={0} />
               <FullWidthButton
                 onPressCallback={onEventDetailPreview}
@@ -177,6 +213,7 @@ export const EventDescription = ({ navigation, route }: any) => {
               text="Book Event"
               colorScheme={colorScheme}
               loadingIndicator={isLoading}
+              style={{ marginTop: "auto" }}
             />
           )}
         </View>
@@ -199,7 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     paddingVertical: Sizing.x20,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
   },
   backgroundImage: {
     width: "100%",
@@ -235,8 +272,11 @@ const styles = StyleSheet.create({
     color: Colors.primary.neutral,
     marginHorizontal: Sizing.x2,
   },
-  eventTitleWrapper: {
+  eventCardBodyWrapper: {
     width: "90%",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
   },
   eventTitle: {
     alignSelf: "flex-start",
@@ -244,5 +284,30 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     ...Typography.header.x60,
     color: Colors.primary.neutral,
+  },
+  shareButtonWrapper: {
+    width: Sizing.x50,
+    height: Sizing.x50,
+    borderRadius: Outlines.borderRadius.max,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  shareButton: {
+    width: Sizing.x40,
+    height: Sizing.x40,
+    borderRadius: Outlines.borderRadius.max,
+    backgroundColor: Colors.primary.neutral,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  eventOrganizer: {
+    marginBottom: Sizing.x5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    width: Sizing.x25,
+    height: Sizing.x25,
+    marginRight: Sizing.x3,
   },
 })

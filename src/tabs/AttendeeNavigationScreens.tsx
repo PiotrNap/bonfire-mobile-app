@@ -34,9 +34,9 @@ export const AttendeeNavigationScreens = ({ route }: any) => {
     <AttendeeNavigationTabs.Navigator
       //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
-      <AttendeeNavigationTabs.Screen name="Home" component={HomeScreen} />
+      <AttendeeNavigationTabs.Screen name="Home Stack" component={HomeScreen} />
       <AttendeeNavigationTabs.Screen
-        name="Browse"
+        name="Browse Stack"
         component={BrowseScreensStack}
       />
       <AttendeeNavigationTabs.Screen name="Wallet" component={WalletScreen} />

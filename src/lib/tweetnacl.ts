@@ -29,10 +29,7 @@ export const signChallenge = async (
 
   // TODO: use a byte-array when the device API's support that type, and fill the buffer with zeros immediately after use.
   try {
-    console.log("before signing :", challenge, _secretKey)
     signedChallenge = nacl.sign.detached(challenge, _secretKey)
-
-    console.log("our signature ", base64.fromByteArray(signedChallenge))
 
     _secretKey = null
     secretKey = new Uint8Array([])

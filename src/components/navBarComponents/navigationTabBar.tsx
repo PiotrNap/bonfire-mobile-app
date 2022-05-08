@@ -16,6 +16,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type NavigationTabBarProps = BottomTabBarProps<OrganizerTabParamList>
 
+enum NAVIGATION_TITLE {
+  "Home Stack" = "Home",
+  "Browse Stack" = "Browse",
+  "Wallet" = "Wallet",
+  "My Events" = "My Events",
+  "Profile" = "Profile",
+}
+
 export const NavigationTabBar = ({
   state,
   descriptors,
@@ -26,9 +34,9 @@ export const NavigationTabBar = ({
 
   const getNavBarIcon = (routeName: string) => {
     switch (routeName) {
-      case "Home":
+      case "Home Stack":
         return HomeIcon
-      case "Browse":
+      case "Browse Stack":
         return SearchIcon
       case "Wallet":
         return WalletIcon
@@ -43,10 +51,10 @@ export const NavigationTabBar = ({
 
   const label = (options: any, route: any) => {
     return options.tabBarLabel != null
-      ? options.tabBarLable
+      ? NAVIGATION_TITLE[options.tabBarLable]
       : options.title != null
-      ? options.title
-      : route.name
+      ? NAVIGATION_TITLE[options.title]
+      : NAVIGATION_TITLE[route.name]
   }
 
   const renderTabItem = (route: any, index: any) => {

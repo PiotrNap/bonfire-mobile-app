@@ -1,4 +1,4 @@
-import { Platform } from "react-native"
+import { Platform, Share } from "react-native"
 
 import { ANDROID_API_URL, IOS_API_URL } from "@env"
 import { signChallenge } from "./tweetnacl"
@@ -6,6 +6,9 @@ import base64 from "base64-js"
 
 import { monthsByName } from "common/types/calendarTypes"
 import { Auth } from "../services/Api/Auth"
+import { getDeepLinkUri } from "./utils"
+import { createNestedPath } from "./navigation"
+import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
 
 /**
  *  Takes index of the selected day in the weeek
@@ -64,11 +67,11 @@ export const startChallengeSequence = async (
     let { challengeString } = res
 
     if (challengeString) {
-      let signature: any = await signChallenge(challengeString)
+      let signature: any = await signChallenge(
+        base64.toByteArray(challengeString)
+      )
 
       if (signature) {
-        signature = base64.fromByteArray(signature)
-
         // request JWT
         let res = await Auth.requestAccessToken(
           challengeString,
@@ -104,4 +107,26 @@ export const getFormDataFromFilePath = (filePath: string) => {
   })
 
   return formData
+}
+
+export const shareEvent = async (id: string) => {
+  try {
+    const result = await Share.share({
+      message:
+        getDeepLinkUri(
+          createNestedPath([
+            DEEP_LINKING_URLS.NAVIGATION,
+            DEEP_LINKING_URLS.BROWSE,
+          ])
+        ) + `/${id}`,
+    })
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+    }
+  } catch (e) {}
 }

@@ -1,5 +1,5 @@
 {
-  "name": "1on1",
+  "name": "Bonfire",
   "author": "Piotr Napierala",
   "organization": "Gimbalabs",
   "scripts": {
@@ -7,12 +7,13 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest --watchAll",
+    "hack": "./node_modules/rn-nodeify/cmd.js --hack --install",
     "prepare": "husky install"
   },
   "dependencies": {
     "@emurgo/react-native-haskell-shelley": "^3.1.3",
     "@pnap/react-native-search-bar": "^1.0.5",
-    "@pnap/react-native-tweetnacl": "^1.0.0",
+    "@pnap/react-native-tweetnacl": "1.0.1",
     "@react-native-async-storage/async-storage": "^1.13.0",
     "@react-native-clipboard/clipboard": "^1.8.5",
     "@react-native-community/datetimepicker": "^6.1.0",

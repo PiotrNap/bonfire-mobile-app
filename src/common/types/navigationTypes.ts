@@ -2,6 +2,7 @@ import {
   UserBaseDTO,
   UserOrganizerDTO,
 } from "common/interfaces/profileInterface"
+import { AnyObject } from "yup/lib/types"
 
 export type AppStackParamList = {
   "Log In": undefined
@@ -30,8 +31,8 @@ export type AppStackParamList = {
 }
 
 export type AttendeeTabParamList = {
-  Home: { id: string }
-  Browse: any
+  "Home Stack": { id: string }
+  "Browse Stack": any
   Wallet: undefined
   "Add Funds": { fromScreen: string }
   Profile: undefined
@@ -88,6 +89,7 @@ interface EventDescription {
   titleColor: string
   description: string
   organizerId: string
+  organizerAlias: string
   fromDate: number | string
   toDate: number | string
   image: any
@@ -100,6 +102,17 @@ interface EventDescription {
 export enum DEEP_LINKING_PATHS {
   ADD_FUNDS = "add-funds",
   AVAILABLE_DAYS_SELECTION = "available-days-selection/:success",
+  AVAILABLE_EVENTS_DAYS_SELECTION = "available-event-days-selection",
+  BROWSE = "browse/:event-id",
+  HOME = "home",
+  NAVIGATION = "navigation",
+  NEW_EVENT_DESCRIPTION = "new-event-description",
+  ONBOARDING = "onboarding",
+}
+
+export enum DEEP_LINKING_URLS {
+  ADD_FUNDS = "add-funds",
+  AVAILABLE_DAYS_SELECTION = "available-days-selection",
   AVAILABLE_EVENTS_DAYS_SELECTION = "available-event-days-selection",
   BROWSE = "browse",
   HOME = "home",

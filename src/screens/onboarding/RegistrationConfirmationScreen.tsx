@@ -50,8 +50,8 @@ export const RegistrationConfirmationScreen = () => {
         const res = await Users.updateUser(organizerProfileDto, id)
 
         if (res.status === 201) {
-          // get challenge from server
           const authResponseDTO = await startChallengeSequence(id, true)
+
           await setToEncryptedStorage("auth-credentials", authResponseDTO)
 
           navigate("Organizer Navigation Screens")

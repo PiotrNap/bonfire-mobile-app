@@ -40,6 +40,7 @@ import { RegistrationIcon } from "./registration"
 import { RemoveIcon } from "./remove"
 import { RightArrowIcon } from "./rightArrow"
 import { SearchIcon } from "./search"
+import { ShareIcon } from "./share"
 import { SingleColorDot } from "./singleColorDot"
 import { TimeIcon } from "./time"
 import { TrashIcon } from "./trash"
@@ -89,6 +90,7 @@ export {
   PartiallyBookedDay,
   QrCodeSampleIcon,
   SearchIcon,
+  ShareIcon,
   SingleColorDot,
   UserIcon,
   WalletIcon,

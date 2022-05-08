@@ -5,6 +5,7 @@ import { BodyText } from "components/rnWrappers/bodyText"
 import { Colors, Outlines, Sizing } from "styles/index"
 import { fontWeight } from "../../styles/typography"
 import { RemoveIcon } from "assets/icons"
+import { appContext } from "contexts/contextApi"
 
 interface Props {
   text: string
@@ -14,6 +15,8 @@ interface Props {
 
 export const HintBox = ({ text, closeable, closeCallback }: Props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true)
+  const { colorScheme } = appContext()
+  const isLightMode = colorScheme === "light"
 
   const closeHintBox = async () => {
     closeCallback()
@@ -21,13 +24,23 @@ export const HintBox = ({ text, closeable, closeCallback }: Props) => {
   }
 
   return isOpen ? (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: isLightMode
+            ? Colors.primary.s180
+            : Colors.primary.s200,
+        },
+      ]}>
       <BodyText
         customStyle={{
           ...fontWeight.semibold,
           fontSize: Sizing.x14,
           width: "90%",
-        }}>
+        }}
+        changingColorScheme
+        colors={[Colors.primary.s600, Colors.primary.s600]}>
         <Text style={{ ...fontWeight.bold }}>Hint:</Text> {text}
       </BodyText>
       {closeable && (
@@ -54,7 +67,6 @@ const styles = StyleSheet.create({
     padding: Sizing.x8,
     borderWidth: Outlines.borderWidth.base,
     borderColor: Colors.primary.s300,
-    backgroundColor: Colors.primary.s180,
     borderRadius: Outlines.borderRadius.base,
   },
   closeButton: {

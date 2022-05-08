@@ -40,11 +40,11 @@ export const OrganizerNavigationScreens = ({ route }: any) => {
       //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
       <OrganizerNavigationTabs.Screen
-        name="Home"
+        name="Home Stack"
         component={OrganizerHomeScreenStack}
       />
       <OrganizerNavigationTabs.Screen
-        name="Browse"
+        name="Browse Stack"
         component={BrowseScreensStack}
       />
       <OrganizerNavigationTabs.Screen name="Wallet" component={WalletScreen} />

@@ -15,7 +15,7 @@ import { Colors, Outlines, Sizing } from "styles/index"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { StackScreenProps } from "@react-navigation/stack"
 import {
-  DEEP_LINKING_PATHS,
+  DEEP_LINKING_URLS,
   EventCreationParamList,
 } from "common/types/navigationTypes"
 import { MonthlyWrapper } from "components/calendar"
@@ -52,7 +52,6 @@ export const AvailableDaysSelection = (props: Props) => {
     isRequesting,
     isValidOauth,
     setIsValidOauth,
-    isLoading,
     startGoogleAuthentication,
   } = useGoogleAuth()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
@@ -103,11 +102,13 @@ export const AvailableDaysSelection = (props: Props) => {
       try {
         await startGoogleAuthentication(
           createNestedPath([
-            DEEP_LINKING_PATHS.NAVIGATION,
-            DEEP_LINKING_PATHS.AVAILABLE_DAYS_SELECTION,
+            DEEP_LINKING_URLS.NAVIGATION,
+            DEEP_LINKING_URLS.AVAILABLE_DAYS_SELECTION,
           ])
         )
-      } catch (e) {}
+      } catch (e) {
+        setError({ isVisible: true, type: "GoogleOauth" })
+      }
 
     const selectedDaysVal = Object.values(selectedDays).sort()
     setDateFrame(
@@ -182,7 +183,7 @@ export const AvailableDaysSelection = (props: Props) => {
             <CalendarWrapperSimple>
               <MonthlyWrapper isNewEventCalendar={true} />
             </CalendarWrapperSimple>
-            {!isValidOauth && !isLoading && (
+            {!isValidOauth && !isRequesting && (
               <View style={styles.messageWrapper}>
                 <Pressable
                   onPress={onCheckBoxPress}
