@@ -1,4 +1,4 @@
-import nacl from "react-native-tweet-nacl"
+import nacl from "@pnap/react-native-tweetnacl"
 import base64 from "base64-js"
 import { getFromEncryptedStorage } from "./encryptedStorage"
 
@@ -9,7 +9,7 @@ interface KeyPair {
 
 export const generateKeyPair = async (): Promise<KeyPair | void> => {
   try {
-    const keypair = await nacl.sign.keyPair()
+    const keypair = nacl.sign.keyPair()
     return keypair
   } catch (e) {
     console.error(e)
@@ -17,25 +17,30 @@ export const generateKeyPair = async (): Promise<KeyPair | void> => {
 }
 
 export const signChallenge = async (
-  challenge: string | Uint8Array
+  challenge: Uint8Array,
+  secretKey?: Uint8Array
 ): Promise<string | void> => {
-  var secretKey, signedChallenge
-  secretKey = await getFromEncryptedStorage("privKey")
+  var _secretKey, signedChallenge
 
-  // convert to Uint8Array
-  if (typeof challenge === "string" && typeof secretKey === "string") {
-    challenge = base64.toByteArray(challenge)
-    secretKey = base64.toByteArray(secretKey)
-  }
+  _secretKey = secretKey || (await getFromEncryptedStorage("privKey"))
+
+  if (!_secretKey || !challenge) return
+  _secretKey = base64.toByteArray(_secretKey)
 
   // TODO: use a byte-array when the device API's support that type, and fill the buffer with zeros immediately after use.
   try {
-    signedChallenge = await nacl.sign.detached(challenge, secretKey)
+    console.log("before signing :", challenge, _secretKey)
+    signedChallenge = nacl.sign.detached(challenge, _secretKey)
 
-    secretKey = null
-    return signedChallenge
+    console.log("our signature ", base64.fromByteArray(signedChallenge))
+
+    _secretKey = null
+    secretKey = new Uint8Array([])
+    challenge = new Uint8Array([])
+
+    return base64.fromByteArray(signedChallenge)
   } catch (e) {
-    secretKey = null
+    _secretKey = null
     console.error(e)
   }
 }
