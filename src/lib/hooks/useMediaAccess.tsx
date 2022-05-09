@@ -93,7 +93,7 @@ export const useMediaAccess = () => {
 
     launchImageLibrary(options, (res) => {
       if (!res.didCancel) setMediaObj(res)
-      modalRef?.close()
+      if (modalRef?.close) modalRef.close()
     })
   }
 

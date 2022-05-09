@@ -1,5 +1,8 @@
 import { setAuthorizationToken } from "Api/base"
-import { getFromEncryptedStorage } from "lib/encryptedStorage"
+import {
+  getFromEncryptedStorage,
+  setToEncryptedStorage,
+} from "lib/encryptedStorage"
 import { startChallengeSequence } from "lib/helpers"
 import * as React from "react"
 
@@ -16,20 +19,17 @@ export const useAppLogin = () => {
         let sec = await getFromEncryptedStorage("privKey")
         let pub = await getFromEncryptedStorage("pubKey")
         let userSettings = await getFromEncryptedStorage("user-settings")
-        /**
-         * We want to make sure if user exists in database first,
-         * TODO set the TTL for JWT and test it
-         */
-        // if (at && !isExpired(at.expiresAt)) {
-        //   setAuthorizationToken(at.accessToken)
-        //   setIsAuthorized(true)
-        //   setUser({
-        //     username: at.username,
-        //     profileType: at.profileType,
-        //     id: at.id,
-        //   })
-        // }
-        console.log(at)
+        const isExpired = new Date() > new Date(at?.expiresAt)
+
+        if (at && !isExpired) {
+          setAuthorizationToken(at.accessToken)
+          setIsAuthorized(true)
+          setUser({
+            username: at.username,
+            profileType: at.profileType,
+            id: at.id,
+          })
+        }
 
         if (sec && pub) {
           const accessTokenDto = await startChallengeSequence(pub, false)
@@ -47,6 +47,7 @@ export const useAppLogin = () => {
               hourlyRate: accessTokenDto?.hourlyRate,
               userSettings,
             })
+            setToEncryptedStorage("auth-credentials", accessTokenDto)
             setAuthorizationToken(accessTokenDto.accessToken)
             setIsAuthorized(true)
           }

@@ -97,8 +97,8 @@ export const useCameraAccess = () => {
     }
 
     launchCamera(options, (res) => {
-      if (res.didCancel) setImgObj(res)
-      modalRef?.close()
+      if (!res.didCancel) setImgObj(res)
+      if (modalRef?.close) modalRef.close()
     })
   }
   return {

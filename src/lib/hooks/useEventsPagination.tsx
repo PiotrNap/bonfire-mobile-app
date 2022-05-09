@@ -1,7 +1,7 @@
 import { Events } from "Api/Events"
 import * as React from "react"
 
-export const useEventsPagination = () => {
+export const useEventsPagination = (id: string) => {
   const [events, setEvents] = React.useState<any[]>([])
   const [eventsPage, setEventsPage] = React.useState<number>(1)
   const [eventsLimit, setEventsLimit] = React.useState<number>(10)
@@ -18,6 +18,7 @@ export const useEventsPagination = () => {
     try {
       const res = await Events.getAllEvents({
         limit: eventsLimit,
+        organizer_id: id,
         page: page ?? eventsPage,
       })
 
