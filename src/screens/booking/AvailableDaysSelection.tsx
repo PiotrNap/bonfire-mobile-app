@@ -20,7 +20,6 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
   const { colorScheme } = appContext()
   const isDisabled = !pickedDate
 
-  //@TODO add the organizer info to route params
   const onBackNavigationPress = () => {
     resetBookingState()
     navigation.navigate("Browse")

@@ -33,7 +33,7 @@ export const EventsList = ({
     isLoading: isPaginationLoading,
     getEventsPaginated,
     eventsPage,
-  } = useEventsPagination()
+  } = useEventsPagination(isOrganizerOwnEvents ? id : "")
 
   // we aren't showing organizers own events on browse-screen
   const filterOrganizerEvents = React.useCallback(
@@ -62,6 +62,7 @@ export const EventsList = ({
       eventCardColor,
       id: eventId,
       organizerId,
+      organizerAlias,
     } = item
 
     return (
@@ -72,6 +73,7 @@ export const EventsList = ({
         fromDate={fromDate}
         toDate={toDate}
         eventId={eventId}
+        organizerAlias={organizerAlias}
         organizerId={organizerId}
         image={bufferToBase64(eventCardImage?.data)}
         color={eventCardColor}

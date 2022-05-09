@@ -14,6 +14,7 @@ export interface EventsListCardProps {
   description: string
   eventId?: string
   organizerId?: string
+  organizerAlias?: string
   fromDate: Date
   toDate: Date
   image: any
@@ -29,6 +30,7 @@ export const EventsListCard = ({
   isTransparent,
   eventId,
   organizerId,
+  organizerAlias,
   title,
   description,
   fromDate,
@@ -49,6 +51,7 @@ export const EventsListCard = ({
       image,
       eventId,
       organizerId,
+      organizerAlias,
       color,
       titleColor,
     })

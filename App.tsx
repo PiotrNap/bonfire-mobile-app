@@ -27,7 +27,8 @@ import SplashScreen from "react-native-splash-screen"
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
 enableScreens() // enable native screens for navigation instead of using Views
 
-LogBox.ignoreLogs(["EventEmitter.removeListener"])
+// TODO remove it
+LogBox.ignoreAllLogs()
 
 // this will enable LayoutAnimation API
 if (Platform.OS === "android") {
@@ -54,8 +55,7 @@ function App() {
                   ? getAthorizedLinkingConfig(user.profileType)
                   : getUnauthorizedLinkingConfig()
               }
-              onReady={onNavigationReady}
-              >
+              onReady={onNavigationReady}>
               <Stack.Navigator
                 initialRouteName={
                   isAuthorized

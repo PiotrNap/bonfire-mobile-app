@@ -58,6 +58,7 @@ export class Events {
       const res = await axios.get(`events/${id}`)
       if (res.data) return res.data
     } catch (e) {
+      console.error(e.response)
       if (e.response) throw new Error(e.response.data)
     }
   }

@@ -17,17 +17,24 @@ import {
 } from "common/interfaces/myCalendarInterface"
 import { CalendarEventsListHeader } from "./CalendarEventsListHeader"
 import { months, monthsByName } from "common/types/calendarTypes"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
 
 export interface CalendarEventsListProps {
   isHomeScreen?: boolean
   isRegularCalendar?: boolean
   currentSelectedDay?: string | null
+  navigateCb: (
+    name: keyof EventCreationParamList,
+    params: ValueOf<EventCreationParamList>
+  ) => void
 }
 
 export const CalendarEventsList = ({
   isHomeScreen,
   isRegularCalendar,
   currentSelectedDay,
+  navigateCb,
 }: CalendarEventsListProps) => {
   const { events, calendarHeader } = myCalendarContext()
   const { colorScheme, accountType, userSettings } = appContext()
@@ -54,6 +61,7 @@ export const CalendarEventsList = ({
         listLength={section?.data.length}
         listSection={section?.title}
         currentSelectedDay={currentSelectedDay}
+        navigateCb={navigateCb}
         {...item}
       />
     ),

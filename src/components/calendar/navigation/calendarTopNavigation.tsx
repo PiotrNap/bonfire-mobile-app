@@ -8,6 +8,7 @@ import { monthsByName } from "common/types/calendarTypes"
 import { useRoute } from "@react-navigation/native"
 import { bookingContext } from "contexts/contextApi"
 import dayjs from "dayjs"
+import { areEqualDates, getTime } from "lib/utils"
 
 export interface CalendarTopNavigationProps {
   onPreviousPress: () => void

@@ -1,6 +1,5 @@
 export { CalendarEventsList } from "./CalendarEventsList"
 export { CalendarEventsDetail } from "./CalendarEventsDetail"
-export { CalendarHeader } from "./CalendarHeader"
 export { CalendarWrapper } from "./CalendarWrapper"
 export { MainCalendar } from "./MainCalendar"
 export { MonthlyWrapper } from "./MonthlyWrapper"

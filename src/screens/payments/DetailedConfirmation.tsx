@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, StyleSheet, Pressable, Share } from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import {
@@ -202,9 +202,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             </View>
           )}
           <View style={styles.buttonContainer}>
-            {params?.organizerEvent ? (
+            {params?.organizerEvent &&
+            !params?.organizerEvent.numOfBookedSlots ? (
               !successMsg ? (
-                // @TODO this should only be possible if this event hasn't been booked yet
                 <FullWidthButton
                   onPressCallback={onDeleteEvent}
                   text="Close Event"
@@ -220,7 +220,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
                 <></>
               )
             ) : !params?.isCalendarEventPreview &&
-              !params?.organizerCalendarEvent ? (
+              !params?.organizerCalendarEvent &&
+              !params?.bookedEvent ? (
               <FullWidthButton
                 onPressCallback={onButtonPress}
                 text={"Confirm"}

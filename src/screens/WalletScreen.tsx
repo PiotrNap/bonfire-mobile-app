@@ -6,11 +6,10 @@ import {
   Pressable,
   LayoutChangeEvent,
   ActivityIndicator,
-  NativeModules,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import { LinearGradient } from "expo-linear-gradient"
+import LinearGradient from "react-native-linear-gradient"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
 import { OrganizerTabParamList } from "common/types/navigationTypes"

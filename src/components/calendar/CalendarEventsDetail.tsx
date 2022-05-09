@@ -6,6 +6,8 @@ import { CalendarSectionTitles, Event } from "interfaces/myCalendarInterface"
 import { getDate, getDigitalTime, getLocaleTimezone, getMonth } from "lib/utils"
 import { months } from "common/types/calendarTypes"
 import { RightArrowIcon } from "icons/index"
+import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
+import { EventCreationParamList } from "common/types/navigationTypes"
 
 export interface CalendarEventsDetailProps extends Event {
   setHighlightedDay: React.Dispatch<any>
@@ -13,6 +15,7 @@ export interface CalendarEventsDetailProps extends Event {
   listLength: number
   index: number
   availableAt: number
+  hourlyRate: number | string
   listSection: CalendarSectionTitles
   bookedDate: Date | undefined
   bookedDuration: number | undefined
@@ -21,13 +24,18 @@ export interface CalendarEventsDetailProps extends Event {
   maxAvailableMonthDate: number | undefined
   minAvailableMonthDate: number | undefined
   currentSelectedDay: Date | undefined
+  navigateCb: (
+    name: keyof EventCreationParamList,
+    params: ValueOf<EventCreationParamList>
+  ) => void
 }
 
 export const CalendarEventsDetail = ({
+  id,
   type,
   index,
   fromDate,
-  // toDate,
+  hourlyRate,
   availableAt,
   fromTimeSlot,
   toTimeSlot,
@@ -45,6 +53,7 @@ export const CalendarEventsDetail = ({
   maxAvailableMonthDate,
   minAvailableMonthDate,
   currentSelectedDay,
+  navigateCb,
 }: CalendarEventsDetailProps) => {
   const animatedMargin = React.useRef(new Animated.Value(-65)).current
   const animatedValue = parseInt(JSON.stringify(animatedMargin))
@@ -85,7 +94,34 @@ export const CalendarEventsDetail = ({
       setHighlightedDay({ listSection, index: index + 1 })
     }
   }
-  const onArrowPress = () => console.log("pressed the arrow!")
+  const onArrowPress = () => {
+    navigateCb(
+      "Event Confirmation Details",
+      type === "active slot"
+        ? {
+            organizerCalendarEvent: {
+              id,
+              title: eventTitle,
+              description: eventDescription,
+              availableAt,
+              hourlyRate,
+            },
+            header: "Active Event",
+          }
+        : {
+            bookedEvent: {
+              id,
+              title: eventTitle,
+              organizerAlias,
+              attendeeAlias,
+              pickedDate: bookedDate,
+              duration: bookedDuration,
+              durationCost: hourlyRate,
+            },
+            header: type === "booked slot" ? "Booked Event" : "Scheduled Event",
+          }
+    )
+  }
 
   const animateToTop = () => {
     Animated.timing(animatedMargin, {

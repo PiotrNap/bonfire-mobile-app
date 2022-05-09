@@ -5,31 +5,33 @@ import {
   eventCreationContext,
   myCalendarContext,
 } from "contexts/contextApi"
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native"
-import { Outlines, Buttons, Colors, Typography, Sizing } from "styles/index"
+import { ActivityIndicator, StyleSheet, View } from "react-native"
+import { Colors, Sizing } from "styles/index"
 import { useNavigation } from "@react-navigation/native"
-import { PlusIcon } from "assets/icons"
 import { ProfileContext } from "contexts/profileContext"
 import { useCalendarEvents } from "lib/hooks/useCalendarEvents"
 import { monthsByName } from "common/types/calendarTypes"
 import { Events, EventsMonth } from "common/interfaces/myCalendarInterface"
+import { SmallButton } from "components/buttons/smallButton"
+import { PlusIcon } from "assets/icons"
+import { EventCreationParamList } from "common/types/navigationTypes"
+import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
 
 export interface CalendarProps {
   isBookingCalendar?: boolean
   isHomeScreen?: boolean
   isRegularCalendar?: boolean
+  navigateCb: (
+    name: keyof EventCreationParamList,
+    params: ValueOf<EventCreationParamList>
+  ) => void
 }
 
 export const Calendar = ({
   isBookingCalendar,
   isHomeScreen,
   isRegularCalendar,
+  navigateCb,
 }: CalendarProps) => {
   const { colorScheme } = appContext()
   const { resetEventCreationState } = eventCreationContext()
@@ -82,7 +84,6 @@ export const Calendar = ({
     resetEventCreationState()
     navigation.navigate("New Event Description")
   }
-
   const onSelectedDayChange = (day: string | null) => setCurrentSelectedDay(day)
   const isMonthWithEvents = !!events?.map((eventsYear: Events) =>
     eventsYear.months.find(
@@ -112,38 +113,24 @@ export const Calendar = ({
             currentSelectedDay={currentSelectedDay}
             isRegularCalendar={isRegularCalendar}
             isHomeScreen={isHomeScreen}
+            navigateCb={navigateCb}
           />
         ) : (
           <View style={styles.buttonWrapper}>
-            <Pressable
+            <SmallButton
               onPress={onAddEventPress}
-              style={Buttons.applyOpacity(
-                Object.assign(
-                  {},
-                  styles.addEventButton,
-                  isLightMode
-                    ? { backgroundColor: Colors.primary.s800 }
-                    : { backgroundColor: Colors.primary.neutral }
-                )
-              )}>
-              <Text
-                style={[
-                  styles.addEventButtonText,
-                  isLightMode
-                    ? { color: Colors.primary.neutral }
-                    : { color: Colors.primary.s800 },
-                ]}>
-                Create Event
-              </Text>
-              <PlusIcon
-                color={
-                  isLightMode ? Colors.primary.neutral : Colors.primary.s800
-                }
-                width={Sizing.x14}
-                height={Sizing.x14}
-                strokeWidth={4}
-              />
-            </Pressable>
+              icon={
+                <PlusIcon
+                  color={
+                    isLightMode ? Colors.primary.neutral : Colors.primary.s800
+                  }
+                  width={Sizing.x14}
+                  height={Sizing.x14}
+                  strokeWidth={4}
+                />
+              }
+              title="Create Event"
+            />
           </View>
         ))}
     </>
@@ -155,18 +142,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  addEventButton: {
-    borderRadius: Outlines.borderRadius.base,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: Sizing.x5,
-    paddingHorizontal: Sizing.x10,
-    ...Outlines.shadow.base,
-  },
-  addEventButtonText: {
-    ...Typography.header.x20,
-    marginRight: Sizing.x5,
   },
 })
