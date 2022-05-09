@@ -85,6 +85,9 @@ export interface NewCalendarMonths {
   year?: number
   isBookingCalendar?: boolean
   isRegularCalendar?: boolean
+  availabilities?: Availabilities
+  startFromCustomMonth?: boolean
+  isNewCalendar?: boolean
 }
 
 export interface PreviewingDayEvents {
@@ -97,6 +100,7 @@ export interface CalendarHeader {
   month: string
   year: number
   numOfEvents?: number | undefined
+  startingDate?: any
 }
 
 export interface Month {

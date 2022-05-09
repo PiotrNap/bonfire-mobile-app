@@ -273,10 +273,13 @@ export const myCalendarContext = () => {
     loadInitialMyCalendar: () => {
       dispatch({ type: "LOAD_INITIAL_MY_CALENDAR" })
     },
-    setAvailCalendar: (availabilities: any) => {
+    setAvailCalendar: (
+      availabilities: any,
+      calendarArgs?: NewCalendarMonths
+    ) => {
       dispatch({
         type: "SET_AVAIL_CALENDAR",
-        payload: { availabilities: availabilities },
+        payload: { availabilities, calendarArgs },
       })
     },
     setCurrSelectedDay: (selectedDay: any) => {

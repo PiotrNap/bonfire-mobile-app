@@ -26,6 +26,7 @@ import FastImage from "react-native-fast-image"
 import { months } from "common/types/calendarTypes"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { shareEvent } from "lib/helpers"
+import { Availabilities } from "common/interfaces/myCalendarInterface"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {
@@ -39,6 +40,7 @@ export const EventDescription = ({ navigation, route }: any) => {
     image,
     color,
     titleColor,
+    numOfBookedSlots,
   } = route.params
   const { colorScheme } = appContext()
   const { setPreviewingEvent, resetBookingState } = bookingContext()
@@ -58,43 +60,68 @@ export const EventDescription = ({ navigation, route }: any) => {
     setIsLoading(true)
 
     try {
-      const event = await Events.getEventById(eventId)
-      if (event) {
-        //TODO let organizers decide what's the 'good until' booking window period
-        const availableDays = convertToCalendarAvailabilities(
-          event.selectedDays,
-          event.availabilities
-        )
+      let event
 
-        resetBookingState()
-
-        setPreviewingEvent(Object.assign({}, event, route.params))
-        setAvailCalendar(availableDays)
+      // We have all event info from previous fetch when navigating with deep link
+      if (route.params?.fromShareLink) {
+        const { fromShareLink, ...rest } = route.params
+        event = rest
+      } else {
+        event = await Events.getEventById(eventId)
       }
-      setIsLoading(false)
+
+      if (!event) return
+
+      //TODO let organizers decide what's the 'good until' booking window period
+      const availableDays: Availabilities = convertToCalendarAvailabilities(
+        event.selectedDays,
+        event.availabilities
+      )
+      resetBookingState()
 
       if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
-        const eventDate = dayjs(event.fromDate)
+        const nextAvailableMonth: number | undefined = (
+          Object.values(event.selectedDays) as number[]
+        ).find(
+          (d: any) =>
+            dayjs(d).month() > dayjs().month() &&
+            dayjs(d).year() >= dayjs().year()
+        )
+        if (!nextAvailableMonth) return
+
+        const availableStartDate = dayjs(nextAvailableMonth)
         const calendarSetup = {
           nextMonths: true,
-          month: eventDate.add(1, "month").month(),
-          year: eventDate.year(),
+          month: availableStartDate.month(),
+          year: availableStartDate.year(),
           isBookingCalendar: true,
           isRegularCalendar: false,
+          availabilities: availableDays,
+          startFromCustomMonth: true,
+          isNewCalendar: true,
         }
         loadMyCalendar(calendarSetup)
         changeMonthHeader({
-          month: months[eventDate.add(1, "month").month()],
-          year: eventDate.year(),
+          month: months[availableStartDate.month()],
+          year: availableStartDate.year(),
           numOfEvents: 0,
+          startingDate: new Date(
+            availableStartDate.year(),
+            availableStartDate.month()
+          ),
         })
+      } else {
+        setAvailCalendar(availableDays)
       }
+      setPreviewingEvent(Object.assign({}, event, route.params))
+      setIsLoading(false)
+
       navigation.navigate("Available Event Days Selection", {
         ...route.params,
       })
     } catch (e) {
       // TODO Implement better error handling *error modal?*
-      console.error(e)
+      console.error(e.response)
       setIsLoading(false)
     }
   }
@@ -199,7 +226,11 @@ export const EventDescription = ({ navigation, route }: any) => {
           </BodyText>
           {isEventOwner ? (
             <View style={{ marginTop: "auto" }}>
-              <EventStatistics views={0} bookings={0} likes={0} />
+              <EventStatistics
+                views={0}
+                bookings={numOfBookedSlots ?? 0}
+                likes={0}
+              />
               <FullWidthButton
                 onPressCallback={onEventDetailPreview}
                 text="Preview"

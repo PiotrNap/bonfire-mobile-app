@@ -13,6 +13,7 @@ import {
   Events,
   EventsDay,
   Availability,
+  Availabilities,
 } from "interfaces/myCalendarInterface"
 import { months, monthsByName, weekDays } from "common/types/calendarTypes"
 import { AnyObject } from "yup/lib/types"
@@ -28,7 +29,7 @@ export const bufferToBase64 = (val: Buffer) => {
   return !val ? val : Buffer.from(val).toString("base64")
 }
 
-export function getDeepLinkUri(path: String = ""): String {
+export function getDeepLinkUri(path: string = ""): string {
   const scheme = "bonfire://"
   const host = "gimbalabs.bonfire.com"
   if (IS_ANDROID) {
@@ -240,12 +241,12 @@ export const isPastDate = (year: number, month: string, day: number) => {
 
 export const availableDaysLeftInCurrMonth = (
   availabilities: number[]
-): boolean => {
-  return !!availabilities.find(
+): boolean =>
+  !!availabilities.find(
     (date) =>
-      dayjs(date).month === dayjs().month && dayjs(date).date < dayjs().date
+      dayjs(date).month() === dayjs().month() &&
+      dayjs(date).date() > dayjs().date()
   )
-}
 
 /**
  *   @description This will return an array with next/previous month/s with
@@ -261,11 +262,13 @@ export function getCalendarMonth(
   fromMonth?: number,
   fromYear?: number,
   availabilities: any[] | undefined | null = [],
-  scheduledEvents: Events[] | undefined | null = []
+  scheduledEvents: Events[] | undefined | null = [],
+  startFromCustomMonth: boolean = false
 ): Month[] {
   var month = fromMonth != null ? fromMonth : new Date().getMonth()
   var year = fromYear != null ? fromYear : new Date().getFullYear()
-  var currMonthIndex = fromMonth != null ? month + 1 : month
+  var currMonthIndex =
+    fromMonth != null && !startFromCustomMonth ? month + 1 : month
 
   // if current month is December and fromYear isn't specified, meaning
   // we are at the last month of the current year
@@ -426,7 +429,7 @@ export function getCalendarMonth(
       let availableSlots: AvailabilitiesDay[] = []
       if (availableYear != null) {
         var availableDays = availableYear.months.find(
-          (month: any) => month.month === months[i]
+          (month: any) => month.month === months[i + 1]
         )
         availableDays?.days.map((availDay: AvailabilitiesDay) =>
           availableSlots.push(availDay)
@@ -741,7 +744,7 @@ export const convertToCalendarAvailabilities = (
     [index: string]: number
   },
   availableDayTimeSlots: any[]
-) => {
+): Availabilities => {
   const timesInMill: number[] = Object.values(selectedDays)
   const sortedAvailableSlots = sortEventAvailabilities(
     availableDayTimeSlots,
@@ -897,6 +900,7 @@ export const convertToCalendarEvents = (organizerEvents: {
         txHash: val?.txHash,
         fromDate: val?.fromDate,
         toDate: val?.toDate,
+        hourlyRate: val?.hourlyRate,
         type,
       }
 

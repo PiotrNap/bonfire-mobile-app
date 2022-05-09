@@ -37,6 +37,7 @@ export const BrowseScreensStack = () => (
           name="Booking Confirmation"
           component={DetailedConfirmation}
         />
+        <Stack.Screen name="Event Details" component={DetailedConfirmation} />
       </Stack.Navigator>
     </MyCalendarProvider>
   </BookingContextProvider>

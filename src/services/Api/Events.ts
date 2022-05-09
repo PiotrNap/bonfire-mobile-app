@@ -73,6 +73,7 @@ export class Events {
           params: {
             limit: query.limit,
             page: query.page,
+            organizer_id: query.organizer_id,
           },
         }
       )
@@ -89,13 +90,13 @@ export class Events {
    */
   public static async getEventsBySearch(
     searchValue: string,
-    organizerId?: string
+    organizer_id?: string
   ): Promise<any[] | void> {
     try {
       return await axios.get("events/results", {
         params: {
           search_query: searchValue,
-          organizer_id: organizerId,
+          organizer_id,
         },
       })
     } catch (e) {

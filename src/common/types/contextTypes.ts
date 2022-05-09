@@ -236,6 +236,7 @@ export type MyCalendarPaylaod = {
   }
   [MyCalendarTypes.SetAvailCalendar]: {
     availabilities?: any
+    calendarArgs?: NewCalendarMonths
   }
   [MyCalendarTypes.SetCurrentSelectedDay]: {
     selectedDay: any

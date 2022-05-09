@@ -33,11 +33,9 @@ export const CalendarTopNavigation = ({
   const [currentPressed, setCurrentPressed] = React.useState<null | Direction>(
     null
   )
-  const { month, year } = calendarHeader
-
+  const { month, year, startingDate } = calendarHeader
   /**
-   * This will show disabled buttons after six months span time
-   * (optional feature)
+   * If we decide to limit calendar to past 6 months
    */
   // const disabledPreviousButton = isSixMonthsBefore(
   //   calendarHeader.year,
@@ -49,7 +47,8 @@ export const CalendarTopNavigation = ({
 
   const hasAvailabilitiesInCurrMonthOnly = React.useCallback(
     () =>
-      !Object.values(previewingEvent?.selectedDays).find(
+      previewingEvent &&
+      !Object.values(previewingEvent.selectedDays)?.find(
         (date: any) => dayjs(date).month() !== monthsByName[month]
       ),
     [previewingEvent]
@@ -57,23 +56,17 @@ export const CalendarTopNavigation = ({
 
   if (isBookingCalendar || isNewEventCalendar) {
     disabledPreviousButton =
-      new Date().getFullYear() === calendarHeader.year &&
-      new Date().getMonth() === monthsByName[calendarHeader.month]
+      areEqualDates(startingDate, getTime(year, monthsByName[month])) ||
+      (new Date().getFullYear() === calendarHeader.year &&
+        new Date().getMonth() === monthsByName[calendarHeader.month])
 
     if (isBookingCalendar) {
       var { toDate }: any = useRoute().params
 
       disabledNextButton =
-        (year === new Date(toDate).getFullYear() &&
-          monthsByName[month] === new Date(toDate).getMonth()) ||
-        hasAvailabilitiesInCurrMonthOnly()
+        year === new Date(toDate).getFullYear() &&
+        monthsByName[month] === new Date(toDate).getMonth()
     }
-    // } else {
-    //   disabledNextButton = isSixMonthsLater(
-    //     calendarHeader.year,
-    //     monthsByName[calendarHeader.month]
-    //   )
-    // }
   }
 
   const navigationButtonStyle = (direction: Direction): ViewStyle => {
@@ -106,7 +99,7 @@ export const CalendarTopNavigation = ({
   }
   const onPressOut = () => setCurrentPressed(null)
 
-  return disabledPreviousButton && disabledNextButton ? (
+  return hasAvailabilitiesInCurrMonthOnly() ? (
     <></>
   ) : (
     <>

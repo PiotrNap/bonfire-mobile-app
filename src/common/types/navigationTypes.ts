@@ -57,6 +57,7 @@ export type BookingStackParamList = {
   "Add Funds": EventDescription
   "Booking Confirmation": EventDescription
   Confirmation: any
+  "Event Details": EventDescription
 }
 
 export type EventCreationParamList = {
@@ -66,7 +67,16 @@ export type EventCreationParamList = {
   "Available Time Selection": { availabilities: any } | undefined
   "Image Cover Selection": undefined
   "Event Card Customization": undefined
-  "Event Confirmation Details": { isNewEvent: boolean } | undefined
+  "Event Confirmation Details":
+    | {
+        isNewEvent?: boolean
+        isCalendarEventPreview?: boolean
+        organizerEvent?: AnyObject
+        organizerCalendarEvent?: AnyObject
+        bookedEvent?: AnyObject
+        header?: string
+      }
+    | undefined
 }
 
 export type MyEventsStackParamList = {

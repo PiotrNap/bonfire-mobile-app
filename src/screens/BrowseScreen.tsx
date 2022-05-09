@@ -88,7 +88,7 @@ export const BrowseScreen = ({ navigation, route }: BrowseProps) => {
           fromDate: event.fromDate,
           toDate: event.toDate,
           image: bufferToBase64(event.eventCardImage.data),
-          eventId: id,
+          eventId: event.id,
           organizerId: event.organizerId,
           organizerAlias: event.organizerAlias,
           color: event.eventCardColor,

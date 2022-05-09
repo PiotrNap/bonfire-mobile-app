@@ -36,13 +36,13 @@ export const initialState: MyCalendarState = {
     month: months[getMonth()],
     year: getYear(),
     numOfEvents: 0,
+    startingDate: null,
   },
 }
 
 const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
   switch (action.type) {
     case MyCalendarTypes.AddEvent:
-      // TODO: Sort through existing events, or send to a server?
       if (state.events != null) {
         state.events.push(action.payload.event)
       }
@@ -50,8 +50,6 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
         ...state,
       }
     case MyCalendarTypes.AddAvailability:
-      // TODO: 1. Check before dispatching if user availability already exists
-      //       2. Figure out how to add availabilities to already existing objects
       return {
         ...state,
         availabilities: action.payload.availabilities,
@@ -63,6 +61,7 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
           month: action.payload.calendarHeader.month,
           year: action.payload.calendarHeader.year,
           numOfEvents: action.payload.calendarHeader.numOfEvents,
+          startingDate: action.payload.calendarHeader.startingDate,
         },
       }
     case MyCalendarTypes.PreviewDayEvents:
@@ -115,7 +114,12 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       const nextMonths = action.payload.calendarArgs.nextMonths
       const year = action.payload.calendarArgs.year
       const month = action.payload.calendarArgs.month
+      const _availabilities: any | undefined =
+        action.payload.calendarArgs.availabilities
+      const isNewCalendar = action.payload.calendarArgs.isNewCalendar
       const newCalendar: Month[] = [...state.calendar]
+      const startFromCustomMonth =
+        action.payload.calendarArgs.startFromCustomMonth
 
       if (nextMonths) {
         newCalendar.push(
@@ -124,11 +128,12 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
             false,
             month,
             year,
-            state.availabilities,
-            state.events
+            _availabilities ?? state.availabilities,
+            state.events,
+            startFromCustomMonth
           )
         )
-        newCalendar.splice(0, 1)
+        newCalendar.splice(0, isNewCalendar ? 2 : 1)
       } else {
         newCalendar.splice(
           0,
@@ -138,8 +143,9 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
             true,
             month,
             year,
-            state.availabilities,
-            state.events
+            _availabilities ?? state.availabilities,
+            state.events,
+            startFromCustomMonth
           )
         )
         newCalendar.splice(newCalendar.length - 1, 1)
