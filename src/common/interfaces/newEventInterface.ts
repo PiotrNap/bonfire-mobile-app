@@ -18,7 +18,8 @@ export interface InitialState {
   tags: string[]
   fromDate: Date | null
   toDate: Date | null
-  hourlyRate: number
+  hourlyRate: HourlyRate
+  eventType: EventType
   imageURI: string
   selectedWeekDays: SelectedWeekDays[]
   privateEvent: boolean
@@ -28,10 +29,16 @@ export interface InitialState {
 
 export type SelectedDays = { [key: string]: number }
 export type SelectedWeekDays = { [key: string]: any }
+export type EventType = "One-Time" | "Recurring"
 
 export interface TextContent {
   title: string
   description: string
+}
+
+export interface HourlyRate {
+  ada: number
+  gimbals: number
 }
 
 export interface EventAvailability {

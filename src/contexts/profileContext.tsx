@@ -4,6 +4,7 @@
  */
 import React, { useState, createContext } from "react"
 import { ProfileState } from "interfaces/profileInterface"
+import { HourlyRate } from "common/interfaces/newEventInterface"
 
 export const initialState: ProfileState = {
   username: "",
@@ -21,7 +22,7 @@ export const initialState: ProfileState = {
   timeBlockCostADA: 0,
   walletBalance: 0,
   profileType: "",
-  hourlyRate: 0,
+  hourlyRate: { ada: 0, gimbals: 0 },
   getUserProfile: () => {},
   setName: () => {},
   setUsername: () => {},
@@ -59,7 +60,10 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
   )
-  const [hourlyRate, setHourlyRate] = useState<number>(0)
+  const [hourlyRate, setHourlyRate] = useState<HourlyRate>({
+    ada: 0,
+    gimbals: 0,
+  })
   const [profession, setProfession] = useState<string | undefined>("")
   const [jobTitle, setJobTitle] = useState<string | undefined>("")
   const [description, setDescription] = useState<string | undefined>("")
@@ -101,7 +105,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setImageBase64("")
     setTimeBlockLengthMin(0)
     setTimeBlockCostADA(0)
-    setHourlyRate(0)
+    setHourlyRate({ ada: 0, gimbals: 0 })
     setProfession("")
     setJobTitle("")
     setDescription("")

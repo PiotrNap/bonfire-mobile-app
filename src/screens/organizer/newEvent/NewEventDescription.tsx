@@ -4,27 +4,35 @@ import { StyleSheet, View, Pressable } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { StackScreenProps } from "@react-navigation/stack"
 import Filter from "bad-words"
+import ButtonToggle from "react-native-button-toggle-group"
 
 import { CheckIcon, LeftArrowIcon } from "assets/icons"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
-import { Colors, Outlines, Sizing } from "styles/index"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { Layout } from "components/layouts/basicLayout"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
+import { applyOpacity } from "../../../styles/colors"
+import { EventType, HourlyRate } from "common/interfaces/newEventInterface"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
 export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const { hourlyRate } = React.useContext(ProfileContext)
-  const { setTextContent, setHourlyRate } = eventCreationContext()
+  console.log(hourlyRate)
+  const { setTextContent, setHourlyRate, setEventType } = eventCreationContext()
   const [eventTitle, setEventTitle] = React.useState<string>("")
-  const [_hourlyRate, _setHourlyRate] = React.useState<string>(String(0))
+  const [eventType, _setEventType] = React.useState<EventType>("One-Time")
+  const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
+    ada: 0,
+    gimbals: 0,
+  })
   const [eventDescription, setEventsDescription] = React.useState<string>("")
   const [markedCheckbox, setMarkedCheckbox] = React.useState<boolean>(false)
 
@@ -35,11 +43,18 @@ export const NewEventDescription = ({ navigation }: Props) => {
   // set the input values
   const onEventTitleChange = (val: string) => setEventTitle(val)
   const onDescriptionChange = (val: string) => setEventsDescription(val)
-  const onHourlyRateChange = (val: string) => {
+  const onAdaHourlyRateChange = (val: string) => onHourlyRateChange(val, "ada")
+  const onGimbalsHourlyRateChange = (val: string) =>
+    onHourlyRateChange(val, "gimbals")
+  const onHourlyRateChange = (val: string, type: "ada" | "gimbals") => {
     if (typeof +val === "number" && +val > 0) {
-      _setHourlyRate(val)
+      if (type === "ada") {
+        _setHourlyRate({ ..._hourlyRate, ada: Number(val) })
+      } else _setHourlyRate({ ..._hourlyRate, gimbals: Number(val) })
     } else {
-      _setHourlyRate("0")
+      if (type === "ada") {
+        _setHourlyRate({ ..._hourlyRate, ada: 0 })
+      } else _setHourlyRate({ ..._hourlyRate, gimbals: 0 })
     }
   }
   // navigation handlers
@@ -50,7 +65,12 @@ export const NewEventDescription = ({ navigation }: Props) => {
       return showInappropriateContentModal()
 
     setTextContent({ title: eventTitle, description: eventDescription })
-    if (!markedCheckbox) setHourlyRate(Number(_hourlyRate))
+    if (!markedCheckbox)
+      setHourlyRate({
+        ada: Number(_hourlyRate.ada),
+        gimbals: Number(_hourlyRate.gimbals),
+      })
+    setEventType(eventType)
 
     navigation.navigate("Available Days Selection")
   }
@@ -103,11 +123,18 @@ export const NewEventDescription = ({ navigation }: Props) => {
         <CustomPlainInput
           label="Ada/hour"
           keyboardType="numeric"
-          defaultValue={_hourlyRate}
-          onEndEditingCallback={onHourlyRateChange}
+          defaultValue={String(_hourlyRate.ada)}
+          onEndEditingCallback={onAdaHourlyRateChange}
           isDisabled={markedCheckbox}
         />
-        {!!hourlyRate && (
+        <CustomPlainInput
+          label="Gimbals/hour"
+          keyboardType="numeric"
+          defaultValue={String(_hourlyRate.gimbals)}
+          onEndEditingCallback={onGimbalsHourlyRateChange}
+          isDisabled={markedCheckbox}
+        />
+        {(!hourlyRate?.ada || !hourlyRate.gimbals) && (
           <View style={styles.messageWrapper}>
             <Pressable
               onPress={onCheckBoxPress}

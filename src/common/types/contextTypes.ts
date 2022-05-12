@@ -4,6 +4,8 @@ import {
 } from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
+  EventType,
+  HourlyRate,
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
@@ -150,7 +152,7 @@ export type EventCreationPayload = {
   }
   [EventCreationTypes.RemoveSelectedWeeks]: any
   [EventCreationTypes.SetHourlyRate]: {
-    hourlyRate: number
+    hourlyRate: HourlyRate
   }
   [EventCreationTypes.SetImageURI]: {
     imageURI: string

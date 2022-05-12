@@ -15,6 +15,8 @@ import {
 import { OrganizerRate } from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
+  EventType,
+  HourlyRate,
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
@@ -116,10 +118,16 @@ export const eventCreationContext = () => {
         payload: {},
       })
     },
-    setHourlyRate: (hourlyRate: number) => {
+    setHourlyRate: (hourlyRate: HourlyRate) => {
       dispatch({
         type: EventCreationTypes.SetHourlyRate,
         payload: { hourlyRate },
+      })
+    },
+    setEventType: (eventType: EventType) => {
+      dispatch({
+        type: EventCreationTypes.SetEventType,
+        payload: { eventType },
       })
     },
     setImageUri: (imageURI: string) => {

@@ -41,7 +41,7 @@ export const RegistrationConfirmationScreen = () => {
       if (publicKey && secretKey) {
         var organizerProfileDto = new OrganizerProfileDto(
           bio,
-          hourlyRate ?? 0,
+          hourlyRate ?? { ada: 0, gimbals: 0 },
           profession,
           jobTitle,
           skills
@@ -113,10 +113,14 @@ export const RegistrationConfirmationScreen = () => {
             <Text style={styles.userDetailsText}>{bio}</Text>
           </>
         ) : null}
-        {hourlyRate ? (
+        {hourlyRate.gimbals || hourlyRate.ada ? (
           <>
             <Text style={styles.userDetailsHeader}>Hourly Rate (ADA)</Text>
-            <Text style={styles.userDetailsText}>{hourlyRate} an hour</Text>
+            <Text style={styles.userDetailsText}>{hourlyRate.ada} an hour</Text>
+            <Text style={styles.userDetailsHeader}>Hourly Rate (Gimbals)</Text>
+            <Text style={styles.userDetailsText}>
+              {hourlyRate.gimbals} an hour
+            </Text>
           </>
         ) : null}
         {skills ? (

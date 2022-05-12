@@ -9,7 +9,7 @@ const APP_PREFIXES = ["bonfire://gimbalabs.bonfire.com", "bonfire://"]
  *
  * config screen keys are NAMES of screens, values can be custom paths
  */
-export const getAthorizedLinkingConfig = (
+export const getAuthorizedLinkingConfig = (
   profileType: "organizer" | "attendee"
 ): LinkingOptions => ({
   config: {

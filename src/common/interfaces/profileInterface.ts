@@ -1,3 +1,5 @@
+import { HourlyRate } from "./newEventInterface"
+
 export interface ProfileState {
   username: string
   name: string
@@ -9,7 +11,7 @@ export interface ProfileState {
   hasSyncedWallet: boolean
   timeBlockLengthMin: number | null
   timeBlockCostADA: number | undefined
-  hourlyRate: number
+  hourlyRate: HourlyRate
   profession: string | undefined
   jobTitle: string | undefined
   description: string | undefined
@@ -24,7 +26,7 @@ export interface ProfileState {
   setImageBase64: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
-  setHourlyRate: (input: number) => void
+  setHourlyRate: (inputs: HourlyRate) => void
   setHasSyncedWallet: (arg: boolean) => void
   setWalletBalance: (input: number) => void
   setProfession: (input: string) => void

@@ -30,7 +30,9 @@ export const OrganizerNavigationScreens = ({ route }: any) => {
       id && setId(id)
       profileType && setProfileType(profileType)
       username && setUsername(username)
-      setHourlyRate(hourlyRate)
+      typeof hourlyRate === "number"
+        ? setHourlyRate({ ada: hourlyRate, gimbals: 0 })
+        : setHourlyRate(hourlyRate)
       setUserSettings(userSettings)
     }
   }, [])

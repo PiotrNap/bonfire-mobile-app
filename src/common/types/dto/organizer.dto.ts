@@ -1,7 +1,9 @@
+import { HourlyRate } from "common/interfaces/newEventInterface"
+
 export class OrganizerProfileDto {
   constructor(
     bio: string,
-    hourlyRate: number,
+    hourlyRate: HourlyRate,
     profession?: string,
     jobTitle?: string,
     skills?: string
@@ -9,12 +11,13 @@ export class OrganizerProfileDto {
     this.bio = bio
     this.profession = profession
     this.skills = skills
-    this.hourlyRate = hourlyRate
+    this.hourlyRate.gimbals = hourlyRate.gimbals
+    this.hourlyRate.ada = hourlyRate.ada
     this.jobTitle = jobTitle
   }
   profession?: string
   jobTitle?: string
   skills?: string
-  hourlyRate: number
+  hourlyRate: HourlyRate = { ada: 0, gimbals: 0 }
   bio: string
 }

@@ -9,16 +9,30 @@ import { Typography, Colors, Sizing, Forms } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { ProfileContext } from "contexts/profileContext"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
+import { HourlyRate } from "common/interfaces/newEventInterface"
 
 export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef }: any) => {
-  const { setProfession, setJobTitle, setBio, setSkills, setHourlyRate } =
-    React.useContext(ProfileContext)
+  const {
+    setProfession,
+    setJobTitle,
+    setBio,
+    setSkills,
+    setHourlyRate,
+    profession,
+    jobTitle,
+    bio,
+    hourlyRate,
+    skills,
+  } = React.useContext(ProfileContext)
   const [_profession, _setProfession] = React.useState<string>("")
   const [_jobTitle, _setJobTitle] = React.useState<string>("")
   const [_bio, _setBio] = React.useState<string>("")
-  const [_hourlyRate, _setHourlyRate] = React.useState<number>(0)
+  const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
+    ada: 0,
+    gimbals: 0,
+  })
   const [_skills, _setSkills] = React.useState<string>("")
 
   const submitBioState = () => {
@@ -53,6 +67,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           labelStyle={inputStyles.label}
           placeholder="Doctor, therapist, developer..."
           styles={inputStyles}
+          defaultValue={profession}
           onEndEditingCallback={(val) => _setProfession(val)}
         />
         <CustomPlainInput
@@ -61,6 +76,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           placeholder="Full Stack Engineer, Sr Business..."
           styles={inputStyles}
           textContentType="jobTitle"
+          defaultValue={jobTitle}
           onEndEditingCallback={(val) => _setJobTitle(val)}
         />
         {/* when handling events with multiline, use ref._lastNativeText */}
@@ -70,6 +86,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           multiline={true}
           numberOfLines={8}
           maxChar={250}
+          defaultValue={bio}
           placeholder="Passionate in helping others draw business goals and needs..."
           styles={inputStyles}
           onEndEditingCallback={(val) => _setBio(val)}
@@ -79,6 +96,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
           labelStyle={inputStyles.label}
           placeholder="Organized, Motivated, Critical Th..."
           styles={inputStyles}
+          defaultValue={skills}
           onEndEditingCallback={(val) => _setSkills(val)}
         />
       </View>
@@ -91,9 +109,30 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
             style={inputStyles.input}
             keyboardType="numeric"
             textContentType="none"
+            defaultValue={String(hourlyRate?.ada || 0)}
             placeholder="35 ₳ an hour"
             placeholderTextColor={inputStyles.placeholderText.color}
-            onChangeText={(val) => _setHourlyRate(Number(val))}
+            onChangeText={(val) =>
+              _setHourlyRate({ ..._hourlyRate, ada: Number(val) })
+            }
+          />
+        </View>
+      </View>
+      <View style={inputStyles.inputContainer}>
+        <View style={inputStyles.labelContainer}>
+          <Text style={inputStyles.label}>Hourly Rate (Gimbals)</Text>
+        </View>
+        <View style={inputStyles.textInputWrapper}>
+          <TextInput
+            style={inputStyles.input}
+            keyboardType="numeric"
+            textContentType="none"
+            defaultValue={String(hourlyRate?.gimbals || 0)}
+            placeholder="5000 GMBL an hour"
+            placeholderTextColor={inputStyles.placeholderText.color}
+            onChangeText={(val) =>
+              _setHourlyRate({ ..._hourlyRate, gimbals: Number(val) })
+            }
           />
         </View>
       </View>

@@ -19,7 +19,7 @@ import { OnboardingScreens } from "tabs/OnboardingScreens"
 import { UserRegistrationScreens } from "tabs/UserRegistrationScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
 import {
-  getAthorizedLinkingConfig,
+  getAuthorizedLinkingConfig,
   getUnauthorizedLinkingConfig,
 } from "lib/navigation"
 import SplashScreen from "react-native-splash-screen"
@@ -52,7 +52,7 @@ function App() {
             <NavigationContainer
               linking={
                 isAuthorized
-                  ? getAthorizedLinkingConfig(user.profileType)
+                  ? getAuthorizedLinkingConfig(user.profileType)
                   : getUnauthorizedLinkingConfig()
               }
               onReady={onNavigationReady}>

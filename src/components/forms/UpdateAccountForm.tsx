@@ -35,6 +35,7 @@ export const UpdateAccountForm = ({
   const isLightMode = colorScheme === "light"
   const isAttendee = accountType === "attendee"
   const handleSubmit = async (newValues: any) => {
+    const { ada, gimbals, ...rest } = newValues
     const bw = new Filter()
     const words = Object.values(newValues).join(" ")
     if (bw.isProfane(words)) return showInappropriateContentModal()
@@ -42,26 +43,25 @@ export const UpdateAccountForm = ({
     var hasChanged: boolean = false
 
     if (accountType === "organizer") {
-      newValues.hourlyRate = Number(newValues.hourlyRate)
+      rest.hourlyRate = {
+        ada: Number(newValues.ada),
+        gimbals: Number(newValues.gimbals),
+      }
       for (let k of Object.keys(newValues)) {
         if (newValues[k] !== userInfo[k]) hasChanged = true
       }
     } else {
-      if (
-        newValues.name !== userInfo.name ||
-        newValues.username !== userInfo.username
-      )
+      if (rest.name !== userInfo.name || rest.username !== userInfo.username)
         hasChanged = true
     }
     if (!hasChanged) return
 
     setIsLoading(true)
-    const res = await updateAccountInfo(newValues, userInfo.id)
+    const res = await updateAccountInfo(rest, userInfo.id)
     res && onUpdateResponse(res)
   }
   const onChangeCallback = (val: any) => {}
   let formStyles: StyleProp<any>
-
   if (isLightMode) {
     formStyles = Object.assign({}, inputStyles, styles, formStyleLight)
   } else {
@@ -163,11 +163,24 @@ export const UpdateAccountForm = ({
                 styles={formStyles}
               />
               <Field
-                id="hourlyRate"
-                key="hourlyRate"
-                name="hourlyRate"
+                id="hourlyRate-ada"
+                key="ada"
+                name="ada"
                 label="Hourly Rate (ADA)"
-                defaultValue={String(userInfo.hourlyRate ?? 0)}
+                defaultValue={String(userInfo.hourlyRate?.ada) ?? "0"}
+                component={CustomInput}
+                onChange={onChangeCallback}
+                keyboardType="numeric"
+                validateForm={validateForm}
+                submitted={submitted}
+                styles={formStyles}
+              />
+              <Field
+                id="hourlyRate-gimbals"
+                key="gimbals"
+                name="gimbals"
+                label="Hourly Rate (Gimbals)"
+                defaultValue={String(userInfo.hourlyRate?.gimbals) ?? "0"}
                 component={CustomInput}
                 onChange={onChangeCallback}
                 keyboardType="numeric"

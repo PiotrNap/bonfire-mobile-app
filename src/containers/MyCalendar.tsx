@@ -46,12 +46,6 @@ export const Calendar = ({
   const isLightMode = colorScheme === "light"
   const navigation = useNavigation()
 
-  // React.useEffect(() => {
-  //   if (monthsByName[calendarHeader.month] === new Date().getMonth()) {
-  //     setCurrentSelectedDay(new Date())
-  //   } else setCurrentSelectedDay(null)
-  // }, [calendarHeader])
-
   React.useEffect(() => {
     if (events === null) {
       getEvents(

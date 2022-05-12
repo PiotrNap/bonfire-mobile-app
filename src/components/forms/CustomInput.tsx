@@ -16,10 +16,12 @@ export const CustomInput = (props: any) => {
     form: { errors, touched, setFieldTouched },
     styles,
     validateForm,
+    defaultValue,
     ...inputProps
   } = props
   const hasError = errors[name] && touched[name]
-  const isNumeric = props.field.name === "hourlyRate"
+  const isNumeric = props.field.name === "ada" || props.field.name === "gimbals"
+  console.log("value ", value)
 
   return (
     <>
@@ -37,7 +39,7 @@ export const CustomInput = (props: any) => {
               textAlignVertical: "top",
             },
           ]}
-          value={String(value ?? (isNumeric ? 0 : ""))}
+          value={String(value ?? (isNumeric ? defaultValue ?? 0 : ""))}
           placeholderTextColor={styles.placeholderText.color}
           onEndEditing={() => validateForm()}
           onChange={() => validateForm()}

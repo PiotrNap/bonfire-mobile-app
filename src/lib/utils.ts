@@ -109,9 +109,14 @@ export function accountValidationScheme() {
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
       .required("Username is required"),
-    hourlyRate: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+    hourlyRate: yup.object().shape({
+      ada: yup
+        .string()
+        .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+      gimbals: yup
+        .string()
+        .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+    }),
   })
 }
 
