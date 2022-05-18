@@ -12,6 +12,7 @@ library
   exposed-modules:     Escrow.EscrowCompiler
                      , Escrow.BonfireDatum
                      , Escrow.BonfireEscrowContractDraft
+                     , Escrow.Types
   build-depends:       aeson
                      , base ^>=4.14.1.0
                      , bytestring

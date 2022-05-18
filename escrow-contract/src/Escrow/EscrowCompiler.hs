@@ -9,12 +9,11 @@ import Codec.Serialise (serialise)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Short as SBS
+import Escrow.BonfireEscrowContractDraft
+import Escrow.Types
 import qualified Ledger
-
 import Plutus.V1.Ledger.Api (Data (B, Constr, I, List, Map), ToData, toData)
 
-import Escrow.BonfireEscrowContractDraft
--- import Escrow.BonfireDispute
 -- import Escrow.TTEscrowDraft -- Tutor Terrace
 -- import Escrow.BountyEscrowDraft
 -- import Escrow.BountyTreasury
@@ -37,13 +36,15 @@ writeValidator file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file 
 -- cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059 = play
 
 writeBonfireEscrowScript :: IO (Either (FileError ()) ())
-writeBonfireEscrowScript = writeValidator "output/bonfire-testnet/bonfire-escrow-000.plutus" $ Escrow.BonfireEscrowContractDraft.validator $ BonfireParam
-    {
-      organizerAccessSymbol = "61c8081a9aed827437c927074efb9ac07310d050256e587fc8b8cd83"
-    , disputeContract = "9cb435a958e72371981537b57b178936d6d41b1fbd8cd1194f6a8014"
-    , ptSymbol    = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059"
-    , ptName      = "play"
-    }
+writeBonfireEscrowScript =
+  writeValidator "output/bonfire-testnet/bonfire-escrow-000.plutus" $
+    Escrow.BonfireEscrowContractDraft.validator $
+      BonfireParam
+        { organizerAccessSymbol = "61c8081a9aed827437c927074efb9ac07310d050256e587fc8b8cd83",
+          disputeContract = "9cb435a958e72371981537b57b178936d6d41b1fbd8cd1194f6a8014",
+          ptSymbol = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059",
+          ptName = "play"
+        }
 
 -- writeBountyTreasuryScript :: IO (Either (FileError ()) ())
 -- writeBountyTreasuryScript = writeValidator "output/testnet-002/bounty-treasury-002.plutus" $ Escrow.BountyTreasury.validator $ TreasuryParam
