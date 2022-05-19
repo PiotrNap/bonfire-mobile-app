@@ -25,7 +25,6 @@ type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const { hourlyRate } = React.useContext(ProfileContext)
-  console.log(hourlyRate)
   const { setTextContent, setHourlyRate, setEventType } = eventCreationContext()
   const [eventTitle, setEventTitle] = React.useState<string>("")
   const [eventType, _setEventType] = React.useState<EventType>("One-Time")

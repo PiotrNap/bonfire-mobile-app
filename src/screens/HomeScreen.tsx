@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet } from "react-native"
+import { View } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"

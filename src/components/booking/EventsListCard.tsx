@@ -8,6 +8,7 @@ import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
 import { getEventCardDate } from "lib/utils"
 import FastImage from "react-native-fast-image"
+import { appContext } from "contexts/contextApi"
 
 export interface EventsListCardProps {
   title: string
@@ -20,6 +21,7 @@ export interface EventsListCardProps {
   image: any
   color: string
   titleColor: string
+  defaultCardColor?: boolean
   isEventCardPreview?: boolean
   isBrowseScreenPreview?: boolean
   isTransparent?: boolean
@@ -38,7 +40,9 @@ export const EventsListCard = ({
   image,
   color,
   titleColor,
+  defaultCardColor,
 }: EventsListCardProps) => {
+  const { colorScheme } = appContext()
   const navigation = useNavigation()
   const _color = tinyColor(color)
 
@@ -55,6 +59,8 @@ export const EventsListCard = ({
       color,
       titleColor,
     })
+  const placeholderColor =
+    colorScheme === "light" ? Colors.primary.s600 : Colors.neutral.s300
 
   return (
     <Pressable
@@ -70,7 +76,11 @@ export const EventsListCard = ({
           style={[
             styles.container,
             {
-              backgroundColor: isTransparent ? "transparent" : color,
+              backgroundColor: defaultCardColor
+                ? placeholderColor
+                : isTransparent
+                ? "transparent"
+                : color,
             },
           ]}>
           {fromDate != null && toDate != null && (

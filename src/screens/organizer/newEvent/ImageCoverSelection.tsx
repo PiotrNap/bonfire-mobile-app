@@ -10,7 +10,12 @@ import {
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import { CameraIcon, LeftArrowIcon, PlaceholderIcon } from "assets/icons"
+import {
+  CameraIcon,
+  LeftArrowIcon,
+  PlaceholderIcon,
+  RemoveIcon,
+} from "assets/icons"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -21,12 +26,16 @@ import { useMediaAccess } from "lib/hooks/useMediaAccess"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { fontWeight } from "../../../styles/typography"
+import { applyOpacity } from "../../../styles/colors"
 
 type Props = StackScreenProps<EventCreationParamList, "Image Cover Selection">
 
 export const ImageCoverSelection = ({ navigation }: Props) => {
   const [layout, setLayout] = React.useState<any>(null)
   const [currImage, setCurrImage] = React.useState<string>("")
+  const [currPhase, setCurrPhase] = React.useState<"selected" | "unselected">(
+    "unselected"
+  )
   const { launchImageLibrary, mediaObj, setMediaObj } = useMediaAccess()
   const { launchCamera, imageObj, setImgObj } = useCameraAccess()
   const { colorScheme } = appContext()
@@ -46,15 +55,23 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
 
     if (imageObj?.assets[0]?.uri && imageObj !== currImage) {
       setCurrImage(imageObj.assets[0].uri)
+      setCurrPhase("selected")
       animateNavigationButtons()
     } else if (mediaObj?.assets[0]?.uri && mediaObj !== currImage) {
       setCurrImage(mediaObj.assets[0].uri)
+      setCurrPhase("selected")
       animateNavigationButtons()
     }
 
     setMediaObj(null)
     setImgObj(null)
   }, [imageObj, mediaObj])
+
+  React.useEffect(() => {
+    if (!currImage && currPhase === "selected") {
+      animateNavigationButtons()
+    }
+  }, [currImage])
 
   const onBackNavigationPress = () => {
     navigation.goBack()
@@ -63,12 +80,17 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
   const onNextPress = () => {
     if (currImage) {
       setImageUri(currImage)
-      navigation.navigate("Event Card Customization")
     }
+    navigation.navigate("Event Card Customization")
   }
   const onLayout = (e: LayoutChangeEvent) => setLayout(e.nativeEvent.layout)
+  const onRemoveImage = () => {
+    setCurrImage("")
+    setImageUri("")
+  }
 
-  const animateNavigationButtons = () => {
+  const animateNavigationButtons = (phase?: "selected" | "unselected") => {
+    if (phase) setCurrPhase(phase)
     Animated.parallel([
       Animated.timing(mainPositionAnimation, {
         toValue: (mainPositionAnimation as any)._value === 0 ? 200 : 0,
@@ -140,8 +162,24 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
                   uri: currImage,
                 }}
                 imageStyle={styles.imagePreview_image}
-                resizeMode="cover"
-              />
+                resizeMode="cover">
+                <View
+                  style={[
+                    styles.removeButtonWrapper,
+                    { backgroundColor: applyOpacity(Colors.neutral.s800, 0.5) },
+                  ]}>
+                  <Pressable
+                    style={Buttons.applyOpacity(styles.removeButton)}
+                    onPress={onRemoveImage}>
+                    <RemoveIcon
+                      style={styles.icon}
+                      strokeWidth={2.5}
+                      stroke={Colors.primary.s800}
+                      fill={Colors.primary.s800}
+                    />
+                  </Pressable>
+                </View>
+              </ImageBackground>
             )}
           </View>
           <View
@@ -165,28 +203,37 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
                   ],
                 },
               ]}>
-              <Pressable
-                style={Buttons.applyOpacity(styles.main_navigation_button)}
-                onPress={launchImageLibrary}>
-                <Text style={styles.button_text}>Gallery</Text>
-                <PlaceholderIcon
-                  width={Sizing.x25}
-                  height={Sizing.x25}
-                  strokeWidth={2}
-                  stroke={Colors.primary.s800}
+              <View style={styles.main_navigation_wrapper_top}>
+                <Pressable
+                  style={Buttons.applyOpacity(styles.media_button)}
+                  onPress={launchImageLibrary}>
+                  <Text style={styles.button_text}>Gallery</Text>
+                  <PlaceholderIcon
+                    width={Sizing.x25}
+                    height={Sizing.x25}
+                    strokeWidth={2}
+                    stroke={Colors.primary.s800}
+                  />
+                </Pressable>
+                <Pressable
+                  style={Buttons.applyOpacity(styles.media_button)}
+                  onPress={launchCamera}>
+                  <Text style={styles.button_text}>Take photo</Text>
+                  <CameraIcon
+                    width={Sizing.x25}
+                    height={Sizing.x25}
+                    strokeWidth={2}
+                    stroke={Colors.primary.s800}
+                  />
+                </Pressable>
+              </View>
+              <View style={styles.main_navigation_wrapper_bottom}>
+                <FullWidthButton
+                  onPressCallback={onNextPress}
+                  text={"Skip Step"}
+                  lightMode={true}
                 />
-              </Pressable>
-              <Pressable
-                style={Buttons.applyOpacity(styles.main_navigation_button)}
-                onPress={launchCamera}>
-                <Text style={styles.button_text}>Take photo</Text>
-                <CameraIcon
-                  width={Sizing.x25}
-                  height={Sizing.x25}
-                  strokeWidth={2}
-                  stroke={Colors.primary.s800}
-                />
-              </Pressable>
+              </View>
             </Animated.View>
             <Animated.View
               style={[
@@ -200,7 +247,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
                 },
               ]}>
               <FullWidthButton
-                onPressCallback={animateNavigationButtons}
+                onPressCallback={() => animateNavigationButtons("unselected")}
                 text={"Change image"}
                 lightMode={true}
                 buttonType={"transparent"}
@@ -281,6 +328,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
+  main_navigation_wrapper_top: {
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  main_navigation_wrapper_bottom: {
+    width: "90%",
+    marginBottom: Sizing.x15,
+  },
   second_navigation_wrapper: {
     position: "absolute",
     bottom: 0,
@@ -289,11 +345,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
-  main_navigation_button: {
+  media_button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: "60%",
+    width: "45%",
     paddingVertical: Sizing.x8,
     backgroundColor: Colors.primary.s400,
     borderWidth: Outlines.borderWidth.base,
@@ -306,5 +362,27 @@ const styles = StyleSheet.create({
     ...fontWeight.semibold,
     color: Colors.primary.s800,
     marginRight: Sizing.x5,
+  },
+  removeButtonWrapper: {
+    position: "absolute",
+    top: Sizing.x10,
+    right: Sizing.x10,
+    width: Sizing.x50,
+    height: Sizing.x50,
+    borderRadius: Outlines.borderRadius.max,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  removeButton: {
+    width: Sizing.x40,
+    height: Sizing.x40,
+    borderRadius: Outlines.borderRadius.max,
+    backgroundColor: Colors.primary.neutral,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    width: Sizing.x25,
+    height: Sizing.x25,
   },
 })

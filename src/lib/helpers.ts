@@ -10,6 +10,9 @@ import { getDeepLinkUri } from "./utils"
 import { createNestedPath } from "./navigation"
 import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
 
+export const isAndroid = Platform.OS === "android"
+export const isIOS = Platform.OS === "ios"
+
 /**
  *  Takes index of the selected day in the weeek
  *  and returns recurring days of the same index in current month.
