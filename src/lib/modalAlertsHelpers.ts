@@ -1,6 +1,5 @@
-import { Alert, Platform } from "react-native"
-
-const isAndroid = Platform.OS === "android"
+import { Alert } from "react-native"
+import { isAndroid } from "./helpers"
 
 export const showInappropriateContentModal = () =>
   showFailedModal(

@@ -44,6 +44,7 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
           colorScheme="dark"
           onPressCallback={onPressLearnMore}
           text="Learn more"
+          buttonType="neutral"
         />
         <FullWidthButton
           colorScheme="dark"

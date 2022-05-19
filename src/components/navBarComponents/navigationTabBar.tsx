@@ -100,7 +100,7 @@ export const NavigationTabBar = ({
       if (colorScheme == "dark" && isFocused) {
         return [
           styles.navBarButton_dark,
-          { backgroundColor: Colors.primary.brand },
+          { backgroundColor: Colors.primary.s600 },
         ]
       }
       if (colorScheme == "dark" && !isFocused) {
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 0.8,
-    borderColor: Colors.primary.brand,
+    borderColor: Colors.primary.s800,
     borderRadius: 10,
     width: 44,
     height: 44,
