@@ -71,14 +71,13 @@ export const WalletSetUpModal = ({
                 style={
                   isLightMode ? styles.headerText_light : styles.headerText_dark
                 }>
-                It looks like you have not yet linked up a wallet
+                It looks like you haven't created a wallet yet
               </Text>
               <BodyText
                 changingColorScheme
                 colors={[Colors.primary.s600, Colors.primary.neutral]}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum venenatis quam sem, eget bibendum lorem convallis et.
-                Donec velit ante.
+                Create a personal Bonfire wallet to book events and make
+                payments. You’re almost there.
               </BodyText>
             </View>
             <View style={styles.buttonContainer}>
@@ -90,7 +89,7 @@ export const WalletSetUpModal = ({
               />
               <FullWidthButton
                 onPressCallback={onLinkWallet}
-                text={"Link wallet"}
+                text={"Create wallet"}
                 colorScheme={colorScheme}
               />
             </View>

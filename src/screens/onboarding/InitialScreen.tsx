@@ -19,9 +19,9 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
     pagerRef.current?.setPage(1)
   }
 
-  const onPressLearnMore = () => {
-    setIsVisibleModal(true)
-  }
+  // const onPressLearnMore = () => {
+  //   setIsVisibleModal(true)
+  // }
 
   return (
     <View style={styles.container}>
@@ -29,23 +29,24 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
         <LiveCollaborationIcon width="100%" height="100%" />
       </View>
       <View style={styles.main}>
-        <Text style={styles.header}>Lorem ipsum dolor sit amet</Text>
+        <Text style={styles.header}>Welcome to Bonfire</Text>
         <View style={styles.subHeaderWrapper}>
           <Text style={styles.subHeader}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            venenatis quam sem, eget bibendum lorem convallis et. Donec velit
-            ante, efficitur at ante eu, consequat hendrerit augue. Vivamus quis
-            eros ex
+            A scheduling dApp that enables event organizers and attendees to
+            exchange crypto payments for booked time. Trustless Cardano smart
+            contracts grant you with a privacy-first approach where personal
+            information stays personal.
           </Text>
         </View>
       </View>
       <View style={styles.buttons}>
+        {/*
         <FullWidthButton
           colorScheme="dark"
           onPressCallback={onPressLearnMore}
           text="Learn more"
           buttonType="neutral"
-        />
+        /> */}
         <FullWidthButton
           colorScheme="dark"
           onPressCallback={navigateToNextScreen}
