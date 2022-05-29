@@ -85,6 +85,15 @@ const reducer = (
     case EventCreationTypes.SetSelectedDays: {
       let newSelectedDays: any = state.selectedDays || {}
 
+      if (action.payload.eventType === "One-Time") {
+        return {
+          ...state,
+          selectedDays: {
+            [action.payload.selectedDays[0]]: action.payload.selectedDays[0],
+          },
+        }
+      }
+
       action.payload.selectedDays.map((day) => {
         if (
           !state.selectedDays ||
@@ -128,6 +137,12 @@ const reducer = (
       return {
         ...state,
         imageURI: action.payload.imageURI,
+      }
+    }
+    case EventCreationTypes.SetEventType: {
+      return {
+        ...state,
+        eventType: action.payload.eventType,
       }
     }
     case EventCreationTypes.SetTags: {

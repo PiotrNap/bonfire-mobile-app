@@ -32,8 +32,13 @@ export const WeekDayNames = ({
   customCallback?: (arg: boolean) => void
 }) => {
   const { calendarHeader } = myCalendarContext()
-  const { setSelectedDays, selectedDays, setSelectedWeek, selectedWeekDays } =
-    eventCreationContext()
+  const {
+    setSelectedDays,
+    selectedDays,
+    setSelectedWeek,
+    selectedWeekDays,
+    eventType,
+  } = eventCreationContext()
   const { colorScheme } = appContext()
   const { month, year } = calendarHeader
   const isDarkMode = colorScheme === "dark"
@@ -95,7 +100,9 @@ export const WeekDayNames = ({
     <View style={styles.container}>
       <View style={styles.weekDays}>
         {weekDays.map((day, i) =>
-          !isNewEventCalendar || isUnavailableWeek(i) ? (
+          !isNewEventCalendar ||
+          isUnavailableWeek(i) ||
+          eventType === "One-Time" ? (
             <View key={`day-${i}`} style={[styles.dayContainer]}>
               <View style={styles.dayPlaceholder}>
                 <Text
