@@ -147,28 +147,14 @@ export const WalletTopUpScreen = ({
               style={[
                 isLightMode ? styles.headerText_light : styles.headerText_dark,
               ]}>
-              {"Fund your wallet"}
+              {"Add Funds"}
             </Text>
-            {isBookingScreen ? (
-              <BodyText
-                changingColorScheme
-                colors={[Colors.primary.s600, Colors.primary.neutral]}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum venenatis quam sem, eget bibendum lorem convallis et.
-                Donec velit ante, efficitur at ante eu, consequat hendrerit
-                augue. Vivamus quis eros ex
-              </BodyText>
-            ) : (
-              <Text
-                style={[
-                  isLightMode
-                    ? styles.subHeaderText_light
-                    : styles.subHeaderText_dark,
-                ]}>
-                Deposit /withdrawl ADA into your wallet to make payments, and
-                receive payments.
-              </Text>
-            )}
+            <BodyText
+              changingColorScheme
+              colors={[Colors.primary.s600, Colors.primary.neutral]}>
+              Fund your Bonfire wallet with ADA or Gimbals using the address
+              below to make payments.
+            </BodyText>
           </View>
           <View style={styles.main}>
             <View style={styles.qrCodeContainer}>
@@ -180,6 +166,7 @@ export const WalletTopUpScreen = ({
             </View>
             <CustomPlainInput
               label="Address"
+              //@TODO change to users address
               placeholder="addr9czf30t9..."
               icon={DuplicateIcon}
               labelStyle={!isBookingScreen && { color: Colors.primary.neutral }}

@@ -15,17 +15,18 @@ export interface Benefit {
   text: string
 }
 const ATTENDEE_BENEFITS: Benefit[] = [
-  { text: "Vestibulum venenatis quam" },
-  { text: "Sapiente libero doloribus modi" },
-  { text: "Itaque cupiditate adipisci quibusdam" },
-  { text: "Vel ipsa esse repudiandae excepturi" },
+  { text: "Book time through a findable event directory" },
+  { text: "Create an in-app wallet to send payments" },
+  { text: "Keep track of events using an in-app calendar" },
+  { text: "Gain access to communities of professionals" },
 ]
 
 const ORGANIZER_BENEFITS: Benefit[] = [
-  { text: "Vestibulum venenatis quam" },
-  { text: "Sapiente libero doloribus modi" },
-  { text: "Itaque cupiditate adipisci quibusdam" },
-  { text: "Vel ipsa esse repudiandae excepturi" },
+  { text: "List public and private events" },
+  { text: "Get paid by blockchain payment solutions" },
+  { text: "Access live analytics for offer clicks and views " },
+  { text: "Register without entering any personal data" },
+  { text: "Keep track of events using an in-app calenda" },
 ]
 
 export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
@@ -67,7 +68,7 @@ export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
             </View>
             <View style={styles.subHeader}>
               <Text style={styles.subHeaderText}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Join Bonfire as an attendee to find people and connect
               </Text>
             </View>
             <View style={styles.checkBoxes}>
@@ -92,7 +93,8 @@ export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {
             </View>
             <View style={styles.subHeader}>
               <Text style={styles.subHeaderText}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Register as a service provider to schedule events and receive
+                payments
               </Text>
             </View>
             <View style={styles.checkBoxes}>

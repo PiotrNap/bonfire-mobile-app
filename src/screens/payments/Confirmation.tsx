@@ -73,15 +73,15 @@ export const Confirmation = ({ navigation, route }: Props) => {
           <BodyText
             changingColorScheme
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            venenatis quam sem, eget bibendum lorem convallis et. Donec velit
-            ante.
+            Success! A transaction confirmation will appear shortly in your
+            wallet.
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>
           <FullWidthButton
             onPressCallback={onButtonPress}
-            text={"Go to dashboard"}
+            //@TODO should this title change based on which context user is in?
+            text={"Return to dashboard"}
             colorScheme={colorScheme}
           />
         </View>

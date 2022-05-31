@@ -31,7 +31,7 @@ export const bufferToBase64 = (val: Buffer) => {
 
 export function getDeepLinkUri(path: string = ""): string {
   const scheme = "bonfire://"
-  const host = "gimbalabs.bonfire.com"
+  const host = "bonfire.com"
   if (IS_ANDROID) {
     let dl = scheme + host
     return path ? dl + "/" + path : dl
@@ -109,14 +109,12 @@ export function accountValidationScheme() {
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
       .required("Username is required"),
-    hourlyRate: yup.object().shape({
-      ada: yup
-        .string()
-        .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-      gimbals: yup
-        .string()
-        .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-    }),
+    ada: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+    gimbals: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
   })
 }
 

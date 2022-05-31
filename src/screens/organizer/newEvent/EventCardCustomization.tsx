@@ -37,6 +37,25 @@ type Props = StackScreenProps<
 type SliderColor = { a: number; h: number; s: number; v: number }
 type SliderType = "saturation" | "hue" | "value" | "opacity"
 
+const INITIAL_BG_COLOR = {
+  a: 1,
+  h: 0,
+  s: 0.01,
+  v: 0.01,
+}
+const INITIAL_TITLE_COLOR = {
+  a: 1,
+  h: 0,
+  s: 0.01,
+  v: 1,
+}
+const INITIAL_CURR_COLOR = {
+  a: 0,
+  h: 0,
+  s: 0,
+  v: 0,
+}
+
 export const EventCardCustomization = ({ navigation }: Props) => {
   const {
     textContent,
@@ -48,27 +67,14 @@ export const EventCardCustomization = ({ navigation }: Props) => {
     eventCardColor,
   } = eventCreationContext()
   const { colorScheme } = appContext()
-  const [bgColor, setBgColor] = React.useState<any>({
-    a: 1,
-    h: 0,
-    s: 0.01,
-    v: 0.01,
-  })
-  const [titleColor, setTitleColor] = React.useState<any>({
-    a: 1,
-    h: 0,
-    s: 0.01,
-    v: 1,
-  })
-  const [currColor, setCurrColor] = React.useState<SliderColor>({
-    a: 0,
-    h: 0,
-    s: 0,
-    v: 0,
-  })
+  const [bgColor, setBgColor] = React.useState<any>(INITIAL_BG_COLOR)
+  const [titleColor, setTitleColor] = React.useState<any>(INITIAL_TITLE_COLOR)
+  const [currColor, setCurrColor] =
+    React.useState<SliderColor>(INITIAL_CURR_COLOR)
   const [opacity, setOpacity] = React.useState<number>(0)
   const [titleOpacity, setTitleOpacity] = React.useState<number>(1)
   const [transparent, setTransparent] = React.useState<boolean>(false)
+  const [colorChanged, setColorChanged] = React.useState<boolean>(false)
   const [activeSelection, setActiveSelection] = React.useState<
     "background" | "title"
   >("background")
@@ -82,7 +88,6 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   const toHexString = (value: any) => tinyColor(value).toHexString()
   const toHsvString = (value: any) => tinyColor(value).toHsvString()
 
-  // const currColor = activeSelection === "background" ? color : titleColor;
   const isLightMode = colorScheme !== "dark"
   const buttonStyle = React.useCallback(
     (type) => {
@@ -113,6 +118,8 @@ export const EventCardCustomization = ({ navigation }: Props) => {
     sliderType: SliderType
   ) => {
     if (resType === "end") {
+      if (!colorChanged) setColorChanged(true)
+
       const { h, v, s } = colorHsvOrRgb
       let newColor = currColor
 
@@ -361,6 +368,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               fromDate={fromDate}
               toDate={toDate}
               image={imageURI}
+              defaultCardColor={!imageURI && (transparent || !colorChanged)}
               color={applyOpacity(toHexString(bgColor), opacity)}
               titleColor={applyOpacity(toHexString(titleColor), titleOpacity)}
               isTransparent={transparent}

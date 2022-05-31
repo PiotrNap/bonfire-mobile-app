@@ -1,7 +1,7 @@
 import { LinkingOptions } from "@react-navigation/native"
 import { DEEP_LINKING_PATHS } from "common/types/navigationTypes"
 
-const APP_PREFIXES = ["bonfire://gimbalabs.bonfire.com", "bonfire://"]
+const APP_PREFIXES = ["bonfire://bonfire.com", "bonfire://"]
 
 /**
  * Return config for deep linking to be used by react-navigation.

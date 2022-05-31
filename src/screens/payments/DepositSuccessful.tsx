@@ -16,7 +16,7 @@ type Props = StackScreenProps<AppStackParamList, "Deposit Successful">
 export const DepositSuccessful = ({ navigation, route }: Props) => {
   const { colorScheme, ref } = appContext()
   const buttonTitle = route.params?.isBookingWalletTopUp
-    ? "Proceed to booking"
+    ? "Continue booking"
     : "Go back"
   const isLightMode = colorScheme === "light"
 
@@ -65,15 +65,14 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
             style={
               isLightMode ? styles.headerText_light : styles.headerText_dark
             }>
-            Deposit successful!
+            Success!
           </Text>
           <BodyText
             customStyle={styles.bodyText}
             changingColorScheme={true}
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            venenatis quam sem, eget bibendum lorem convallis et. Donec velit
-            ante.
+            Your deposit has been made. A transaction confirmation will appear
+            shortly in your wallet.
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>

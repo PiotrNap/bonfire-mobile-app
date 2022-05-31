@@ -54,18 +54,21 @@ export const EventConfirmationDetail = ({
               />
             )}
           </View>
-          {(lineContent as any).map((line: EventLine, index: number) => (
-            <View
-              style={styles.subHeaderContent}
-              key={`${line.content}_${index}`}>
-              {line.icon}
-              <SubHeaderText
-                children={line.content}
-                colors={[Colors.primary.s800, Colors.primary.neutral]}
-                customStyle={styles.text}
-              />
-            </View>
-          ))}
+          {(lineContent as any).map(
+            (line: EventLine, index: number) =>
+              line && (
+                <View
+                  style={styles.subHeaderContent}
+                  key={`${line.content}_${index}`}>
+                  {line.icon}
+                  <SubHeaderText
+                    children={line.content}
+                    colors={[Colors.primary.s800, Colors.primary.neutral]}
+                    customStyle={styles.text}
+                  />
+                </View>
+              )
+          )}
         </>
       ) : (
         <>

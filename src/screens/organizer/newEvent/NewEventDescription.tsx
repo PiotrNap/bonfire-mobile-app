@@ -25,7 +25,6 @@ type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const { hourlyRate } = React.useContext(ProfileContext)
-  console.log(hourlyRate)
   const { setTextContent, setHourlyRate, setEventType } = eventCreationContext()
   const [eventTitle, setEventTitle] = React.useState<string>("")
   const [eventType, _setEventType] = React.useState<EventType>("One-Time")
@@ -78,6 +77,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
     setMarkedCheckbox((prev) => !prev)
     setHourlyRate(hourlyRate)
   }
+  const onEventTypeChange = (type: EventType) => _setEventType(type)
 
   return (
     <Layout scrollable>
@@ -114,6 +114,38 @@ export const NewEventDescription = ({ navigation }: Props) => {
           multiline
           numberOfLines={8}
           onEndEditingCallback={onDescriptionChange}
+        />
+        <HeaderText
+          customStyles={{ marginBottom: Sizing.x10 }}
+          colorScheme={colorScheme}>
+          Select the type
+        </HeaderText>
+        <ButtonToggle
+          highlightBackgroundColor={
+            isLightMode ? Colors.primary.s800 : Colors.primary.neutral
+          }
+          highlightTextColor={
+            isLightMode ? Colors.primary.neutral : Colors.primary.s800
+          }
+          inactiveBackgroundColor={"transparent"}
+          inactiveTextColor={
+            isLightMode ? Colors.primary.s800 : Colors.primary.neutral
+          }
+          values={["One-Time", "Recurring"]}
+          value={eventType}
+          textStyle={Typography.header.x25}
+          style={{
+            borderRadius: Outlines.borderRadius.base,
+            borderWidth: Outlines.borderWidth.thin,
+            padding: Sizing.x5,
+            backgroundColor: applyOpacity(
+              isLightMode ? Colors.primary.s800 : Colors.primary.neutral,
+              0.1
+            ),
+            marginBottom: Sizing.x10,
+          }}
+          //@ts-ignore
+          onSelect={onEventTypeChange}
         />
         <HeaderText
           customStyles={{ marginBottom: Sizing.x10 }}

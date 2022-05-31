@@ -47,12 +47,12 @@ export const Calendar = ({
   const navigation = useNavigation()
 
   React.useEffect(() => {
-    if (events === null) {
-      getEvents(
-        true,
-        new Date(calendarHeader.year, monthsByName[calendarHeader.month])
-      )
-    }
+    // if (events === null) {
+    getEvents(
+      true,
+      new Date(calendarHeader.year, monthsByName[calendarHeader.month])
+    )
+    // }
 
     const subscribe = () => {
       navigation.addListener("blur", () => {})
@@ -115,9 +115,7 @@ export const Calendar = ({
               onPress={onAddEventPress}
               icon={
                 <PlusIcon
-                  color={
-                    isLightMode ? Colors.primary.neutral : Colors.primary.s800
-                  }
+                  color={Colors.primary.neutral}
                   width={Sizing.x14}
                   height={Sizing.x14}
                   strokeWidth={4}

@@ -198,7 +198,7 @@ export const EventConfirmationDetails = ({
         callbackFnScreen: "Event Card Customization",
       },
       lineContent: [
-        {
+        !!imageURI && {
           content: imageURI,
           icon: sectionsIcons.placeholder,
         },

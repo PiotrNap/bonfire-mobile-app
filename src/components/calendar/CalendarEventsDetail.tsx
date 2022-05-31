@@ -8,6 +8,8 @@ import { months } from "common/types/calendarTypes"
 import { RightArrowIcon } from "icons/index"
 import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
 import { EventCreationParamList } from "common/types/navigationTypes"
+import { isAndroid } from "lib/helpers"
+import { applyOpacity } from "../../styles/colors"
 
 export interface CalendarEventsDetailProps extends Event {
   setHighlightedDay: React.Dispatch<any>

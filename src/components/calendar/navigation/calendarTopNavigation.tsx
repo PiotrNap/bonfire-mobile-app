@@ -115,7 +115,9 @@ export const CalendarTopNavigation = ({
           height="20"
           strokeWidth={3}
           color={
-            colorScheme === "light" ? Colors.neutral.s100 : Colors.primary.s800
+            colorScheme === "light"
+              ? Colors.neutral.s100
+              : Colors.primary.neutral
           }
         />
       </Pressable>
@@ -131,7 +133,9 @@ export const CalendarTopNavigation = ({
           height="20"
           strokeWidth={3}
           color={
-            colorScheme === "light" ? Colors.neutral.s100 : Colors.primary.s800
+            colorScheme === "light"
+              ? Colors.neutral.s100
+              : Colors.primary.neutral
           }
         />
       </Pressable>
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
     width: Sizing.x35,
     height: Sizing.x35,
     borderRadius: Outlines.borderRadius.max,
-    backgroundColor: Colors.primary.s200,
+    backgroundColor: Colors.primary.s600,
     justifyContent: "center",
     alignItems: "center",
   },

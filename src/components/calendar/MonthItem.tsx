@@ -8,7 +8,7 @@ import { BookingDay } from "./days/BookingDay"
 import { AvailabilityDay } from "./days/AvailabilityDay"
 import { getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
-import { eventCreationContext } from "contexts/contextApi"
+import { appContext, eventCreationContext } from "contexts/contextApi"
 
 export interface MonthProps extends Month {
   dimensions: LayoutRectangle | null
@@ -30,28 +30,19 @@ export const MonthItem = ({
   isNewEventCalendar = false,
   secondCustomCallback,
 }: MonthProps) => {
-  const { selectedDays, setSelectedDays } = eventCreationContext()
+  const { selectedDays, setSelectedDays, eventType } = eventCreationContext()
+  const { userSettings } = appContext()
   const [activeDay, setActiveDay] = React.useState<number | null>(null)
 
   const isSelectedAvailability = React.useCallback(
     (year, month, number) => {
       return !!selectedDays?.[getTime(year, monthsByName[month], number)]
     },
-    [selectedDays]
+    [Object.values(selectedDays)]
   )
 
-  const onPressCallback = React.useCallback(
-    (val: number) => {
-      if (!selectedDays) {
-        setSelectedDays([val])
-      } else if (selectedDays) {
-        setSelectedDays([val])
-      } else {
-        setSelectedDays([val])
-      }
-    },
-    [isNewEventCalendar]
-  )
+  const onPressCallback = (val: number) =>
+    setSelectedDays([val], false, eventType)
 
   const updateActiveDay = (num: number | null) => {
     if (!num) {
@@ -91,7 +82,6 @@ export const MonthItem = ({
             availabilities={day.availabilities}
             isAvailable={day.isAvailable}
             activeDay={activeDay}
-            setActiveDay={setActiveDay}
             isPastDate={isPastDate(year, month, day.number)}
           />
         ) : isNewEventCalendar ? (
@@ -115,6 +105,8 @@ export const MonthItem = ({
             activeDay={activeDay}
             updateActiveDay={updateActiveDay}
             events={day.events}
+            isPastDate={isPastDate(year, month, day.number, day?.toTimeSlot)}
+            showPastDate={userSettings?.showPastCalendarEvents}
           />
         )
       )}

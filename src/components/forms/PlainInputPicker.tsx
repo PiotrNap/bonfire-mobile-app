@@ -186,8 +186,18 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
         )}
         {os === "android" && (
           <Picker
-            onFocus={() => iconAnimation.start()}
-            onBlur={() => iconAnimation.start()}
+            testID={label}
+            nativeID={label}
+            //@ts-ignore
+            onFocus={({ _targetInst }) =>
+              _targetInst.pendingProps?.testID === label &&
+              iconAnimation.start()
+            }
+            //@ts-ignore
+            onBlur={({ _targetInst }) =>
+              _targetInst.pendingProps?.testID === label &&
+              iconAnimation.start()
+            }
             enabled={enabledPicker}
             style={[
               styles.androidPicker,

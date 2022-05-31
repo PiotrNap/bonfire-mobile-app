@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   button_dark: {
     ...Buttons.bar.secondary,
     padding: Sizing.x8,
-    backgroundColor: Colors.primary.neutral,
+    backgroundColor: Colors.primary.s600,
     ...Outlines.shadow.lifted_noElevation,
   },
   buttonText_light: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     paddingHorizontal: Sizing.x2,
     textAlign: "center",
-    color: Colors.primary.s600,
+    color: Colors.primary.neutral,
   },
   profilePicWrapper: {
     flex: 1,
