@@ -1,26 +1,41 @@
-# Bonfire MVP
-### April 2022
-
-## Some V1 Ideas:
-- Implement multi-asset payment (V0 works with ADA and gimbals)
-- Implement Organizer cancellation policy (V0, everyone works with same cancel policy)
-- Implement Update as contract Action (V0 only has Cancel, Complete, Dispute)
-- More robust Dispute handling! (Technically, V0 allows Attendee to Dispute too early)
-
-## Things to think about:
-- How does the Contract "reference" the records in the backend?
-- How can users trust that information on backend is not changing?
-
-## Things to look for in testing:
-- Is it ok for the number of "pt" tokens to be zero? (Ie: only ADA is included in event cost?)
-
+# Bonfire Escrow
+## Plutus Documentation
+### June 2022
 
 # VO Testing
+There are 2 Contracts:
+1. Dispute
+2. Bonfire Escrow
+
+### For any instance of Bonfire, we must define the following tokens:
+#### Dispute Contract
+1. The `CurrencySymbol` for a Bonfire Admin Token that must be held by anyone settling a Dispute.
+2. Some fungible "payment token". (Will be `gimbal` on `mainnet`; code can be refactored to remove payment tokens, or to handle many.)
+3. The `PubKeyHash` (or better, `ValidatorHash`) for a Bonfire Treasury. Can be a wallet address to start; a multi-sig contract will be better.
+
+#### Escrow Contract
+1. The `CurrencySymbol` for an Organizer Access Token
+2. The same fungible "payment token" as specified in Dispute. (Will be `gimbal` on `mainnet`; code can be refactored to remove payment tokens, or to handle many.)
+3. `ValidatorHash` of Dispute Contract
+
+### For Testing on `cardano-cli`:
+- See `/output/bonfire-testnet`
+- Two Access Token minting policies.
+    - Address `addr_test1qrur6muavwjtj4q66nhu5k6g9q9llku2cnjzfj2yxfugzz0jvp30yy579zdq3fdgsyttt35m8s7mphjcmk6wugrdxp0qskpeql` owns the minting policy for these Access Tokens
+    - Bonfire Admin Token `CurrencySymbol`:
+    - Organizer Access Token `CurrencySymbol`:
+- Minted 1,000,000,000 `bonGimbal` tokens minted in GameChanger Testnet, which allows us to test that decimals are correctly handles on FE: `982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c`
+- New testnet wallet; `.skey` can be shared
+
+
+
+
+
 ```
-organizerAccessSymbol = "61c8081a9aed827437c927074efb9ac07310d050256e587fc8b8cd83"
-disputeContract = "9cb435a958e72371981537b57b178936d6d41b1fbd8cd1194f6a8014"
-ptSymbol    = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059"
-ptName      = "play"
+organizerAccessSymbol = ""
+disputeContract = ""
+ptSymbol    = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e"
+ptName      = "bonGimbal"
 ```
 
 ## Set Variables:
@@ -101,3 +116,38 @@ cardano-cli transaction submit \
 ### Organizer can Unlock any time
 
 ### Attendee can Unlock up to 24 hours before Event start time
+
+## Some V1 Ideas:
+- Implement multi-asset payment (V0 works with ADA and gimbals)
+- Implement Organizer cancellation policy (V0, everyone works with same cancel policy)
+- Implement Update as contract Action (V0 only has Cancel, Complete, Dispute)
+- More robust Dispute handling! (Technically, V0 allows Attendee to Dispute too early)
+
+## Things to think about:
+- How does the Contract "reference" the records in the backend?
+- How can users trust that information on backend is not changing?
+
+---
+
+## Quick Reference Simple TX
+```
+cardano-cli transaction build \
+--alonzo-era \
+--tx-in $TX1 \
+--tx-in $TX2 \
+--tx-out $SENDER+"500000000 + 1000000000 982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c" \
+--change-address $SENDER \
+--protocol-params-file protocol.json \
+--out-file tx.raw \
+--testnet-magic 1097911063
+
+cardano-cli transaction sign \
+--signing-key-file $SENDERKEY \
+--testnet-magic 1097911063 \
+--tx-body-file tx.raw \
+--out-file tx.signed
+
+cardano-cli transaction submit \
+--tx-file tx.signed \
+--testnet-magic 1097911063
+```
