@@ -11,6 +11,7 @@ import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Short as SBS
 import Escrow.BonfireEscrowContractDraft
 import Escrow.Types
+import Escrow.BonfireDispute
 import qualified Ledger
 import Plutus.V1.Ledger.Api (Data (B, Constr, I, List, Map), ToData, toData)
 
@@ -40,17 +41,19 @@ writeBonfireEscrowScript =
   writeValidator "output/bonfire-testnet/bonfire-escrow-000.plutus" $
     Escrow.BonfireEscrowContractDraft.validator $
       BonfireParam
-        { organizerAccessSymbol = "61c8081a9aed827437c927074efb9ac07310d050256e587fc8b8cd83",
-          disputeContract = "9cb435a958e72371981537b57b178936d6d41b1fbd8cd1194f6a8014",
-          ptSymbol = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059",
-          ptName = "play"
+        { organizerAccessSymbol = "",
+          disputeContract = "",
+          ptSymbol = "",
+          ptName = ""
         }
 
--- writeBountyTreasuryScript :: IO (Either (FileError ()) ())
--- writeBountyTreasuryScript = writeValidator "output/testnet-002/bounty-treasury-002.plutus" $ Escrow.BountyTreasury.validator $ TreasuryParam
---     {
---       authTokenSymbol = "5d6b6c332866044b2a8bdd147d92f77e42714986f1cb98cef70e201f"
---     , bountyContract  = "9cb435a958e72371981537b57b178936d6d41b1fbd8cd1194f6a8014"
---     , bSymbol         = "cb4a5cb63378a521cb82bdfacc4a8fd543b22ae19c094b75e13f7853"
---     , bName           = "tGimbal"
---     }
+writeBonfireDispute :: IO (Either (FileError ()) ())
+writeBonfireDispute =
+  writeValidator "output/bonfire-testnet/bonfire-dispute-000.plutus" $
+    Escrow.BonfireDispute.validator $
+      DisputeParam
+        { bonfireAdminToken = "",
+          dpPtSymbol = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059",
+          dpPtName = "play",
+          bonfireTreasuryPkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3"
+        }
