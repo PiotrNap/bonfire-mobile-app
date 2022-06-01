@@ -20,6 +20,8 @@ import Ledger.Value as Value
 import qualified PlutusTx
 import PlutusTx.Prelude hiding (Semigroup (..), unless)
 import Prelude (Show (..))
+import PlutusTx.Ratio (numerator)
+
 
 -- IF we create a separate "Dispute Contract", should its ValidatorHash be referenced here,
 -- OR the other way around?
@@ -41,25 +43,18 @@ mkValidator bp edatum action ctx =
 
     OrgCancel ->
       traceIfFalse "Organizer must sign Cancellation Tx" signedByOrganizer
+        && traceIfFalse "Organizer must have Access Token" organizerHasAccessToken
         && traceIfFalse "Output must be returned to Attendee" sufficientOutputToAttendee
     Complete ->
       traceIfFalse "Organizer must sign Cancellation Tx" signedByOrganizer
+        && traceIfFalse "Organizer must have Access Token" organizerHasAccessToken
         && traceIfFalse "It is too early to collect" afterDisputeDeadline
         && traceIfFalse "Output must be sent to Organizer" sufficientOutputToOrganizer
-    -- TODO:
-    -- 1. Check for Organizer's Access Token
-    -- 2. What % is Bonfire Treasury taking?
-
-    -- TODO: Write a simple dispute contract
     Dispute ->
       traceIfFalse "Attendee must sign Cancellation Tx" signedByAttendee
         && traceIfFalse "Must pay to Dispute Contract" sufficientOutputToDisputeContract
         && traceIfFalse "It is too late for you to Dispute!" beforeDisputeDeadline
   where
-    -- for now, what can we promise in terms of dispute resolution?
-    -- (someday, we'll be passing users along to Loxe.inc)
-    -- Send utxo to a different contract where our team can mediate disputes
-    -- (this raises questions of scale)
 
     info :: TxInfo
     info = scriptContextTxInfo ctx
@@ -89,12 +84,24 @@ mkValidator bp edatum action ctx =
     beforeDisputeDeadline :: Bool
     beforeDisputeDeadline = not afterDisputeDeadline
 
+    -- Look for Access Token in Input(s)
+    -- Create a list of all CurrencySymbol in tx input
+    inVals :: [CurrencySymbol]
+    inVals = symbols $ valueSpent info
+
+    -- Check that list of CurrencySymbols includes Auth CurrencySymbol
+    organizerHasAccessToken :: Bool
+    organizerHasAccessToken = (organizerAccessSymbol bp) `elem` inVals
+
     -- Handle Outputs
     valueToAttendee :: Value
     valueToAttendee = valuePaidTo info $ attendeePkh edatum
 
     valueToOrganizer :: Value
     valueToOrganizer = valuePaidTo info $ organizerPkh edatum
+
+    valueToTreasury :: Value
+    valueToTreasury = valuePaidTo info $ treasuryPkh bp
 
     sufficientOutputToAttendee :: Bool
     sufficientOutputToAttendee =
@@ -103,8 +110,10 @@ mkValidator bp edatum action ctx =
 
     sufficientOutputToOrganizer :: Bool
     sufficientOutputToOrganizer =
-      (getLovelace $ fromValue valueToOrganizer) >= (eventCostLovelace edatum)
-        && (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= (eventCostPaymentToken edatum)
+      (getLovelace $ fromValue valueToOrganizer) >= numerator (95 `unsafeRatio` 100) * (eventCostLovelace edatum)
+        && (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= numerator (95 `unsafeRatio` 100) * (eventCostPaymentToken edatum)
+        && (getLovelace $ fromValue valueToTreasury) >= numerator (5 `unsafeRatio` 100) * (eventCostLovelace edatum)
+        && (valueOf valueToTreasury (ptSymbol bp) (ptName bp)) >= numerator (5 `unsafeRatio` 100) * (eventCostPaymentToken edatum)
 
     -- Dispute
     valueToDisputeContract :: Value

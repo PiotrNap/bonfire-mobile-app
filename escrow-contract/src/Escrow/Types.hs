@@ -13,7 +13,8 @@ data BonfireParam = BonfireParam
   { organizerAccessSymbol :: !CurrencySymbol,
     disputeContract :: !ValidatorHash,
     ptSymbol :: !CurrencySymbol,
-    ptName :: !TokenName
+    ptName :: !TokenName,
+    treasuryPkh :: !PubKeyHash
   }
 
 PlutusTx.makeLift ''BonfireParam

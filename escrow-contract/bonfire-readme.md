@@ -4,8 +4,8 @@
 
 # VO Testing
 There are 2 Contracts:
-1. Dispute
-2. Bonfire Escrow
+1. Dispute:         `addr_test1wz3n674cvzdptuc8yezgynxlct2rraqk8gtq83zpdyepzds8vr72y`
+2. Bonfire Escrow:  `addr_test1wryd5eypwq9v3c30nyv88evhs6aap0jcaguh0cx6l6gxnsggqw8tx`
 
 ### For any instance of Bonfire, we must define the following tokens:
 #### Dispute Contract
@@ -17,42 +17,52 @@ There are 2 Contracts:
 1. The `CurrencySymbol` for an Organizer Access Token
 2. The same fungible "payment token" as specified in Dispute. (Will be `gimbal` on `mainnet`; code can be refactored to remove payment tokens, or to handle many.)
 3. `ValidatorHash` of Dispute Contract
+4. The same Bonfire Treasury PKH specified in Dispute Contract
 
 ### For Testing on `cardano-cli`:
 - See `/output/bonfire-testnet`
 - Two Access Token minting policies.
     - Address `addr_test1qrur6muavwjtj4q66nhu5k6g9q9llku2cnjzfj2yxfugzz0jvp30yy579zdq3fdgsyttt35m8s7mphjcmk6wugrdxp0qskpeql` owns the minting policy for these Access Tokens
-    - Bonfire Admin Token `CurrencySymbol`:
-    - Organizer Access Token `CurrencySymbol`:
+    - Bonfire Admin Token `CurrencySymbol`: `0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce`
+    - Organizer Access Token `CurrencySymbol`: `0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce`
 - Minted 1,000,000,000 `bonGimbal` tokens minted in GameChanger Testnet, which allows us to test that decimals are correctly handles on FE: `982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c`
 - New testnet wallet; `.skey` can be shared
 
-
-
-
-
+## `DisputeParams`
 ```
-organizerAccessSymbol = ""
-disputeContract = ""
+bonfireAdminToken = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce",
+dpPtSymbol = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e",
+dpPtName = "bonGimbal",
+bonfireTreasuryPkh = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109"
+```
+
+## `BonfireParams`
+```
+organizerAccessSymbol = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce"
 ptSymbol    = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e"
 ptName      = "bonGimbal"
+treasuryPkh = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109"
+disputeContract = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
 ```
 
-## Set Variables:
-```
-CONTRACT=addr_test1wz2l0m99885whn9nk7pmeq46d0wgeunk3t2qrn3wkpz56cqautg0m
-```
+## We need to test these Transactions:
+1. The process always starts with an ATTENDEE locking one UTXO in the BonfireEscrow Contract
+2. We must test 4 ways to unlock this UTXO:
+    - Attendee can CANCEL 24 hours before event
+    - Organizer can CANCEL any time before event
+    - Organizer can COMPLETE an event 60 minutes after start time
+    - Attendee can DISPUTE an event up to 60 minutes after start time
+3. In every case except for Dispute, the interaction is complete.
+4. If there's a Dispute, we must test the ways to unlock funds from Dispute Contract:
+    - Pay Attendee
+    - Pay Organizer
+    - Split
 
-## Testnet Locking TX (Event "Creation"):
-- Pay attention to Event start time, as specified in Datum.
-- "Who" will be able to unlock this transaction "When"?
-    - Attendee can cancel the Event up to 24 hours before event (funds back to Attendee)
-    - Organizer can cancel any time (funds back to Attendee)
-    - Organizer can claim UTXO 1 hour after event start time
-    - Attendee can send the UTXO to Dispute Contract up until 1 hour after start time
+### Things to Pay Attention To:
+1. In any TX where we check for Access Token, we must also make sure that the token is sent back to Organizer. (This logic will change after Vasil fork.)
+2. Test with and without Gimbals in Event payment
 
-```
-```
+### Before we build transactions, we must construct Datum
 
 ```
 cardano-cli transaction build \
@@ -79,12 +89,12 @@ cardano-cli transaction submit \
 
 ## Unlocking Event UTXOs
 ```
-CONTRACTADDR="addr_test1wz2l0m99885whn9nk7pmeq46d0wgeunk3t2qrn3wkpz56cqautg0m"
-ATTENDEE="addr_test1vrszlrw40cmcaenn6klnhaezswp0zvd3we743zneeh38y6svxuvxr"
-ORGANIZER="addr_test1qq3pzlaap7r2yyawfaxcynxs6w8w520yjaj2ugh4759685cv5qhzt95z9t8lur483fur90ge4ppqk2j89gmu8yy9m0ksac989n"
-CONTRACTTXIN="86e1f9793b6b4d564f1a8cc9f864c05aca5a3463b11927d99aa257cab0a1c889#1"
-ORGANIZERTXIN="8b90f54a3e751a5ca225d39f3466d89d6a5e5e73219e1a55c1c806b2ffc78d72#0"
-COLLATERAL="6308cc82a08ec7a3c19ee0ca8e659f564dc39d5e37dcae3ba642c31d986e64fa#10"
+CONTRACTADDR=""
+ATTENDEE=""
+ORGANIZER=""
+CONTRACTTXIN="#1"
+ORGANIZERTXIN="#0"
+COLLATERAL="#10"
 ```
 
 ```

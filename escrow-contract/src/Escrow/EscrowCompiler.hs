@@ -41,10 +41,11 @@ writeBonfireEscrowScript =
   writeValidator "output/bonfire-testnet/bonfire-escrow-000.plutus" $
     Escrow.BonfireEscrowContractDraft.validator $
       BonfireParam
-        { organizerAccessSymbol = "",
-          disputeContract = "",
-          ptSymbol = "",
-          ptName = ""
+        { organizerAccessSymbol = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce",
+          ptSymbol          = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e",
+          ptName            = "bonGimbal",
+          treasuryPkh       = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109",
+          disputeContract   = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
         }
 
 writeBonfireDispute :: IO (Either (FileError ()) ())
@@ -52,8 +53,8 @@ writeBonfireDispute =
   writeValidator "output/bonfire-testnet/bonfire-dispute-000.plutus" $
     Escrow.BonfireDispute.validator $
       DisputeParam
-        { bonfireAdminToken = "",
-          dpPtSymbol = "cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059",
-          dpPtName = "play",
-          bonfireTreasuryPkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3"
+        { bonfireAdminToken = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce",
+          dpPtSymbol = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e",
+          dpPtName = "bonGimbal",
+          bonfireTreasuryPkh = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109"
         }

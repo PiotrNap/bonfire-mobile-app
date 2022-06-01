@@ -17,12 +17,12 @@ import qualified PlutusTx
 exampleEvent :: BonfireEventEscrowDatum
 exampleEvent =
   BonfireEventEscrowDatum
-    { organizerReference = "piotrTheOrganizer",
-      eventReference = "piotrAndJamesMeetxx00001",
+    { organizerReference = "jamesTheOrganizer",
+      eventReference = "mixaximMeetJames",
       organizerPkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3",
-      attendeePkh = "e02f8dd57e378ee673d5bf3bf7228382f131b1767d588a79cde2726a",
-      eventCostLovelace = 4000000,
-      eventCostPaymentToken = 20,
+      attendeePkh = "e2755525479cfef354384534039a1d504d31504a53d856fc98237044",
+      eventCostLovelace = 23000000,
+      eventCostPaymentToken = 1000000,
       eventStartTime = 1651252695000
     }
 
