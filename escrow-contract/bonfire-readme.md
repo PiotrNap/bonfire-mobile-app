@@ -62,15 +62,29 @@ disputeContract = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
 1. In any TX where we check for Access Token, we must also make sure that the token is sent back to Organizer. (This logic will change after Vasil fork.)
 2. Test with and without Gimbals in Event payment
 
-### Before we build transactions, we must construct Datum
+### Transaction #1: Attendee Books an Event --> Locks UTXO at BonfireEscrow Contract Addr:
+- Step 1 - Set Variables:
+```
+TXIN=
+SENDER=
+SENDERKEY=
+CONTRACT=
+EVENTLOVELACE=
+EVENTGIMBALS=
+POLICYID=
+TOKENNAME=
+DATUMPATH=
+```
+- Step 2 - Construct Datum: Use `Escrow.BonfireDatum.hs`
+- Step 3 - Build + Submit Tx:
 
 ```
 cardano-cli transaction build \
 --alonzo-era \
 --tx-in $TXIN \
---tx-out $CONTRACT+"4000000 + 20 cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059.706c6179" \
---tx-out-datum-embed-file piotr-attendee.json \
---tx-out $SENDER+"5000000 + 4960 cef5bfce1ff3fc5b128296dd0aa87e075a8ee8833057230c192c4059.706c6179" \
+--tx-out $CONTRACT+"$EVENTLOVELACE + $EVENTGIMBALS" \
+--tx-out-datum-embed-file $DATUMPATH \
+--tx-out $SENDER+"" \
 --change-address $SENDER \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
@@ -86,6 +100,67 @@ cardano-cli transaction submit \
 --tx-file tx.signed \
 --testnet-magic 1097911063
 ```
+
+
+
+### Test: Organizer Can Cancel an Event:
+TXIN1=1ebe6ed12ea313c8f4128a88913b2e86a9cb3a9c48062f5bfdcd81241e54b616#1
+TXIN2=0b7d781e9db52aa8672063b7219336cbe644a94e4b484f75e5bd1c473200501b#0
+CONTRACTTXIN=de8bbb1c8a28392495a0672784945cba033112e3d41b748f1d3cbb654d693682#1
+ATTENDEE=addr_test1vr3824f9g7w0au658pzngqu6r4gy6v2sfffas4hunq3hq3qpqegu5
+EVENTLOVELACE=23000000
+EVENTGIMBALS=1000000
+ORGANIZERTOKEN="0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce.6a616d6573546573744f7267303031"
+PAYMENTTOKEN="982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c"
+ORGANIZER
+
+cardano-cli transaction build \
+--alonzo-era \
+--tx-in $TXIN1 \
+--tx-in $TXIN2 \
+--tx-in $CONTRACTTXIN \
+--tx-in-script-file bonfire-escrow-000.plutus \
+--tx-in-datum-file mix-james-test-001.json \
+--tx-in-redeemer-file OrgCancel.json \
+--tx-in-collateral 6308cc82a08ec7a3c19ee0ca8e659f564dc39d5e37dcae3ba642c31d986e64fa#10 \
+--tx-out $ATTENDEE+"$EVENTLOVELACE + $EVENTGIMBALS $PAYMENTTOKEN" \
+--tx-out $ORGANIZER+"2000000 + 1 $ORGANIZERTOKEN" \
+--change-address $ORGANIZER \
+--required-signer-hash 22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3 \
+--protocol-params-file protocol.json \
+--out-file tx.raw \
+--testnet-magic 1097911063
+
+cardano-cli transaction sign \
+--signing-key-file $ORGANIZERKEY \
+--testnet-magic 1097911063 \
+--tx-body-file tx.raw \
+--out-file tx.signed
+
+cardano-cli transaction submit \
+--tx-file tx.signed \
+--testnet-magic 1097911063
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Unlocking Event UTXOs
 ```

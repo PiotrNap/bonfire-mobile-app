@@ -17,13 +17,13 @@ import qualified PlutusTx
 exampleEvent :: BonfireEventEscrowDatum
 exampleEvent =
   BonfireEventEscrowDatum
-    { organizerReference = "jamesTheOrganizer",
-      eventReference = "mixaximMeetJames",
+    { organizerReference = "jamesOrganizer",
+      eventReference = "mixaximMeetJames001",
       organizerPkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3",
       attendeePkh = "e2755525479cfef354384534039a1d504d31504a53d856fc98237044",
       eventCostLovelace = 23000000,
       eventCostPaymentToken = 1000000,
-      eventStartTime = 1651252695000
+      eventStartTime = 1654344492000
     }
 
 dataToScriptData :: Data -> ScriptData
@@ -40,7 +40,7 @@ writeUnit :: IO ()
 writeUnit = writeJSON "output/bonfire-testnet/unit.json" ()
 
 writeExampleDatum :: IO ()
-writeExampleDatum = writeJSON "output/bonfire-testnet/piotr-attendee.json" exampleEvent
+writeExampleDatum = writeJSON "output/bonfire-testnet/mix-james-test-001.json" exampleEvent
 
 -- data BonfireEventEscrowDatum = BonfireEventEscrowDatum
 --   {
