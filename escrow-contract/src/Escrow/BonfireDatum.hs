@@ -4,6 +4,7 @@ module Escrow.BonfireDatum
   ( writeJSON,
     writeUnit,
     writeExampleDatum,
+    writeExampleDisputeDatum,
   )
 where
 
@@ -26,6 +27,16 @@ exampleEvent =
       eventStartTime = 1654344492000
     }
 
+exampleDispute :: BonfireDisputeDatum
+exampleDispute = BonfireDisputeDatum
+  { bddOrganizerPkh = "e2755525479cfef354384534039a1d504d31504a53d856fc98237044",
+    bddAttendeePkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3",
+    bddEventCostLovelace = 32000000,
+    bddEventCostPaymentToken = 2000000,
+    bddEventID = "jamesMeetMIxAxIM002",
+    bddDisputeID = "firstFIGHT"
+  }
+
 dataToScriptData :: Data -> ScriptData
 dataToScriptData (Constr n xs) = ScriptDataConstructor n $ dataToScriptData <$> xs
 dataToScriptData (Map xs) = ScriptDataMap [(dataToScriptData x, dataToScriptData y) | (x, y) <- xs]
@@ -41,6 +52,9 @@ writeUnit = writeJSON "output/bonfire-testnet/unit.json" ()
 
 writeExampleDatum :: IO ()
 writeExampleDatum = writeJSON "output/bonfire-testnet/james-mix-test-002.json" exampleEvent
+
+writeExampleDisputeDatum :: IO ()
+writeExampleDisputeDatum = writeJSON "output/bonfire-testnet/dispute-002.json" exampleDispute
 
 -- data BonfireEventEscrowDatum = BonfireEventEscrowDatum
 --   {
