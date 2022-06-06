@@ -18,22 +18,22 @@ import qualified PlutusTx
 exampleEvent :: BonfireEventEscrowDatum
 exampleEvent =
   BonfireEventEscrowDatum
-    { organizerReference = "mixaximOrganizer",
-      eventReference = "jamesMeetMIxAxIM002",
-      organizerPkh = "e2755525479cfef354384534039a1d504d31504a53d856fc98237044",
-      attendeePkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3",
-      eventCostLovelace = 32000000,
-      eventCostPaymentToken = 2000000,
-      eventStartTime = 1654344492000
+    { organizerReference = "localOrganizerTest",
+      eventReference = "alterEgoMeeting",
+      organizerPkh = "1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b",
+      attendeePkh = "8ad46253eecbf732f01713bf78a5f7da8a373436c8dd42af01592062",
+      eventCostLovelace = 25000000,
+      eventCostPaymentToken = 1500000,
+      eventStartTime = 1654719848000
     }
 
 exampleDispute :: BonfireDisputeDatum
 exampleDispute = BonfireDisputeDatum
-  { bddOrganizerPkh = "e2755525479cfef354384534039a1d504d31504a53d856fc98237044",
-    bddAttendeePkh = "22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3",
-    bddEventCostLovelace = 32000000,
-    bddEventCostPaymentToken = 2000000,
-    bddEventID = "jamesMeetMIxAxIM002",
+  { bddOrganizerPkh = "1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b",
+    bddAttendeePkh = "8ad46253eecbf732f01713bf78a5f7da8a373436c8dd42af01592062",
+    bddEventCostLovelace = 25000000,
+    bddEventCostPaymentToken = 1500000,
+    bddEventID = "localOrganizerTest",
     bddDisputeID = "firstFIGHT"
   }
 
@@ -51,10 +51,10 @@ writeUnit :: IO ()
 writeUnit = writeJSON "output/bonfire-testnet/unit.json" ()
 
 writeExampleDatum :: IO ()
-writeExampleDatum = writeJSON "output/bonfire-testnet/james-mix-test-002.json" exampleEvent
+writeExampleDatum = writeJSON "output/bonfire-testnet/example-datum.json" exampleEvent
 
 writeExampleDisputeDatum :: IO ()
-writeExampleDisputeDatum = writeJSON "output/bonfire-testnet/dispute-002.json" exampleDispute
+writeExampleDisputeDatum = writeJSON "output/bonfire-testnet/example-dispute-datum.json" exampleDispute
 
 -- data BonfireEventEscrowDatum = BonfireEventEscrowDatum
 --   {

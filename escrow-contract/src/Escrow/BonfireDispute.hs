@@ -72,56 +72,31 @@ mkValidator dp dd res ctx =
     valueToTreasury :: Value
     valueToTreasury = valuePaidTo info $ bonfireTreasuryPkh dp
 
+    -- see https://playground.plutus.iohkdev.io/doc/haddock/plutus-tx/html/PlutusTx-Prelude.html
+    -- unsafeRatio does not protect for zero denominator
+    -- all denominators are specified here, so we are "safe"
     outputToAttendee :: Bool
     outputToAttendee =
-      valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp) >= numerator (9 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToAttendee
-           )
-          >= numerator (9 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
-        && (valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp) >= numerator (1 `unsafeRatio` 10) * bddEventCostPaymentToken dd)
-        && ( getLovelace $
-               fromValue valueToTreasury
-           )
-          >= numerator (1 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
+      fromInteger (valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp)) >= (9 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToAttendee) >= (9 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
+        && fromInteger (valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp)) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
 
     outputToOrganizer :: Bool
     outputToOrganizer =
-      valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp) >= numerator (9 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToOrganizer
-           )
-          >= numerator (9 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
-        && valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp) >= numerator (1 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToTreasury
-           )
-          >= numerator (1 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
+      fromInteger (valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp)) >= (9 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToOrganizer) >= (9 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
+        && fromInteger (valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp)) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
 
     outputToBoth :: Bool
     outputToBoth =
-      valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp) >= numerator (45 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToAttendee
-           )
-          >= numerator (45 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
-        && valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp) >= numerator (45 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToOrganizer
-           )
-          >= numerator (45 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
-        && valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp) >= numerator (1 `unsafeRatio` 10) * bddEventCostPaymentToken dd
-        && ( getLovelace $
-               fromValue valueToTreasury
-           )
-          >= numerator (1 `unsafeRatio` 10)
-          * bddEventCostLovelace dd
+      fromInteger (valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToAttendee) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
+        && fromInteger (valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToOrganizer) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
+        && fromInteger (valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp)) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
 
 data EscrowTypes
 

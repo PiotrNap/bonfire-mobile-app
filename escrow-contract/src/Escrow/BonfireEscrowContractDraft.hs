@@ -19,7 +19,21 @@ import Ledger.Typed.Scripts
 import Ledger.Value as Value
 import qualified PlutusTx
 import PlutusTx.Prelude hiding (Semigroup (..), unless)
-import Prelude (Show (..))
+import PlutusTx.Prelude as Plutus
+  ( Bool (..),
+    Eq ((==)),
+    Integer,
+    Maybe (..),
+    fromInteger,
+    length,
+    traceIfFalse,
+    unsafeRatio,
+    (&&),
+    (*),
+    (.),
+    (<>),
+    (>=),
+  )
 import PlutusTx.Ratio (numerator)
 
 
@@ -110,10 +124,10 @@ mkValidator bp edatum action ctx =
 
     sufficientOutputToOrganizer :: Bool
     sufficientOutputToOrganizer =
-      (getLovelace $ fromValue valueToOrganizer) >= numerator (95 `unsafeRatio` 100) * (eventCostLovelace edatum)
-        && (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= numerator (95 `unsafeRatio` 100) * (eventCostPaymentToken edatum)
-        && (getLovelace $ fromValue valueToTreasury) >= numerator (5 `unsafeRatio` 100) * (eventCostLovelace edatum)
-        && (valueOf valueToTreasury (ptSymbol bp) (ptName bp)) >= numerator (5 `unsafeRatio` 100) * (eventCostPaymentToken edatum)
+      fromInteger (getLovelace $ fromValue valueToOrganizer) >= (95 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)
+        && fromInteger (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= (95 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
+        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (5 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)
+        && fromInteger (valueOf valueToTreasury (ptSymbol bp) (ptName bp)) >= (5 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
 
     -- Dispute
     valueToDisputeContract :: Value

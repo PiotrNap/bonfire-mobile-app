@@ -4,8 +4,8 @@
 
 # VO Testing
 There are 2 Contracts:
-1. Dispute:         `addr_test1wz3n674cvzdptuc8yezgynxlct2rraqk8gtq83zpdyepzds8vr72y`
-2. Bonfire Escrow:  `addr_test1wrsdd8c77qkqp6a37rsf7kw92tswpa2y2cpwjvpqt63tqwgxt2gnn`
+1. Dispute:         `addr_test1wqftm6cc67agdg30rssmk7fppq9ytwylng0fnv5wgwtljnsw2cf8n`
+2. Bonfire Escrow:  `addr_test1wz4zy9gqw40ct28hw4r0e4gv4tg3gwf6fgftannn202pwvgd3mvzj`
 
 ### For any instance of Bonfire, we must define the following tokens:
 #### Dispute Contract
@@ -42,7 +42,7 @@ organizerAccessSymbol = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fc
 ptSymbol    = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e"
 ptName      = "bonGimbal"
 treasuryPkh = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109"
-disputeContract = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
+disputeContract = "12bdeb18d7ba86a22f1c21bb7921080a45b89f9a1e99b28e4397f94e"
 ```
 
 ## We need to test these Transactions:
@@ -67,13 +67,15 @@ disputeContract = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
 ```
 SENDER=
 SENDERKEY=
-TXIN1=34a2bccd852fffc70ce50af40bd4ebf8a553393850aac17a688ef4d909b0d143#2
-TXIN2=c3ee9ca26ad4087072f1b86920f494aea31c6861f30ab8de2c80680a79b7244e#0
-CONTRACT=addr_test1wrsdd8c77qkqp6a37rsf7kw92tswpa2y2cpwjvpqt63tqwgxt2gnn
-EVENTLOVELACE=32000000
-EVENTGIMBALS=2000000
+TXIN=
+// If Necessary, additional TXs (coin selection handles this)
+TXIN1=
+TXIN2=
+CONTRACT=addr_test1wz4zy9gqw40ct28hw4r0e4gv4tg3gwf6fgftannn202pwvgd3mvzj
+EVENTLOVELACE=25000000
+EVENTGIMBALS=1500000
 PAYMENTTOKEN="982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c"
-DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/james-mix-test-002.json
+DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-datum.json
 ```
 - Step 2 - Construct Datum: Use `Escrow.BonfireDatum.hs`
 - Step 3 - Build + Submit Tx:
@@ -81,11 +83,10 @@ DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/james-mix-test-
 ```
 cardano-cli transaction build \
 --alonzo-era \
---tx-in $TXIN1 \
---tx-in $TXIN2 \
+--tx-in $TXIN \
 --tx-out $CONTRACT+"$EVENTLOVELACE + $EVENTGIMBALS $PAYMENTTOKEN" \
 --tx-out-datum-embed-file $DATUMPATH \
---tx-out $ATTENDEE+"5000000 + 5000000 $PAYMENTTOKEN" \
+--tx-out $ATTENDEE+"5000000 + 3500000 $PAYMENTTOKEN" \
 --change-address $ATTENDEE \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
@@ -144,18 +145,18 @@ cardano-cli transaction submit \
 
 
 ### Test: Attendee Can Dispute an Event
-TXIN1=8b90f54a3e751a5ca225d39f3466d89d6a5e5e73219e1a55c1c806b2ffc78d72#0
-CONTRACTTXIN=86a7f8b013fd530d595c42788c6c14a7777a7c40b33b5a00562b8702395fc667#1
-ATTENDEE=addr_test1qq3pzlaap7r2yyawfaxcynxs6w8w520yjaj2ugh4759685cv5qhzt95z9t8lur483fur90ge4ppqk2j89gmu8yy9m0ksac989n
-EVENTLOVELACE=33000000
-EVENTGIMBALS=2000000
+TXIN1=e8b0d97c9a0ea2a4e0e748f6dbc303cd3a5b24fbce4e6efe63619de29fa0fd22#1
+CONTRACTTXIN=5af5b4d4d9e5e2af889204e8d11f9fe9acd43e9b6bbdec8f8be2021c6062b4e8#1
+ATTENDEE
+EVENTLOVELACE=25000000
+EVENTGIMBALS=1500000
 PAYMENTTOKEN="982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c"
-UNLOCKESCROWDATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/james-mix-test-002.json
-LOCKDISPUTEDATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/dispute-002.json
-PLUTUSPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/plutus-scripts/bonfire-escrow-000.plutus
-DISPUTECONTRACT=addr_test1wz3n674cvzdptuc8yezgynxlct2rraqk8gtq83zpdyepzds8vr72y
+UNLOCKESCROWDATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-datum.json
+LOCKDISPUTEDATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-dispute-datum.json
+PLUTUSPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/plutus-scripts/bonfire-escrow-v2.plutus
+DISPUTECONTRACT=addr_test1wqftm6cc67agdg30rssmk7fppq9ytwylng0fnv5wgwtljnsw2cf8n
 REDEEMERPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/redeemers/Dispute.json
-COLLATERAL=6308cc82a08ec7a3c19ee0ca8e659f564dc39d5e37dcae3ba642c31d986e64fa#10
+COLLATERAL=e8b0d97c9a0ea2a4e0e748f6dbc303cd3a5b24fbce4e6efe63619de29fa0fd22#2
 
 cardano-cli transaction build \
 --alonzo-era \
@@ -168,7 +169,7 @@ cardano-cli transaction build \
 --tx-out $DISPUTECONTRACT+"$EVENTLOVELACE + $EVENTGIMBALS $PAYMENTTOKEN" \
 --tx-out-datum-embed-file $LOCKDISPUTEDATUMPATH \
 --change-address $ATTENDEE \
---required-signer-hash 22117fbd0f86a213ae4f4d824cd0d38eea29e49764ae22f5f50ba3d3 \
+--required-signer-hash 8ad46253eecbf732f01713bf78a5f7da8a373436c8dd42af01592062 \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
 --testnet-magic 1097911063
@@ -187,21 +188,22 @@ cardano-cli transaction submit \
 ### Test: Resolving Disputes
 TXINADMIN=1c7ab0ed1914e2ebd034775a32157d9ff6d76a673a781036ab4899533afede8e#1
 TXINFEE=2476ebe4ad89b2d6250291425374906d791459079d60598d6a37c03653eda826#0
-CONTRACTTXIN=ed2136816cdbc533a21914adeadf6307e1f15575b2f6ffe871ed32f07f4607f6#1
-ATTENDEE=addr_test1qq3pzlaap7r2yyawfaxcynxs6w8w520yjaj2ugh4759685cv5qhzt95z9t8lur483fur90ge4ppqk2j89gmu8yy9m0ksac989n
-EVENTLOVELACE=33000000
-EVENTGIMBALS=2000000
+CONTRACTTXIN=a76be113aa832f6af46b1e9b981a913bd3e7736c1e9d1ea212ae6bd6efecc078#1
+ATTENDEE=addr_test1qz9dgcjnam9lwvhszufm77997ldg5de5xmyd6s40q9vjqc4st24qnf0rynsma7ajvnp7nc8y8vpdgmchecl8ug503assug2qrs
+EVENTLOVELACE=25000000
+EVENTGIMBALS=1500000
 PAYMENTTOKEN="982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c"
-DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/dispute-002.json
-PLUTUSPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/plutus-scripts/bonfire-dispute-000.plutus
+DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-dispute-datum.json
+PLUTUSPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/plutus-scripts/bonfire-dispute-v2.plutus
 REDEEMERPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/redeemers/PayAttendee.json
 COLLATERAL=c7a944e18f0b4e4b164d698b148b6436519a874794bb1542382bae2e5a038c06#0
 ADMIN=addr_test1qrur6muavwjtj4q66nhu5k6g9q9llku2cnjzfj2yxfugzz0jvp30yy579zdq3fdgsyttt35m8s7mphjcmk6wugrdxp0qskpeql
 TREASURY=addr_test1qrur6muavwjtj4q66nhu5k6g9q9llku2cnjzfj2yxfugzz0jvp30yy579zdq3fdgsyttt35m8s7mphjcmk6wugrdxp0qskpeql
-LOVELACETOATT=29700000
-GIMBALSTOATT=1800000
-LOVELACETOTREAS=3300000
-GIMBALSTOTREAS=200000
+ADMINTOKEN="0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce.7465737441646d696e303032"
+LOVELACETOATT=22500000
+GIMBALSTOATT=1350000
+LOVELACETOTREAS=2500000
+GIMBALSTOTREAS=150000
 
 Note: in this test case, `ADMIN` and `TREASURY` are same addr, but they will not be in Dapp.
 
@@ -216,16 +218,21 @@ cardano-cli transaction build \
 --tx-in-collateral $COLLATERAL \
 --tx-out $ATTENDEE+"$LOVELACETOATT + $GIMBALSTOATT $PAYMENTTOKEN" \
 --tx-out $TREASURY+"$LOVELACETOTREAS + $GIMBALSTOTREAS $PAYMENTTOKEN" \
-
--- need tx-out to ADMIN with ADMIN Token
-(but first, fix the error "Must pay to Attendee")
-
+--tx-out $ADMIN+"2000000 + 1 $ADMINTOKEN" \
 --change-address $ADMIN \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
 --testnet-magic 1097911063
 
+cardano-cli transaction sign \
+--signing-key-file $ADMINKEY \
+--testnet-magic 1097911063 \
+--tx-body-file tx.raw \
+--out-file tx.signed
 
+cardano-cli transaction submit \
+--tx-file tx.signed \
+--testnet-magic 1097911063
 
 
 
@@ -293,20 +300,43 @@ cardano-cli transaction submit \
 
 ---
 
-## Quick Reference Simple TX
+## Quick Tx
 ```
 cardano-cli transaction build \
 --alonzo-era \
---tx-in $TX1 \
---tx-in $TX2 \
---tx-out $SENDER+"500000000 + 1000000000 982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c" \
---change-address $SENDER \
+--tx-in $TXIN \
+--tx-out $ATTENDEE+10000000 \
+--tx-out $ATTENDEE+10000000 \
+--change-address $ATTENDEE \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
 --testnet-magic 1097911063
 
 cardano-cli transaction sign \
---signing-key-file $SENDERKEY \
+--signing-key-file $ATTENDEEKEY \
+--testnet-magic 1097911063 \
+--tx-body-file tx.raw \
+--out-file tx.signed
+
+cardano-cli transaction submit \
+--tx-file tx.signed \
+--testnet-magic 1097911063
+```
+
+## Quick Send bonGimbals TX
+```
+cardano-cli transaction build \
+--alonzo-era \
+--tx-in $TXIN1 \
+--tx-in $TXIN2 \
+--tx-out $ATTENDEE+"100000000 + 5000000 982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c" \
+--change-address $MONDAY \
+--protocol-params-file protocol.json \
+--out-file tx.raw \
+--testnet-magic 1097911063
+
+cardano-cli transaction sign \
+--signing-key-file $MONDAYKEY \
 --testnet-magic 1097911063 \
 --tx-body-file tx.raw \
 --out-file tx.signed

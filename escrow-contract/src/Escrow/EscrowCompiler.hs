@@ -38,19 +38,19 @@ writeValidator file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file 
 
 writeBonfireEscrowScript :: IO (Either (FileError ()) ())
 writeBonfireEscrowScript =
-  writeValidator "output/bonfire-testnet/bonfire-escrow-000.plutus" $
+  writeValidator "output/bonfire-testnet/bonfire-escrow-v2.plutus" $
     Escrow.BonfireEscrowContractDraft.validator $
       BonfireParam
         { organizerAccessSymbol = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce",
           ptSymbol          = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e",
           ptName            = "bonGimbal",
           treasuryPkh       = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109",
-          disputeContract   = "a33d7ab8609a15f3072644824cdfc2d431f4163a1603c44169321136"
+          disputeContract   = "12bdeb18d7ba86a22f1c21bb7921080a45b89f9a1e99b28e4397f94e"
         }
 
 writeBonfireDispute :: IO (Either (FileError ()) ())
 writeBonfireDispute =
-  writeValidator "output/bonfire-testnet/bonfire-dispute-000.plutus" $
+  writeValidator "output/bonfire-testnet/bonfire-dispute-v2.plutus" $
     Escrow.BonfireDispute.validator $
       DisputeParam
         { bonfireAdminToken = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce",
