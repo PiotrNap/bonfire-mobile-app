@@ -91,10 +91,10 @@ mkValidator dp dd res ctx =
 
     outputToBoth :: Bool
     outputToBoth =
-      fromInteger (valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
-        && fromInteger (getLovelace $ fromValue valueToAttendee) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
-        && fromInteger (valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
-        && fromInteger (getLovelace $ fromValue valueToOrganizer) >= (45 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
+      fromInteger (valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 100) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToAttendee) >= (45 `unsafeRatio` 100) * fromInteger (bddEventCostLovelace dd)
+        && fromInteger (valueOf valueToOrganizer (dpPtSymbol dp) (dpPtName dp)) >= (45 `unsafeRatio` 100) * fromInteger (bddEventCostPaymentToken dd)
+        && fromInteger (getLovelace $ fromValue valueToOrganizer) >= (45 `unsafeRatio` 100) * fromInteger (bddEventCostLovelace dd)
         && fromInteger (valueOf valueToTreasury (dpPtSymbol dp) (dpPtName dp)) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
         && fromInteger (getLovelace $ fromValue valueToTreasury) >= (1 `unsafeRatio` 10) * fromInteger (bddEventCostLovelace dd)
 
