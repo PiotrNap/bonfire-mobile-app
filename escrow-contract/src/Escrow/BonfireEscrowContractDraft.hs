@@ -122,7 +122,7 @@ mkValidator bp edatum action ctx =
       (getLovelace $ fromValue valueToAttendee) >= (eventCostLovelace edatum)
         && (valueOf valueToAttendee (ptSymbol bp) (ptName bp)) >= (eventCostPaymentToken edatum)
 
-    -- To Do: EventCost < 30 ada | EventCost > 30 ada
+    -- To Do: EventCost < 30 ada || EventCost > 30 ada
 
     sufficientOutputToOrganizer :: Bool
     sufficientOutputToOrganizer =

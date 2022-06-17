@@ -154,6 +154,7 @@ DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-datum-2
 ORGANIZERPKH=1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b
 COLLATERAL=54d9e29d9d1cd42062908027bb05e8f6c194d23b7e39b0435c267dfc59a0261e#4
 
+
 cardano-cli transaction build \
 --alonzo-era \
 --tx-in $TXIN1 \
@@ -166,7 +167,6 @@ cardano-cli transaction build \
 --tx-out $ATTENDEE+"$EVENTLOVELACE + $EVENTGIMBALS $PAYMENTTOKEN" \
 --tx-out $ORGANIZER+"2000000 + 1 $ORGANIZERTOKEN" \
 --change-address $ORGANIZER \
---invalid-before 61030331 \
 --required-signer-hash $ORGANIZERPKH \
 --protocol-params-file protocol.json \
 --out-file tx.raw \
@@ -187,8 +187,6 @@ TXIN1=53d0e7a10069425e5d1eb0c49ed73eeac421d81fff9f4392cdd94a6595c09525#1
 TXIN2=54d9e29d9d1cd42062908027bb05e8f6c194d23b7e39b0435c267dfc59a0261e#1
 CONTRACTTXIN=abb0534a9122616127e9cc87bcc543a080979678ec958fd85494e758d01336d0#1
 ORGANIZER=addr_test1qqdffdmhqh56zssx2hndj5h3x0u9ej63feaks9gwsnp2k7c7r7y2e9sq4acqxuhgz47hs8c3qyr3msyam60ntqyhs4uq3l9r89
-EVENTLOVELACE=25000000
-EVENTGIMBALS=1500000
 ORGANIZERTOKEN="0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fce.6f7267616e697a657231"
 PAYMENTTOKEN="982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e.626f6e47696d62616c"
 REDEEMERPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/redeemers/Complete.json
@@ -196,6 +194,15 @@ PLUTUSPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/plutus-scripts/bonfir
 DATUMPATH=/home/james/hd2/bonfire/bonfire/escrow-contract/datums/example-datum-2.json
 ORGANIZERPKH=1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b
 COLLATERAL=54d9e29d9d1cd42062908027bb05e8f6c194d23b7e39b0435c267dfc59a0261e#4
+EVENTLOVELACE=23750000
+EVENTGIMBALS=1425000
+LOVELACETOTREAS=1250000
+GIMBALSTOTREAS=75000
+
+SLOT=61030331
+Note: we can query tip for current slot and use that slot.
+This is like saying "this tx is invalid before now"
+
 
 cardano-cli transaction build \
 --alonzo-era \
@@ -208,7 +215,9 @@ cardano-cli transaction build \
 --tx-in-collateral $COLLATERAL \
 --tx-out $ORGANIZER+"$EVENTLOVELACE + $EVENTGIMBALS $PAYMENTTOKEN" \
 --tx-out $ORGANIZER+"2000000 + 1 $ORGANIZERTOKEN" \
+--tx-out $TREASURY+"$LOVELACETOTREAS + $GIMBALSTOTREAS $PAYMENTTOKEN" \
 --change-address $ORGANIZER \
+--invalid-before $SLOT \
 --required-signer-hash $ORGANIZERPKH \
 --protocol-params-file protocol.json \
 --out-file tx.raw \

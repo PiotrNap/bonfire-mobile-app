@@ -76,7 +76,7 @@ mkValidator dp dd res ctx =
     -- unsafeRatio does not protect for zero denominator
     -- all denominators are specified here, so we are "safe"
 
-    -- To Do: EventCost < 30 ada | EventCost > 30 ada
+    -- To Do: EventCost < 30 ada || EventCost > 30 ada
 
     outputToAttendee :: Bool
     outputToAttendee =
