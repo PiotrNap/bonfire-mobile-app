@@ -75,6 +75,9 @@ mkValidator dp dd res ctx =
     -- see https://playground.plutus.iohkdev.io/doc/haddock/plutus-tx/html/PlutusTx-Prelude.html
     -- unsafeRatio does not protect for zero denominator
     -- all denominators are specified here, so we are "safe"
+
+    -- To Do: EventCost < 30 ada | EventCost > 30 ada
+
     outputToAttendee :: Bool
     outputToAttendee =
       fromInteger (valueOf valueToAttendee (dpPtSymbol dp) (dpPtName dp)) >= (9 `unsafeRatio` 10) * fromInteger (bddEventCostPaymentToken dd)
