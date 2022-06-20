@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372663761405",
+    "project_id": "bonfire-2129d",
+    "storage_bucket": "bonfire-2129d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372663761405:android:228e83175775ee42260194",
+        "android_client_info": {
+          "package_name": "com.bonfire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372663761405-tb5rca033dd6kjfltbjgf4mq9g4gg63r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRx8MsnS755Y1j2iwfogpqAK40w2L8RRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372663761405-tb5rca033dd6kjfltbjgf4mq9g4gg63r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

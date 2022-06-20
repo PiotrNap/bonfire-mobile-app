@@ -17,7 +17,13 @@ import { appContext } from "contexts/contextApi"
 import { RefreshIcon, RightArrowIcon, SearchIcon } from "icons/index"
 import { TransactionsList } from "components/wallet/transactionsList"
 import { ProfileContext } from "contexts/profileContext"
-import { Address } from "@emurgo/react-native-haskell-shelley"
+import {
+  Address,
+  BaseAddress,
+  Bip32PrivateKey,
+} from "@emurgo/react-native-haskell-shelley"
+import { generateMnemonic } from "bip39"
+import { Wallet } from "lib/wallet"
 
 // @TODO: Implement navigationTypes type
 export interface WalletScreenProps
@@ -29,11 +35,8 @@ function wait(ms: number): Promise<void> {
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { colorScheme } = appContext()
-  const {
-    hasSyncedWallet,
-    setHasSyncedWallet,
-    walletBalance,
-  } = React.useContext(ProfileContext)
+  const { hasSyncedWallet, setHasSyncedWallet, walletBalance } =
+    React.useContext(ProfileContext)
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
   const [isTxListLoading, setIsTxListLoading] = React.useState<boolean>(false)
@@ -42,15 +45,12 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
 
-  console.log(NativeModules.HaskellShelley)
   const getAddr = async () => {
     try {
-      const addrHex =
-        "616464725f746573743176707134356b72613075366d6c7233747261676a70323072307037756a703733356774367430676d77767466773273797a637a3378"
-      const addrBytes = Buffer.from(addrHex, "hex")
-      console.log("bytes ", addrBytes)
-      const address = await Address.from_bytes(addrBytes)
-      console.log("address is :", address)
+      let mnemonic = generateMnemonic()
+      console.log("mnemonic ", mnemonic)
+      let addr = await new Wallet().init(mnemonic, "password")
+      console.log("addr ", addr)
     } catch (err) {
       console.error(err)
     }
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   safeaArea_dark: {
     flex: 1,
-    backgroundColor: Colors.primary.s600,
+    backgroundColor: Colors.neutral.s600,
     alignItems: "center",
   },
   container: {

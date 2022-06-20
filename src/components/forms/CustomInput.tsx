@@ -21,7 +21,6 @@ export const CustomInput = (props: any) => {
   } = props
   const hasError = errors[name] && touched[name]
   const isNumeric = props.field.name === "ada" || props.field.name === "gimbals"
-  console.log("value ", value)
 
   return (
     <>

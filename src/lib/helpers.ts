@@ -2,6 +2,11 @@ import { Platform, Share } from "react-native"
 
 import { ANDROID_API_URL, IOS_API_URL } from "@env"
 import { signChallenge } from "./tweetnacl"
+import {
+  decrypt_with_password,
+  encrypt_with_password,
+} from "@emurgo/react-native-haskell-shelley"
+import crs from "crypto-random-string"
 import base64 from "base64-js"
 
 import { monthsByName } from "common/types/calendarTypes"
@@ -132,4 +137,25 @@ export const shareEvent = async (id: string) => {
     } else if (result.action === Share.dismissedAction) {
     }
   } catch (e) {}
+}
+
+export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
+
+export const encryptWithPassword = async (
+  value: string,
+  password: string
+): Promise<string> => {
+  const saltHex = crs({ length: 2 * 32 })
+  const nonceHex = crs({ length: 2 * 12 })
+  const hexValue = Buffer.from(value).toString("hex")
+  const hexPassword = Buffer.from(password).toString("hex")
+  return await encrypt_with_password(hexPassword, saltHex, nonceHex, hexValue)
+}
+
+export const decryptWithPassword = async (
+  cipherText: string,
+  password: string
+): Promise<string> => {
+  const hexPassword = Buffer.from(password).toString("hex")
+  return await decrypt_with_password(hexPassword, cipherText)
 }

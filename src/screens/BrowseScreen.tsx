@@ -14,6 +14,7 @@ import SearchBar from "@pnap/react-native-search-bar"
 import { ProfileContext } from "contexts/profileContext"
 import { Events } from "Api/Events"
 import { bufferToBase64 } from "lib/utils"
+import { isUUID } from "lib/helpers"
 
 export interface BrowseProps
   extends StackScreenProps<BookingStackParamList, "Browse"> {
