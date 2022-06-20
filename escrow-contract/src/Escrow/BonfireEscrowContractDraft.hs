@@ -122,14 +122,25 @@ mkValidator bp edatum action ctx =
       (getLovelace $ fromValue valueToAttendee) >= (eventCostLovelace edatum)
         && (valueOf valueToAttendee (ptSymbol bp) (ptName bp)) >= (eventCostPaymentToken edatum)
 
-    -- To Do: EventCost < 30 ada || EventCost > 30 ada
+    -- Returns True if at least 2 ADA fee is paid, or if fee is at least 5% of event cost.
+    -- This approach allows for options on front-end while maintining guarantee that Organizer gets at least (cost - 2) or (cost * 95%)
+    -- The "threshold" for minimum event cost can therefore be "set" to anything.
+    -- Think about front-end messaging and how to handle event cost of 35 ada, for example.
+    lovelaceOutputsCorrect :: Bool
+    lovelaceOutputsCorrect =
+      (fromInteger (getLovelace $ fromValue valueToOrganizer) >= (95 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)
+        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (5 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)) ||
+      (getLovelace (fromValue valueToOrganizer) >= (eventCostLovelace edatum - 2000000)
+        && getLovelace (fromValue valueToTreasury) >= 2000000)
+
+    -- gimbal costs can always stick to 95% / 5%
+    gimbalOutputsCorrect :: Bool
+    gimbalOutputsCorrect =
+      fromInteger (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= (95 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
+        && fromInteger (valueOf valueToTreasury (ptSymbol bp) (ptName bp)) >= (5 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
 
     sufficientOutputToOrganizer :: Bool
-    sufficientOutputToOrganizer =
-      fromInteger (getLovelace $ fromValue valueToOrganizer) >= (95 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)
-        && fromInteger (valueOf valueToOrganizer (ptSymbol bp) (ptName bp)) >= (95 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
-        && fromInteger (getLovelace $ fromValue valueToTreasury) >= (5 `unsafeRatio` 100) * fromInteger (eventCostLovelace edatum)
-        && fromInteger (valueOf valueToTreasury (ptSymbol bp) (ptName bp)) >= (5 `unsafeRatio` 100) * fromInteger (eventCostPaymentToken edatum)
+    sufficientOutputToOrganizer = gimbalOutputsCorrect && lovelaceOutputsCorrect
 
     -- Dispute
     valueToDisputeContract :: Value

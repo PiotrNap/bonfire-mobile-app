@@ -42,7 +42,20 @@ organizerAccessSymbol = "0c930db0966a7456dfa21096261a1c5caa7599390b9125212ce48fc
 ptSymbol    = "982ff92902a6d9c547506a9d53f342899857562f30f51c0232fb668e"
 ptName      = "bonGimbal"
 treasuryPkh = "f83d6f9d63a4b9541ad4efca5b48280bffdb8ac4e424c94432788109"
-disputeContract = "12bdeb18d7ba86a22f1c21bb7921080a45b89f9a1e99b28e4397f94e"
+disputeContract = "a6e6fe9543132a112ebd056779b727b0ff4d33ec76eb77a7d1ed21a0"
+```
+
+## Contract Addresses (V3 - updated 2022-06-20)
+```
+CONTRACT=addr_test1wq5p2ul7nk37e89w2s06deupes4kxua9swyqdm9hs9spqdsvuny2y
+DISPUTECONTRACT=addr_test1wznwdl54gvfj5yfwh5zkw7dhy7c07nfna3mwkaa868kjrgqwmy5zc
+```
+
+## Testing Addresses
+```
+ADMIN=addr_test1qrur6muavwjtj4q66nhu5k6g9q9llku2cnjzfj2yxfugzz0jvp30yy579zdq3fdgsyttt35m8s7mphjcmk6wugrdxp0qskpeql
+ORGANIZER=addr_test1qqdffdmhqh56zssx2hndj5h3x0u9ej63feaks9gwsnp2k7c7r7y2e9sq4acqxuhgz47hs8c3qyr3msyam60ntqyhs4uq3l9r89
+ATTENDEE=addr_test1qz9dgcjnam9lwvhszufm77997ldg5de5xmyd6s40q9vjqc4st24qnf0rynsma7ajvnp7nc8y8vpdgmchecl8ug503assug2qrs
 ```
 
 ## We need to test these Transactions:

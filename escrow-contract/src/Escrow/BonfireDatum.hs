@@ -22,17 +22,17 @@ exampleEvent =
       eventReference = "16juneStartNow",
       organizerPkh = "1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b",
       attendeePkh = "8ad46253eecbf732f01713bf78a5f7da8a373436c8dd42af01592062",
-      eventCostLovelace = 25000000,
-      eventCostPaymentToken = 1500000,
-      eventStartTime = 1655395528000
+      eventCostLovelace = 35000000,
+      eventCostPaymentToken = 4000000,
+      eventStartTime = 1655735145000
     }
 
 exampleDispute :: BonfireDisputeDatum
 exampleDispute = BonfireDisputeDatum
   { bddOrganizerPkh = "1a94b77705e9a1420655e6d952f133f85ccb514e7b68150e84c2ab7b",
     bddAttendeePkh = "8ad46253eecbf732f01713bf78a5f7da8a373436c8dd42af01592062",
-    bddEventCostLovelace = 25000000,
-    bddEventCostPaymentToken = 1500000,
+    bddEventCostLovelace = 35000000,
+    bddEventCostPaymentToken = 4000000,
     bddEventID = "16juneStartNow",
     bddDisputeID = "secondFIGHT"
   }
@@ -51,10 +51,10 @@ writeUnit :: IO ()
 writeUnit = writeJSON "output/bonfire-testnet/unit.json" ()
 
 writeExampleDatum :: IO ()
-writeExampleDatum = writeJSON "datums/example-datum-2.json" exampleEvent
+writeExampleDatum = writeJSON "datums/example-datum-3.json" exampleEvent
 
 writeExampleDisputeDatum :: IO ()
-writeExampleDisputeDatum = writeJSON "datums/example-dispute-datum-2.json" exampleDispute
+writeExampleDisputeDatum = writeJSON "datums/example-dispute-datum-3.json" exampleDispute
 
 -- data BonfireEventEscrowDatum = BonfireEventEscrowDatum
 --   {
