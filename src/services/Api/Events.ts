@@ -11,7 +11,7 @@ export class Events {
       const res = await axios.post("/events", event)
       if (res.data) return res.data
     } catch (e) {
-      if (e.response) throw new Error(e.response.data.message)
+      if (e) throw e
     }
   }
 
@@ -40,7 +40,7 @@ export class Events {
 
       if (res.data) return res.data
     } catch (e) {
-      throw new Error(e)
+      throw e
     }
   }
 

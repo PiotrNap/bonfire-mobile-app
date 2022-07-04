@@ -1,17 +1,10 @@
 import * as React from "react"
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Text,
-  Linking,
-} from "react-native"
+import { View, StyleSheet, Pressable, ScrollView, Text } from "react-native"
 
-import { CheckIcon, LeftArrowIcon } from "assets/icons"
+import { LeftArrowIcon } from "assets/icons"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Colors, Outlines, Sizing } from "styles/index"
+import { Colors, Sizing } from "styles/index"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { StackScreenProps } from "@react-navigation/stack"
 import {
@@ -21,7 +14,6 @@ import {
 import { MonthlyWrapper } from "components/calendar"
 import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { BodyText } from "components/rnWrappers/bodyText"
 import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
 import { SlideTopModal } from "components/modals/slideTopModal"
 import { createNestedPath } from "lib/navigation"
@@ -32,7 +24,7 @@ import {
   setToEncryptedStorage,
 } from "lib/encryptedStorage"
 import { UserSettings } from "common/interfaces/appInterface"
-import * as qs from "qs"
+import { Checkbox } from "components/forms/Checkbox"
 
 type Props = StackScreenProps<
   EventCreationParamList,
@@ -41,34 +33,24 @@ type Props = StackScreenProps<
 
 export const AvailableDaysSelection = (props: Props) => {
   const navigation = props.navigation
-  const { colorScheme } = appContext()
+  const { colorScheme, validGoogleOAuth } = appContext()
   const {
     selectedDays,
     setDateFrame,
     removeSelectedDays,
     removeSelectedWeeks,
+    setGCalEventsBooking,
   } = eventCreationContext()
-  const {
-    isRequesting,
-    isValidOauth,
-    setIsValidOauth,
-    startGoogleAuthentication,
-  } = useGoogleAuth()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [hintBoxVisible, setHintBoxVisible] = React.useState<boolean>(false)
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
 
-  const eventListener = React.useCallback((event: { url: string }) => {
-    const query = qs.parse(event.url.split("?")[1])
-    const { success } = query
-
-    if (success === "false") {
-      setError({ isVisible: true, type: "GoogleOauth" })
-    }
-
-    setIsValidOauth(true)
-    if (success === "true") navigation.navigate("Available Time Selection")
-  }, [])
+  const googleOauthCallback = () => {
+    setGCalEventsBooking(acceptedCheckbox)
+    navigation.navigate("Available Time Selection")
+  }
+  const { isRequesting, isInitialRequesting, startGoogleAuthentication } =
+    useGoogleAuth(googleOauthCallback, setError)
 
   React.useEffect(() => {
     ;(async () => {
@@ -77,9 +59,6 @@ export const AvailableDaysSelection = (props: Props) => {
       )
       if (!userSettings?.eventCreationHintHidden) setHintBoxVisible(true)
     })()
-
-    Linking.addEventListener("url", eventListener)
-    return () => Linking.removeEventListener("url", eventListener)
   }, [])
 
   const isLightMode = colorScheme === "light"
@@ -98,26 +77,32 @@ export const AvailableDaysSelection = (props: Props) => {
   const onNextButtonPress = async () => {
     if (error.isVisible) setError({ isVisible: false, type: "" })
 
-    if (acceptedCheckbox)
+    if (acceptedCheckbox && !validGoogleOAuth) {
       try {
         await startGoogleAuthentication(
           createNestedPath([
             DEEP_LINKING_URLS.NAVIGATION,
+            DEEP_LINKING_URLS.HOME,
             DEEP_LINKING_URLS.AVAILABLE_DAYS_SELECTION,
           ])
         )
+        setEventDate()
       } catch (e) {
         setError({ isVisible: true, type: "GoogleOauth" })
       }
-
+    } else {
+      setEventDate()
+      setGCalEventsBooking(acceptedCheckbox)
+      navigation.navigate("Available Time Selection")
+    }
+  }
+  const setEventDate = React.useCallback(() => {
     const selectedDaysVal = Object.values(selectedDays).sort()
     setDateFrame(
       new Date(selectedDaysVal[0]),
       new Date(selectedDaysVal[selectedDaysVal.length - 1])
     )
-
-    if (!acceptedCheckbox) navigation.navigate("Available Time Selection")
-  }
+  }, [selectedDays])
 
   const ErrorModalIcon = React.memo(() => (
     <ErrorIcon
@@ -178,57 +163,24 @@ export const AvailableDaysSelection = (props: Props) => {
               closeCallback={onHintClose}
             />
           )}
-          <View style={styles.messageWrapper}></View>
           <ScrollView showsVerticalScrollIndicator={false}>
             <CalendarWrapperSimple>
               <MonthlyWrapper isNewEventCalendar={true} />
             </CalendarWrapperSimple>
-            {!isValidOauth && !isRequesting && (
-              <View style={styles.messageWrapper}>
-                <Pressable
-                  onPress={onCheckBoxPress}
-                  hitSlop={5}
-                  style={[
-                    styles.checkbox,
-                    {
-                      borderWidth: isLightMode ? Outlines.borderWidth.thin : 0,
-                      backgroundColor:
-                        isLightMode && acceptedCheckbox
-                          ? Colors.primary.s600
-                          : Colors.primary.neutral,
-                      borderColor:
-                        isLightMode && acceptedCheckbox
-                          ? Colors.primary.s600
-                          : "black",
-                    },
-                  ]}>
-                  <CheckIcon
-                    width="15"
-                    height="15"
-                    strokeWidth="3.5"
-                    stroke={
-                      isLightMode
-                        ? Colors.primary.neutral
-                        : !isLightMode && acceptedCheckbox
-                        ? Colors.primary.s600
-                        : Colors.primary.neutral
-                    }
-                  />
-                </Pressable>
-                <BodyText
-                  customStyle={{
-                    fontFamily: "Roboto-Regular",
-                    fontSize: Sizing.x14,
-                    width: "90%",
-                  }}
-                  changingColorScheme
-                  colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                  Attendees schedule time on my Google calendar
-                  {"\n"}
-                  <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant access
-                </BodyText>
-              </View>
-            )}
+            <View style={styles.messageWrapper}>
+              <Checkbox
+                onCheckBoxPress={onCheckBoxPress}
+                acceptedCheckbox={acceptedCheckbox}>
+                Attendees schedule time on my Google calendar
+                {!validGoogleOAuth && !isInitialRequesting && (
+                  <>
+                    {"\n"}
+                    <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant
+                    access
+                  </>
+                )}
+              </Checkbox>
+            </View>
           </ScrollView>
           <FullWidthButton
             text="Next"
@@ -266,17 +218,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     flexDirection: "row",
-    marginTop: Sizing.x5,
-  },
-  checkbox: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 17,
-    height: 17,
-    marginTop: Sizing.x5,
-    marginRight: Sizing.x10,
-    marginLeft: Sizing.x2,
-    borderRadius: Sizing.x3,
+    marginTop: Sizing.x10,
   },
   button: { width: "90%", marginTop: "auto", marginBottom: Sizing.x15 },
 })

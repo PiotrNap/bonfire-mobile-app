@@ -25,6 +25,7 @@ export interface InitialState {
   privateEvent: boolean
   eventCardColor: string
   eventTitleColor: string
+  gCalEventsBooking: boolean
 }
 
 export type SelectedDays = { [key: string]: number }

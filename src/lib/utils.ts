@@ -5,7 +5,6 @@ import {
   Permission,
 } from "react-native"
 import { randomBytes } from "react-native-randombytes"
-import * as yup from "yup"
 import {
   AvailabilitiesDay,
   Day,
@@ -60,62 +59,6 @@ export const requestAndroidPermission = async (
   } catch (err) {
     return false
   }
-}
-
-/**
- * @description Use this function to validate form input that
- * has to contain only numbers
- *
- * @param val
- */
-export function validateNumberInput(val: string): boolean {
-  var regex = /^\d+$/
-  if (+val || val == "") {
-    if (regex.test(val)) {
-      return true
-    }
-  }
-  return false
-}
-
-/**
- * @description This will specify schema for validating organizer
- * form inputs values.
- */
-export function formValidationSchema() {
-  return yup.object().shape({
-    alias: yup.string().required("Alias is required"),
-    aboutURL: yup.string().url(),
-    imageURL: yup.string().url(),
-    timeBlockCostADA: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers")
-      .required("Please provide the price"),
-    timeBlockLengthMin: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers")
-      .required("Please provide the time length"),
-  })
-}
-
-/**
- * @description This will specify validation schema for creating a new
- * account or updating an existing one.
- */
-export function accountValidationScheme() {
-  return yup.object().shape({
-    name: yup.string().required("Name is required"),
-    username: yup
-      .string()
-      .min(2, "User name is to short (minimum 2 characters)")
-      .required("Username is required"),
-    ada: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-    gimbals: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-  })
 }
 
 /**
@@ -227,19 +170,31 @@ export function areEqualDates(val1: number, val2: number): boolean {
 }
 
 /**
- * @description Returns false if the given date is a past date or it is a current day
+ * @description Returns false if the given date is a past date (starting from 1 day before)
  * @param year
  * @param month
  * @param day
  */
 export const isPastDate = (year: number, month: string, day: number) => {
-  const sameYear = getYear() === year
-  const sameMonth = getMonthName() === month
-  const sameDay = getDate() === day
-  return (
-    (sameYear && sameMonth && sameDay) ||
-    (sameYear && sameMonth && day < getDate())
-  )
+  const currYear = dayjs().year()
+  const currMonth = dayjs().month()
+  const currDay = dayjs().day()
+  const currDate = new Date(currYear, currMonth, currDay)
+
+  return new Date(year, monthsByName[month], day) <= currDate
+}
+
+/**
+ * @description Checks whether two dates are at the same day in time
+ * @param date1
+ * @param date2
+ */
+export const isSameDay = (date1: number, date2: string) => {
+  const sameYear = dayjs(date1).year() === dayjs(date2).year()
+  const sameMonth = dayjs(date1).month() === dayjs(date2).month()
+  const sameDay = dayjs(date1).day() === dayjs(date2).day()
+
+  return sameYear && sameMonth && sameDay
 }
 
 export const availableDaysLeftInCurrMonth = (
@@ -343,8 +298,7 @@ export function getCalendarMonth(
         let availableDay = availableSlots.find((s) => s.day === j)
 
         let dayEvents = events.find((e) => e.day === j)?.events
-        let currIndexDate = new Date(currYear, currMonthIndex, j).getDate()
-        let isPastDate = currIndexDate < new Date().getDate()
+        let isPastDate = new Date(currYear, currMonthIndex, j) < new Date()
 
         let day: Day = {
           name: weekDays[currDayIndex],
@@ -453,8 +407,7 @@ export function getCalendarMonth(
       for (let j = 1; isValidDate(j, currMonthIndex, currYear); j++) {
         let availableDay = availableSlots.find((s) => s.day === j)
         let dayEvents = events.find((e) => e.day === j)?.events
-        let isPastDate =
-          new Date(currYear, currMonthIndex, j).getDate() < new Date().getDate()
+        let isPastDate = new Date(currYear, currMonthIndex, j) < new Date()
 
         let day: Day = {
           name: weekDays[currDayIndex],
@@ -734,7 +687,10 @@ export const sortEventAvailabilities = (
   sortType: "asc" | "desc"
 ) =>
   availabilities.sort((a, b) => {
-    if (a.to > b.to || (a.to === b.to && a.maxDuration > b.maxDuration))
+    if (
+      dayjs(a.to) > dayjs(b.to) ||
+      (dayjs(a.to) === dayjs(b.to) && a.maxDuration > b.maxDuration)
+    )
       return sortType === "asc" ? 1 : -1
     return sortType === "asc" ? -1 : 1
   })
@@ -747,7 +703,7 @@ export const convertToCalendarAvailabilities = (
     [index: string]: number
   },
   availableDayTimeSlots: any[]
-): Availabilities => {
+): Availabilities[] => {
   const timesInMill: number[] = Object.values(selectedDays)
   const sortedAvailableSlots = sortEventAvailabilities(
     availableDayTimeSlots,
@@ -760,7 +716,7 @@ export const convertToCalendarAvailabilities = (
     new Date(lastAvailableDayTimeSlot.to).getTime() -
     lastAvailableDayTimeSlot.maxDuration * 60000
 
-  let calendarAvailabilities = []
+  let calendarAvailabilities: Availabilities[] = []
   let currentYear, currentMonth, currentDay
 
   for (const time of timesInMill) {
@@ -836,7 +792,7 @@ export const convertToCalendarEvents = (organizerEvents: {
     type: "booked slot" | "scheduled slot" | "active slot"
   ) => {
     if (!arr.length) return
-    var eventsInEachMonth: any[] = []
+    var eventsInEachMonth: AnyObject = {}
 
     // Because we want to show each available day for an ongoing
     // event of our organizers, we have to create separate slots
@@ -848,10 +804,29 @@ export const convertToCalendarEvents = (organizerEvents: {
           newArr.push(Object.assign({ availableAt: day }, event))
 
           // this will let us know how many days are in current month
-          if (!eventsInEachMonth.find((m) => m?.month === getMonthName(day))) {
-            eventsInEachMonth.push({
-              month: getMonthName(day),
-              events: Object.values(event.selectedDays)
+          if (!eventsInEachMonth[getYear(day)]?.[getMonthName(day)]) {
+            eventsInEachMonth[getYear(day)] = {
+              [getMonthName(day)]: {
+                events: [
+                  {
+                    id: event.id,
+                    days: Object.values(event.selectedDays)
+                      .filter(
+                        (sd: any) => getMonthName(sd) === getMonthName(day)
+                      )
+                      .sort(),
+                  },
+                ],
+              },
+            }
+          } else if (
+            !eventsInEachMonth[getYear(day)]?.[getMonthName(day)]?.events.find(
+              (e: any) => e.id === event.id
+            )
+          ) {
+            eventsInEachMonth[getYear(day)][getMonthName(day)].events.push({
+              id: event.id,
+              days: Object.values(event.selectedDays)
                 .filter((sd: any) => getMonthName(sd) === getMonthName(day))
                 .sort(),
             })
@@ -915,8 +890,8 @@ export const convertToCalendarEvents = (organizerEvents: {
           )
           currEventId = val.id
         }
-        // we need to know what's the max available day in this month
-
+        // we need to know what's the max available day in a month
+        // for a particular event
         slotObject.toTimeSlot = sortedAvailabilites[0].to
         slotObject.fromTimeSlot =
           sortedAvailabilites[sortedAvailabilites.length - 1].from
@@ -924,17 +899,18 @@ export const convertToCalendarEvents = (organizerEvents: {
         slotObject.availableAt = val.availableAt
 
         // return max day for active event in a given month
-        const eventsInMonth = eventsInEachMonth.find(
-          (m) => m.month === month
-        )?.events
-        if (eventsInMonth && eventsInMonth.length) {
+        const eventsInMonth = eventsInEachMonth[year]?.[month]?.events.find(
+          (e: AnyObject) => e.id === val.id
+        )
+
+        if (eventsInMonth && eventsInMonth.days?.length) {
           slotObject.maxAvailableMonthDate =
-            eventsInMonth[eventsInMonth.length - 1]
-          slotObject.minAvailableMonthDate = eventsInMonth[0]
+            eventsInMonth.days[eventsInMonth.days.length - 1]
+          slotObject.minAvailableMonthDate = eventsInMonth.days[0]
         }
       }
 
-      // Case when it's the first time or the year has changed
+      // Case when it's the first time or year has changed
       if (
         year !== currentYear &&
         month !== currentMonth &&

@@ -13,6 +13,7 @@ import {
   appContext,
   eventCreationContext,
   myCalendarContext,
+  bookingContext,
 } from "contexts/contextApi"
 import { Colors, Typography, Sizing, Outlines } from "styles/index"
 import { MonthItem } from "./MonthItem"
@@ -22,6 +23,7 @@ import { WeekDayNames } from "./WeekDayNames"
 import { CalendarTopNavigation } from "./navigation/calendarTopNavigation"
 import { CalendarLegend } from "./CalendarLegend"
 import { useCalendarEvents } from "lib/hooks/useCalendarEvents"
+import dayjs from "dayjs"
 
 export interface MonthlyWrapperProps {
   isBookingCalendar?: boolean
@@ -50,6 +52,7 @@ export const MonthlyWrapper = ({
   const { colorScheme } = appContext()
   const { selectedWeekDays } = eventCreationContext()
   const { fetchEvents } = useCalendarEvents()
+  const { previewingEvent } = bookingContext()
 
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
     null
@@ -106,8 +109,18 @@ export const MonthlyWrapper = ({
       animatedOpacity.setValue(1)
     })
   }
-
+  const hasAvailabilitiesInCurrMonthOnly = React.useCallback(
+    () =>
+      previewingEvent &&
+      !Object.values(previewingEvent.selectedDays)?.find(
+        (date: any) =>
+          dayjs(date).month() !== monthsByName[calendarHeader.month]
+      ),
+    [previewingEvent]
+  )
   const onPlaceholderPress = (direction: string) => {
+    if (hasAvailabilitiesInCurrMonthOnly()) return
+
     if (direction === "previous") onPreviousStartAnimation()
     if (direction === "next") onNextStartAnimation()
   }
@@ -368,7 +381,9 @@ export const MonthlyWrapper = ({
         <View
           style={[
             styles.calendar,
-            { backgroundColor: isDarkMode ? Colors.primary.neutral : "white" },
+            {
+              backgroundColor: isDarkMode ? Colors.primary.neutral : "white",
+            },
           ]}>
           <WeekComponent />
           <View style={styles.calendarContainer} onLayout={onLayout}>

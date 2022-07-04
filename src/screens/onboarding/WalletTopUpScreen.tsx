@@ -11,12 +11,12 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import ViewPager from "react-native-pager-view"
 import QRCode from "react-native-qrcode-svg"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
-import { DuplicateIcon, LeftArrowIcon } from "icons/index"
+import { DuplicateIcon, LeftArrowIcon, PaymentIcon } from "icons/index"
 import { Typography, Colors, Sizing, Outlines } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
-import { WalletSetUpModal } from "components/modals/walletSetUpModal"
+import { BigSlideModal } from "components/modals/bigSlideModal"
 import { useNavigation } from "@react-navigation/native"
 import Clipboard from "@react-native-clipboard/clipboard"
 import { CopyMessage } from "components/popups/copyMessage"
@@ -33,7 +33,7 @@ export const WalletTopUpScreen = ({
   pagerRef,
 }: WalletTopUpScreenProps) => {
   const navigation = useNavigation()
-  const { colorScheme, receivingAddr } = appContext()
+  const { colorScheme, receivingAddr, textContent } = appContext()
   const [isLightMode, setIsLightMode] = React.useState<boolean>(false)
   const [address, setAddress] = React.useState<string>("")
   const [amount, setAmount] = React.useState<string>("")
@@ -89,7 +89,19 @@ export const WalletTopUpScreen = ({
   const WalletTopUpModal = React.useMemo(
     () => (
       <View>
-        <WalletSetUpModal hideModal={hideModal} isVisible={isVisibleModal} />
+        <BigSlideModal
+          hideModal={hideModal}
+          isVisible={isVisibleModal}
+          icon={
+            <PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />
+          }
+          header={textContent.wallet.create_wallet.modal.header}
+          body={textContent.wallet.create_wallet.modal.body}
+          buttonTitle={textContent.wallet.create_wallet.modal.button_title}
+          secondButtonTitle={
+            textContent.wallet.create_wallet.modal.secondButton_title
+          }
+        />
       </View>
     ),
     [isVisibleModal]

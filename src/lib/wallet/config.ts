@@ -84,3 +84,5 @@ export const ROLE_TYPE = {
   INTERNAL_CHAIN: 1,
   STAKING_KEY: 2,
 }
+
+export const RECOVERY_PHRASE_LENGTHS = [9, 12, 15, 18, 21, 24]

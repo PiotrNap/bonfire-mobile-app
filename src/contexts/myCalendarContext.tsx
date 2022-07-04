@@ -153,6 +153,7 @@ const reducer = (state: MyCalendarState, action: MyCalendarActions) => {
       return {
         ...state,
         calendar: newCalendar,
+        availabilities: _availabilities ?? state.availabilities,
       }
     case MyCalendarTypes.UpdateCalendarMonth: {
       let year = action.payload.calendarArgs.year || new Date().getFullYear()

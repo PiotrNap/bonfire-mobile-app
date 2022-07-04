@@ -1,13 +1,19 @@
 import * as React from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, Text } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
-import { BookingStackParamList } from "common/types/navigationTypes"
+import {
+  BookingStackParamList,
+  DEEP_LINKING_URLS,
+} from "common/types/navigationTypes"
 import { Sizing } from "styles/index"
 import { appContext, bookingContext } from "contexts/contextApi"
 import { MonthlyWrapper } from "components/calendar"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
+import { Checkbox } from "components/forms/Checkbox"
+import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
+import { createNestedPath } from "lib/navigation"
 
 type Props = StackScreenProps<
   BookingStackParamList,
@@ -16,15 +22,49 @@ type Props = StackScreenProps<
 
 export const AvailableDaysSelection = ({ navigation, route }: Props) => {
   const { title, image, color, titleColor } = route.params
-  const { pickedDate, resetBookingState } = bookingContext()
-  const { colorScheme } = appContext()
+  const { pickedDate, resetBookingState, setCreateGoogleCalEvent } =
+    bookingContext()
+  const { colorScheme, validGoogleOAuth } = appContext()
+  const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
   const isDisabled = !pickedDate
 
+  const googleCallback = () => {
+    setCreateGoogleCalEvent(acceptedCheckbox)
+    navigation.navigate("Available Times", route.params)
+  }
+  const { isRequesting, isInitialRequesting, startGoogleAuthentication } =
+    useGoogleAuth(googleCallback, setError)
+
+  const onNextPress = async () => {
+    if (error.isVisible) setError({ isVisible: false, type: "" })
+
+    if (acceptedCheckbox && !validGoogleOAuth) {
+      try {
+        await startGoogleAuthentication(
+          createNestedPath([
+            DEEP_LINKING_URLS.NAVIGATION,
+            DEEP_LINKING_URLS.BROWSE,
+            DEEP_LINKING_URLS.AVAILABLE_TIMES,
+          ])
+        )
+      } catch (e) {
+        console.error("New error ", e)
+        setError({ isVisible: true, type: "GoogleOauth" })
+      }
+    } else {
+      acceptedCheckbox && setCreateGoogleCalEvent(acceptedCheckbox)
+      navigation.navigate("Available Times", route.params)
+    }
+  }
   const onBackNavigationPress = () => {
     resetBookingState()
     navigation.navigate("Browse")
   }
-  const onNextPress = () => navigation.navigate("Available Times", route.params)
+  const onCheckBoxPress = () => {
+    setError({ isVisible: false, type: "" })
+    setAcceptedChecbox((prev) => !prev)
+  }
 
   return (
     <EventBookingLayout
@@ -37,12 +77,26 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
       <View style={styles.calendarWrapper}>
         <MonthlyWrapper isBookingCalendar={true} />
       </View>
+      <View style={styles.messageWrapper}>
+        <Checkbox
+          onCheckBoxPress={onCheckBoxPress}
+          acceptedCheckbox={acceptedCheckbox}>
+          Schedule this event on my Google calendar
+          {"\n"}
+          {!validGoogleOAuth && !isInitialRequesting && (
+            <>
+              <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant access
+            </>
+          )}
+        </Checkbox>
+      </View>
       <View style={styles.buttonContainer}>
         <FullWidthButton
           onPressCallback={onNextPress}
           text={"Next Step"}
           colorScheme={colorScheme}
           disabled={isDisabled}
+          loadingIndicator={isRequesting}
         />
       </View>
     </EventBookingLayout>
@@ -57,6 +111,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
-    marginVertical: Sizing.x10,
+    marginBottom: Sizing.x10,
+    marginTop: Sizing.x5,
+  },
+  messageWrapper: {
+    width: "90%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    flexDirection: "row",
+    marginTop: Sizing.x5,
   },
 })

@@ -6,15 +6,24 @@ import {
   Pressable,
   LayoutChangeEvent,
   ActivityIndicator,
+  useWindowDimensions,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import LinearGradient from "react-native-linear-gradient"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
-import { OrganizerTabParamList } from "common/types/navigationTypes"
+import {
+  OrganizerTabParamList,
+  WalletStackParamList,
+} from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
-import { RefreshIcon, RightArrowIcon, SearchIcon } from "icons/index"
+import {
+  PaymentIcon,
+  RefreshIcon,
+  RightArrowIcon,
+  SearchIcon,
+} from "icons/index"
 import { TransactionsList } from "components/wallet/transactionsList"
 import { ProfileContext } from "contexts/profileContext"
 import {
@@ -24,53 +33,56 @@ import {
 } from "@emurgo/react-native-haskell-shelley"
 import { generateMnemonic } from "bip39"
 import { Wallet } from "lib/wallet"
+import { BigSlideModal } from "components/modals/bigSlideModal"
 
 // @TODO: Implement navigationTypes type
 export interface WalletScreenProps
-  extends StackScreenProps<OrganizerTabParamList, "Wallet"> {}
+  extends StackScreenProps<WalletStackParamList, "Wallet"> {}
 
 function wait(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms))
 }
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, textContent } = appContext()
   const { hasSyncedWallet, setHasSyncedWallet, walletBalance } =
     React.useContext(ProfileContext)
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
   const [isTxListLoading, setIsTxListLoading] = React.useState<boolean>(false)
   const [isWalletSyncing, setIsWalletSyncing] = React.useState<boolean>(false)
+  const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    const listener = navigation.addListener("blur", () => {
+      hideModal()
+    })
+    getAddr()
+
+    return listener
+  }, [route])
 
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
+  const windowWidth = useWindowDimensions().width
 
   const getAddr = async () => {
     try {
-      let mnemonic = generateMnemonic()
-      console.log("mnemonic ", mnemonic)
-      let addr = await new Wallet().init(mnemonic, "password")
-      console.log("addr ", addr)
+      // let mnemonic = generateMnemonic()
+      // console.log("mnemonic ", mnemonic)
+      // let addr = await new Wallet().init(mnemonic)
+      // console.log("addr ", addr)
     } catch (err) {
       console.error(err)
     }
   }
+  const onAddWalletPress = () => {
+    setIsModalVisible(true)
 
-  React.useEffect(() => {
-    getAddr()
-  }, [])
-
-  const onWalletButtonPress = async () => {
-    if (!hasSyncedWallet) {
-      setIsWalletSyncing(true)
-      await wait(1200)
-      setHasSyncedWallet(true)
-      setIsWalletSyncing(false)
-    } else {
-      navigation.navigate("Add Funds", { fromScreen: "Wallet" })
-    }
+    // if (!hasSyncedWallet) {
+    // } else {
+    // }
   }
-
   const onLayout = (e: LayoutChangeEvent) => {
     setLayoutHeight(e.nativeEvent.layout.height)
 
@@ -78,12 +90,16 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
       setIsSmallScreen(true)
     }
   }
-
   const onRefreshPress = async () => {
     setIsTxListLoading(true)
     await wait(2000)
     setIsTxListLoading(false)
   }
+  const onCreateWalletPress = () => {}
+  const onImportWalletPress = () => {
+    navigation.navigate("Import Mnemonics")
+  }
+  const hideModal = () => setIsModalVisible(false)
 
   return (
     <SafeAreaView
@@ -126,7 +142,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             {!hasSyncedWallet ? "--" : walletBalance} ₳
           </Text>
           <Pressable
-            onPress={onWalletButtonPress}
+            onPress={onAddWalletPress}
             pressRetentionOffset={15}
             hitSlop={15}
             style={Buttons.applyOpacity(
@@ -140,7 +156,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                   ? styles.walletButtonText_light
                   : styles.walletButtonText_dark,
               ]}>
-              {!hasSyncedWallet ? "Link Wallet" : "Add funds"}
+              {!hasSyncedWallet ? "Add Wallet" : "Add funds"}
             </Text>
           </Pressable>
         </LinearGradient>
@@ -199,6 +215,25 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             isSmallScreen={isSmallScreen}
           />
         </View>
+        {isModalVisible ? (
+          <BigSlideModal
+            hideModal={() => setIsModalVisible(false)}
+            isVisible={isModalVisible}
+            icon={
+              <PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />
+            }
+            header={textContent.wallet.add_new_wallet.modal.header}
+            body={textContent.wallet.add_new_wallet.modal.body}
+            buttonTitle={textContent.wallet.add_new_wallet.modal.button_title}
+            secondButtonTitle={
+              textContent.wallet.add_new_wallet.modal.secondButton_title
+            }
+            buttonCb={onImportWalletPress}
+            secondButtonCb={onCreateWalletPress}
+          />
+        ) : (
+          <></>
+        )}
       </View>
     </SafeAreaView>
   )

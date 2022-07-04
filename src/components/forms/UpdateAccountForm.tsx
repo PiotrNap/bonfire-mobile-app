@@ -4,16 +4,14 @@ import { StyleProp, StyleSheet, View } from "react-native"
 import { Formik, Field } from "formik"
 import Filter from "bad-words"
 
-import { accountValidationScheme } from "lib/utils"
-import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
+import { accountValidationScheme } from "lib/validators"
+import { Sizing } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { useUpdateAccountInfo } from "lib/hooks/useUpdateAccountInfo"
 import { appContext } from "contexts/contextApi"
 import { CustomInput } from "./CustomInput"
-import {
-  showFailedModal,
-  showInappropriateContentModal,
-} from "lib/modalAlertsHelpers"
+import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
+import { inputStyles, formStyleDark, formStyleLight } from "../../styles/forms"
 
 interface Props {
   accountType: "organizer" | "attendee"
@@ -67,13 +65,18 @@ export const UpdateAccountForm = ({
   } else {
     formStyles = Object.assign({}, inputStyles, styles, formStyleDark)
   }
+  const { hourlyRate, ..._userInfo } = userInfo
 
   return (
     <Formik
       validationSchema={accountValidationScheme()}
       validateOnChange={submitted}
       validateOnBlur={submitted}
-      initialValues={userInfo}
+      initialValues={{
+        ..._userInfo,
+        ada: hourlyRate.ada,
+        gimbals: hourlyRate.gimbals,
+      }}
       onSubmit={handleSubmit}>
       {({ handleSubmit, isValid, validateForm }) => (
         <>
@@ -208,71 +211,5 @@ export const UpdateAccountForm = ({
 const styles = StyleSheet.create({
   buttonWrapper: {
     marginBottom: Sizing.x10,
-  },
-})
-
-/**
- * Styles passed as props to CustomInput
- */
-const inputStyles = StyleSheet.create({
-  inputContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  labelContainer: {
-    width: "100%",
-  },
-  textInputWrapper: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
-  },
-  errorInput: {
-    borderColor: Colors.danger.s300,
-  },
-  errorWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    height: Sizing.x20,
-  },
-  error: {
-    color: Colors.danger.s400,
-    ...Typography.header.x20,
-  },
-})
-
-const formStyleLight = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_light,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_light,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
-  },
-})
-
-const formStyleDark = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_dark,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_dark,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
   },
 })

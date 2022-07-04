@@ -124,6 +124,7 @@ export const shareEvent = async (id: string) => {
         getDeepLinkUri(
           createNestedPath([
             DEEP_LINKING_URLS.NAVIGATION,
+            DEEP_LINKING_URLS.NAVIGATION,
             DEEP_LINKING_URLS.BROWSE,
           ])
         ) + `/${id}`,
@@ -152,6 +153,7 @@ export const encryptWithPassword = async (
   return await encrypt_with_password(hexPassword, saltHex, nonceHex, hexValue)
 }
 
+//@TODO throw error if password is incorrect
 export const decryptWithPassword = async (
   cipherText: string,
   password: string

@@ -6,8 +6,12 @@ import {
   Bip32PublicKey,
   StakeCredential,
 } from "@emurgo/react-native-haskell-shelley"
-import { setToEncryptedStorage } from "../encryptedStorage"
-import { encryptWithPassword } from "../helpers"
+import {
+  getFromEncryptedStorage,
+  setToEncryptedStorage,
+  StoragePropertyKeys,
+} from "../encryptedStorage"
+import { decryptWithPassword, encryptWithPassword } from "../helpers"
 import {
   ROLE_TYPE,
   CONFIG_NUMBERS,
@@ -27,42 +31,36 @@ export class Wallet {
       CARDANO_NETWORK === "mainnet" ? HASKELL_SHELLEY : HASKELL_SHELLEY_TESTNET
   }
 
-  async init(mnemonic: string, password: string): Promise<any> {
+  /**
+   * Creates root key and account keys with base address
+   */
+  async init(mnemonic: string): Promise<any> {
     try {
       const rootKeyPtr: Bip32PrivateKey = await this.createRootKey(mnemonic)
-      const rootKey: string = Buffer.from(
-        await rootKeyPtr.as_bytes()
-      ).toString()
+      const rootKey: string = Buffer.from(await rootKeyPtr.as_bytes()).toString(
+        "hex"
+      )
 
-      const encryptedRootKey = await encryptWithPassword(rootKey, password)
-      await setToEncryptedStorage("wallet-root-key", encryptedRootKey)
-
-      // create extended priv and pub keys
-      const accountKey = await (
+      const accountKeyPtr = await (
         await (
           await rootKeyPtr.derive(CONFIG_NUMBERS.WALLET_TYPE_PURPOSE.CIP1852)
         ).derive(CONFIG_NUMBERS.COIN_TYPES.CARDANO)
       ).derive(
         CONFIG_NUMBERS.ACCOUNT_INDEX + CONFIG_NUMBERS.HARD_DERIVATION_START
       )
-
-      const encryptedAccountKey = await encryptWithPassword(
-        Buffer.from(await accountKey.as_bytes()).toString(),
-        password
+      const accountKey = Buffer.from(await accountKeyPtr.as_bytes()).toString(
+        "hex"
       )
-      await setToEncryptedStorage("account-key", encryptedAccountKey)
 
-      const accountPubKey = await accountKey.to_public()
-      const encryptedAccountPubKey = encryptWithPassword(
-        Buffer.from(await accountPubKey.as_bytes()).toString("hex"),
-        password
-      )
-      await setToEncryptedStorage("account-pub-key", encryptedAccountPubKey)
+      const accountPubKeyPtr = await accountKeyPtr.to_public()
+      const accountPubKey = Buffer.from(
+        await accountPubKeyPtr.as_bytes()
+      ).toString("hex")
 
       // for first release use first index only
-      const baseAddress = await this.generateBaseAddress(accountPubKey, 0)
+      const baseAddress = await this.generateBaseAddress(accountPubKeyPtr, 0)
 
-      return baseAddress
+      return { baseAddress, rootKey, accountKey, accountPubKey }
     } catch (e) {
       console.error(e)
       throw e
@@ -74,18 +72,17 @@ export class Wallet {
     index: number
   ): Promise<string> {
     const chainKey = await accountPubKey.derive(ROLE_TYPE.EXTERNAL_CHAIN)
-    const stakingKey = await (
-      await (
-        await accountPubKey.derive(ROLE_TYPE.STAKING_KEY)
-      ).derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX)
-    ).to_raw_key()
+    const stakingKey = await accountPubKey.derive(ROLE_TYPE.STAKING_KEY)
 
     const chainKeyAddr = await (await chainKey.derive(index)).to_raw_key()
+    const stakingKeyAddr = await (
+      await stakingKey.derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX)
+    ).to_raw_key()
 
     const addr = await BaseAddress.new(
       this.chainConfig.CHAIN_NETWORK_ID,
       await StakeCredential.from_keyhash(await chainKeyAddr.hash()),
-      await StakeCredential.from_keyhash(await stakingKey.hash())
+      await StakeCredential.from_keyhash(await stakingKeyAddr.hash())
     )
     return await (await addr.to_address()).to_bech32()
   }
@@ -101,7 +98,22 @@ export class Wallet {
     return rootKey
   }
 
-  async createBaseAddressFromKey() {}
+  async encryptAndStoreOnDevice(
+    value: string,
+    password: string,
+    storageKey: StoragePropertyKeys
+  ) {
+    const encryptedValue = await encryptWithPassword(value, password)
+    return await setToEncryptedStorage(storageKey, encryptedValue)
+  }
+
+  async decryptAndRetrieveFromDevice(
+    password: string,
+    storageKey: StoragePropertyKeys
+  ): Promise<string> {
+    const value = await getFromEncryptedStorage(storageKey)
+    return await decryptWithPassword(value, password)
+  }
 
   async signTransaction() {}
 

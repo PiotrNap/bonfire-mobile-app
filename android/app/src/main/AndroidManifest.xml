@@ -28,7 +28,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="bonfire" android:host="gimbalabs.bonfire.com"/>
+            <data android:scheme="bonfire" android:host="bonfire.com"/>
         </intent-filter>
       </activity>
     </application>

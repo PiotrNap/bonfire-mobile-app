@@ -88,11 +88,12 @@ export const fontWeight: Record<FontWeight, TextStyle> = {
   },
 }
 
-type LetterSpacing = "x20" | "x30" | "x40"
+type LetterSpacing = "x10" | "x20" | "x30" | "x40"
 export const letterSpacing: Record<LetterSpacing, number> = {
+  x10: 0.5,
   x20: 1,
   x30: 2,
-  x40: 3,
+  x40: 4,
 }
 
 type LineHeight =
@@ -375,7 +376,7 @@ type Monospace = "base"
 export const monospace: Record<Monospace, TextStyle> = {
   base: {
     fontFamily: monospaceFontFamily,
-    letterSpacing: letterSpacing.x30,
+    letterSpacing: letterSpacing.x10,
   },
 }
 

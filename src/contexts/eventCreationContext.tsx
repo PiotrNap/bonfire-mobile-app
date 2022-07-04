@@ -27,6 +27,7 @@ const initialState: InitialState = {
   eventTitleColor: "",
   selectedWeekDays: [],
   privateEvent: false,
+  gCalEventsBooking: false,
 }
 
 const reducer = (
@@ -188,6 +189,12 @@ const reducer = (
         toDate: action.payload.toDate,
       }
     }
+    case EventCreationTypes.SetGCalEventsBooking: {
+      return {
+        ...state,
+        gCalEventsBooking: action.payload.gCalEventsBooking,
+      }
+    }
     case EventCreationTypes.ResetState: {
       return {
         textContent: {
@@ -205,6 +212,7 @@ const reducer = (
         eventCardColor: "",
         eventTitleColor: "",
         selectedWeekDays: [],
+        gCalEventsBooking: false,
         privateEvent: false,
       }
     }

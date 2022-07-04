@@ -2,6 +2,8 @@
  * @interfaces for appContext.tsx file.
  */
 
+import { AnyObject } from "yup/lib/types"
+
 export type ColorSchemeName = "light" | "dark"
 
 export interface AppState {
@@ -11,10 +13,12 @@ export interface AppState {
   colorScheme: ColorSchemeName
   appBgColor: string
   favoriteOrganizers: any[]
+  validGoogleOAuth: boolean
   pageIndex: number
   ref: any
   JWT?: JWTPayload | null
   userSettings: UserSettings | null
+  textContent: AnyObject
 }
 
 export interface JWTPayload {

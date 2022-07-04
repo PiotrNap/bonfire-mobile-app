@@ -103,7 +103,7 @@ export const BrowseScreen = ({ navigation, route }: BrowseProps) => {
 
   const eventListener = async (event: { url: string }) => {
     const eventId = event.url.split("/").reverse()[0]
-    await navigateToEvent(eventId)
+    if (isUUID(eventId)) await navigateToEvent(eventId)
   }
 
   React.useEffect(() => {

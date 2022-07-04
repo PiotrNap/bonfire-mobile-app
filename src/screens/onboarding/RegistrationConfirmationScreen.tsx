@@ -113,7 +113,7 @@ export const RegistrationConfirmationScreen = () => {
             <Text style={styles.userDetailsText}>{bio}</Text>
           </>
         ) : null}
-        {hourlyRate.gimbals || hourlyRate.ada ? (
+        {hourlyRate?.gimbals || hourlyRate?.ada ? (
           <>
             <Text style={styles.userDetailsHeader}>Hourly Rate (ADA)</Text>
             <Text style={styles.userDetailsText}>{hourlyRate.ada} an hour</Text>

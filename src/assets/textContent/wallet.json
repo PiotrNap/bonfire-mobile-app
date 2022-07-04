@@ -1,0 +1,21 @@
+{
+    "add_new_wallet": {
+        "modal": {
+            "body": "Create a personal Bonfire wallet to book events and make payments. Or, import an existing wallet by providing a recovery phrase. You’re almost there.",
+            "header": "It looks like you haven't created a wallet yet",
+            "button_title": "Import Wallet",
+            "secondButton_title": "Create New Wallet"
+        }
+    },
+    "import_wallet": {
+        "import_mnemonics": {
+            "header": "Import an Existing Wallet",
+            "body": "Please insert each word of your recovery phrase into boxes below. Words are case sensitive and should be lower case."
+        },
+        "address_confirmation": {
+            "header": "Confirm Your Wallet Address",
+            "body": "Please confirm that given base address is known to you. If it's not, your previous wallet may be using a different method of address derivation. Or, you've inserted wrongly your recovery phrase."
+        }
+    }
+    "
+}

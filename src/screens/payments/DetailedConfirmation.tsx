@@ -36,8 +36,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     eventCardColor,
     eventTitleColor,
     availabilities,
+    gCalEventsBooking,
   } = eventCreationContext()
-  const { duration, pickedDate, previewingEvent } = bookingContext()
+  const { duration, pickedDate, previewingEvent, createGoogleCalEvent } =
+    bookingContext()
   const { username, id } = React.useContext(ProfileContext)
   const {
     errorMsg,
@@ -50,21 +52,22 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const [_errMsg, setErrMsg] = React.useState<string>("")
 
   const isLightMode = colorScheme === "light"
-  const ModalIcon = errorMsg ? (
-    <ErrorIcon
-      stroke={Colors.primary.neutral}
-      width={Sizing.x60}
-      height={Sizing.x60}
-      strokeWidth={1.5}
-    />
-  ) : (
-    <CheckIcon
-      stroke={Colors.success.s400}
-      width={Sizing.x60}
-      height={Sizing.x60}
-      strokeWidth={1.5}
-    />
-  )
+  const ModalIcon =
+    _errMsg || errorMsg ? (
+      <ErrorIcon
+        stroke={Colors.primary.neutral}
+        width={Sizing.x60}
+        height={Sizing.x60}
+        strokeWidth={1.5}
+      />
+    ) : (
+      <CheckIcon
+        stroke={Colors.success.s400}
+        width={Sizing.x60}
+        height={Sizing.x60}
+        strokeWidth={1.5}
+      />
+    )
   const onBackNavigationPress = () => navigation.goBack()
   const onButtonPress = async () => {
     setIsLoading(true)
@@ -86,28 +89,28 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           id,
           username,
         },
+        gCalEventsBooking,
       }
 
       try {
         const eventId = await Events.createEvent(newEvent)
 
-        if (eventId) {
+        if (eventId && imageURI)
           // update img as we cant send multiple content-type headers
-          const success = await Events.uploadEventImage(imageURI, eventId)
+          await Events.uploadEventImage(imageURI, eventId)
 
-          if (success) {
-            setIsLoading(false)
-
-            navigation.navigate("Confirmation", {
-              isBookingConfirmation: false,
-            })
-          }
-        }
+        setIsLoading(false)
+        navigation.navigate("Confirmation", {
+          isBookingConfirmation: false,
+          isNewEvent: true,
+        })
       } catch (e) {
+        console.error(e)
         setIsLoading(false)
         if (e.response.status === 422) return showNSFWImageModal()
 
-        setErrMsg("Something went wrong while creating a new event.")
+        setErrMsg(e.response.data.message)
+        setIsModalVisible(true)
       }
     } else {
       try {
@@ -116,6 +119,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           durationCost: previewingEvent.durationCost,
           bookedDate: new Date(pickedDate),
           bookedDuration: duration,
+          createGoogleCalEvent,
         })
 
         if (res) {
@@ -125,6 +129,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         }
       } catch (e) {
         console.error(e)
+        if (e.response.data.message) setErrMsg(e.response.data.message)
+        setIsModalVisible(true)
+
         setIsLoading(false)
       }
 
@@ -234,7 +241,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           </View>
         </View>
       </SafeAreaView>
-      {params?.organizerEvent && isModalVisible && (
+      {isModalVisible && (
         <SlideTopModal
           icon={ModalIcon}
           isModalVisible={isModalVisible}

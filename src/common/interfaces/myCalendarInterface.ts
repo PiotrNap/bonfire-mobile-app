@@ -23,7 +23,7 @@ export interface AvailabilitiesMonth {
 
 export interface AvailabilitiesDay {
   day: number
-  timeSlots: AvailabilitySlot[]
+  timeSlots?: AvailabilitySlot[]
   availableUntil?: number
 }
 
@@ -121,6 +121,8 @@ export interface Day {
   availabilities?: AvailabilitySlot[]
   events?: Event[]
   direction?: "previous" | "next" | undefined
+  toTimeSlot?: string
+  fromTimeSlot?: string
 }
 
 export interface Date extends Day {

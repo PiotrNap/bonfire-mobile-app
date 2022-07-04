@@ -17,6 +17,7 @@ export const CustomInput = (props: any) => {
     styles,
     validateForm,
     defaultValue,
+    placeholder,
     ...inputProps
   } = props
   const hasError = errors[name] && touched[name]
@@ -40,6 +41,7 @@ export const CustomInput = (props: any) => {
           ]}
           value={String(value ?? (isNumeric ? defaultValue ?? 0 : ""))}
           placeholderTextColor={styles.placeholderText.color}
+          placeholder={placeholder}
           onEndEditing={() => validateForm()}
           onChange={() => validateForm()}
           onChangeText={(text) => {

@@ -22,18 +22,10 @@ export const SmallButton = ({ onPress, icon, title }: Props) => {
           styles.button,
           isLightMode
             ? { backgroundColor: Colors.primary.s800 }
-            : { backgroundColor: Colors.primary.neutral }
+            : { backgroundColor: Colors.primary.s600 }
         )
       )}>
-      <Text
-        style={[
-          styles.buttonText,
-          isLightMode
-            ? { color: Colors.primary.neutral }
-            : { color: Colors.primary.s800 },
-        ]}>
-        {title}
-      </Text>
+      <Text style={styles.buttonText}>{title}</Text>
       {icon}
     </Pressable>
   )
@@ -52,5 +44,6 @@ const styles = StyleSheet.create({
   buttonText: {
     ...Typography.header.x20,
     marginRight: Sizing.x5,
+    color: Colors.primary.neutral,
   },
 })

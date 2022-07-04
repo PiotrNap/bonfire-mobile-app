@@ -23,12 +23,13 @@ import {
   getUnauthorizedLinkingConfig,
 } from "lib/navigation"
 import SplashScreen from "react-native-splash-screen"
+import { useFirebaseMessaging } from "lib/hooks/useFirebaseMessaging"
 
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
 enableScreens() // enable native screens for navigation instead of using Views
 
 // TODO remove it
-LogBox.ignoreAllLogs()
+// LogBox.ignoreAllLogs()
 
 // this will enable LayoutAnimation API
 if (Platform.OS === "android") {
@@ -40,6 +41,7 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
+  const { token } = useFirebaseMessaging(user?.id, isAuthorized)
   const onNavigationReady = () => SplashScreen.hide()
 
   if (!isAuthLoaded) {
@@ -83,13 +85,13 @@ function App() {
                   name="Attendee Navigation Screens"
                   component={AttendeeNavigationScreens}
                   options={{ headerShown: false }}
-                  initialParams={user}
+                  initialParams={{ ...user, token }}
                 />
                 <Stack.Screen
                   name="Organizer Navigation Screens"
                   component={OrganizerNavigationScreens}
                   options={{ headerShown: false }}
-                  initialParams={user}
+                  initialParams={{ ...user, token }}
                 />
                 <Stack.Screen
                   name="Deposit Successful"

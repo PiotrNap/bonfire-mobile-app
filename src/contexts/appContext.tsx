@@ -13,13 +13,19 @@ import {
 import { AppActions, AppTypes } from "common/types/contextTypes"
 import { Colors } from "styles/index"
 
+// text json files
+import wallet from "assets/textContent/wallet.json"
+
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
+
+const appTextContent = { wallet }
 
 const initialAppState: AppState = {
   authentication: false,
   accountType: null,
   receivingAddr: "",
+  validGoogleOAuth: false,
   // JWT: {
   //   expiresIn: null,
   //   accessToken: null,
@@ -31,6 +37,7 @@ const initialAppState: AppState = {
   pageIndex: 0,
   ref: null,
   userSettings: null,
+  textContent: appTextContent,
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -50,6 +57,12 @@ const reducer = (state: AppState, action: AppActions) => {
           accessToken: accessToken ?? null,
         },
       }
+    case AppTypes.SetValidGoogleOAuth: {
+      return {
+        ...state,
+        validGoogleOAuth: action.payload.validGoogleOAuth,
+      }
+    }
     case AppTypes.ToggleAuth:
       return {
         ...state,
@@ -100,6 +113,7 @@ const reducer = (state: AppState, action: AppActions) => {
         favoriteOrganizers: [],
         pageIndex: 0,
         ref: null,
+        textContent: appTextContent,
       }
     }
     default:

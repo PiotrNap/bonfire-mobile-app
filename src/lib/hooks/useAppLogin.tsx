@@ -1,10 +1,12 @@
+import * as React from "react"
+
 import { setAuthorizationToken } from "Api/base"
 import {
   getFromEncryptedStorage,
   setToEncryptedStorage,
 } from "lib/encryptedStorage"
 import { startChallengeSequence } from "lib/helpers"
-import * as React from "react"
+import TZ from "react-native-timezone"
 
 export const useAppLogin = () => {
   const [isAuthorized, setIsAuthorized] = React.useState<boolean>(false)
@@ -21,6 +23,8 @@ export const useAppLogin = () => {
         let userSettings = await getFromEncryptedStorage("user-settings")
         const isExpired = new Date() > new Date(at?.expiresAt)
 
+        console.log(at, isExpired)
+
         if (at && !isExpired) {
           setAuthorizationToken(at.accessToken)
           setIsAuthorized(true)
@@ -30,6 +34,7 @@ export const useAppLogin = () => {
             id: at.id,
           })
         }
+        const tz = await TZ.getTimeZone()
 
         if (sec && pub) {
           const accessTokenDto = await startChallengeSequence(pub, false)
@@ -45,6 +50,7 @@ export const useAppLogin = () => {
               profileType: accessTokenDto.profileType,
               id: accessTokenDto.id,
               hourlyRate: accessTokenDto?.hourlyRate,
+              timeZone: accessTokenDto?.timeZone,
               userSettings,
             })
             setToEncryptedStorage("auth-credentials", accessTokenDto)
@@ -57,6 +63,7 @@ export const useAppLogin = () => {
 
         setIsAuthLoaded(true)
       } catch (e) {
+        console.error(e)
         setIsAuthLoaded(true)
       }
     })()

@@ -1,23 +1,44 @@
 import * as React from "react"
-import { View, Text, StyleSheet, useWindowDimensions } from "react-native"
+import {
+  View,
+  Text,
+  StyleSheet,
+  useWindowDimensions,
+  Pressable,
+} from "react-native"
 
 import Modal from "react-native-modal"
-import { PaymentIcon } from "assets/icons"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { ProfileContext } from "contexts/profileContext"
 
-export interface WalletSetUpModalProps {
+export interface BidSlideModalProps {
+  children?: React.ReactNode
   isVisible: boolean
   hideModal: () => void
+  icon?: JSX.Element
+  header: string
+  body?: string
+  buttonTitle: string
+  buttonCb: () => void
+  secondButtonTitle?: string
+  secondButtonCb?: () => void
 }
 
-export const WalletSetUpModal = ({
+export const BigSlideModal = ({
   isVisible,
   hideModal,
-}: WalletSetUpModalProps) => {
+  icon,
+  header,
+  body,
+  buttonTitle,
+  secondButtonTitle,
+  buttonCb,
+  secondButtonCb,
+  children,
+}: BidSlideModalProps) => {
   const { setHasSyncedWallet } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
   const [visible, setVisible] = React.useState<boolean>(isVisible)
@@ -57,41 +78,51 @@ export const WalletSetUpModal = ({
               : { backgroundColor: Colors.neutral.s600 },
           ]}>
           <View style={styles.main}>
-            <View
+            <Pressable
+              hitSlop={Sizing.x20}
               style={[
                 styles.topSwipeLine,
                 isLightMode
-                  ? { backgroundColor: Colors.primary.s300 }
+                  ? { backgroundColor: Colors.primary.s800 }
                   : { backgroundColor: Colors.primary.neutral },
               ]}
+              onPress={onHideModal}
             />
-            <PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />
+            {/*
+             // icons are not visible in dark mode
+            <View style={{ backgroundColor: Colors.primary.neutral }}>
+              {icon}
+            </View>
+            */}
             <View style={styles.textContainer}>
               <Text
                 style={
                   isLightMode ? styles.headerText_light : styles.headerText_dark
                 }>
-                It looks like you haven't created a wallet yet
+                {header}
               </Text>
-              <BodyText
-                changingColorScheme
-                colors={[Colors.primary.s600, Colors.primary.neutral]}>
-                Create a personal Bonfire wallet to book events and make
-                payments. You’re almost there.
-              </BodyText>
+              {body && (
+                <BodyText
+                  changingColorScheme
+                  colors={[Colors.primary.s600, Colors.primary.neutral]}>
+                  {body}
+                </BodyText>
+              )}
+              {children}
             </View>
             <View style={styles.buttonContainer}>
               <FullWidthButton
-                onPressCallback={onHideModal}
-                text={"Close"}
-                colorScheme={colorScheme}
-                buttonType="transparent"
-              />
-              <FullWidthButton
-                onPressCallback={onLinkWallet}
-                text={"Create wallet"}
+                onPressCallback={buttonCb}
+                text={buttonTitle}
                 colorScheme={colorScheme}
               />
+              {secondButtonCb && secondButtonTitle && (
+                <FullWidthButton
+                  onPressCallback={secondButtonCb}
+                  text={secondButtonTitle}
+                  colorScheme={colorScheme}
+                />
+              )}
             </View>
           </View>
         </View>
@@ -122,11 +153,12 @@ const styles = StyleSheet.create({
     marginTop: Sizing.x35,
   },
   topSwipeLine: {
-    width: "50%",
+    width: "40%",
     height: Sizing.x5,
     borderRadius: Outlines.borderRadius.max,
   },
   textContainer: {
+    marginTop: "auto",
     marginBottom: "auto",
   },
   headerText_light: {

@@ -31,6 +31,7 @@ export enum AppTypes {
   SetPageIndex = "SET_PAGE_INDEX",
   SetUserSettings = "SET_USER_SETTINGS",
   SetColorScheme = "SET_COLOR_SCHEME",
+  SetValidGoogleOAuth = "SET_VALID_GOOGLE_OAUTH",
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
   ResetState = "RESET_STATE",
 }
@@ -49,8 +50,10 @@ export enum EventCreationTypes {
   SetImageURI = "SET_IMAGE_URI",
   SetHourlyRate = "SET_HOURLY_RATE",
   SetPrivateEvent = "SET_PRIVATE_EVENT",
+  SetEventType = "SET_EVENT_TYPE",
   SetEventCardColor = "SET_EVENT_CARD_COLOR",
   SetEventTitleColor = "SET_EVENT_TITLE_COLOR",
+  SetGCalEventsBooking = "SET_GCAL_EVENTS_BOOKING",
   ResetState = "RESET_STATE",
 }
 
@@ -65,6 +68,7 @@ export enum BookingTypes {
   SetEventCardInfo = "SET_EVENT_CARD_INFO",
   SetMaxTimeSlotDuration = "SET_MAX_TIME_SLOT_DUR",
   SetMinTimeSlotDuration = "SET_MIN_TIME_SLOT_DUR",
+  SetCreateGoogleCalEvent = "SET_CREATE_GCAL_EVENT",
   ResetState = "RESET_STATE",
 }
 
@@ -126,6 +130,9 @@ export type AppPayload = {
   [AppTypes.SetColorScheme]: {
     newColorScheme: ColorSchemeName
   }
+  [AppTypes.SetValidGoogleOAuth]: {
+    validGoogleOAuth: boolean
+  }
   [AppTypes.ResetState]: {}
   ["unknown"]: any
 }
@@ -140,7 +147,8 @@ export type EventCreationPayload = {
   [EventCreationTypes.RemoveAvailabilities]: {}
   [EventCreationTypes.SetSelectedDays]: {
     selectedDays: number[]
-    isRecurringSelection: boolean
+    isRecurringSelection?: boolean
+    eventType: EventType
   }
   [EventCreationTypes.RemoveSelectedDays]: any
   [EventCreationTypes.SetSelectedWeek]: {
@@ -166,11 +174,17 @@ export type EventCreationPayload = {
   [EventCreationTypes.SetPrivateEvent]: {
     privateEvent: boolean
   }
+  [EventCreationTypes.SetEventType]: {
+    eventType: EventType
+  }
   [EventCreationTypes.SetEventCardColor]: {
     eventCardColor: string
   }
   [EventCreationTypes.SetEventTitleColor]: {
     eventTitleColor: string
+  }
+  [EventCreationTypes.SetGCalEventsBooking]: {
+    gCalEventsBooking: boolean
   }
   [EventCreationTypes.ResetState]: any
   ["unknown"]: any
@@ -206,6 +220,9 @@ export type BookingPayload = {
   }
   [BookingTypes.SetEventCardInfo]: {
     eventCardInfo: EventCardInfo
+  }
+  [BookingTypes.SetCreateGoogleCalEvent]: {
+    createGoogleCalEvent: boolean
   }
   [BookingTypes.ResetState]: {}
   ["unknown"]: any

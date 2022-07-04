@@ -2,6 +2,7 @@ import {
   UserBaseDTO,
   UserOrganizerDTO,
 } from "common/interfaces/profileInterface"
+import { WalletNavigationParams } from "lib/wallet/types"
 import { AnyObject } from "yup/lib/types"
 
 export type AppStackParamList = {
@@ -91,6 +92,13 @@ export type ProfileStackParamList = {
   "Profile Settings": undefined
 }
 
+export type WalletStackParamList = {
+  Wallet: undefined
+  "Import Mnemonics": undefined
+  "Import Mnemonics Confirmation": WalletNavigationParams
+  "New Wallet Set Up": WalletNavigationParams
+}
+
 /**
  * Navigation params interfaces
  */
@@ -113,6 +121,7 @@ export enum DEEP_LINKING_PATHS {
   ADD_FUNDS = "add-funds",
   AVAILABLE_DAYS_SELECTION = "available-days-selection/:success",
   AVAILABLE_EVENTS_DAYS_SELECTION = "available-event-days-selection",
+  AVAILABLE_TIMES = "available-times",
   BROWSE = "browse/:event-id",
   HOME = "home",
   NAVIGATION = "navigation",
@@ -122,6 +131,7 @@ export enum DEEP_LINKING_PATHS {
 
 export enum DEEP_LINKING_URLS {
   ADD_FUNDS = "add-funds",
+  AVAILABLE_TIMES = "available-times",
   AVAILABLE_DAYS_SELECTION = "available-days-selection",
   AVAILABLE_EVENTS_DAYS_SELECTION = "available-event-days-selection",
   BROWSE = "browse",
