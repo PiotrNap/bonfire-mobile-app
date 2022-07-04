@@ -18,7 +18,7 @@ export interface FullWidthButtonProps {
   isOnboarding?: boolean
   colorScheme?: "light" | "dark"
   disabled?: boolean
-  buttonType?: "filled" | "transparent"
+  buttonType?: "filled" | "transparent" | "neutral"
   style?: StyleProp<any>
   textStyle?: StyleProp<any>
   lightMode?: boolean
@@ -51,6 +51,10 @@ export const FullWidthButton = ({
   const buttonStyleTransparent = isLightMode
     ? Buttons.bar.transparent_light
     : Buttons.bar.transparent_dark
+  const buttonStyleNeutral = {
+    ...Buttons.bar.primary_dark,
+    backgroundColor: Colors.primary.neutral,
+  }
   const textStyleFilled = [
     isLightMode ? Buttons.barText.primary_light : Buttons.barText.primary_dark,
   ]
@@ -59,11 +63,23 @@ export const FullWidthButton = ({
       ? Buttons.barText.transparent_light
       : Buttons.barText.transparent_dark,
   ]
+  const textStyleNeutral = {
+    ...Buttons.barText.primary_dark,
+    color: Colors.primary.s800,
+  }
   const customButtonStyle =
-    buttonType === "filled" ? buttonStyleFilled : buttonStyleTransparent
+    buttonType === "filled"
+      ? buttonStyleFilled
+      : buttonType === "transparent"
+      ? buttonStyleTransparent
+      : buttonStyleNeutral
   const customTextStyle =
-    buttonType === "filled" ? textStyleFilled : textStyleTransparent
-  const disabledStyle = { opacity: 0.75 }
+    buttonType === "filled"
+      ? textStyleFilled
+      : buttonType === "transparent"
+      ? textStyleTransparent
+      : textStyleNeutral
+  const disabledStyle = { opacity: 0.7 }
 
   const onLayoutText = (e: LayoutChangeEvent) => {
     setTextWidth(e.nativeEvent?.layout?.width)
@@ -88,13 +104,7 @@ export const FullWidthButton = ({
       </Text>
       {loadingIndicator && pressableWidth && textWidth && (
         <ActivityIndicator
-          color={
-            isOnboarding
-              ? Colors.primary.neutral
-              : isLightMode
-              ? Colors.primary.neutral
-              : Colors.primary.s800
-          }
+          color={Colors.primary.neutral}
           size="small"
           animating={true}
           style={{

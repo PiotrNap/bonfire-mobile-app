@@ -20,6 +20,7 @@ import { EmptyDocumentsIcon } from "./emptyDocuments"
 import { ErrorIcon } from "./error"
 import { EyeIcon } from "./eye"
 import { EyeOffIcon } from "./eyeOff"
+import { FontIcon } from "./font"
 import { HearthIcon } from "./hearth"
 import { HomeIcon } from "./home"
 import { IdeaIcon } from "./idea"
@@ -73,6 +74,7 @@ export {
   ErrorIcon,
   EyeIcon,
   EyeOffIcon,
+  FontIcon,
   IdeaIcon,
   PlusIcon,
   HearthIcon,

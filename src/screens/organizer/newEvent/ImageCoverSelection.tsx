@@ -163,22 +163,28 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
                 }}
                 imageStyle={styles.imagePreview_image}
                 resizeMode="cover">
-                <View
-                  style={[
-                    styles.removeButtonWrapper,
-                    { backgroundColor: applyOpacity(Colors.neutral.s800, 0.5) },
-                  ]}>
-                  <Pressable
-                    style={Buttons.applyOpacity(styles.removeButton)}
-                    onPress={onRemoveImage}>
-                    <RemoveIcon
-                      style={styles.icon}
-                      strokeWidth={2.5}
-                      stroke={Colors.primary.s800}
-                      fill={Colors.primary.s800}
-                    />
-                  </Pressable>
-                </View>
+                {currImage ? (
+                  <View
+                    style={[
+                      styles.removeButtonWrapper,
+                      {
+                        backgroundColor: applyOpacity(Colors.neutral.s800, 0.5),
+                      },
+                    ]}>
+                    <Pressable
+                      style={Buttons.applyOpacity(styles.removeButton)}
+                      onPress={onRemoveImage}>
+                      <RemoveIcon
+                        style={styles.icon}
+                        strokeWidth={2.5}
+                        stroke={Colors.primary.s800}
+                        fill={Colors.primary.s800}
+                      />
+                    </Pressable>
+                  </View>
+                ) : (
+                  <></>
+                )}
               </ImageBackground>
             )}
           </View>

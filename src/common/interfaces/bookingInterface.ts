@@ -9,6 +9,7 @@ export interface InitialState {
   eventCardInfo: EventCardInfo | null
   maxTimeSlotDuration: number
   minTimeSlotDuration: number
+  createGoogleCalEvent: boolean
 }
 
 export interface OrganizerRate {
@@ -36,6 +37,7 @@ export interface EventCallbackFn {
 export interface EventLine {
   content: string
   icon?: React.ReactNode
+  icons?: React.ReactNode[]
 }
 
 export interface EventCardInfo {

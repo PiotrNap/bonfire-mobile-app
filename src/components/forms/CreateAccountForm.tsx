@@ -3,7 +3,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from "react-native"
 
 import { Formik, Field } from "formik"
 import { Buttons, Typography, Colors, Sizing, Forms } from "styles/index"
-import { accountValidationScheme } from "lib/utils"
+import { accountValidationScheme } from "lib/validators"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"
 import { setAuthorizationToken } from "Api/base"
@@ -16,6 +16,7 @@ import { appContext } from "contexts/contextApi"
 import { startChallengeSequence } from "lib/helpers"
 import { generateKeyPair } from "lib/tweetnacl"
 import base64 from "base64-js"
+import TZone from "react-native-timezone"
 
 export interface CreateAccountFormProps {
   onErrorCallback: (val: string) => void
@@ -28,7 +29,7 @@ export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,
 }: CreateAccountFormProps) => {
-  const { profileType, setUsername, setId, setName } =
+  const { profileType, setUsername, setId, setName, setTimeZone } =
     React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
@@ -86,16 +87,18 @@ export const CreateAccountForm = ({
       try {
         values.publicKey = base64.fromByteArray(publicKey)
         values.profileType = profileType
+        values.timeZone = await TZone.getTimeZone()
 
         // get new user object
         const user = await Users.createAccount(values)
 
         if (user != null) {
-          const { id, name, username } = user
+          const { id, name, username, timeZone } = user
 
           setId(id)
           setUsername(username)
           setName(name)
+          setTimeZone(timeZone ?? "")
 
           // start challenge and get JWT
           const authResponseDTO = await startChallengeSequence(id, true)
@@ -103,6 +106,7 @@ export const CreateAccountForm = ({
           if (authResponseDTO) {
             const { accessToken } = authResponseDTO
             setAuthorizationToken(accessToken)
+            setToEncryptedStorage("time-zone", timeZone)
             setToEncryptedStorage("auth-credentials", authResponseDTO)
           }
 

@@ -54,10 +54,12 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
           text="Next"
         />
       </View>
+      {/*
       <LearnMoreModal
         setIsVisibleModal={setIsVisibleModal}
         isVisibleModal={isVisibleModal}
       />
+      */}
     </View>
   )
 }

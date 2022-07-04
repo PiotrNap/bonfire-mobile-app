@@ -2,14 +2,14 @@ import * as React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
 import { OrganizerTabParamList } from "common/types/navigationTypes"
-import { WalletScreen } from "screens/index"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
-import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
+import { BrowseScreensStack } from "stacks/BrowseScreensStack"
 import { OrganizerHomeScreenStack } from "stacks/OrganizerHomeScreenStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
 import { MyEventsStack } from "stacks/MyEventsStack"
+import { WalletScreenStack } from "stacks/WalletScreenStack"
 
 const OrganizerNavigationTabs =
   createBottomTabNavigator<OrganizerTabParamList>()
@@ -49,7 +49,10 @@ export const OrganizerNavigationScreens = ({ route }: any) => {
         name="Browse Stack"
         component={BrowseScreensStack}
       />
-      <OrganizerNavigationTabs.Screen name="Wallet" component={WalletScreen} />
+      <OrganizerNavigationTabs.Screen
+        name="Wallet"
+        component={WalletScreenStack}
+      />
       <OrganizerNavigationTabs.Screen
         name="My Events"
         component={MyEventsStack}

@@ -14,6 +14,7 @@ import { getDigitalLocaleTime } from "lib/utils"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
+import dayjs from "dayjs"
 
 export interface AvailableTimesProps {}
 
@@ -60,42 +61,23 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
 
       setMaxTimeSlotDuration(availability.maxDuration)
       setMinTimeSlotDuration(availability.minDuration)
-
-      // calculate the max time span of organizer availability
-      // let timeBlockMilSec = previewingOrganizer?.timeBlock * 60 * 1000;
-      // let endOfAvailability =
-      //   currAvailabilities?.[currAvailabilities.length - 1] + timeBlockMilSec;
-      // let upcomingEvent = scheduledTimes?.find(
-      //   (time: any) => time > selectedTimeSlot
-      // );
-
-      // there aren't any upcoming events at current day
-      // if (upcomingEvent == null) {
-      //   // return the time span between selected time slot and
-      //   // the end of organizer availability
-      //   return endOfAvailability - selectedTimeSlot;
-      // } else {
-      //   // else return the time span between selected time slot
-      //   // and the first already booked event
-      //   return upcomingEvent - selectedTimeSlot;
-      // }
     }
   }
 
-  const onBackNavigationPress = () => navigation.goBack()
-  const onNextPress = () => {
-    if (selectedTimeSlot) {
-      const hour = new Date(selectedTimeSlot).getHours() * 60 * 60 * 1000
-      const minutes = new Date(selectedTimeSlot).getMinutes() * 60 * 1000
+  const onBackNavigationPress = () =>
+    navigation.navigate("Available Event Days Selection", route.params)
+  const onNextPress = React.useCallback(() => {
+    if (selectedTimeSlot && pickedDate) {
+      const newDate = dayjs(pickedDate)
+        .set("hour", dayjs(selectedTimeSlot).hour())
+        .set("minutes", dayjs(selectedTimeSlot).minute())
+        .toISOString()
 
-      let date: number = new Date(pickedDate).getTime()
-      let newDate = new Date(date + hour + minutes).getTime()
-
-      setPickedDate(newDate)
+      setPickedDate(new Date(newDate).getTime())
       setTimeDuration()
       navigation.navigate("Duration Choice", route.params)
     }
-  }
+  }, [selectedTimeSlot, pickedDate])
 
   const onPressCallback = (item: number) => {
     if (scheduledTimes?.includes(item)) return

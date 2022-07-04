@@ -107,6 +107,7 @@ export const EventsList = ({
     }),
     []
   )
+  //@TODO fix loading indicator at the bottom
   return (
     <>
       {!isEmptyEventsList && !isLoading ? (
@@ -125,9 +126,7 @@ export const EventsList = ({
           onRefresh={onRefresh}
           onLayout={onLayout}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={
-            !customEvents && isLoading ? _ActivityIndicator : null
-          }
+          ListFooterComponent={isLoading ? _ActivityIndicator : null}
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={30}
           removeClippedSubviews

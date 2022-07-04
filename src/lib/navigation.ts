@@ -31,7 +31,12 @@ export const getAuthorizedLinkingConfig = (
                 },
                 "Browse Stack": {
                   screens: {
-                    Browse: DEEP_LINKING_PATHS.BROWSE,
+                    Browse: {
+                      path: "browse",
+                      screens: {
+                        "Availalble Times": DEEP_LINKING_PATHS.AVAILABLE_TIMES,
+                      },
+                    },
                   },
                 },
               },

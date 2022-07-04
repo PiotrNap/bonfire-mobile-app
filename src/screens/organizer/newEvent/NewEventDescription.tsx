@@ -37,7 +37,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
 
   const isLightMode = colorScheme === "light"
   const isDisabledButton =
-    !eventTitle || !eventDescription || (!+_hourlyRate && !markedCheckbox)
+    !eventTitle || !eventDescription || (!+_hourlyRate.ada && !markedCheckbox)
 
   // set the input values
   const onEventTitleChange = (val: string) => setEventTitle(val)
@@ -166,7 +166,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
           onEndEditingCallback={onGimbalsHourlyRateChange}
           isDisabled={markedCheckbox}
         />
-        {(!hourlyRate?.ada || !hourlyRate.gimbals) && (
+        {hourlyRate?.ada && (
           <View style={styles.messageWrapper}>
             <Pressable
               onPress={onCheckBoxPress}
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     flexDirection: "row",
-    marginTop: Sizing.x5,
+    marginVertical: Sizing.x5,
   },
   checkbox: {
     alignItems: "center",

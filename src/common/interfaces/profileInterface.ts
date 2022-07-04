@@ -9,6 +9,7 @@ export interface ProfileState {
   bio: string
   imageBase64?: string | null
   hasSyncedWallet: boolean
+  timeZone?: string
   timeBlockLengthMin: number | null
   timeBlockCostADA: number | undefined
   hourlyRate: HourlyRate
@@ -24,6 +25,7 @@ export interface ProfileState {
   setId: (input: string) => void
   setBio: (input: string) => void
   setImageBase64: (input: string) => void
+  setTimeZone: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
   setHourlyRate: (inputs: HourlyRate) => void
@@ -41,6 +43,7 @@ export interface UserBaseDTO {
   username: string
   name: string
   id: string
+  timeZone?: string
   publicKey?: string
 }
 

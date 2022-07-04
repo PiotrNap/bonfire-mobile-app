@@ -18,6 +18,7 @@ export const initialState: ProfileState = {
   description: "",
   skills: "",
   hasSyncedWallet: false,
+  timeZone: "",
   timeBlockLengthMin: 0,
   timeBlockCostADA: 0,
   walletBalance: 0,
@@ -31,6 +32,7 @@ export const initialState: ProfileState = {
   setPublicKey: () => {},
   setBio: () => {},
   setImageBase64: () => {},
+  setTimeZone: () => {},
   setTimeBlockLengthMin: () => {},
   setTimeBlockCostADA: () => {},
   setHourlyRate: () => {},
@@ -56,6 +58,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [publicKey, setPublicKey] = useState<string>("")
   const [bio, setBio] = useState<string>("")
   const [imageBase64, setImageBase64] = useState<string>("")
+  const [timeZone, setTimeZone] = useState<string>("")
   const [timeBlockLengthMin, setTimeBlockLengthMin] = useState<number | null>(0)
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
@@ -85,6 +88,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     imageBase64,
     hasSyncedWallet,
     hourlyRate,
+    timeZone,
     timeBlockLengthMin,
     timeBlockCostADA,
     profession,
@@ -105,6 +109,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setImageBase64("")
     setTimeBlockLengthMin(0)
     setTimeBlockCostADA(0)
+    setTimeZone("")
     setHourlyRate({ ada: 0, gimbals: 0 })
     setProfession("")
     setJobTitle("")
@@ -131,6 +136,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setHasSyncedWallet,
         setTimeBlockLengthMin,
         setTimeBlockCostADA,
+        setTimeZone,
         setHourlyRate,
         setProfession,
         setJobTitle,

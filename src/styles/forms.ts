@@ -1,4 +1,4 @@
-import { TextStyle } from "react-native"
+import { StyleSheet, TextStyle } from "react-native"
 
 import * as Colors from "./colors"
 import * as Outlines from "./outlines"
@@ -70,3 +70,69 @@ export const inputLabel: Record<InputLabel, TextStyle> = {
     fontFamily: "Roboto-Medium",
   },
 }
+
+/**
+ * Styles passed as props to CustomInput
+ */
+export const inputStyles = StyleSheet.create({
+  inputContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  labelContainer: {
+    width: "100%",
+  },
+  textInputWrapper: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    width: "100%",
+    ...input.primary,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
+  },
+  errorInput: {
+    borderColor: Colors.danger.s300,
+  },
+  errorWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    height: Sizing.x20,
+  },
+  error: {
+    color: Colors.danger.s400,
+    ...Typography.header.x20,
+  },
+})
+
+export const formStyleLight = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_light,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_light,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
+  },
+})
+
+export const formStyleDark = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_dark,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_dark,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
+  },
+})

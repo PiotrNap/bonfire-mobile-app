@@ -14,6 +14,8 @@ export interface MonthlyDayProps extends Day {
   month: string
   updateActiveDay: (arg: number | null) => void
   setSelectedDay?: (arg: any) => any
+  isPastDate?: boolean
+  showPastDate?: boolean
 }
 
 /**
@@ -28,23 +30,37 @@ export const MonthlyDay = ({
   activeDay,
   updateActiveDay,
   events,
+  showPastDate,
+  isPastDate,
 }: MonthlyDayProps) => {
-  const hasActiveEvents = !!events?.find((e) => e.type === "active slot")
-  const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot")
+  const hasActiveEvents = !!events?.find(
+    (e) => e.type === "active slot"
+  )
+  const hasScheduledSlots = !!events?.find(
+    (e) => e.type !== "active slot"
+  )
 
   const dayInTime =
-    year && month && number && getTime(year, monthsByName[month], number)
+    year &&
+    month &&
+    number &&
+    getTime(year, monthsByName[month], number)
   const isActiveDay = activeDay === dayInTime
 
   const onPress = () => {
     updateActiveDay(isActiveDay ? null : number)
   }
 
-  const TextComponent = () => <Text style={styles.dayButtonText}>{number}</Text>
+  const TextComponent = () => (
+    <Text style={styles.dayButtonText}>{number}</Text>
+  )
 
   return React.useMemo(
     () => (
-      <Pressable onPress={onPress} hitSlop={Sizing.x5} style={styles.dayButton}>
+      <Pressable
+        onPress={onPress}
+        hitSlop={Sizing.x5}
+        style={styles.dayButton}>
         {isActiveDay ? (
           <View style={styles.selectionIndicator}>
             <TextComponent />
@@ -52,25 +68,37 @@ export const MonthlyDay = ({
         ) : (
           <TextComponent />
         )}
-        {hasActiveEvents && hasScheduledSlots && (
+        {isPastDate && !showPastDate ? null : (
           <>
-            <DotIcon
-              style={[styles.icon, styles.leftIcon]}
-              fill="#60A5FA"
-              stroke="none"
-            />
-            <DotIcon
-              style={[styles.icon, styles.rightIcon]}
-              fill="#FCD34D"
-              stroke="none"
-            />
+            {hasActiveEvents && hasScheduledSlots && (
+              <>
+                <DotIcon
+                  style={[styles.icon, styles.leftIcon]}
+                  fill="#60A5FA"
+                  stroke="none"
+                />
+                <DotIcon
+                  style={[styles.icon, styles.rightIcon]}
+                  fill="#FCD34D"
+                  stroke="none"
+                />
+              </>
+            )}
+            {hasActiveEvents && !hasScheduledSlots && (
+              <DotIcon
+                style={styles.icon}
+                fill="#60A5FA"
+                stroke="none"
+              />
+            )}
+            {hasScheduledSlots && !hasActiveEvents && (
+              <DotIcon
+                style={styles.icon}
+                fill="#FCD34D"
+                stroke="none"
+              />
+            )}
           </>
-        )}
-        {hasActiveEvents && !hasScheduledSlots && (
-          <DotIcon style={styles.icon} fill="#60A5FA" stroke="none" />
-        )}
-        {hasScheduledSlots && !hasActiveEvents && (
-          <DotIcon style={styles.icon} fill="#FCD34D" stroke="none" />
         )}
       </Pressable>
     ),

@@ -14,7 +14,8 @@ import {
 import { Colors, Forms, Outlines, Sizing } from "styles/index"
 
 export type CustomPlainInputProps = TextInputProps & {
-  label: string
+  label?: string
+  idx?: string | number
   styles?: any
   onPressHandler?: () => void
   icon?: any
@@ -24,13 +25,14 @@ export type CustomPlainInputProps = TextInputProps & {
   labelStyle?: StyleProp<TextStyle>
   onChangeCallback?: (e: any) => void
   onPressInCallback?: (e: any) => void
-  onEndEditingCallback?: (e: any) => void
+  onEndEditingCallback?: (e: any, id?: any) => void
 }
 
 export const CustomPlainInput = ({
   icon,
   placeholder,
   label,
+  idx,
   labelStyle,
   customChild,
   onPressHandler,
@@ -83,11 +85,13 @@ export const CustomPlainInput = ({
 
   return (
     <View style={styles.inputContainer}>
-      <View style={styles.labelContainer}>
-        <Text style={[styles.label, labelStyle]}>
-          {label} {charsLeft && `${charsLeft}/${maxChar}`}
-        </Text>
-      </View>
+      {label && (
+        <View style={styles.labelContainer}>
+          <Text style={[styles.label, labelStyle]}>
+            {label} {charsLeft && `${charsLeft}/${maxChar}`}
+          </Text>
+        </View>
+      )}
       <View style={styles.textInputWrapper}>
         <TextInput
           style={[
@@ -98,8 +102,13 @@ export const CustomPlainInput = ({
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}
           onChangeText={onChangeText}
+          onChange={(e) =>
+            onEndEditingCallback &&
+            onEndEditingCallback(e.nativeEvent.text, idx)
+          }
           onEndEditing={(e) =>
-            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text)
+            onEndEditingCallback &&
+            onEndEditingCallback(e.nativeEvent.text, idx)
           }
           placeholderTextColor={styles.placeholderText.color}
           defaultValue={defaultValue}

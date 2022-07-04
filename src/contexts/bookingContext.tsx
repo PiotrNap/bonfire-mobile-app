@@ -17,6 +17,7 @@ const initialState: InitialState = {
   minTimeSlotDuration: 0,
   previewingOrganizer: null,
   previewingEvent: null,
+  createGoogleCalEvent: false,
 }
 
 const reducer = (state: InitialState, action: BookingActions) => {
@@ -70,6 +71,12 @@ const reducer = (state: InitialState, action: BookingActions) => {
       return {
         ...state,
         eventCardInfo: action.payload.eventCardInfo,
+      }
+    }
+    case BookingTypes.SetCreateGoogleCalEvent: {
+      return {
+        ...state,
+        createGoogleCalEvent: action.payload.createGoogleCalEvent,
       }
     }
     case BookingTypes.ResetState: {

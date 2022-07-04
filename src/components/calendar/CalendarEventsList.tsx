@@ -245,7 +245,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     borderRadius: Outlines.borderRadius.small,
-    marginVertical: Sizing.x5,
+    marginBottom: Sizing.x5,
+    marginTop: Sizing.x10,
   },
   list: {
     minWidth: "95%",

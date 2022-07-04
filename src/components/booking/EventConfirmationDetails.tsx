@@ -12,6 +12,7 @@ import {
   CalendarIcon,
   ColorsPalleteIcon,
   DescriptionIcon,
+  FontIcon,
   PlaceholderIcon,
   PresentationIcon,
   TimeIcon,
@@ -26,9 +27,10 @@ import {
   getDigitalLocaleTime,
   getMonth,
   getTimeSpanLength,
+  isSameDay,
 } from "lib/utils"
-import { useAuthCredentials } from "lib/hooks/useAuthCredentials"
 import { AnyObject } from "yup/lib/types"
+import tz from "react-native-timezone"
 
 interface EventConfirmationDetails {
   isNewEvent: boolean
@@ -58,8 +60,8 @@ export const EventConfirmationDetails = ({
     eventCardColor,
     eventTitleColor,
   } = eventCreationContext()
-  const credentials = useAuthCredentials()
   const previewingEvent = bookingPreviewingEvent || bookedEvent
+  const [timeZone, setTimeZone] = React.useState<any>("")
   var selectedDaysArr: number[] = []
   var fromDate, toDate
 
@@ -69,13 +71,20 @@ export const EventConfirmationDetails = ({
     toDate = Math.max(...selectedDaysArr)
   }
 
+  React.useEffect(() => {
+    ;(async () => {
+      let _timeZone = await tz.getTimeZone()
+      setTimeZone(_timeZone)
+    })()
+  }, [])
+
   const isLightMode = colorScheme === "light"
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s600 : Colors.primary.s200,
     strokeWidth: 1.8,
-    width: 24,
-    height: 24,
+    width: Sizing.x25,
+    height: Sizing.x25,
     marginRight: Sizing.x5,
   }
 
@@ -88,6 +97,7 @@ export const EventConfirmationDetails = ({
     ada: <AdaIcon {...iconStyles} />,
     placeholder: <PlaceholderIcon {...iconStyles} />,
     colorsPallete: <ColorsPalleteIcon {...iconStyles} />,
+    font: <FontIcon {...iconStyles} />,
   }
 
   const organizerEventSections: any[] = [
@@ -107,36 +117,62 @@ export const EventConfirmationDetails = ({
     },
     organizerEvent?.fromDate && {
       label: "Date & time",
-      lineContent: [
-        {
-          content: `Start: ${weekDays[getDay(organizerEvent?.fromDate)]} - ${
-            months[getMonth(organizerEvent?.fromDate)]
-          } ${getDate(organizerEvent?.fromDate)}`,
-          icon: sectionsIcons.calendar,
-        },
-        {
-          content: `End: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
-            months[getMonth(organizerEvent?.toDate)]
-          } ${getDate(organizerEvent?.toDate)}`,
-          icon: sectionsIcons.calendar,
-        },
-      ],
+      lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
+        ? [
+            {
+              content: `Start: ${
+                weekDays[getDay(organizerEvent?.fromDate)]
+              } - ${months[getMonth(organizerEvent?.fromDate)]} ${getDate(
+                organizerEvent?.fromDate
+              )}`,
+              icon: sectionsIcons.calendar,
+            },
+            {
+              content: `End: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
+                months[getMonth(organizerEvent?.toDate)]
+              } ${getDate(organizerEvent?.toDate)}`,
+              icon: sectionsIcons.calendar,
+            },
+          ]
+        : [
+            {
+              content: `${weekDays[getDay(organizerEvent?.fromDate)]}`,
+              icon: sectionsIcons.calendar,
+            },
+          ],
     },
     organizerEvent?.availableAt && {
       label: "Date & time",
-      lineContent: {
-        content: `Start: ${weekDays[getDay(organizerEvent?.availableAt)]} - ${
-          months[getMonth(organizerEvent?.availableAt)]
-        } ${getDate(organizerEvent?.availableAt)}`,
-        icon: sectionsIcons.calendar,
-      },
+      lineContent: [
+        {
+          content: `${weekDays[getDay(organizerEvent?.availableAt)]} - ${
+            months[getMonth(organizerEvent?.availableAt)]
+          } ${getDate(organizerEvent?.availableAt)}`,
+          icon: sectionsIcons.calendar,
+        },
+        organizerEvent?.fromTimeSlot &&
+          organizerEvent?.toTimeSlot && {
+            content: `${getDigitalLocaleTime(
+              organizerEvent?.fromTimeSlot
+            )} - ${getDigitalLocaleTime(
+              new Date(organizerEvent?.toTimeSlot).getTime()
+            )} ${timeZone}`,
+            icon: sectionsIcons.time,
+          },
+      ],
     },
-    organizerEvent?.hourlyRate && {
+    (organizerEvent?.hourlyRate.ada || organizerEvent?.hourlyRate.gimbals) && {
       label: "Hourly Rate",
-      lineContent: {
-        content: `${organizerEvent?.hourlyRate ?? credentials?.hourlyRate}`,
-        icon: sectionsIcons.ada,
-      },
+      lineContent: [
+        organizerEvent?.hourlyRate.ada && {
+          content: `${organizerEvent?.hourlyRate.ada}`,
+          icon: sectionsIcons.ada,
+        },
+        organizerEvent?.hourlyRate.gimbals && {
+          content: `${organizerEvent?.hourlyRate.gimbals}`,
+          icon: sectionsIcons.ada,
+        },
+      ],
     },
   ].filter((s) => !!s)
 
@@ -169,27 +205,40 @@ export const EventConfirmationDetails = ({
         label: "Edit",
         callbackFnScreen: "Available Days Selection",
       },
-      lineContent: [
-        {
-          content: `Start: ${weekDays[getDay(fromDate)]} - ${
-            months[getMonth(fromDate)]
-          } ${getDate(fromDate)}`,
-          icon: sectionsIcons.calendar,
-        },
-        {
-          content: `End: ${weekDays[getDay(toDate)]} - ${
-            months[getMonth(toDate)]
-          } ${getDate(toDate)}`,
-          icon: sectionsIcons.calendar,
-        },
-      ],
+      lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
+        ? [
+            {
+              content: `Start: ${weekDays[getDay(fromDate)]} - ${
+                months[getMonth(fromDate)]
+              } ${getDate(fromDate)}`,
+              icon: sectionsIcons.calendar,
+            },
+            {
+              content: `End: ${weekDays[getDay(toDate)]} - ${
+                months[getMonth(toDate)]
+              } ${getDate(toDate)}`,
+              icon: sectionsIcons.calendar,
+            },
+          ]
+        : [
+            {
+              content: `${weekDays[getDay(fromDate)]}`,
+              icon: sectionsIcons.calendar,
+            },
+          ],
     },
     {
       label: "Hourly Rate",
-      lineContent: {
-        content: `${eventHourlyRate}`,
-        icon: sectionsIcons.ada,
-      },
+      lineContent: [
+        eventHourlyRate.ada && {
+          content: `${eventHourlyRate.ada}`,
+          icon: sectionsIcons.ada,
+        },
+        eventHourlyRate.gimbals && {
+          content: `${eventHourlyRate.gimbals}`,
+          icon: sectionsIcons.ada,
+        },
+      ],
     },
     {
       label: "Event card",
@@ -208,7 +257,7 @@ export const EventConfirmationDetails = ({
         },
         eventTitleColor !== "transparent" && {
           content: `${eventTitleColor}`,
-          icon: sectionsIcons.colorsPallete,
+          icon: sectionsIcons.font,
         },
       ],
     },
@@ -259,7 +308,7 @@ export const EventConfirmationDetails = ({
             )} - ${getDigitalLocaleTime(
               new Date(previewingEvent?.pickedDate || pickedDate).getTime() +
                 (previewingEvent?.duration || duration)
-            )}`,
+            )} ${timeZone}`,
             icon: sectionsIcons.time,
           },
         ],

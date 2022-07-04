@@ -16,12 +16,13 @@ type Props = StackScreenProps<BookingStackParamList, "Duration Choice">
 
 export const DurationChoice = ({ navigation, route }: Props) => {
   const { title, image, color, titleColor } = route.params
-  const { maxTimeSlotDuration, minTimeSlotDuration } = bookingContext()
+  const { maxTimeSlotDuration, minTimeSlotDuration, pickedDate } =
+    bookingContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [selectedDuration, setSelectedDuration] = React.useState<number>(0)
   const [cost, setCost] = React.useState<number>(0)
   const { walletBalance } = React.useContext(ProfileContext)
-  const { setDuration, setDurationCost } = bookingContext()
+  const { setDuration, setDurationCost, previewingEvent } = bookingContext()
   const { colorScheme } = appContext()
 
   const isLightMode = colorScheme === "light"
@@ -33,9 +34,10 @@ export const DurationChoice = ({ navigation, route }: Props) => {
 
   const { timeSlots } = useDurationSlots(
     minTimeSlotDuration,
-    maxTimeSlotDuration
+    maxTimeSlotDuration,
+    previewingEvent.availabilities,
+    pickedDate as number
   )
-
   const onBackNavigationPress = () => navigation.goBack()
 
   const onNextPress = async () => {

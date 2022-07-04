@@ -32,9 +32,11 @@ export const appContext = () => {
     colorScheme: state.colorScheme,
     pageIndex: state.pageIndex,
     appBgColor: state.appBgColor,
+    validGoogleOAuth: state.validGoogleOAuth,
     favoriteOrganizers: state.favoriteOrganizers,
     receivingAddr: state.receivingAddr,
     ref: state.ref,
+    textContent: state.textContent,
     userSettings: state.userSettings,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
     setUserSettings: (userSettings: UserSettings) =>
@@ -47,6 +49,12 @@ export const appContext = () => {
       dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
     toggleAuth: (auth: boolean, accountType: string) => {
       dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } })
+    },
+    setValidGoogleOAuth: (validGoogleOAuth: boolean) => {
+      dispatch({
+        type: "SET_VALID_GOOGLE_OAUTH",
+        payload: { validGoogleOAuth },
+      })
     },
     setFavoriteOrganizer: (alias: string) => {
       dispatch({ type: "SET_FAVORITE_ORGANIZER", payload: { alias } })
@@ -77,8 +85,10 @@ export const eventCreationContext = () => {
     privateEvent: state.privateEvent,
     fromDate: state.fromDate,
     toDate: state.toDate,
+    eventType: state.eventType,
     eventCardColor: state.eventCardColor,
     eventTitleColor: state.eventTitleColor,
+    gCalEventsBooking: state.gCalEventsBooking,
     setTextContent: (textContent: TextContent) => {
       dispatch({
         type: EventCreationTypes.SetTextContent,
@@ -87,11 +97,12 @@ export const eventCreationContext = () => {
     },
     setSelectedDays: (
       selectedDays: any[],
-      isRecurringSelection: boolean = false
+      isRecurringSelection: boolean = false,
+      eventType: EventType
     ) => {
       dispatch({
         type: EventCreationTypes.SetSelectedDays,
-        payload: { selectedDays, isRecurringSelection },
+        payload: { selectedDays, isRecurringSelection, eventType },
       })
     },
     setSelectedWeek: (selectedWeek: SelectedWeekDays) => {
@@ -166,6 +177,12 @@ export const eventCreationContext = () => {
         payload: { eventTitleColor: color },
       })
     },
+    setGCalEventsBooking: (gCalEventsBooking: boolean) => {
+      dispatch({
+        type: EventCreationTypes.SetGCalEventsBooking,
+        payload: { gCalEventsBooking },
+      })
+    },
     removeSelectedDays: () =>
       dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
     removeSelectedWeeks: () =>
@@ -190,6 +207,7 @@ export const bookingContext = () => {
     previewingEvent: state.previewingEvent,
     maxTimeSlotDuration: state.maxTimeSlotDuration,
     minTimeSlotDuration: state.minTimeSlotDuration,
+    createGoogleCalEvent: state.createGoogleCalEvent,
     setDuration: (duration: number) =>
       dispatch({ type: "SET_DURATION", payload: { duration } }),
     setDurationCost: (durationCost: number) =>
@@ -225,6 +243,11 @@ export const bookingContext = () => {
       dispatch({
         type: "SET_PREVIEWING_EVENT",
         payload: { previewingEvent },
+      }),
+    setCreateGoogleCalEvent: (createGoogleCalEvent: boolean) =>
+      dispatch({
+        type: "SET_CREATE_GCAL_EVENT",
+        payload: { createGoogleCalEvent },
       }),
     resetBookingState: () => {
       dispatch({

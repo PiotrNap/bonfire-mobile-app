@@ -1,5 +1,6 @@
 import {
   EventAvailability,
+  HourlyRate,
   SelectedDays,
 } from "common/interfaces/newEventInterface"
 
@@ -16,9 +17,10 @@ export interface CreateEventDto {
   tags: string[]
   fromDate: Date | null
   toDate: Date | null
-  hourlyRate: number
+  hourlyRate: HourlyRate
   privateEvent: boolean
   eventCardColor: string
   eventTitleColor: string
   organizer: EventUser
+  gCalEventsBooking: boolean
 }

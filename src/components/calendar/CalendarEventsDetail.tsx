@@ -37,6 +37,7 @@ export const CalendarEventsDetail = ({
   type,
   index,
   fromDate,
+  toDate,
   hourlyRate,
   availableAt,
   fromTimeSlot,
@@ -70,9 +71,12 @@ export const CalendarEventsDetail = ({
     type === "active slot"
       ? getDate(availableAt)
       : getDate(bookedDate || availabilityDate || fromDate || "")
-  const eventMonth = months[getMonth(bookedDate || fromTimeSlot)]
+  const eventMonth = months[getMonth(bookedDate || fromDate)]
   const fromDayActiveEvent = getDate(minAvailableMonthDate)
   const toDayActiveEvent = getDate(maxAvailableMonthDate)
+  const oneDayEvent = fromDate === toDate
+  const isLastCard = index === listLength - 1
+  const isFirstCard = index === 0
 
   const fromDateToDateEvent =
     type === "active slot" &&
@@ -81,17 +85,15 @@ export const CalendarEventsDetail = ({
 
   const onDateCardPress = () => {
     // when we click on the last card, return
-    if (index === listLength - 1) return
+    if (isLastCard) return
 
     if (
       highlightedDay.listSection === listSection &&
       highlightedDay.index - 1 === index &&
       animatedValue === Sizing.x65
     ) {
-      console.log("here") // when someone clicks on the same card, just pull it back to top
       setHighlightedDay({ listSection: "", index: null })
     } else {
-      console.log("or here") // on press, set the index of card bellow the one that was clicked,
       // because that's the one that needs to move down
       setHighlightedDay({ listSection, index: index + 1 })
     }
@@ -107,6 +109,8 @@ export const CalendarEventsDetail = ({
               description: eventDescription,
               availableAt,
               hourlyRate,
+              fromTimeSlot,
+              toTimeSlot,
             },
             header: "Active Event",
           }
@@ -127,7 +131,7 @@ export const CalendarEventsDetail = ({
 
   const animateToTop = () => {
     Animated.timing(animatedMargin, {
-      toValue: -Sizing.x65,
+      toValue: -Sizing.x75,
       duration: 200,
       useNativeDriver: false,
     }).start()
@@ -151,17 +155,25 @@ export const CalendarEventsDetail = ({
     }
   }, [highlightedDay])
 
+  const cardBgColor =
+    type === "active slot"
+      ? Colors.blueCalendarCard.s300
+      : Colors.yellowCalendarCard.s300
   const cardStyle = [
     styles.container,
     {
-      backgroundColor:
-        type === "active slot"
-          ? Colors.blueCalendarCard.s300
-          : Colors.yellowCalendarCard.s300,
+      backgroundColor: cardBgColor,
     },
     {
       zIndex: index,
       marginTop: index === 0 ? 0 : animatedMargin,
+    },
+    isAndroid && {
+      elevation: index + 1,
+    },
+    !isFirstCard && {
+      borderTop: Outlines.borderWidth.thick,
+      borderColor: applyOpacity(Colors.neutral.s600, 1),
     },
   ]
   const textColor = {
@@ -183,7 +195,11 @@ export const CalendarEventsDetail = ({
         <View style={styles.upperContainer}>
           <View style={styles.dateHolder}>
             <Text style={[styles.dateDay, textColor]}>
-              {fromDateToDateEvent
+              {oneDayEvent
+                ? fromDayActiveEvent < 10
+                  ? "0" + fromDayActiveEvent
+                  : fromDayActiveEvent
+                : fromDateToDateEvent
                 ? (fromDayActiveEvent < 10
                     ? "0" + fromDayActiveEvent
                     : fromDayActiveEvent) +
