@@ -3,7 +3,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from "react-native"
 
 import { Formik, Field } from "formik"
 import { Buttons, Typography, Colors, Sizing, Forms } from "styles/index"
-import { accountValidationScheme } from "lib/validators"
+import { accountValidationScheme } from "lib/utils"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"
 import { setAuthorizationToken } from "Api/base"

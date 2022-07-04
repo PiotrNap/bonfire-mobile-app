@@ -14,12 +14,12 @@ import { AppActions, AppTypes } from "common/types/contextTypes"
 import { Colors } from "styles/index"
 
 // text json files
-import wallet from "assets/textContent/wallet.json"
+// import wallet from "assets/textContent/wallet.json"
 
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
 
-const appTextContent = { wallet }
+const appTextContent = { wallet: {} }
 
 const initialAppState: AppState = {
   authentication: false,
