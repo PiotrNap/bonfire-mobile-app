@@ -66,7 +66,7 @@ export const ImportMnemonicsScreen = ({ navigation }: Props) => {
     let rowInputsSum = 0
     for (let i = 0; i < MAX_MNEMONICS_LENGTH / 3; i++) {
       inputs.push(
-        <View style={styles.inputRow} key={getRandomKey(i)}>
+        <View style={styles.inputRow}>
           <View style={styles.inputRowItem}>
             <SubHeaderText
               customStyle={styles.recoveryPhraseInputNumber}

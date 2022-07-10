@@ -78,7 +78,9 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [skills, setSkills] = useState<string | undefined>("")
   const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
   //@TODO change this...
-  const [walletBalance, setWalletBalance] = useState<number>(50)
+  const [walletBalance, setWalletBalance] = useState<number>(0)
+  const [walletBaseAddress, setWalletBaseAddress] = useState<string>("")
+  const [walletName, setWalletName] = useState<string>("")
   const [profileType, setProfileType] = useState<"" | "attendee" | "organizer">(
     ""
   )
@@ -89,6 +91,8 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     id,
     publicKey,
     walletBalance,
+    walletName,
+    walletBaseAddress,
     bio,
     imageBase64,
     hasSyncedWallet,
@@ -140,6 +144,8 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setBio,
         setImageBase64,
         setWalletBalance,
+        setWalletBaseAddress,
+        setWalletName,
         setHasSyncedWallet,
         setTimeBlockLengthMin,
         setTimeBlockCostADA,

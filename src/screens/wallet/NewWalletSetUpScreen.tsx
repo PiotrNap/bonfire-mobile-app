@@ -70,6 +70,7 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
         "mnemonic"
       )
       await setToEncryptedStorage("wallet-name", name)
+      await setToEncryptedStorage("wallet-base-address", params.baseAddress)
 
       setIsLoading(false)
       navigation.navigate("Wallet")
