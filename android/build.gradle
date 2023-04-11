@@ -2,12 +2,12 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "29.0.3"
+        buildToolsVersion = "30.0.3"
         minSdkVersion = 21
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        compileSdkVersion = 30
+        targetSdkVersion = 31
         supportLibVersion = "29.0.0"
-        ndkVersion = "22.1.7171670"
+        ndkVersion = "25.2.9519653"
     }
     repositories {
         google()
@@ -17,12 +17,15 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.4")
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'gradle.plugin.org.mozilla.rust-android-gradle:plugin:0.8.3'
-        classpath 'com.google.gms:google-services:4.3.10'
+
+        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31'
+        classpath 'org.mozilla.rust-android-gradle:plugin:0.9.3'
     }
 }
 
@@ -42,4 +45,3 @@ allprojects {
         jcenter()
     }
 }
-
