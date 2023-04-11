@@ -14,6 +14,7 @@ import { applyOpacity } from "../../styles/colors"
 export interface CalendarEventsDetailProps extends Event {
   setHighlightedDay: React.Dispatch<any>
   highlightedDay: any
+  organizer: any
   listLength: number
   index: number
   availableAt: number

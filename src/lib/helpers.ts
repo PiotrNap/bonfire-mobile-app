@@ -145,7 +145,7 @@ export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 export const encryptWithPassword = async (
   value: string,
   password: string
-): Promise<string> => {
+): Promise<undefined | string> => {
   const saltHex = crs({ length: 2 * 32 })
   const nonceHex = crs({ length: 2 * 12 })
   const hexValue = Buffer.from(value).toString("hex")
@@ -157,7 +157,7 @@ export const encryptWithPassword = async (
 export const decryptWithPassword = async (
   cipherText: string,
   password: string
-): Promise<string> => {
+): Promise<undefined | string> => {
   const hexPassword = Buffer.from(password).toString("hex")
   return await decrypt_with_password(hexPassword, cipherText)
 }

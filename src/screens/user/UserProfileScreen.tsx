@@ -28,7 +28,7 @@ import { SlideTopModal } from "components/modals/SlideTopModal"
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}
 
-export const UserProfile = ({ navigation }: UserProfileProps) => {
+export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
   const { colorScheme, setColorScheme } = appContext()

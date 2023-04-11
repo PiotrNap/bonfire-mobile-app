@@ -10,7 +10,7 @@ import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { generateMnemonic, Wallet } from "lib/wallet"
 import { BodyText } from "components/rnWrappers/bodyText"
-import { monospace } from "../../styles/typography"
+import { monospace } from "../styles/typography"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { Checkbox } from "components/forms/Checkbox"
 

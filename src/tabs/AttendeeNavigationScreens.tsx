@@ -3,12 +3,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
 import { HomeScreen } from "screens/index"
 import { OrganizerTabParamList } from "common/types/navigationTypes"
-import { WalletScreen } from "screens/index"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
 import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
+import { WalletScreen } from "screens/wallet/WalletScreen"
 
 const AttendeeNavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
 

@@ -1,26 +1,13 @@
 import * as React from "react"
-import { View, StyleSheet, Pressable, Text } from "react-native"
 import { NavigationContainer } from "@react-navigation/native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import {
-  CalendarIcon,
-  UserIcon,
-  SearchIcon,
-  WalletIcon,
-  HomeIcon,
-} from "icons/index"
-import {
-  HomeScreen,
-  WalletScreen,
-  MyCalendarScreen,
-  BrowseScreen,
-} from "screens/index"
+import { HomeScreen, MyCalendarScreen, BrowseScreen } from "screens/index"
 import { BrowseScreensStack } from "stacks/index"
 
-import { Colors, Buttons, Sizing, Outlines, Typography } from "styles/index"
-import { UserProfileScreen } from "screens/organizer/UserProfileScreen"
 import { appContext } from "contexts/contextApi"
 import { WalletTopUpScreen } from "screens/onboarding"
+import { UserProfileScreen } from "screens/user"
+import { WalletScreen } from "screens/wallet/WalletScreen"
 
 export interface OrganizerBottomNavProps {}
 

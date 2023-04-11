@@ -101,6 +101,7 @@ export const WalletTopUpScreen = ({
           secondButtonTitle={
             textContent.wallet.create_wallet.modal.secondButton_title
           }
+          buttonCb={() => {}}
         />
       </View>
     ),

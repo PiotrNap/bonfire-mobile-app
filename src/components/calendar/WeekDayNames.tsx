@@ -79,7 +79,7 @@ export const WeekDayNames = ({
       .map((num: number) => !!selectedDays?.[num])
       .includes(false)
 
-    setSelectedDays(recurringAvailableDays(index), selectRecurring)
+    setSelectedDays(recurringAvailableDays(index), selectRecurring, eventType)
 
     let newSelectedWeek = currentMonthSelectedWeek()
 

@@ -73,7 +73,7 @@ export const EventDescription = ({ navigation, route }: any) => {
       if (!event) return
 
       //TODO let organizers decide what's the 'good until' booking window period
-      const availableDays: Availabilities = convertToCalendarAvailabilities(
+      const availableDays: Availabilities[] = convertToCalendarAvailabilities(
         event.selectedDays,
         event.availabilities
       )

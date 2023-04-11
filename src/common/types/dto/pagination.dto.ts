@@ -1,7 +1,10 @@
+export type Organizer = {
+  organizer_id?: string
+}
+
 export interface PaginationRequestDto {
   limit: number
   page: number
-  organizer_id: string
 }
 
 export interface PaginationResponseDto {

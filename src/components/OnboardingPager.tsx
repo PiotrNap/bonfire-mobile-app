@@ -35,11 +35,10 @@ export const OnboardingScreens = ({
       }
 
       const inputRange = state.routes.map((_: any, i: number) => i)
-      const opacity = Animated.interpolate(
-        position,
+      const opacity = Animated.interpolateNode(position, {
         inputRange,
-        inputRange.map((i: number) => (i === index ? 1 : 0))
-      )
+        outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
+      })
 
       return (
         <Pressable

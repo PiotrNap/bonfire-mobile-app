@@ -85,7 +85,7 @@ export interface NewCalendarMonths {
   year?: number
   isBookingCalendar?: boolean
   isRegularCalendar?: boolean
-  availabilities?: Availabilities
+  availabilities?: Availabilities[]
   startFromCustomMonth?: boolean
   isNewCalendar?: boolean
 }

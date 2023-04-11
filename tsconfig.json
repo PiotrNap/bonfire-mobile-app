@@ -9,6 +9,7 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "isolatedModules": true,
@@ -34,11 +35,6 @@
       "utils/*": ["./src/lib/utils.ts*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js"
-  ],
-  "extends": "expo/tsconfig.base"
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.json"]
 }

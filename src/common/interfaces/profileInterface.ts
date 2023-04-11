@@ -18,7 +18,6 @@ export interface ProfileState {
   description: string | undefined
   skills: string | undefined
   profileType: "attendee" | "organizer" | ""
-  timeZone: string | undefined
   getUserProfile: () => any
   setName: (input: string) => void
   setUsername: (input: string) => void
@@ -26,7 +25,6 @@ export interface ProfileState {
   setId: (input: string) => void
   setBio: (input: string) => void
   setImageBase64: (input: string) => void
-  setTimeZone: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
   setTimeZone: (input: string) => void

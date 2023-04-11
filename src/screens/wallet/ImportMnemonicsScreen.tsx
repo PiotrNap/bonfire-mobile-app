@@ -13,7 +13,7 @@ import { appContext } from "contexts/contextApi"
 import { RECOVERY_PHRASE_LENGTHS } from "lib/wallet/config"
 import { Colors, Sizing } from "styles/index"
 import { getRandomKey } from "lib/utils"
-import { SlideTopModal } from "components/modals/slideTopModal"
+import { SlideTopModal } from "components/modals/SlideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { useWalletInit } from "lib/hooks/useWalletInit"
 

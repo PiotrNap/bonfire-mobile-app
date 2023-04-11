@@ -21,7 +21,7 @@ import {
 import { CARDANO_NETWORK } from "@env"
 import { AnyObject } from "yup/lib/types"
 
-export const generateMnemonic = bip39(128, randomBytes)
+export const generateMnemonic = () => bip39(128, randomBytes)
 
 export class Wallet {
   chainConfig: AnyObject
@@ -70,21 +70,29 @@ export class Wallet {
   async generateBaseAddress(
     accountPubKey: Bip32PublicKey,
     index: number
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     const chainKey = await accountPubKey.derive(ROLE_TYPE.EXTERNAL_CHAIN)
     const stakingKey = await accountPubKey.derive(ROLE_TYPE.STAKING_KEY)
+    if (!chainKey || !stakingKey) return
 
-    const chainKeyAddr = await (await chainKey.derive(index)).to_raw_key()
-    const stakingKeyAddr = await (
-      await stakingKey.derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX)
-    ).to_raw_key()
+    const derivedIdx = await chainKey.derive(index)
+    const chainKeyAddr = await derivedIdx?.to_raw_key()
+    const stakingDerivedIdx = await stakingKey.derive(
+      CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX
+    )
+    const stakingKeyAddr = await stakingDerivedIdx?.to_raw_key()
+
+    if (!chainKeyAddr || !stakingKeyAddr) return
+
+    const chainKeyAddrHash = await chainKeyAddr.hash()
+    const stakingKeyAddrHash = await stakingKeyAddr.hash()
 
     const addr = await BaseAddress.new(
       this.chainConfig.CHAIN_NETWORK_ID,
-      await StakeCredential.from_keyhash(await chainKeyAddr.hash()),
-      await StakeCredential.from_keyhash(await stakingKeyAddr.hash())
+      await StakeCredential.from_keyhash(chainKeyAddrHash),
+      await StakeCredential.from_keyhash(stakingKeyAddrHash)
     )
-    return await (await addr.to_address()).to_bech32()
+    return await (await addr.to_address()).to_bech32(undefined)
   }
 
   async createRootKey(mnemonic: string): Promise<Bip32PrivateKey> {
@@ -107,10 +115,10 @@ export class Wallet {
     return await setToEncryptedStorage(storageKey, encryptedValue)
   }
 
-  async decryptAndRetrieveFromDevice(
+  async retrieveAndDecryptFromDevice(
     password: string,
     storageKey: StoragePropertyKeys
-  ): Promise<string> {
+  ): Promise<undefined | string> {
     const value = await getFromEncryptedStorage(storageKey)
     return await decryptWithPassword(value, password)
   }

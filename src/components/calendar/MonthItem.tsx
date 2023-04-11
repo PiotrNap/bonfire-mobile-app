@@ -105,7 +105,7 @@ export const MonthItem = ({
             activeDay={activeDay}
             updateActiveDay={updateActiveDay}
             events={day.events}
-            isPastDate={isPastDate(year, month, day.number, day?.toTimeSlot)}
+            isPastDate={isPastDate(year, month, day.number)}
             showPastDate={userSettings?.showPastCalendarEvents}
           />
         )

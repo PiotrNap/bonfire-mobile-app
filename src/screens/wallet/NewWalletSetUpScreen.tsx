@@ -34,7 +34,7 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
         password,
         "wallet-root-key"
       )
-      const decrypted = await wallet.decryptAndRetrieveFromDevice(
+      const decrypted = await wallet.retrieveAndDecryptFromDevice(
         password,
         "wallet-root-key"
       )
