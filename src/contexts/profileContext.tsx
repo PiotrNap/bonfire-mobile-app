@@ -23,6 +23,7 @@ export const initialState: ProfileState = {
   timeBlockCostADA: 0,
   walletBalance: 0,
   profileType: "",
+  timeZone: "",
   hourlyRate: { ada: 0, gimbals: 0 },
   getUserProfile: () => {},
   setName: () => {},
@@ -35,6 +36,7 @@ export const initialState: ProfileState = {
   setTimeZone: () => {},
   setTimeBlockLengthMin: () => {},
   setTimeBlockCostADA: () => {},
+  setTimeZone: () => {},
   setHourlyRate: () => {},
   setHasSyncedWallet: () => {},
   setWalletBalance: () => {},
@@ -63,6 +65,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
   )
+  const [timeZone, setTimeZone] = useState<string | undefined>("")
   const [hourlyRate, setHourlyRate] = useState<HourlyRate>({
     ada: 0,
     gimbals: 0,
@@ -91,6 +94,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     timeZone,
     timeBlockLengthMin,
     timeBlockCostADA,
+    timeZone,
     profession,
     jobTitle,
     description,
@@ -115,6 +119,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setJobTitle("")
     setDescription("")
     setSkills("")
+    setTimeZone("")
     setHasSyncedWallet(false)
     setWalletBalance(0)
     setProfileType("")
@@ -142,6 +147,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setJobTitle,
         setDescription,
         setSkills,
+        setTimeZone,
         resetProfileState,
       }}>
       {children}

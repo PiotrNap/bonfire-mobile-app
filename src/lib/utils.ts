@@ -788,7 +788,7 @@ export const convertToCalendarEvents = (organizerEvents: {
   var currentYear: number, currentMonth: string, currentDay: number
 
   const iterateOverEvents = (
-    arr: any[],
+    arr: any[] = [],
     type: "booked slot" | "scheduled slot" | "active slot"
   ) => {
     if (!arr.length) return

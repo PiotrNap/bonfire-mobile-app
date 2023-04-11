@@ -17,6 +17,7 @@ import { startChallengeSequence } from "lib/helpers"
 import { generateKeyPair } from "lib/tweetnacl"
 import base64 from "base64-js"
 import TZone from "react-native-timezone"
+import { inputStyles } from "../../styles/forms"
 
 export interface CreateAccountFormProps {
   onErrorCallback: (val: string) => void
@@ -280,46 +281,5 @@ const styles = StyleSheet.create({
     ...Typography.body.x30,
     fontFamily: "Roboto-Regular",
     color: Colors.primary.s300,
-  },
-})
-
-/**
- * Styles passed as props to CustomInput
- */
-const inputStyles = StyleSheet.create({
-  inputContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  labelContainer: {
-    width: "100%",
-  },
-  label: {
-    ...Forms.inputLabel.primary,
-  },
-  textInputWrapper: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
-  },
-  errorInput: {
-    borderColor: Colors.danger.s300,
-  },
-  errorWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    height: Sizing.x20,
-  },
-  error: {
-    color: Colors.danger.s400,
-    ...Typography.header.x20,
   },
 })

@@ -11,6 +11,8 @@ import { AppContextProvider } from "contexts/appContext"
 import { ProfileContextProvider } from "contexts/profileContext"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { enableScreens } from "react-native-screens"
+import SplashScreen from "react-native-splash-screen"
+
 import { WalletTopUpScreen } from "screens/onboarding"
 import { Confirmation, DepositSuccessful } from "screens/payments"
 import { AttendeeNavigationScreens } from "tabs/AttendeeNavigationScreens"
@@ -22,7 +24,6 @@ import {
   getAuthorizedLinkingConfig,
   getUnauthorizedLinkingConfig,
 } from "lib/navigation"
-import SplashScreen from "react-native-splash-screen"
 import { useFirebaseMessaging } from "lib/hooks/useFirebaseMessaging"
 
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode

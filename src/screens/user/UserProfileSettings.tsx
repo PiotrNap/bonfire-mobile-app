@@ -111,7 +111,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       </View>
       <SettingsItem
         titleStyle={textStyle}
-        title={"Show past events on the calendar."}>
+        title={"Show past events on my calendar."}>
         <Text style={switchTextStyle}>No</Text>
         <CustomSwitch
           onValueChange={onShowPastCalendarEvents}

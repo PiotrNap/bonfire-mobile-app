@@ -10,10 +10,11 @@ import {
   Animated,
 } from "react-native"
 
-import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
+import { Colors, Outlines, Sizing } from "styles/index"
 import { Picker } from "@react-native-picker/picker"
 import { DownIcon } from "assets/icons"
 import { appContext } from "contexts/contextApi"
+import { formStyleDark, formStyleLight } from "../../styles/forms"
 
 export interface PlainInputPickerProps {
   label: string
@@ -254,36 +255,5 @@ const defaultStyles = StyleSheet.create({
     height: Sizing.x30,
     position: "absolute",
     right: 0,
-  },
-})
-
-const formStyleLight = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_light,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_light,
-    ...Outlines.shadow.lifted,
-    alignItems: "center",
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
-  },
-})
-
-const formStyleDark = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_dark,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_dark,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
   },
 })

@@ -4,7 +4,7 @@ import { StyleProp, StyleSheet, View } from "react-native"
 import { Formik, Field } from "formik"
 import Filter from "bad-words"
 
-import { accountValidationScheme } from "lib/validators"
+import { accountValidationScheme } from "lib/utils"
 import { Sizing } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { useUpdateAccountInfo } from "lib/hooks/useUpdateAccountInfo"

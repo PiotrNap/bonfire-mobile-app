@@ -32,6 +32,7 @@
     "axios": "^0.21.1",
     "bad-words": "^3.0.4",
     "base64-js": "^1.5.1",
+    "big-integer": "^1.6.51",
     "bip39": "^3.0.4",
     "browserify-zlib": "^0.1.4",
     "buffer": "^4.9.1",
@@ -50,7 +51,7 @@
     "path-browserify": "^0.0.0",
     "qs": "^6.10.1",
     "querystring-es3": "^0.2.1",
-    "react": "16.13.1",
+    "react": "17.0.2",
     "react-content-loader": "^6.2.0",
     "react-dom": "16.13.1",
     "react-native": "~0.65.1",
@@ -71,11 +72,12 @@
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modal": "^11.10.0",
     "react-native-modal-selector": "git+https://github.com/PiotrNap/react-native-modal-selector.git",
+    "react-native-os": "^1.0.1",
     "react-native-pager-view": "5.0.12",
     "react-native-permissions": "^3.0.5",
     "react-native-qrcode-svg": "^6.1.1",
     "react-native-randombytes": "^3.6.1",
-    "react-native-reanimated": "^3.0.2",
+    "react-native-reanimated": "2.9.0",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-restart": "^0.0.24",
     "react-native-safe-area-context": "3.2.0",
@@ -162,7 +164,8 @@
     "tls": false,
     "dns": "dns.js",
     "domain": "domain-browser",
-    "querystring": "querystring-es3"
+    "querystring": "querystring-es3",
+    "net": "react-native-tcp"
   },
   "resolutions": {
     "@types/react": "17.0.2",
@@ -191,6 +194,7 @@
     "tls": false,
     "dns": "dns.js",
     "domain": "domain-browser",
-    "querystring": "querystring-es3"
+    "querystring": "querystring-es3",
+    "net": "react-native-tcp"
   }
 }

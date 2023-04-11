@@ -107,6 +107,7 @@ export const EventsList = ({
     }),
     []
   )
+  //@TODO fix loading indicator at the bottom
   return (
     <>
       {!isEmptyEventsList && !isLoading ? (
@@ -125,7 +126,6 @@ export const EventsList = ({
           onRefresh={onRefresh}
           onLayout={onLayout}
           showsVerticalScrollIndicator={false}
-          //@TODO fix loading indicator at the bottom
           ListFooterComponent={isLoading ? _ActivityIndicator : null}
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={30}

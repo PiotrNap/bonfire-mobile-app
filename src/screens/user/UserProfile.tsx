@@ -23,7 +23,7 @@ import { useUserInfo } from "lib/hooks/useUserInfo"
 import FastImage from "react-native-fast-image"
 import { CustomSwitch } from "components/rnWrappers/customSwitch"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
-import { SlideTopModal } from "components/modals/slideTopModal"
+import { SlideTopModal } from "components/modals/SlideTopModal"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile"> {}

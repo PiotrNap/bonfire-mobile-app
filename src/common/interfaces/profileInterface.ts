@@ -18,6 +18,7 @@ export interface ProfileState {
   description: string | undefined
   skills: string | undefined
   profileType: "attendee" | "organizer" | ""
+  timeZone: string | undefined
   getUserProfile: () => any
   setName: (input: string) => void
   setUsername: (input: string) => void
@@ -28,6 +29,7 @@ export interface ProfileState {
   setTimeZone: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
+  setTimeZone: (input: string) => void
   setHourlyRate: (inputs: HourlyRate) => void
   setHasSyncedWallet: (arg: boolean) => void
   setWalletBalance: (input: number) => void

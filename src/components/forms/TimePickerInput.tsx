@@ -15,6 +15,7 @@ import { Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
 import { DownIcon } from "assets/icons"
 import { getDigitalTime } from "lib/utils"
 import { appContext } from "contexts/contextApi"
+import { formStyleDark, formStyleLight } from "../../styles/forms"
 
 export interface TimePickerInputProps {
   label: string
@@ -223,36 +224,4 @@ const defaultStyles = StyleSheet.create({
     borderRadius: Outlines.borderRadius.base,
   },
   dateTimePicker: {},
-})
-
-const formStyleLight = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_light,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_light,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
-    marginRight: "auto",
-  },
-})
-
-const formStyleDark = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_dark,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_dark,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
-    marginRight: "auto",
-  },
 })

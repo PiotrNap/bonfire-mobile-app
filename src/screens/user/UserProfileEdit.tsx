@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native"
 
 import { CheckIcon, LeftArrowIcon } from "assets/icons"
 import { Layout } from "components/layouts/basicLayout"
-import { SlideTopModal } from "components/modals/slideTopModal"
+import { SlideTopModal } from "components/modals/SlideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { Colors, Typography, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
@@ -11,9 +11,13 @@ import { UpdateAccountForm } from "components/forms/UpdateAccountForm"
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
 
-interface UserProfileEditProps extends StackScreenProps<ProfileStackParamList, "Edit Profile"> {}
+interface UserProfileEditProps
+  extends StackScreenProps<ProfileStackParamList, "Edit Profile"> {}
 
-export const UserProfileEdit = ({ navigation, route }: UserProfileEditProps) => {
+export const UserProfileEdit = ({
+  navigation,
+  route,
+}: UserProfileEditProps) => {
   const { colorScheme, accountType } = appContext()
   const [isInfoChanged, setIsInfoChanged] = React.useState<boolean>(false)
   const [updateResponse, setUpdateResponse] = React.useState<any>(null)

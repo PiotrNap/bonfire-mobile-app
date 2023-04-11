@@ -11,7 +11,8 @@ import {
   StyleProp,
 } from "react-native"
 
-import { Colors, Forms, Outlines, Sizing } from "styles/index"
+import { Colors, Sizing } from "styles/index"
+import { formStyleDark, formStyleLight } from "../../styles/forms"
 
 export type CustomPlainInputProps = TextInputProps & {
   label?: string
@@ -149,33 +150,5 @@ const defaultStyles = StyleSheet.create({
   icon: {
     width: Sizing.x30,
     height: Sizing.x30,
-  },
-})
-
-const formStyleLight = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_light,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_light,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
-  },
-})
-
-const formStyleDark = StyleSheet.create({
-  label: {
-    ...Forms.inputLabel.primary_dark,
-  },
-  input: {
-    width: "100%",
-    ...Forms.input.primary_dark,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s300,
   },
 })

@@ -11,7 +11,7 @@ import {
 } from "icons/index"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { ProfileContext } from "contexts/profileContext"
-import { SlideTopModal } from "components/modals/slideTopModal"
+import { SlideTopModal } from "components/modals/SlideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { Errors } from "common/types/errors"
 
