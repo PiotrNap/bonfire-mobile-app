@@ -2,9 +2,9 @@
 
 This is an open-source project. Use it at your own risk. 
 
-Community best efforts put into this project have tried to make this softwtare as reliable as possible,
+Community best efforts put into this project have tried to make this software as reliable as possible,
 but it cannot guarantee that things will work as expected every time. None of the people who contributed to 
-this project is or will be responsible for any damagaed caused by explicit use of this software. 
+this project is or will be responsible for any damage caused by explicit use of this software. 
 
 ## Getting started
 
