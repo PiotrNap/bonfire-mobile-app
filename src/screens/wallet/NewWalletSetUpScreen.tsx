@@ -1,4 +1,8 @@
+import * as React from "react"
+import { View, StyleSheet, ScrollView } from "react-native"
+
 import { StackScreenProps } from "@react-navigation/stack"
+
 import { Users } from "Api/Users"
 import { WalletStackParamList } from "common/types/navigationTypes"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
@@ -13,9 +17,6 @@ import { ProfileContext } from "contexts/profileContext"
 import { setToEncryptedStorage } from "lib/encryptedStorage"
 import { Wallet } from "lib/wallet"
 import { WalletSetUpFormValues } from "lib/wallet/types"
-import * as React from "react"
-import { View, StyleSheet, Pressable, Text } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
 
@@ -28,15 +29,11 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
   const [walletFormValues, setWalletFormValues] =
     React.useState<WalletSetUpFormValues | null>(null)
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
-  const [checkboxSelected, setCheckboxSelected] = React.useState<any>({
-    0: false,
-    1: false,
-  })
   const { params } = route
   const isLightMode = colorScheme === "light"
 
   const onBackNavigation = () => navigation.goBack()
-  const onSubmitCallback = async (walletForm: WalletSetUpFormValues) => {
+  const onSubmitCallback = (walletForm: WalletSetUpFormValues) => {
     setIsLoading(true)
     setIsModalVisible(true)
     setWalletFormValues(walletForm)
@@ -46,34 +43,40 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
   }
   const createWallet = async () => {
     if (!walletFormValues) return
+    const { password, name } = walletFormValues
+
+    if (params.isNewWalletCreation) {
+      navigation.navigate("Mnemonic Preview", walletFormValues)
+    }
 
     setIsLoading(true)
     setIsModalVisible(false)
-    // - send base address to our back end (to know where to fetch tx from, have insight to wallet history ic of dispute, track tx of users)
+    // - send base address to our back end (to know where to fetch tx from, have insight to wallet history ic of a dispute,
+    //   and to track tx of each user)
     // - store keys to encrypted storage, encrypted with the password
     // - save the name and base address unencrypted (to display on wallet screen, fetch all tx's)
     try {
-      // update user entity
+      const wallet = new Wallet()
+
       await Users.updateUser({ walletBaseAddress: params.baseAddress }, id)
 
-      const wallet = new Wallet()
-      const { password, name } = walletFormValues
+      if (params.rootKey && params.mnemonics && params.baseAddress) {
+        await wallet.encryptAndStoreOnDevice(
+          params.rootKey,
+          password,
+          "wallet-root-key"
+        )
+        await wallet.encryptAndStoreOnDevice(
+          Object.values(params.mnemonics).join(" "),
+          password,
+          "mnemonic"
+        )
+        await setToEncryptedStorage("wallet-name", name)
+        await setToEncryptedStorage("wallet-base-address", params.baseAddress)
 
-      await wallet.encryptAndStoreOnDevice(
-        params.rootKey,
-        password,
-        "wallet-root-key"
-      )
-      await wallet.encryptAndStoreOnDevice(
-        Object.values(params.mnemonics).join(" "),
-        password,
-        "mnemonic"
-      )
-      await setToEncryptedStorage("wallet-name", name)
-      await setToEncryptedStorage("wallet-base-address", params.baseAddress)
-
-      setIsLoading(false)
-      navigation.navigate("Wallet")
+        setIsLoading(false)
+        navigation.navigate("Wallet")
+      }
     } catch (e) {
       console.error(e)
       setIsLoading(false)
@@ -87,12 +90,10 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
           <HeaderText
             colorScheme={colorScheme}
             customStyles={{ marginBottom: Sizing.x10 }}>
-            Set Up a New Wallet
+            {textContent.wallet.common.wallet_set_up.header}
           </HeaderText>
           <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Give your wallet a name and provide a unique spending password. This
-            password will be required to spend your assets and gain access to
-            the recovery phrase. Make sure to make a backup copy.
+            {textContent.wallet.common.wallet_set_up.body}
           </SubHeaderText>
         </View>
         <View style={styles.form}>
@@ -105,7 +106,7 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
         onRequestClose={closeRiskAckModal}
         transparent={true}>
         <View style={styles.modalView}>
-          <ScrollView
+          <View
             style={[
               styles.modalContent,
               {
@@ -117,20 +118,34 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
             <SubHeaderText
               customStyle={{ ...Typography.fontWeight.semibold }}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              {textContent.wallet.risk_acknowledgement.header}
+              {!params.isNewWalletCreation
+                ? textContent.wallet.risk_acknowledgement.header
+                : textContent.wallet.create_wallet.mnemonic_info_modal.header}
             </SubHeaderText>
-            {textContent.wallet.risk_acknowledgement.body_items.map((item) => (
-              <View style={styles.modalItemWrapper}>
-                <BodyText>{item.text}</BodyText>
-              </View>
-            ))}
-            <View style={{ marginBottom: "auto" }}>
+            <ScrollView style={styles.modalScrollContent}>
+              {!params.isNewWalletCreation ? (
+                textContent.wallet.risk_acknowledgement.body_items.map(
+                  (item) => (
+                    <View style={styles.modalItemWrapper}>
+                      <BodyText>{item.text}</BodyText>
+                    </View>
+                  )
+                )
+              ) : (
+                <View style={styles.modalItemWrapper}>
+                  <BodyText>
+                    {textContent.wallet.create_wallet.mnemonic_info_modal.body}
+                  </BodyText>
+                </View>
+              )}
+            </ScrollView>
+            <View style={styles.modalButtonsWrapper}>
               <FullWidthButton
                 text="I Understand"
                 style={styles.modalButton}
                 textStyle={{ ...Typography.fontSize.x25 }}
                 colorScheme={colorScheme}
-                onPressCallback={() => createWallet()}
+                onPressCallback={createWallet}
               />
               <FullWidthButton
                 text="Cancel"
@@ -140,7 +155,7 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
                 onPressCallback={() => setIsModalVisible(false)}
               />
             </View>
-          </ScrollView>
+          </View>
         </View>
       </SmallModal>
     </>
@@ -168,11 +183,16 @@ const styles = StyleSheet.create({
     padding: Sizing.x12,
     borderRadius: Outlines.borderRadius.base,
     width: "80%",
-    maxHeight: "70%",
+    height: "80%",
   },
+  modalScrollContent: {},
   modalItemWrapper: {
     marginVertical: Sizing.x5,
-    padding: Sizing.x5,
+    paddingTop: Sizing.x15,
+    paddingBottom: Sizing.x5,
+  },
+  modalButtonsWrapper: {
+    margin: Sizing.x10,
   },
   modalButton: {
     width: "80%",

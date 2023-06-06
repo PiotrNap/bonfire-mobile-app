@@ -19,6 +19,7 @@ export const CustomPasswordInput = (props: any) => {
     showIcon,
     passwordHideCb,
     hidePassword,
+    isPasswordConfirmation,
     ...inputProps
   } = props
 
@@ -43,12 +44,17 @@ export const CustomPasswordInput = (props: any) => {
           placeholder={placeholder}
           placeholderTextColor={styles.placeholderText.color}
           onChangeText={(text) => onChange(name)(text)}
-          onChange={validateForm}
           secureTextEntry={hidePassword}
           textContentType={textContentType}
           onBlur={() => {
             setFieldTouched(name)
             onBlur(name)
+          }}
+          onFocus={() => {
+            if (isPasswordConfirmation) {
+              setFieldTouched(name)
+              onBlur(name)
+            }
           }}
           {...inputProps}
         />

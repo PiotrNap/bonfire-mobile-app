@@ -1,7 +1,9 @@
 export interface Wallet {
   add_new_wallet: AddNewWallet
   import_wallet: ImportWallet
+  create_wallet: CreateWallet
   risk_acknowledgement: RiskAcknowledgement
+  common: Common
 }
 
 export interface AddNewWallet {
@@ -15,19 +17,32 @@ export interface Modal {
   secondButton_title: string
 }
 
-export interface ImportWallet {
-  import_mnemonics: AddressConfirmation
-  address_confirmation: AddressConfirmation
+export interface CreateWallet {
+  mnemonic_info_modal: MnemonicInfoModal
 }
 
-export interface AddressConfirmation {
+export interface Common {
+  wallet_set_up: WalletSetUp
+}
+
+export interface MnemonicInfoModal {
   header: string
   body: string
+}
+
+export interface ImportWallet {
+  import_mnemonics: MnemonicInfoModal
+  address_confirmation: MnemonicInfoModal
 }
 
 export interface RiskAcknowledgement {
   header: string
   body_items: BodyItem[]
+}
+
+export interface WalletSetUp {
+  header: string
+  body: string
 }
 
 export interface BodyItem {

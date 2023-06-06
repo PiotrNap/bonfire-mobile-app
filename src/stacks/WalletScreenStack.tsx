@@ -5,6 +5,7 @@ import { WalletStackParamList } from "common/types/navigationTypes"
 import { ImportMnemonicsScreen } from "screens/wallet/ImportMnemonicsScreen"
 import { ImportMnemonicsConfirmation } from "screens/wallet/ImportMnemonicsConfirmationScreen"
 import { NewWalletSetUp } from "screens/wallet/NewWalletSetUpScreen"
+import { MnemonicsPreview } from "screens/wallet/MnemonicsPreviewScreen"
 
 const WalletStack = createStackNavigator<WalletStackParamList>()
 
@@ -23,6 +24,10 @@ export const WalletScreenStack = () => {
       <WalletStack.Screen
         name={"New Wallet Set Up"}
         component={NewWalletSetUp}
+      />
+      <WalletStack.Screen
+        name={"Mnemonic Preview"}
+        component={MnemonicsPreview}
       />
     </WalletStack.Navigator>
   )

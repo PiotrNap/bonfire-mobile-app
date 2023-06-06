@@ -32,26 +32,34 @@ import { getFromEncryptedStorage } from "lib/encryptedStorage"
 export interface WalletScreenProps
   extends StackScreenProps<WalletStackParamList, "Wallet"> {}
 
-function wait(ms: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, ms))
-}
-
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { colorScheme, textContent } = appContext()
-  const { walletBalance } = React.useContext(ProfileContext)
+  const { walletBalance, setWalletName, setWalletBaseAddress, walletName } =
+    React.useContext(ProfileContext)
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
-  const [isTxListLoading, setIsTxListLoading] = React.useState<boolean>(false)
-  const [isWalletSyncing, setIsWalletSyncing] = React.useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   React.useEffect(() => {
-    ;async () => {
-      const _walletName = await getFromEncryptedStorage("wallet-name")
-      const _walletBaseAddress = await getFromEncryptedStorage(
-        "wallet-base-address"
-      )
-    }
+    ;(async () => {
+      try {
+        console.log("here")
+        const _walletName = await getFromEncryptedStorage("wallet-name")
+        const _walletBaseAddress = await getFromEncryptedStorage(
+          "wallet-base-address"
+        )
+
+        console.log(_walletName, _walletBaseAddress)
+        if (_walletName && _walletBaseAddress) {
+          console.log(setWalletName, setWalletBaseAddress)
+          setWalletName(_walletName)
+          setWalletBaseAddress(_walletBaseAddress)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    })()
 
     const listener = navigation.addListener("blur", () => {
       hideModal()
@@ -74,12 +82,14 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
       setIsSmallScreen(true)
     }
   }
-  const onRefreshPress = async () => {
-    setIsTxListLoading(true)
-    await wait(2000)
-    setIsTxListLoading(false)
+  // const onRefreshPress = async () => {
+  //   setIsTxListLoading(true)
+  //   await wait(2000)
+  //   setIsTxListLoading(false)
+  // }
+  const onCreateWalletPress = () => {
+    navigation.navigate("New Wallet Set Up", { isNewWalletCreation: true })
   }
-  const onCreateWalletPress = () => {}
   const onImportWalletPress = () => {
     navigation.navigate("Import Mnemonics")
   }
@@ -91,16 +101,13 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
         colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark,
       ]}>
       <View style={styles.container}>
-        {/* <View style={styles.searchToolContainer}>
-          </View>*/}
-
         <LinearGradient
           colors={colorScheme === "light" ? darkGradient : lightGradient}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.walletContainer}>
           <ActivityIndicator
-            animating={isWalletSyncing}
+            animating={isLoading}
             color={
               colorScheme === "light"
                 ? Colors.primary.neutral
@@ -108,7 +115,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             }
             style={styles.walletLoadingSpinner}
           />
-          {walletName && (
+          {!!walletName && (
             <Text
               style={[
                 colorScheme == "light"
@@ -125,7 +132,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                 ? styles.walletBalance_ligth
                 : styles.walletBalance_dark,
             ]}>
-            {!hasSyncedWallet ? "--" : walletBalance} ₳
+            {!isLoading ? "--" : walletBalance} ₳
           </Text>
           <Pressable
             onPress={onAddWalletPress}
@@ -142,7 +149,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                   ? styles.walletButtonText_light
                   : styles.walletButtonText_dark,
               ]}>
-              {!hasSyncedWallet ? "Add Wallet" : "Add funds"}
+              {!isLoading ? "Add Wallet" : "Add funds"}
             </Text>
           </Pressable>
         </LinearGradient>
@@ -163,9 +170,10 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                     ? styles.transactionsSubheaderText_light
                     : styles.transactionsSubheaderText_dark
                 }>
-                Last 30 days
+                Lorem Ipsum
               </Text>
             </View>
+            {/*
             <View style={styles.iconWrapper}>
               {isSmallScreen && (
                 <Pressable onPress={onRefreshPress} hitSlop={5}>
@@ -195,11 +203,14 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                 style={{ marginLeft: "auto" }}
               />
             </View>
+            */}
           </View>
+          {/*
           <TransactionsList
             isLoading={isTxListLoading}
             isSmallScreen={isSmallScreen}
           />
+          */}
         </View>
         {isModalVisible ? (
           <BigSlideModal

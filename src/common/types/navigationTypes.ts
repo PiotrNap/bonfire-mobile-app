@@ -2,7 +2,7 @@ import {
   UserBaseDTO,
   UserOrganizerDTO,
 } from "common/interfaces/profileInterface"
-import { WalletNavigationParams } from "lib/wallet/types"
+import { WalletNavigationParams, WalletSetUpFormValues } from "lib/wallet/types"
 import { AnyObject } from "yup/lib/types"
 
 export type AppStackParamList = {
@@ -101,6 +101,7 @@ export type WalletStackParamList = {
 >>>>>>> b2cfda9 (feat: New wallet import flow)
   "Import Mnemonics Confirmation": WalletNavigationParams
   "New Wallet Set Up": WalletNavigationParams
+  "Mnemonic Preview": WalletSetUpFormValues
 }
 
 /**

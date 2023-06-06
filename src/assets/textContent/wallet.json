@@ -17,6 +17,27 @@
             "body": "Please confirm that given base address is known to you. If it's not, your previous wallet may be using a different method of address derivation. Or, you've inserted wrongly your recovery phrase."
         }
     },
+    "create_wallet": {
+        "mnemonic_info_modal": {
+            "header": "Important Information",
+            "body": "You will be shown a set of 15 random words which are your secret recovery phrase (aka mnemonic phrase). Make sure you make a copy of it, either a virtual or a physical one. Anyone with access to this secret gains control over your wallet. Make sure no one is spying you!"
+        },
+        "mnemonic_preview": {
+            "header": "Wallet Recovery Phrase",
+            "body": "Make sure you've made a backup copy of it. You will be able to reconstruct your wallet in a different Cardano wallet application (if it supports the same address derivation method).",
+            "checkbox_text": "I confirm making a backup copy of my secret recovery phrase"
+        },
+        "mnemonic_confirmation": {
+            "header": "Recovery Phrase Confirmation",
+            "body": "Please insert each word of your recovery phrase into boxes below. Words are case sensitive and should be lower case."
+        }
+    },
+    "common": {
+        "wallet_set_up":{
+            "header": "Set Up a New Wallet",
+            "body":"Give your wallet a name and provide a unique spending password. This password will be required to spend your assets and gain access to the recovery phrase. Make sure to make a backup copy."
+        }
+    },
     "risk_acknowledgement": {
         "header": "Risk Acknowledgement",
         "body_items": [

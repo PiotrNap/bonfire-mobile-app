@@ -20,8 +20,9 @@ import {
 } from "./config"
 import { CARDANO_NETWORK } from "@env"
 import { AnyObject } from "yup/lib/types"
+import { WalletKeys } from "./types"
 
-export const generateMnemonic = bip39(128, randomBytes)
+export const generateMnemonic = () => bip39(128, randomBytes)
 
 export class Wallet {
   chainConfig: AnyObject
@@ -34,7 +35,7 @@ export class Wallet {
   /**
    * Creates root key and account keys with base address
    */
-  async init(mnemonic: string): Promise<any> {
+  async init(mnemonic: string): Promise<WalletKeys | void> {
     try {
       const rootKeyPtr: Bip32PrivateKey = await this.createRootKey(mnemonic)
       const rootKey: string = Buffer.from(await rootKeyPtr.as_bytes()).toString(
