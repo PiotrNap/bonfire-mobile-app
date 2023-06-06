@@ -13,17 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import LinearGradient from "react-native-linear-gradient"
 import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
-import {
-  OrganizerTabParamList,
-  WalletStackParamList,
-} from "common/types/navigationTypes"
+import { WalletStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
-import {
-  PaymentIcon,
-  RefreshIcon,
-  RightArrowIcon,
-  SearchIcon,
-} from "icons/index"
+import { PaymentIcon, RefreshIcon, SearchIcon } from "icons/index"
 import { TransactionsList } from "components/wallet/transactionsList"
 import { ProfileContext } from "contexts/profileContext"
 import {
@@ -33,7 +25,8 @@ import {
 } from "@emurgo/react-native-haskell-shelley"
 import { generateMnemonic } from "bip39"
 import { Wallet } from "lib/wallet"
-import { BigSlideModal } from "components/modals/bigSlideModal"
+import { BigSlideModal } from "components/modals/BigSlideModal"
+import { getFromEncryptedStorage } from "lib/encryptedStorage"
 
 // @TODO: Implement navigationTypes type
 export interface WalletScreenProps
@@ -45,8 +38,7 @@ function wait(ms: number): Promise<void> {
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { colorScheme, textContent } = appContext()
-  const { hasSyncedWallet, setHasSyncedWallet, walletBalance } =
-    React.useContext(ProfileContext)
+  const { walletBalance } = React.useContext(ProfileContext)
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
   const [isTxListLoading, setIsTxListLoading] = React.useState<boolean>(false)
@@ -54,10 +46,16 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
 
   React.useEffect(() => {
+    ;async () => {
+      const _walletName = await getFromEncryptedStorage("wallet-name")
+      const _walletBaseAddress = await getFromEncryptedStorage(
+        "wallet-base-address"
+      )
+    }
+
     const listener = navigation.addListener("blur", () => {
       hideModal()
     })
-    getAddr()
 
     return listener
   }, [route])
@@ -66,22 +64,8 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
   const windowWidth = useWindowDimensions().width
 
-  const getAddr = async () => {
-    try {
-      // let mnemonic = generateMnemonic()
-      // console.log("mnemonic ", mnemonic)
-      // let addr = await new Wallet().init(mnemonic)
-      // console.log("addr ", addr)
-    } catch (err) {
-      console.error(err)
-    }
-  }
   const onAddWalletPress = () => {
     setIsModalVisible(true)
-
-    // if (!hasSyncedWallet) {
-    // } else {
-    // }
   }
   const onLayout = (e: LayoutChangeEvent) => {
     setLayoutHeight(e.nativeEvent.layout.height)
@@ -124,15 +108,17 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             }
             style={styles.walletLoadingSpinner}
           />
-          <Text
-            style={[
-              colorScheme == "light"
-                ? styles.walletHeader_ligth
-                : styles.walletHeader_dark,
-              { marginRight: "auto" },
-            ]}>
-            Current balance
-          </Text>
+          {walletName && (
+            <Text
+              style={[
+                colorScheme == "light"
+                  ? styles.walletHeader_ligth
+                  : styles.walletHeader_dark,
+                { marginRight: "auto" },
+              ]}>
+              {walletName}
+            </Text>
+          )}
           <Text
             style={[
               colorScheme == "light"

@@ -26,7 +26,7 @@ const ORGANIZER_BENEFITS: Benefit[] = [
   { text: "Get paid by blockchain payment solutions" },
   { text: "Access live analytics for offer clicks and views " },
   { text: "Register without entering any personal data" },
-  { text: "Keep track of events using an in-app calenda" },
+  { text: "Keep track of events using an in-app calendar" },
 ]
 
 export const PricingScreen = ({ pagerRef }: PricingScreenProps) => {

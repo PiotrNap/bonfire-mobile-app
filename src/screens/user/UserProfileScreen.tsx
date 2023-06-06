@@ -11,7 +11,7 @@ import { ProfileStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
 import { CogIcon, ErrorIcon, HearthIcon, LightBulbIcon } from "icons/index"
 
-import { NativeModal } from "components/modals/nativeModal"
+import { ImagePickerModal } from "components/modals/ImagePickerModal"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
 import { useMediaAccess } from "lib/hooks/useMediaAccess"
 import { ProfileContext } from "contexts/profileContext"
@@ -96,7 +96,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
             : styles.safeaArea_dark,
         ]}>
         <View style={styles.headerNavigation}>
-          <NativeModal
+          <ImagePickerModal
             cameraAccessCb={launchCamera}
             mediaLibraryCb={launchImageLibrary}
             onImageDeleted={updateCurrImage}
@@ -163,7 +163,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
                   </Pressable>
                 </View>
               )
-            }></NativeModal>
+            }></ImagePickerModal>
           <Text
             style={[
               styles.headerText,

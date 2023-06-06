@@ -71,38 +71,6 @@ export const inputLabel: Record<InputLabel, TextStyle> = {
   },
 }
 
-export const formStyleLight = StyleSheet.create({
-  label: {
-    ...inputLabel.primary_light,
-  },
-  input: {
-    width: "100%",
-    ...input.primary_light,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
-    marginRight: "auto",
-  },
-})
-
-export const formStyleDark = StyleSheet.create({
-  label: {
-    ...inputLabel.primary_dark,
-  },
-  input: {
-    width: "100%",
-    ...input.primary_dark,
-    ...Outlines.shadow.lifted,
-  },
-  placeholderText: {
-    color: Colors.primary.s600,
-    ...Typography.subHeader.x30,
-    marginRight: "auto",
-  },
-})
-
 /**
  * Styles passed as props to CustomInput
  */
@@ -113,9 +81,6 @@ export const inputStyles = StyleSheet.create({
   },
   labelContainer: {
     width: "100%",
-  },
-  label: {
-    ...inputLabel.primary,
   },
   textInputWrapper: {
     width: "100%",
@@ -141,5 +106,33 @@ export const inputStyles = StyleSheet.create({
   error: {
     color: Colors.danger.s400,
     ...Typography.header.x20,
+  },
+})
+
+export const formStyleLight = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_light,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_light,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
+  },
+})
+
+export const formStyleDark = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_dark,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_dark,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
   },
 })

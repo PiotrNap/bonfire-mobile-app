@@ -16,7 +16,7 @@ import { Typography, Colors, Sizing, Outlines } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
-import { BigSlideModal } from "components/modals/bigSlideModal"
+import { BigSlideModal } from "components/modals/BigSlideModal"
 import { useNavigation } from "@react-navigation/native"
 import Clipboard from "@react-native-clipboard/clipboard"
 import { CopyMessage } from "components/popups/copyMessage"
@@ -101,7 +101,6 @@ export const WalletTopUpScreen = ({
           secondButtonTitle={
             textContent.wallet.create_wallet.modal.secondButton_title
           }
-          buttonCb={() => {}}
         />
       </View>
     ),

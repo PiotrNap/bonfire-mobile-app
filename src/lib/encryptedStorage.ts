@@ -70,5 +70,8 @@ export type StoragePropertyKeys =
   | "time-zone"
   | "test"
   | "wallet-root-key"
+  | "wallet-name"
+  | "wallet-base-address"
   | "account-key"
   | "account-pub-key"
+  | "mnemonic"

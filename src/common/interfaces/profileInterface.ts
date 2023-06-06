@@ -6,6 +6,8 @@ export interface ProfileState {
   publicKey: string
   id: string
   walletBalance: number
+  walletName: string
+  walletBaseAddress: string
   bio: string
   imageBase64?: string | null
   hasSyncedWallet: boolean
@@ -25,12 +27,15 @@ export interface ProfileState {
   setId: (input: string) => void
   setBio: (input: string) => void
   setImageBase64: (input: string) => void
+  setTimeZone: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
   setTimeZone: (input: string) => void
   setHourlyRate: (inputs: HourlyRate) => void
   setHasSyncedWallet: (arg: boolean) => void
   setWalletBalance: (input: number) => void
+  setWalletBaseAddress: (input: string) => void
+  setWalletName: (input: string) => void
   setProfession: (input: string) => void
   setJobTitle: (input: string) => void
   setDescription: (input: string) => void

@@ -2,7 +2,7 @@
  * @interfaces for appContext.tsx file.
  */
 
-import { AnyObject } from "yup/lib/types"
+import { Wallet } from "./textContent/wallet"
 
 export type ColorSchemeName = "light" | "dark"
 
@@ -18,7 +18,7 @@ export interface AppState {
   ref: any
   JWT?: JWTPayload | null
   userSettings: UserSettings | null
-  textContent: AnyObject
+  textContent: { wallet: Wallet }
 }
 
 export interface JWTPayload {

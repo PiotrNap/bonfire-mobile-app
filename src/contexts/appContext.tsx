@@ -12,9 +12,7 @@ import {
 } from "interfaces/appInterface"
 import { AppActions, AppTypes } from "common/types/contextTypes"
 import { Colors } from "styles/index"
-
-// text json files
-import wallet from "assets/textContent/wallet.json"
+import { wallet } from "../assets/textContent"
 
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
@@ -37,7 +35,7 @@ const initialAppState: AppState = {
   pageIndex: 0,
   ref: null,
   userSettings: null,
-  textContent: appTextContent,
+  textContent: { wallet },
 }
 
 const reducer = (state: AppState, action: AppActions) => {

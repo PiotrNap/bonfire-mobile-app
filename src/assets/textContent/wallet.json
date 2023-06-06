@@ -16,5 +16,16 @@
             "header": "Confirm Your Wallet Address",
             "body": "Please confirm that given base address is known to you. If it's not, your previous wallet may be using a different method of address derivation. Or, you've inserted wrongly your recovery phrase."
         }
+    },
+    "risk_acknowledgement": {
+        "header": "Risk Acknowledgement",
+        "body_items": [
+            {
+                "text": "Your private keys are stored on this device and not on Bonfires servers. We will never ask you to reveal your mnemonic phrase or any other secrets associated with your wallet."
+            },
+            {
+                "text": "If the device on which you initialized or imported a wallet has been lost, the only way to restore your previous wallet is by re-entering your recovery phrase. The same rule applies for when uninstalling Bonfire application after a wallet has been created."
+            }
+        ]
     }
 }

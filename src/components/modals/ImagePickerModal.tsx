@@ -6,19 +6,19 @@ import { Text, Pressable, Alert } from "react-native"
 import ModalSelector from "react-native-modal-selector"
 import { Buttons, Sizing, Typography } from "styles/index"
 
-export interface NativeModalProps {
+export interface ImagePickerModalProps {
   cameraAccessCb: (ref: any) => any
   mediaLibraryCb: (ref: any) => any
   onImageDeleted: () => void
   child: React.ReactNode
 }
 
-export const NativeModal = ({
+export const ImagePickerModal = ({
   cameraAccessCb,
   mediaLibraryCb,
   onImageDeleted,
   child,
-}: NativeModalProps) => {
+}: ImagePickerModalProps) => {
   const { id } = React.useContext(ProfileContext)
   const [selector, setSelector] = React.useState<ModalSelector | null>(null)
 

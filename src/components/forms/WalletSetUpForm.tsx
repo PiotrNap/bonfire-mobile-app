@@ -91,6 +91,7 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
             styles={formStyles}
             placeholder={"UniquePassword123"}
             hidePassword={hidePassword}
+            isPasswordConfirmation
           />
 
           <FullWidthButton

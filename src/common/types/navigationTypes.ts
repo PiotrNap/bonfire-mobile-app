@@ -95,7 +95,10 @@ export type ProfileStackParamList = {
 export type WalletStackParamList = {
   Wallet: undefined
   "Import Mnemonics": undefined
+<<<<<<< HEAD
   "Mnemonic Preview": undefined
+=======
+>>>>>>> b2cfda9 (feat: New wallet import flow)
   "Import Mnemonics Confirmation": WalletNavigationParams
   "New Wallet Set Up": WalletNavigationParams
 }

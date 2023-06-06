@@ -63,3 +63,7 @@ buck-out/
 # Haskell
 escrow-contract/dist-newstyle/
 escrow-contract/output
+
+# key files
+*.priv
+*.pub
