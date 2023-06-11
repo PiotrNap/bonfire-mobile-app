@@ -11,7 +11,9 @@
     "hack": "./node_modules/rn-nodeify/cmd.js --hack --install",
     "prepare": "husky install",
     "emulators:android": "./scripts/run-android-emulators.sh",
-    "emulators:apple": ""
+    "emulators:apple": "",
+    "prebuild": "sh ./scripts/git-hash.sh",
+    "build": "react-native bundle"
   },
   "dependencies": {
     "@emurgo/cip4-js": "^1.0.7",
@@ -78,7 +80,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.4",
     "react-native-level-fs": "^3.0.1",
     "react-native-linear-gradient": "^2.5.6",
-    "react-native-modal": "^11.10.0",
+    "react-native-modal": "^13.0.1",
     "react-native-modal-selector": "git+https://github.com/PiotrNap/react-native-modal-selector.git",
     "react-native-pager-view": "5.0.12",
     "react-native-permissions": "^3.0.5",
@@ -110,7 +112,10 @@
     "utf8": "^3.0.0",
     "util": "^0.12.4",
     "vm-browserify": "0.0.4",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "react-native-os": "^1.0.1",
+    "react-native-udp": "^2.1.0",
+    "react-native-tcp": "^3.2.1"
   },
   "devDependencies": {
     "@svgr/cli": "^5.5.0",

@@ -33,6 +33,8 @@ import {
 import { Users } from "Api/Users"
 import { CustomSwitch } from "components/rnWrappers/customSwitch"
 import { UserSettings } from "common/interfaces/appInterface"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { GIT_HASH } from "../../gitHash"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
@@ -139,6 +141,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           text="Delete"
         />
       </SettingsItem>
+      <BodyText>Version: {String(GIT_HASH).substring(0, 8)}</BodyText>
     </Layout>
   )
 }

@@ -1,0 +1,2 @@
+1. commit your changes & push to origin/master
+2. run 'yarn prebuild' & 'yarn build'
