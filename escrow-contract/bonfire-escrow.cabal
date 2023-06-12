@@ -9,8 +9,10 @@ License-files:       LICENSE
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Escrow.EscrowCompiler
+  exposed-modules:     Escrow.Demu
+                     , Escrow.EscrowCompiler
                      , Escrow.BonfireDatum
+                     , Escrow.BonfireDispute
                      , Escrow.BonfireEscrowContractDraft
                      , Escrow.Types
   build-depends:       aeson

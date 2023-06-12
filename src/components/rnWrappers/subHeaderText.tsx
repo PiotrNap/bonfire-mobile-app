@@ -7,7 +7,13 @@
  */
 
 import * as React from "react"
-import { Text, StyleSheet, StyleProp, TextStyle } from "react-native"
+import {
+  Text,
+  StyleSheet,
+  StyleProp,
+  TextStyle,
+  ColorSchemeName,
+} from "react-native"
 
 import { appContext } from "contexts/contextApi"
 import { Colors, Typography } from "styles/index"
@@ -18,6 +24,7 @@ export interface SubHeaderTextProps {
   customStyle?: StyleProp<TextStyle>
   callbackFn?: () => any
   extraProps?: any
+  customColorScheme?: ColorSchemeName
 }
 
 export const SubHeaderText = ({
@@ -26,8 +33,10 @@ export const SubHeaderText = ({
   customStyle,
   callbackFn,
   extraProps,
+  customColorScheme,
 }: SubHeaderTextProps) => {
-  const { colorScheme } = appContext()
+  var { colorScheme } = appContext()
+  if (customColorScheme) colorScheme = customColorScheme
 
   const textColor =
     colors != null

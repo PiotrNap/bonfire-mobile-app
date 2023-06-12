@@ -9,7 +9,6 @@ export const useEventsResults = (id?: string) => {
     try {
       const res: any = await Events.getEventsBySearch(searchValue, id)
       const data = res.data
-
       if (data) {
         setEvents(data.result)
         setIsLoading(false)
