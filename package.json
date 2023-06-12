@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development react-native start",
+    "start": "adb reverse tcp:8081 tcp:8081 && NODE_ENV=development react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest --watchAll",

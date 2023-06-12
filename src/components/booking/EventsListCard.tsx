@@ -21,6 +21,7 @@ export interface EventsListCardProps {
   image: any
   color: string
   titleColor: string
+  hourlyRate: any
   defaultCardColor?: boolean
   isEventCardPreview?: boolean
   isBrowseScreenPreview?: boolean
@@ -41,6 +42,7 @@ export const EventsListCard = ({
   color,
   titleColor,
   defaultCardColor,
+  hourlyRate,
 }: EventsListCardProps) => {
   const { colorScheme } = appContext()
   const navigation = useNavigation()
@@ -58,6 +60,7 @@ export const EventsListCard = ({
       organizerAlias,
       color,
       titleColor,
+      hourlyRate,
     })
   const placeholderColor =
     colorScheme === "light" ? Colors.primary.s600 : Colors.neutral.s300
@@ -76,11 +79,12 @@ export const EventsListCard = ({
           style={[
             styles.container,
             {
-              backgroundColor: defaultCardColor
-                ? placeholderColor
-                : isTransparent
-                ? "transparent"
-                : color,
+              backgroundColor:
+                defaultCardColor || !image
+                  ? placeholderColor
+                  : isTransparent
+                  ? "transparent"
+                  : color,
             },
           ]}>
           {fromDate != null && toDate != null && (

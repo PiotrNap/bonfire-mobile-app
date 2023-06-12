@@ -16,6 +16,7 @@ import { SmallButton } from "components/buttons/smallButton"
 import { PlusIcon } from "assets/icons"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
+import { RoundedButton } from "components/buttons/roundedButton"
 
 export interface CalendarProps {
   isBookingCalendar?: boolean
@@ -33,7 +34,7 @@ export const Calendar = ({
   isRegularCalendar,
   navigateCb,
 }: CalendarProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, appBgColor } = appContext()
   const { resetEventCreationState } = eventCreationContext()
   const { id } = React.useContext(ProfileContext)
   const { events, calendarHeader } = myCalendarContext()
@@ -86,7 +87,7 @@ export const Calendar = ({
   )[0]
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: appBgColor }}>
       <MonthlyWrapper
         secondCustomCallback={onSelectedDayChange}
         isRegularCalendar={isRegularCalendar}
@@ -116,8 +117,8 @@ export const Calendar = ({
               icon={
                 <PlusIcon
                   color={Colors.primary.neutral}
-                  width={Sizing.x14}
-                  height={Sizing.x14}
+                  width={Sizing.x20}
+                  height={Sizing.x20}
                   strokeWidth={4}
                 />
               }
@@ -125,7 +126,22 @@ export const Calendar = ({
             />
           </View>
         ))}
-    </>
+      {isMonthWithEvents && !loadingEvents && (
+        <View style={styles.cornerButtonWrapper}>
+          <RoundedButton
+            onPress={onAddEventPress}
+            icon={
+              <PlusIcon
+                color={Colors.primary.neutral}
+                width={Sizing.x40}
+                height={Sizing.x40}
+                strokeWidth={2}
+              />
+            }
+          />
+        </View>
+      )}
+    </View>
   )
 }
 
@@ -134,5 +150,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  cornerButtonWrapper: {
+    position: "absolute",
+    bottom: Sizing.x15,
+    right: Sizing.x15,
   },
 })

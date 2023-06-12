@@ -63,6 +63,7 @@ export const EventsList = ({
       id: eventId,
       organizerId,
       organizerAlias,
+      hourlyRate,
     } = item
 
     return (
@@ -78,6 +79,7 @@ export const EventsList = ({
         image={bufferToBase64(eventCardImage?.data)}
         color={eventCardColor}
         isTransparent={eventCardColor === "transparent"}
+        hourlyRate={hourlyRate}
       />
     )
   }, [])
@@ -142,7 +144,7 @@ export const EventsList = ({
             loop={false}
           />
           <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            It looks empty here...
+            Nothing to see here...
           </SubHeaderText>
         </View>
       )}

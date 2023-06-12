@@ -8,7 +8,7 @@ import * as Typography from "./typography"
 type Input = "primary" | "primary_light" | "primary_dark"
 export const input: Record<Input, TextStyle> = {
   primary: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     paddingVertical: Sizing.x12,
     paddingHorizontal: Sizing.x14,
     backgroundColor: Colors.primary.neutral,
@@ -20,7 +20,7 @@ export const input: Record<Input, TextStyle> = {
     ...Outlines.shadow.lifted,
   },
   primary_light: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     paddingVertical: Sizing.x12,
     paddingHorizontal: Sizing.x14,
     backgroundColor: Colors.primary.neutral,
@@ -32,7 +32,7 @@ export const input: Record<Input, TextStyle> = {
     ...Outlines.shadow.lifted,
   },
   primary_dark: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     paddingVertical: Sizing.x12,
     paddingHorizontal: Sizing.x14,
     backgroundColor: Colors.primary.neutral,
@@ -48,19 +48,19 @@ export const input: Record<Input, TextStyle> = {
 type InputLabel = "primary" | "error" | "primary_light" | "primary_dark"
 export const inputLabel: Record<InputLabel, TextStyle> = {
   primary: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     fontFamily: "Roboto-Medium",
     color: Colors.primary.neutral,
     marginLeft: Sizing.x15,
   },
   primary_light: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     fontFamily: "Roboto-Medium",
     color: Colors.primary.s800,
     marginLeft: Sizing.x15,
   },
   primary_dark: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     fontFamily: "Roboto-Medium",
     color: Colors.primary.s200,
     marginLeft: Sizing.x15,
@@ -95,7 +95,7 @@ export const inputStyles = StyleSheet.create({
     color: Colors.primary.s300,
   },
   errorInput: {
-    borderColor: Colors.danger.s300,
+    borderColor: Colors.danger.s400,
   },
   errorWrapper: {
     justifyContent: "center",

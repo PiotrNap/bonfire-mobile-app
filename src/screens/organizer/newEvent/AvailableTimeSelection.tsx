@@ -159,7 +159,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
           </Pressable>
         </View>
         <HeaderText
-          customStyles={{ marginBottom: Sizing.x10 }}
+          customStyles={{ marginBottom: Sizing.x10, marginRight: "auto" }}
           colorScheme={colorScheme}>
           Select a time you are available
         </HeaderText>
@@ -267,7 +267,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
                 textAlign: "center",
                 color: isLightMode ? Colors.neutral.s600 : Colors.primary.s200,
               }}>
-              Select your time frame &{"\n"} add a new time slot!
+              Select your time frame &{"\n"} add new time slot!
             </Text>
             <CurvedArrow
               style={[

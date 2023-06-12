@@ -143,8 +143,6 @@ export const MonthlyWrapper = ({
                 translateX: animatedTranslateX,
               },
             ],
-            width: dimensions ? dimensions.width : 0,
-            height: dimensions ? dimensions.height : 0,
           },
         ]}>
         <MonthItem
@@ -162,7 +160,7 @@ export const MonthlyWrapper = ({
         />
       </Animated.View>
     ),
-    [!!dimensions, initialAnimationLoaded]
+    [!!dimensions, initialAnimationLoaded, calendar]
   )
 
   const loadNewMonths = (nextMonths: boolean, month: number, year?: number) => {
@@ -418,7 +416,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   calendarContainer: {
-    width: "100%",
     height: Sizing.x150,
     marginTop: Sizing.x7,
   },
@@ -427,7 +424,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: Sizing.x5,
     paddingVertical: Sizing.x10,
-    paddingHorizontal: Sizing.x10,
     borderRadius: Outlines.borderRadius.base,
     ...Outlines.shadow.lifted,
   },
@@ -477,5 +473,7 @@ const styles = StyleSheet.create({
   monthContainer: {
     flexWrap: "wrap",
     flexDirection: "row",
+    width: "100%",
+    flex: 1,
   },
 })

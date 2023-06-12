@@ -3,18 +3,18 @@ import { View, StyleSheet, Animated } from "react-native"
 
 import { Layout } from "components/layouts/basicLayout"
 import SearchBar from "@pnap/react-native-search-bar"
-import { SearchIcon } from "assets/icons"
-import { appContext } from "contexts/contextApi"
+import { PlusIcon, SearchIcon } from "assets/icons"
+import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography, Buttons } from "styles/index"
 import { useEventsResults } from "lib/hooks/useEventsResults"
 import { EventsList } from "components/booking/EventsList"
 import { ProfileContext } from "contexts/profileContext"
 import { applyOpacity } from "../../styles/colors"
+import { RoundedButton } from "components/buttons/roundedButton"
 
-export interface Props {}
-
-export const MyEvents = ({}: Props) => {
+export const MyEvents = ({ navigation }: any) => {
   const { id } = React.useContext(ProfileContext)
+  const { resetEventCreationState } = eventCreationContext()
   const { colorScheme } = appContext()
   const {
     events: searchEvents,
@@ -40,6 +40,10 @@ export const MyEvents = ({}: Props) => {
   const onToggleSearchBar = (val: boolean) => {
     // user hides search bar? show the normal events list.
     if (!val) setEvents(null)
+  }
+  const onAddEventPress = () => {
+    resetEventCreationState()
+    navigation.navigate("New Event Description")
   }
 
   const CustomSearchIcon = React.useCallback(
@@ -110,6 +114,19 @@ export const MyEvents = ({}: Props) => {
           ]}
         />
       </View>
+      <View style={styles.cornerButtonWrapper}>
+        <RoundedButton
+          onPress={onAddEventPress}
+          icon={
+            <PlusIcon
+              color={Colors.primary.neutral}
+              width={Sizing.x40}
+              height={Sizing.x40}
+              strokeWidth={2}
+            />
+          }
+        />
+      </View>
     </Layout>
   )
 }
@@ -129,6 +146,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: applyOpacity(Colors.neutral.s500, 0.5),
+  },
+  cornerButtonWrapper: {
+    position: "absolute",
+    bottom: Sizing.x15,
+    right: Sizing.x15,
   },
 })
 

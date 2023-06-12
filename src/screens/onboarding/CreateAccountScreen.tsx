@@ -14,6 +14,7 @@ import { ProfileContext } from "contexts/profileContext"
 import { SlideTopModal } from "components/modals/SlideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { Errors } from "common/types/errors"
+import { HeaderText } from "components/rnWrappers/headerText"
 
 const SCREEN_WIDTH = Dimensions.get("screen").width
 
@@ -81,10 +82,7 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
           )}
         </View>
         <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Create {profileType === "attendee" ? "attendee" : "organizer"}{" "}
-            account
-          </Text>
+          <HeaderText>Create New Account</HeaderText>
         </View>
         <CreateAccountForm
           onChangeCallback={onChangeCallback}
@@ -144,20 +142,13 @@ const styles = StyleSheet.create({
   },
   backButtonSection: {
     marginTop: Sizing.x20,
-    alignItems: "center",
-    justifyContent: "center",
   },
   backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Sizing.x10,
+    justifyContent: "center",
   },
   backButtonText: {
-    lineHeight: 30,
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
     paddingBottom: Sizing.x2,
+    marginLeft: Sizing.x8,
     ...Typography.subHeader.x35,
     ...Typography.roboto.medium,
     color: Colors.primary.neutral,

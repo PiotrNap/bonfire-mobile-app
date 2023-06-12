@@ -25,6 +25,7 @@ import {
 } from "lib/encryptedStorage"
 import { UserSettings } from "common/interfaces/appInterface"
 import { Checkbox } from "components/forms/Checkbox"
+import { BodyText } from "components/rnWrappers/bodyText"
 
 type Props = StackScreenProps<
   EventCreationParamList,
@@ -40,6 +41,7 @@ export const AvailableDaysSelection = (props: Props) => {
     removeSelectedDays,
     removeSelectedWeeks,
     setGCalEventsBooking,
+    eventType,
   } = eventCreationContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [hintBoxVisible, setHintBoxVisible] = React.useState<boolean>(false)
@@ -152,10 +154,12 @@ export const AvailableDaysSelection = (props: Props) => {
             <HeaderText
               customStyles={{ marginBottom: Sizing.x10 }}
               colorScheme={colorScheme}>
-              Select dates you are available to host event
+              {`Select date${
+                eventType === "One-Time" ? "" : "s"
+              } you are available`}
             </HeaderText>
           </View>
-          {hintBoxVisible && (
+          {hintBoxVisible && eventType === "Recurring" && (
             <HintBox
               text="Press on a day to
         select one, or tap on a day name to select them all."
@@ -171,14 +175,23 @@ export const AvailableDaysSelection = (props: Props) => {
               <Checkbox
                 onCheckBoxPress={onCheckBoxPress}
                 acceptedCheckbox={acceptedCheckbox}>
-                Attendees schedule time on my Google calendar
-                {!validGoogleOAuth && !isInitialRequesting && (
-                  <>
-                    {"\n"}
-                    <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant
-                    access
-                  </>
-                )}
+                <BodyText
+                  customStyle={{
+                    fontFamily: "Roboto-Medium",
+                    fontSize: Sizing.x15,
+                    width: "90%",
+                  }}
+                  changingColorScheme
+                  colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                  Allow people to schedule my time on my Google calendar.
+                  {!validGoogleOAuth && !isInitialRequesting && (
+                    <>
+                      {" "}
+                      <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant
+                      access
+                    </>
+                  )}
+                </BodyText>
               </Checkbox>
             </View>
           </ScrollView>
@@ -219,6 +232,7 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     flexDirection: "row",
     marginTop: Sizing.x10,
+    alignItems: "center",
   },
   button: { width: "90%", marginTop: "auto", marginBottom: Sizing.x15 },
 })

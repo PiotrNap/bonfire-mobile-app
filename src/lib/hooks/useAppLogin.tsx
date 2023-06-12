@@ -17,27 +17,32 @@ export const useAppLogin = () => {
   React.useEffect(() => {
     ;(async () => {
       try {
-        let at = await getFromEncryptedStorage("auth-credentials")
+        let authCred = await getFromEncryptedStorage("auth-credentials")
         let sec = await getFromEncryptedStorage("privKey")
         let pub = await getFromEncryptedStorage("pubKey")
         let userSettings = await getFromEncryptedStorage("user-settings")
-        const isExpired = new Date() > new Date(at?.expiresAt)
+        const isExpired = new Date() > new Date(authCred?.expiresAt)
 
-        console.log(at, isExpired)
+        console.log(authCred, isExpired)
+        if (!pub) throw new Error(`Missing public key. User not authorized`)
 
-        if (at && !isExpired) {
-          setAuthorizationToken(at.accessToken)
+        if (authCred && !isExpired) {
+          setAuthorizationToken(authCred.accessToken)
           setIsAuthorized(true)
           setUser({
-            username: at.username,
-            profileType: at.profileType,
-            id: at.id,
+            username: authCred.username,
+            profileType: authCred.profileType,
+            id: authCred.id,
           })
         }
-        const tz = await TZ.getTimeZone()
+        // const tz = await TZ.getTimeZone()
 
         if (sec && pub) {
-          const accessTokenDto = await startChallengeSequence(pub, false)
+          const accessTokenDto = await startChallengeSequence(
+            pub,
+            authCred.id,
+            false
+          )
 
           if (accessTokenDto) {
             console.log(
@@ -60,12 +65,11 @@ export const useAppLogin = () => {
         } else {
           if (isAuthorized) setIsAuthorized(false)
         }
-
-        setIsAuthLoaded(true)
       } catch (e) {
         console.error(e)
-        setIsAuthLoaded(true)
+        setIsAuthorized(false)
       }
+      setIsAuthLoaded(true)
     })()
   }, [])
 

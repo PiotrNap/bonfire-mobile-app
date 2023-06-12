@@ -17,10 +17,10 @@ export type UserCredential = { [index: string]: any }
 
 export class Auth {
   public static async requestChallenge(
-    credential: UserCredential
+    payload: UserCredential
   ): Promise<any | void> {
     try {
-      const res = await axios.post("/auth/challenge", credential)
+      const res = await axios.post("/auth/challenge", payload)
       if (res.data) return res.data
     } catch (e) {
       if (e.response) console.error(e.response.data)

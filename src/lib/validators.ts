@@ -39,13 +39,35 @@ export function formValidationSchema() {
  * @description This will specify validation schema for creating a new
  * account or updating an existing one.
  */
-export function accountValidationScheme() {
+export function newEventScheme() {
   return yup.object().shape({
+    title: yup.string().required("Title is required"),
+    ada: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+    gimbals: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+  })
+}
+
+/**
+ * @description This will specify validation schema for creating a new
+ * account or updating an existing one.
+ */
+export function accountValidationScheme() {
+  const baseScheme = yup.object().shape({
     name: yup.string().required("Name is required"),
     username: yup
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
       .required("Username is required"),
+  })
+  return baseScheme.concat(hourlyRateValidationScheme())
+}
+
+export function hourlyRateValidationScheme() {
+  return yup.object().shape({
     ada: yup
       .string()
       .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),

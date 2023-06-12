@@ -143,17 +143,22 @@ export const EventDescription = ({ navigation, route }: any) => {
         <FastImage
           source={{ uri: `data:image/png;base64,${image}` }}
           style={styles.backgroundImage}>
-          <View style={[styles.topInnerContainer, { backgroundColor: color }]}>
+          <View
+            style={[
+              styles.topInnerContainer,
+              { backgroundColor: !image ? Colors.primary.s600 : color },
+            ]}>
             <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
-              <View style={styles.navigation}>
-                <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-                  <LeftArrowIcon
-                    width={24}
-                    height={24}
-                    color={Colors.primary.neutral}
-                  />
-                </Pressable>
-              </View>
+              <Pressable
+                style={Buttons.applyOpacity(styles.navigation)}
+                onPress={onBackNavigationPress}
+                hitSlop={10}>
+                <LeftArrowIcon
+                  width={24}
+                  height={24}
+                  color={Colors.primary.s600}
+                />
+              </Pressable>
               <View
                 style={[
                   styles.dateCard,
@@ -286,8 +291,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   navigation: {
+    borderRadius: Outlines.borderRadius.max,
+    backgroundColor: Colors.primary.neutral,
     marginBottom: "auto",
+    width: Sizing.x40,
+    height: Sizing.x40,
     marginTop: Sizing.x15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   dateCard: {
     maxWidth: Sizing.x85,

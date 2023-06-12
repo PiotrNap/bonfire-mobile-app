@@ -33,18 +33,11 @@ export const MonthlyDay = ({
   showPastDate,
   isPastDate,
 }: MonthlyDayProps) => {
-  const hasActiveEvents = !!events?.find(
-    (e) => e.type === "active slot"
-  )
-  const hasScheduledSlots = !!events?.find(
-    (e) => e.type !== "active slot"
-  )
+  const hasActiveEvents = !!events?.find((e) => e.type === "active slot")
+  const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot")
 
   const dayInTime =
-    year &&
-    month &&
-    number &&
-    getTime(year, monthsByName[month], number)
+    year && month && number && getTime(year, monthsByName[month], number)
   const isActiveDay = activeDay === dayInTime
 
   const onPress = () => {
@@ -52,15 +45,18 @@ export const MonthlyDay = ({
   }
 
   const TextComponent = () => (
-    <Text style={styles.dayButtonText}>{number}</Text>
+    <Text
+      style={[
+        styles.dayButtonText,
+        isActiveDay && { fontFamily: "Roboto-Bold" },
+      ]}>
+      {number}
+    </Text>
   )
 
   return React.useMemo(
     () => (
-      <Pressable
-        onPress={onPress}
-        hitSlop={Sizing.x5}
-        style={styles.dayButton}>
+      <Pressable onPress={onPress} hitSlop={Sizing.x5} style={styles.dayButton}>
         {isActiveDay ? (
           <View style={styles.selectionIndicator}>
             <TextComponent />
@@ -85,18 +81,10 @@ export const MonthlyDay = ({
               </>
             )}
             {hasActiveEvents && !hasScheduledSlots && (
-              <DotIcon
-                style={styles.icon}
-                fill="#60A5FA"
-                stroke="none"
-              />
+              <DotIcon style={styles.icon} fill="#60A5FA" stroke="none" />
             )}
             {hasScheduledSlots && !hasActiveEvents && (
-              <DotIcon
-                style={styles.icon}
-                fill="#FCD34D"
-                stroke="none"
-              />
+              <DotIcon style={styles.icon} fill="#FCD34D" stroke="none" />
             )}
           </>
         )}
@@ -120,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 999,
-    backgroundColor: applyOpacity(Colors.primary.s350, 0.34),
+    backgroundColor: applyOpacity(Colors.primary.s350, 0.3),
   },
   dayButtonText: {
     ...Typography.body.x30,

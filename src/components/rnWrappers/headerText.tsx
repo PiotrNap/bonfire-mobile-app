@@ -3,7 +3,7 @@ import { Text, StyleSheet, StyleProp, TextStyle } from "react-native"
 import { Colors, Typography } from "styles/index"
 
 export interface HeaderTextProps {
-  colorScheme: "light" | "dark"
+  colorScheme?: "light" | "dark"
   children: React.ReactNode
   customStyles?: StyleProp<TextStyle>
 }
@@ -21,11 +21,11 @@ export const HeaderText = ({
 
 const styles = StyleSheet.create({
   text_light: {
-    ...Typography.header.x50,
+    ...Typography.header.x45,
     color: Colors.primary.s800,
   },
   text_dark: {
-    ...Typography.header.x50,
+    ...Typography.header.x45,
     color: Colors.primary.neutral,
   },
 })

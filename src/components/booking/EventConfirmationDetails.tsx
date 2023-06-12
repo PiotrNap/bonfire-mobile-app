@@ -116,7 +116,7 @@ export const EventConfirmationDetails = ({
       },
     },
     organizerEvent?.fromDate && {
-      label: "Date & time",
+      label: "Date & Time",
       lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
         ? [
             {
@@ -142,7 +142,7 @@ export const EventConfirmationDetails = ({
           ],
     },
     organizerEvent?.availableAt && {
-      label: "Date & time",
+      label: "Date & Time",
       lineContent: [
         {
           content: `${weekDays[getDay(organizerEvent?.availableAt)]} - ${
@@ -200,32 +200,31 @@ export const EventConfirmationDetails = ({
       },
     },
     selectedDays && {
-      label: "Date & time",
+      label: "Date & Time",
       callbackFn: {
         label: "Edit",
         callbackFnScreen: "Available Days Selection",
       },
-      lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
-        ? [
-            {
-              content: `Start: ${weekDays[getDay(fromDate)]} - ${
-                months[getMonth(fromDate)]
-              } ${getDate(fromDate)}`,
-              icon: sectionsIcons.calendar,
-            },
-            {
-              content: `End: ${weekDays[getDay(toDate)]} - ${
-                months[getMonth(toDate)]
-              } ${getDate(toDate)}`,
-              icon: sectionsIcons.calendar,
-            },
-          ]
-        : [
-            {
-              content: `${weekDays[getDay(fromDate)]}`,
-              icon: sectionsIcons.calendar,
-            },
-          ],
+      lineContent:
+        !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate) &&
+        fromDate &&
+        toDate
+          ? [
+              {
+                content: `Start: ${new Date(fromDate).toLocaleString()}`,
+                icon: sectionsIcons.calendar,
+              },
+              {
+                content: `End: ${new Date(toDate).toLocaleString()}`,
+                icon: sectionsIcons.calendar,
+              },
+            ]
+          : [
+              {
+                content: `${weekDays[getDay(fromDate)]}`,
+                icon: sectionsIcons.calendar,
+              },
+            ],
     },
     {
       label: "Hourly Rate",
@@ -241,7 +240,7 @@ export const EventConfirmationDetails = ({
       ],
     },
     {
-      label: "Event card",
+      label: "Event Card",
       callbackFn: {
         label: "Edit",
         callbackFnScreen: "Event Card Customization",
@@ -287,7 +286,7 @@ export const EventConfirmationDetails = ({
     },
     (previewingEvent?.pickedDate || pickedDate) &&
       (previewingEvent?.duration || duration) && {
-        label: "Date & time",
+        label: "Date & Time",
         ...(pickedDate &&
           duration && {
             callbackFn: {
@@ -354,7 +353,7 @@ export const EventConfirmationDetails = ({
       isLastItem={isLastItem(index)}
     />
   )
-
+  debugger
   const keyExtractor = (item: any, index: number) => `${item?.label}_${index}`
 
   return (

@@ -16,6 +16,8 @@ import {
   setToEncryptedStorage,
 } from "lib/encryptedStorage"
 import { startChallengeSequence } from "lib/helpers"
+import { HeaderText } from "components/rnWrappers/headerText"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface RegistrationConfirmationScreen {}
 
@@ -50,11 +52,13 @@ export const RegistrationConfirmationScreen = () => {
         const res = await Users.updateUser(organizerProfileDto, id)
 
         if (res.status === 201) {
-          const authResponseDTO = await startChallengeSequence(id, true)
-
+          const authResponseDTO = await startChallengeSequence(
+            publicKey,
+            id,
+            true
+          )
           await setToEncryptedStorage("auth-credentials", authResponseDTO)
-
-          navigate("Organizer Navigation Screens")
+          navigate("Navigation Screens")
         }
       } else {
         throw new Error("Occured problems while accessing keys from storage")
@@ -75,20 +79,19 @@ export const RegistrationConfirmationScreen = () => {
         <RegistrationIcon style={styles.image} />
       </View>
       <View style={styles.header}>
-        <Text style={styles.headerText}>
-          Confirm details and complete registration
-        </Text>
-        <Text style={styles.subHeaderText}>
+        <HeaderText>Confirm details and complete registration</HeaderText>
+        <SubHeaderText customColorScheme="dark">
           You will be able to edit any personal information in your account
           profile if needed.
-        </Text>
+        </SubHeaderText>
       </View>
       <View style={styles.userDetails}>
         <PressableIcon
           icon={
             <PencilAltIcon
-              stroke={Colors.primary.s350}
+              stroke={Colors.primary.s600}
               style={styles.userDetailsIcon}
+              strokeWidth="1.5"
               onPress={onChangePress}
             />
           }

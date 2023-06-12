@@ -11,13 +11,10 @@ import { BodyText } from "components/rnWrappers/bodyText"
 import { LeftArrowIcon, PaymentSuccessfulIcon } from "assets/icons"
 import { AppStackParamList } from "common/types/navigationTypes"
 
-export interface ConfirmationProps {}
-
 type Props = StackScreenProps<AppStackParamList, "Confirmation">
 
 export const Confirmation = ({ navigation, route }: Props) => {
-  const { colorScheme, accountType } = appContext()
-
+  const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
 
   const navigateBack = () => {
@@ -29,10 +26,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
         index: 0,
         routes: [
           {
-            name:
-              accountType === "organizer"
-                ? "Organizer Navigation Screens"
-                : "Attendee Navigation Screens",
+            name: "Navigation Screens",
           },
         ],
       })
@@ -73,15 +67,17 @@ export const Confirmation = ({ navigation, route }: Props) => {
           <BodyText
             changingColorScheme
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
-            Success! A transaction confirmation will appear shortly in your
-            wallet.
+            Success!{" "}
+            {route.params?.isNewEvent
+              ? "Your new event should now appear on your dashboard."
+              : "A transaction confirmation will appear shortly in your wallet."}
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>
           <FullWidthButton
             onPressCallback={onButtonPress}
             //@TODO should this title change based on which context user is in?
-            text={"Return to dashboard"}
+            text={"Close"}
             colorScheme={colorScheme}
           />
         </View>

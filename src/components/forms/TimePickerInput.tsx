@@ -151,12 +151,15 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
         style={styles.input}>
         <View style={styles.textInputWrapper}>
           <Text
-            style={[styles.placeholderText, os === "ios" && { lineHeight: 0 }]}>
+            style={[
+              { color: Colors.primary.s600 },
+              os === "ios" && { lineHeight: 0 },
+            ]}>
             {getDigitalTime(timeValue, "12")}
           </Text>
           <AnimatedIcon
             style={[styles.icon, { transform: [{ rotate: spin }] }]}
-            stroke={Colors.primary.s350}
+            stroke={Colors.primary.s600}
           />
         </View>
         {os === "ios" && (
@@ -206,7 +209,7 @@ const defaultStyles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   icon: {
     width: Sizing.x30,
@@ -223,5 +226,4 @@ const defaultStyles = StyleSheet.create({
     backgroundColor: Colors.neutral.s150,
     borderRadius: Outlines.borderRadius.base,
   },
-  dateTimePicker: {},
 })

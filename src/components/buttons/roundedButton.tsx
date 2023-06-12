@@ -1,16 +1,15 @@
 import * as React from "react"
-import { Text, StyleSheet, Pressable } from "react-native"
+import { StyleSheet, Pressable } from "react-native"
 
-import { Outlines, Buttons, Typography, Colors, Sizing } from "styles/index"
+import { Outlines, Buttons, Colors, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
 
 export interface Props {
   onPress: () => void
   icon: React.ReactNode
-  title?: string
 }
 
-export const SmallButton = ({ onPress, icon, title }: Props) => {
+export const RoundedButton = ({ onPress, icon }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
   return (
@@ -25,7 +24,6 @@ export const SmallButton = ({ onPress, icon, title }: Props) => {
             : { backgroundColor: Colors.primary.s600 }
         )
       )}>
-      {title && <Text style={styles.buttonText}>{title}</Text>}
       {icon}
     </Pressable>
   )
@@ -33,17 +31,11 @@ export const SmallButton = ({ onPress, icon, title }: Props) => {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: Outlines.borderRadius.base,
+    borderRadius: Outlines.borderRadius.max,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: Sizing.x5,
-    paddingHorizontal: Sizing.x10,
+    padding: Sizing.x7,
     ...Outlines.shadow.base,
-  },
-  buttonText: {
-    ...Typography.header.x20,
-    marginRight: Sizing.x5,
-    color: Colors.primary.neutral,
   },
 })

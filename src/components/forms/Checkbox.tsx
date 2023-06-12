@@ -10,6 +10,7 @@ export interface Props {
   onCheckBoxPress: () => void
   children: React.ReactNode
   customStyle?: ViewStyle
+  colorMode?: "light" | "dark"
 }
 
 export const Checkbox = ({
@@ -17,9 +18,10 @@ export const Checkbox = ({
   onCheckBoxPress,
   customStyle,
   children,
+  colorMode,
 }: Props) => {
   const { colorScheme } = appContext()
-  const isLightMode = colorScheme === "light"
+  const isLightMode = (colorMode ?? colorScheme) === "light"
   return (
     <>
       <Pressable
@@ -39,9 +41,9 @@ export const Checkbox = ({
           customStyle,
         ]}>
         <CheckIcon
-          width="15"
-          height="15"
-          strokeWidth="3.5"
+          width={Sizing.x20}
+          height={Sizing.x20}
+          strokeWidth="4"
           stroke={
             isLightMode
               ? Colors.primary.neutral
@@ -69,11 +71,9 @@ const styles = StyleSheet.create({
   checkbox: {
     alignItems: "center",
     justifyContent: "center",
-    width: 17,
-    height: 17,
-    marginTop: Sizing.x5,
-    marginRight: Sizing.x10,
-    marginLeft: Sizing.x2,
+    width: Sizing.x20,
+    height: Sizing.x20,
+    margin: Sizing.x10,
     borderRadius: Sizing.x3,
   },
 })

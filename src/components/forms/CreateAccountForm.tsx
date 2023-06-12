@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native"
+import { Animated, StyleSheet, Text, View } from "react-native"
 
 import { Formik, Field } from "formik"
 import { Buttons, Typography, Colors, Sizing, Forms } from "styles/index"
@@ -7,7 +7,6 @@ import { accountValidationScheme } from "lib/validators"
 import { CustomInput } from "../forms/CustomInput"
 import { Users } from "Api/Users"
 import { setAuthorizationToken } from "Api/base"
-import { CheckIcon } from "icons/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { setToEncryptedStorage } from "lib/encryptedStorage"
 import { ProfileContext } from "contexts/profileContext"
@@ -17,14 +16,13 @@ import { startChallengeSequence } from "lib/helpers"
 import { generateKeyPair } from "lib/tweetnacl"
 import base64 from "base64-js"
 import TZone from "react-native-timezone"
-import { inputStyles } from "../../styles/forms"
+import { inputStyles, formStyleDark } from "../../styles/forms"
+import { Checkbox } from "./Checkbox"
 
 export interface CreateAccountFormProps {
   onErrorCallback: (val: string) => void
   onChangeCallback: () => void
 }
-
-const AnimatedCheckIcon = Animated.createAnimatedComponent(CheckIcon)
 
 export const CreateAccountForm = ({
   onErrorCallback,
@@ -102,7 +100,11 @@ export const CreateAccountForm = ({
           setTimeZone(timeZone ?? "")
 
           // start challenge and get JWT
-          const authResponseDTO = await startChallengeSequence(id, true)
+          const authResponseDTO = await startChallengeSequence(
+            values.publicKey,
+            id,
+            true
+          )
 
           if (authResponseDTO) {
             const { accessToken } = authResponseDTO
@@ -139,8 +141,6 @@ export const CreateAccountForm = ({
   return (
     <Formik
       validationSchema={accountValidationScheme()}
-      validateOnChange={submitted}
-      validateOnBlur={submitted}
       initialValues={{
         name: "",
         username: "",
@@ -153,64 +153,60 @@ export const CreateAccountForm = ({
             name="name"
             label="Name"
             component={CustomInput}
-            onChange={onChangeCallback}
+            customOnChange={onChangeCallback}
             placeholder="John Doe"
             keyboardType="default"
             textContentType="name"
             autoCompleteType="name"
             validateForm={validateForm}
             submitted={submitted}
-            styles={inputStyles}
+            styles={Object.assign({}, inputStyles, formStyleDark)}
           />
           <Field
             key="Username"
             name="username"
             label="Username"
             component={CustomInput}
-            onChange={onChangeCallback}
+            customOnChange={onChangeCallback}
             placeholder="@John12"
             keyboardType="default"
             textContentType="username"
             autoCompleteType="username"
             validateForm={validateForm}
             submitted={submitted}
-            styles={inputStyles}
+            styles={Object.assign({}, inputStyles, formStyleDark)}
           />
-          <View style={styles.checkboxWrapper}>
-            <Pressable
-              onPress={onCheckBoxPress}
-              style={styles.pressableCheckbox}
-              hitSlop={2}>
-              <View style={styles.checkbox}>
-                <AnimatedCheckIcon
-                  opacity={animatedOpacity}
-                  width="15"
-                  height="15"
-                  strokeWidth="4"
-                  stroke={Colors.primary.s600}
-                />
-              </View>
-            </Pressable>
-            <Text style={styles.checkboxText}>I accept</Text>
-            <Text style={styles.checkboxTextLink}>
-              Privacy Policy + Terms of Use
-            </Text>
-          </View>
+          <View style={styles.footer}>
+            <View style={styles.checkboxWrapper}>
+              <Checkbox
+                acceptedCheckbox={acceptedCheckbox}
+                colorMode={"dark"}
+                onCheckBoxPress={onCheckBoxPress}>
+                <Text style={styles.checkboxText}>I accept</Text>{" "}
+                <Text style={styles.checkboxTextLink}>
+                  Privacy Policy + Terms of Use
+                </Text>
+              </Checkbox>
+            </View>
+            {/*
+          @TODO
           <View style={styles.appendix}>
             <Text style={styles.appendixText}>Already have an account?</Text>
             <Text style={styles.appendixTextLink}>Sign in</Text>
           </View>
-          <FullWidthButton
-            colorScheme={"dark"}
-            buttonType="transparent"
-            loadingIndicator={isLoading}
-            onPressCallback={handleSubmit}
-            style={styles.submitButton}
-            text={"Create account"}
-            textStyle={styles.submitButtonText}
-            disabled={!isValid}
-            isOnboarding
-          />
+          */}
+            <FullWidthButton
+              colorScheme={"dark"}
+              buttonType="transparent"
+              loadingIndicator={isLoading}
+              onPressCallback={handleSubmit}
+              style={styles.submitButton}
+              text={"Submit"}
+              textStyle={styles.submitButtonText}
+              disabled={!isValid}
+              isOnboarding
+            />
+          </View>
         </>
       )}
     </Formik>
@@ -226,6 +222,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     ...Buttons.bar.transparent_dark,
+    marginBottom: "auto",
   },
   submitButtonText: {
     ...Buttons.barText.transparent_dark,
@@ -234,33 +231,17 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Sizing.x5,
-  },
-  pressableCheckbox: {
-    width: 32,
-    height: 32,
-    alignItems: "center",
     justifyContent: "center",
-  },
-  checkbox: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 17,
-    height: 17,
-    padding: Sizing.x1,
-    borderRadius: Sizing.x3,
-    backgroundColor: Colors.primary.neutral,
+    marginVertical: Sizing.x5,
   },
   checkboxText: {
-    marginLeft: Sizing.x2,
-    marginRight: Sizing.x5,
     ...Typography.body.x30,
     fontFamily: "Roboto-Regular",
     color: Colors.primary.neutral,
   },
   checkboxTextLink: {
     ...Typography.body.x30,
-    fontFamily: "Roboto-Regular",
+    fontFamily: "Roboto-Bold",
     color: Colors.primary.s300,
   },
   appendix: {
@@ -281,5 +262,9 @@ const styles = StyleSheet.create({
     ...Typography.body.x30,
     fontFamily: "Roboto-Regular",
     color: Colors.primary.s300,
+  },
+  footer: {
+    width: "100%",
+    justifyContent: "space-evenly",
   },
 })

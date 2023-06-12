@@ -19,12 +19,13 @@ export type AppStackParamList = {
   Confirmation:
     | {
         isBookingWalletTopUp: boolean | undefined
+        isNewEvent: boolean | undefined
         isBookingConfirmation: boolean | undefined
       }
     | undefined
   "Add Funds": { fromScreen: string }
   "Attendee Navigation Screens": undefined
-  "Organizer Navigation Screens": undefined
+  "Navigation Screens": undefined
   "User Registration Screens": undefined
   "Onboarding Screens": undefined
   "Duration Choice": any
@@ -87,7 +88,7 @@ export type MyEventsStackParamList = {
 }
 
 export type ProfileStackParamList = {
-  Profile: undefined
+  "Profile Main": undefined
   "Edit Profile": { userInfo: UserBaseDTO | UserOrganizerDTO }
   "Profile Settings": undefined
 }
@@ -95,10 +96,6 @@ export type ProfileStackParamList = {
 export type WalletStackParamList = {
   Wallet: undefined
   "Import Mnemonics": undefined
-<<<<<<< HEAD
-  "Mnemonic Preview": undefined
-=======
->>>>>>> b2cfda9 (feat: New wallet import flow)
   "Import Mnemonics Confirmation": WalletNavigationParams
   "New Wallet Set Up": WalletNavigationParams
   "Mnemonic Preview": WalletSetUpFormValues

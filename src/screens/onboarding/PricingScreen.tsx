@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
   scrollContainer: {
     width: "100%",
     height: "100%",
-    marginTop: Sizing.x20,
+    marginTop: Sizing.x40,
+    marginBottom: Sizing.x20,
   },
   container: {
     width: "90%",
@@ -202,21 +203,14 @@ const styles = StyleSheet.create({
     marginLeft: Sizing.x10,
   },
   backButtonSection: {
-    marginTop: Sizing.x5,
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: "center",
   },
   backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Sizing.x10,
+    justifyContent: "center",
   },
   backButtonText: {
-    lineHeight: 30,
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
     paddingBottom: Sizing.x2,
+    marginLeft: Sizing.x8,
     ...Typography.subHeader.x35,
     ...Typography.roboto.medium,
     color: Colors.primary.neutral,

@@ -97,65 +97,64 @@ export const WeekDayNames = ({
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.weekDays}>
-        {weekDays.map((day, i) =>
-          !isNewEventCalendar ||
-          isUnavailableWeek(i) ||
-          eventType === "One-Time" ? (
-            <View key={`day-${i}`} style={[styles.dayContainer]}>
-              <View style={styles.dayPlaceholder}>
-                <Text
-                  style={[
-                    styles.dayTitle,
-                    {
-                      color: Colors.primary.s600,
-                    },
-                  ]}>
-                  {day}
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <Pressable
-              key={i}
-              style={[styles.dayContainer]}
-              hitSlop={5}
-              onPress={() => onPress(i)}>
-              <View
+    <View style={styles.weekDays}>
+      {weekDays.map((day, i) =>
+        !isNewEventCalendar ||
+        isUnavailableWeek(i) ||
+        eventType === "One-Time" ? (
+          <View key={`day-${i}`} style={[styles.dayContainer]}>
+            <View style={styles.dayPlaceholder}>
+              <Text
                 style={[
-                  styles.dayButton,
-                  dayButtonStyle,
-                  isSelectedDay(i) && {
-                    ...styles.selectedDayButton,
-                    borderColor: Colors.primary.s600,
+                  styles.dayTitle,
+                  {
+                    color: Colors.primary.s600,
                   },
                 ]}>
-                <Text
-                  style={[
-                    styles.dayTitle,
-                    {
-                      color: isSelectedDay(i)
-                        ? Colors.primary.neutral
-                        : Colors.primary.s600,
-                    },
-                  ]}>
-                  {day}
-                </Text>
-              </View>
-            </Pressable>
-          )
-        )}
-      </View>
+                {day}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <Pressable
+            key={i}
+            style={[styles.dayContainer]}
+            hitSlop={5}
+            onPress={() => onPress(i)}>
+            <View
+              style={[
+                styles.dayButton,
+                dayButtonStyle,
+                isSelectedDay(i) && {
+                  ...styles.selectedDayButton,
+                  borderColor: Colors.primary.s600,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.dayTitle,
+                  {
+                    color: isSelectedDay(i)
+                      ? Colors.primary.neutral
+                      : Colors.primary.s600,
+                  },
+                ]}>
+                {day}
+              </Text>
+            </View>
+          </Pressable>
+        )
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {},
   weekDays: {
     flexDirection: "row",
     justifyContent: "space-evenly",
+    borderBottomWidth: Outlines.borderWidth.base,
+    borderBottomColor: Colors.primary.s200,
   },
   dayTitle: {
     ...Typography.body.x30,

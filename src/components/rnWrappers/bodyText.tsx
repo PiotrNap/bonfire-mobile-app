@@ -9,12 +9,14 @@ import { Text, StyleSheet, StyleProp } from "react-native"
 
 import { appContext } from "contexts/contextApi"
 import { Colors, Typography } from "styles/index"
+import { ColorSchemeName } from "common/interfaces/appInterface"
 
 export interface BodyTextProps {
   children?: React.ReactNode
   colors?: string[]
   changingColorScheme?: boolean
   customStyle?: StyleProp<any> | Array<StyleProp<any>>
+  customColorScheme?: ColorSchemeName
 }
 
 export const BodyText = ({
@@ -22,8 +24,10 @@ export const BodyText = ({
   colors,
   customStyle,
   changingColorScheme,
+  customColorScheme,
 }: BodyTextProps) => {
-  const { colorScheme } = appContext()
+  var { colorScheme } = appContext()
+  if (customColorScheme) colorScheme = customColorScheme
 
   const textColor =
     changingColorScheme && colorScheme != null && colors

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Alert, Platform } from "react-native"
+import { Alert, Linking, Platform } from "react-native"
 import {
   check,
   PERMISSIONS,
@@ -57,13 +57,21 @@ export const useMediaAccess = () => {
 
     try {
       const res: PermissionStatus = await request(permission, rationale)
-      if (res !== "granted") {
+      if (res === "blocked") {
+        Alert.alert(
+          "Permission Required",
+          "We need access to your media library for uploading images. Please enable it in your settings.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Open Settings", onPress: () => Linking.openSettings() },
+          ]
+        )
+      } else if (res !== "granted") {
         Alert.alert(
           "Access needed",
-          "We need access to your media library for uploading images.",
+          "We need access to your media library for uploading images. You may need to manually give Bonfire permission.",
           [{ text: "Close", style: "cancel", onPress: () => {} }]
         )
-        return false
       } else {
         return true
       }
@@ -73,8 +81,8 @@ export const useMediaAccess = () => {
         "Please try accessing media library again. Make sure you have granted the access.",
         [{ text: "Close", style: "cancel", onPress: () => {} }]
       )
-      return false
     }
+    return false
   }
   const _launchImageLibrary = async (modalRef: any) => {
     if (!access) {

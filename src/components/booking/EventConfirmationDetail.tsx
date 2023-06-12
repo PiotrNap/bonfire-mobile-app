@@ -21,7 +21,6 @@ export const EventConfirmationDetail = ({
   if (lineContent == null) {
     return <></>
   }
-
   const onTextPress = (screen: string) => {
     if (callbackFn != null) navigation.navigate(screen)
   }
@@ -45,13 +44,15 @@ export const EventConfirmationDetail = ({
               colors={[Colors.primary.s600, Colors.primary.neutral]}
               customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
             />
-            {callbackFn && (
+            {callbackFn ? (
               <SubHeaderText
                 customStyle={{ ...fontWeight.semibold }}
                 children={callbackFn.label}
                 colors={[Colors.primary.s350, Colors.primary.s200]}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
               />
+            ) : (
+              <></>
             )}
           </View>
           {(lineContent as any).map(
@@ -74,26 +75,28 @@ export const EventConfirmationDetail = ({
         <>
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
-              children={label}
               colors={[Colors.primary.s600, Colors.primary.neutral]}
-              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
-            />
-            {callbackFn && (
+              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}>
+              {label}
+            </SubHeaderText>
+            {callbackFn ? (
               <SubHeaderText
-                children={callbackFn.label}
                 colors={[Colors.primary.s350, Colors.primary.s200]}
                 customStyle={{ ...fontWeight.semibold }}
-                callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
-              />
+                callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}>
+                {callbackFn.label}
+              </SubHeaderText>
+            ) : (
+              <></>
             )}
           </View>
           <View style={styles.subHeaderContent}>
             {lineContent.icon}
             <SubHeaderText
-              children={lineContent.content}
               colors={[Colors.primary.s800, Colors.primary.neutral]}
-              customStyle={styles.text}
-            />
+              customStyle={styles.text}>
+              {lineContent.content}
+            </SubHeaderText>
           </View>
         </>
       )}

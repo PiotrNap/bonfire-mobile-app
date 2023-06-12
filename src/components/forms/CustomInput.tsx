@@ -9,15 +9,18 @@
  */
 import * as React from "react"
 import { TextInput, Text, View } from "react-native"
+import { Colors } from "styles/index"
 
 export const CustomInput = (props: any) => {
-  const {
+  let {
     field: { onChange, name, onBlur, value },
     form: { errors, touched, setFieldTouched },
     styles,
     validateForm,
     defaultValue,
     placeholder,
+    customOnChange,
+    isDisabled,
     ...inputProps
   } = props
   const hasError = errors[name] && touched[name]
@@ -38,14 +41,18 @@ export const CustomInput = (props: any) => {
               height: 100,
               textAlignVertical: "top",
             },
+            isDisabled && {
+              backgroundColor: Colors.neutral.s200,
+            },
           ]}
+          editable={!isDisabled}
           value={String(value ?? (isNumeric ? defaultValue ?? 0 : ""))}
           placeholderTextColor={styles.placeholderText.color}
           placeholder={placeholder}
           onEndEditing={() => validateForm()}
-          onChange={() => validateForm()}
           onChangeText={(text) => {
             onChange(name)(text)
+            customOnChange && customOnChange(text)
           }}
           onBlur={() => {
             setFieldTouched(name)

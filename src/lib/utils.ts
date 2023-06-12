@@ -176,12 +176,10 @@ export function areEqualDates(val1: number, val2: number): boolean {
  * @param day
  */
 export const isPastDate = (year: number, month: string, day: number) => {
-  const currYear = dayjs().year()
-  const currMonth = dayjs().month()
-  const currDay = dayjs().day()
-  const currDate = new Date(currYear, currMonth, currDay)
-
-  return new Date(year, monthsByName[month], day) <= currDate
+  return dayjs(new Date(year, monthsByName[month], day)).isBefore(
+    dayjs(),
+    "day"
+  )
 }
 
 /**

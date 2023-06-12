@@ -5,7 +5,7 @@ import { signChallenge } from "./tweetnacl"
 import {
   decrypt_with_password,
   encrypt_with_password,
-} from "@emurgo/react-native-haskell-shelley"
+} from "@emurgo/csl-mobile-bridge"
 import crs from "crypto-random-string"
 import base64 from "base64-js"
 
@@ -68,10 +68,11 @@ export const getRecurringMonthDays = (
  */
 export const startChallengeSequence = async (
   credential: string,
+  id: string,
   isSigningUp: boolean
 ): Promise<{ [index: string]: string } | null> => {
   try {
-    let res = await Auth.requestChallenge({ credential })
+    let res = await Auth.requestChallenge({ credential, id })
     let { challengeString } = res
 
     if (challengeString) {
@@ -81,11 +82,10 @@ export const startChallengeSequence = async (
 
       if (signature) {
         // request JWT
-        let res = await Auth.requestAccessToken(
-          challengeString,
-          signature,
-          isSigningUp ? { id: credential } : { publicKey: credential }
-        )
+        let res = await Auth.requestAccessToken(challengeString, signature, {
+          id,
+          publicKey: credential,
+        })
         if (res) return res
       }
     }

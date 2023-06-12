@@ -30,8 +30,8 @@ export const useGoogleAuth = (
       }
     })()
 
-    Linking.addEventListener("url", eventListener)
-    return () => Linking.removeEventListener("url", eventListener)
+    const subscription = Linking.addEventListener("url", eventListener)
+    return () => subscription.remove()
   }, [])
 
   const eventListener = React.useCallback((event: { url: string }) => {
@@ -55,15 +55,17 @@ export const useGoogleAuth = (
       const res: AxiosResponse<any> = await axios.get("auth/google-oauth-url", {
         params: { uri },
       })
-      const { authUrl } = await res.data
 
+      const { authUrl } = await res.data
       // check if device supports this
       const inAppBrowserAvailable = await InAppBrowser.isAvailable()
 
       if (authUrl && inAppBrowserAvailable) {
         await InAppBrowser.open(authUrl)
       } else Linking.openURL(authUrl)
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
 
     return setIsRequesting(false)
   }

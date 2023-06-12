@@ -58,7 +58,6 @@ export const UpdateAccountForm = ({
     const res = await updateAccountInfo(rest, userInfo.id)
     res && onUpdateResponse(res)
   }
-  const onChangeCallback = (val: any) => {}
   let formStyles: StyleProp<any>
   if (isLightMode) {
     formStyles = Object.assign({}, inputStyles, styles, formStyleLight)
@@ -74,8 +73,8 @@ export const UpdateAccountForm = ({
       validateOnBlur={submitted}
       initialValues={{
         ..._userInfo,
-        ada: hourlyRate.ada,
-        gimbals: hourlyRate.gimbals,
+        ada: hourlyRate?.ada || 0,
+        gimbals: hourlyRate?.gimbals || 0,
       }}
       onSubmit={handleSubmit}>
       {({ handleSubmit, isValid, validateForm }) => (
@@ -85,7 +84,6 @@ export const UpdateAccountForm = ({
             name="name"
             label="Name"
             component={CustomInput}
-            onChange={onChangeCallback}
             defaultValue={userInfo.name}
             keyboardType="default"
             textContentType="name"
@@ -100,7 +98,6 @@ export const UpdateAccountForm = ({
             label="Username"
             defaultValue={userInfo.username}
             component={CustomInput}
-            onChange={onChangeCallback}
             keyboardType="default"
             textContentType="username"
             autoCompleteType="username"
@@ -117,7 +114,6 @@ export const UpdateAccountForm = ({
                 spellCheck={true}
                 defaultValue={userInfo.profession}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="default"
                 validateForm={validateForm}
                 submitted={submitted}
@@ -129,7 +125,6 @@ export const UpdateAccountForm = ({
                 label="Job Title"
                 defaultValue={userInfo.jobTitle}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="default"
                 textContentType="jobTitle"
                 validateForm={validateForm}
@@ -146,7 +141,6 @@ export const UpdateAccountForm = ({
                 numberOfLines={3}
                 maxChar={250}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="default"
                 validateForm={validateForm}
                 submitted={submitted}
@@ -159,7 +153,6 @@ export const UpdateAccountForm = ({
                 defaultValue={userInfo.skills}
                 spellCheck={true}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="default"
                 validateForm={validateForm}
                 submitted={submitted}
@@ -172,7 +165,6 @@ export const UpdateAccountForm = ({
                 label="Hourly Rate (ADA)"
                 defaultValue={String(userInfo.hourlyRate?.ada) ?? "0"}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="numeric"
                 validateForm={validateForm}
                 submitted={submitted}
@@ -185,7 +177,6 @@ export const UpdateAccountForm = ({
                 label="Hourly Rate (Gimbals)"
                 defaultValue={String(userInfo.hourlyRate?.gimbals) ?? "0"}
                 component={CustomInput}
-                onChange={onChangeCallback}
                 keyboardType="numeric"
                 validateForm={validateForm}
                 submitted={submitted}

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, Text } from "react-native"
+import { View, StyleSheet, } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
 import {
@@ -81,13 +81,7 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
         <Checkbox
           onCheckBoxPress={onCheckBoxPress}
           acceptedCheckbox={acceptedCheckbox}>
-          Schedule this event on my Google calendar
-          {"\n"}
-          {!validGoogleOAuth && !isInitialRequesting && (
-            <>
-              <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant access
-            </>
-          )}
+          Schedule this event on my Google calendar.
         </Checkbox>
       </View>
       <View style={styles.buttonContainer}>

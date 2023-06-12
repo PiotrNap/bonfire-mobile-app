@@ -5,6 +5,7 @@ import { Day } from "interfaces/myCalendarInterface"
 import { getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
 import { appContext } from "contexts/contextApi"
+import { roboto } from "../../../styles/typography"
 
 export interface AvailabilityDayProps extends Day {
   number: number
@@ -81,6 +82,9 @@ export const _AvailabilityDay = ({
               color: isSelectedDay
                 ? Colors.primary.neutral
                 : Colors.primary.s600,
+              ...(isSelectedDay
+                ? Typography.roboto.bold
+                : Typography.roboto.regular),
             },
           ]}>
           {number}
@@ -93,7 +97,6 @@ export const _AvailabilityDay = ({
 const styles = StyleSheet.create({
   dayNumber: {
     ...Typography.body.x30,
-    ...Typography.roboto.medium,
     zIndex: 2,
     textAlign: "center",
   },
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
     height: 33,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: Outlines.borderWidth.thin,
+    borderWidth: Outlines.borderWidth.base,
     ...Outlines.shadow.base,
   },
   selectedDayButton: {

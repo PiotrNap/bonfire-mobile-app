@@ -6,6 +6,7 @@ import { EventAvailability } from "common/interfaces/newEventInterface"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import { getDigitalLocaleTime } from "lib/utils"
 import { fontWeight } from "../../styles/typography"
+import { applyOpacity } from "../../styles/colors"
 
 export interface AvailabilityProps {
   availability: EventAvailability
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: Outlines.borderRadius.max,
     borderColor: Colors.primary.s300,
-    borderWidth: Outlines.borderWidth.thick,
+    borderWidth: Outlines.borderWidth.base,
     backgroundColor: Colors.primary.s180,
     ...Outlines.shadow.base,
   },
@@ -72,7 +73,9 @@ const styles = StyleSheet.create({
     width: Sizing.x40,
     height: Sizing.x40,
     borderRadius: Outlines.borderRadius.max,
-    margin: Sizing.x5,
+    borderWidth: Outlines.borderWidth.base,
+    borderColor: Colors.danger.s300,
+    backgroundColor: applyOpacity(Colors.danger.s300, 0.1),
     alignItems: "center",
     justifyContent: "center",
   },

@@ -159,7 +159,10 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
         style={styles.input}>
         <View style={styles.textInputWrapper}>
           <Text
-            style={[styles.placeholderText, os === "ios" && { lineHeight: 0 }]}>
+            style={[
+              { color: Colors.primary.s600 },
+              os === "ios" && { lineHeight: 0 },
+            ]}>
             {inputValue + " min"}
           </Text>
           <AnimatedIcon

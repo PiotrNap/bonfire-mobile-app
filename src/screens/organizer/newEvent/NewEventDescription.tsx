@@ -4,10 +4,8 @@ import { StyleSheet, View, Pressable } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { StackScreenProps } from "@react-navigation/stack"
 import Filter from "bad-words"
-import ButtonToggle from "react-native-button-toggle-group"
 
-import { CheckIcon, LeftArrowIcon } from "assets/icons"
-import { CustomPlainInput } from "components/forms/CustomPlainInput"
+import { LeftArrowIcon } from "assets/icons"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -17,8 +15,18 @@ import { Layout } from "components/layouts/basicLayout"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ProfileContext } from "contexts/profileContext"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
-import { applyOpacity } from "../../../styles/colors"
 import { EventType, HourlyRate } from "common/interfaces/newEventInterface"
+import { Checkbox } from "components/forms/Checkbox"
+import ToggleButton from "./toggleButton"
+import { CustomInput } from "components/forms/CustomInput"
+import { Field, Formik } from "formik"
+import { newEventScheme } from "lib/validators"
+import {
+  formStyleDark,
+  formStyleLight,
+  inputStyles,
+} from "../../../styles/forms"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
@@ -26,26 +34,24 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const { hourlyRate } = React.useContext(ProfileContext)
   const { setTextContent, setHourlyRate, setEventType } = eventCreationContext()
+  const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [eventTitle, setEventTitle] = React.useState<string>("")
   const [eventType, _setEventType] = React.useState<EventType>("One-Time")
   const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
     ada: 0,
     gimbals: 0,
   })
-  const [eventDescription, setEventsDescription] = React.useState<string>("")
   const [markedCheckbox, setMarkedCheckbox] = React.useState<boolean>(false)
 
   const isLightMode = colorScheme === "light"
-  const isDisabledButton =
-    !eventTitle || !eventDescription || (!+_hourlyRate.ada && !markedCheckbox)
+  const isDisabledButton = !eventTitle
 
   // set the input values
   const onEventTitleChange = (val: string) => setEventTitle(val)
-  const onDescriptionChange = (val: string) => setEventsDescription(val)
   const onAdaHourlyRateChange = (val: string) => onHourlyRateChange(val, "ada")
   const onGimbalsHourlyRateChange = (val: string) =>
     onHourlyRateChange(val, "gimbals")
-  const onHourlyRateChange = (val: string, type: "ada" | "gimbals") => {
+  const onHourlyRateChange = (val: any, type: "ada" | "gimbals") => {
     if (typeof +val === "number" && +val > 0) {
       if (type === "ada") {
         _setHourlyRate({ ..._hourlyRate, ada: Number(val) })
@@ -58,26 +64,35 @@ export const NewEventDescription = ({ navigation }: Props) => {
   }
   // navigation handlers
   const onBackNavigationPress = () => navigation.goBack()
-  const onNextPress = () => {
+  const onSubmit = (formValues: any) => {
+    const { title, description, ada, gimbals } = formValues
+    setSubmitted(true)
     const bw = new Filter()
-    if (bw.isProfane([eventTitle, eventDescription].join(" ")))
-      return showInappropriateContentModal()
+    if (bw.isProfane([title, description].join(" "))) {
+      showInappropriateContentModal()
+      setSubmitted(false)
+      return
+    }
 
-    setTextContent({ title: eventTitle, description: eventDescription })
+    setTextContent({ title, description })
     if (!markedCheckbox)
       setHourlyRate({
-        ada: Number(_hourlyRate.ada),
-        gimbals: Number(_hourlyRate.gimbals),
+        ada: Number(ada),
+        gimbals: Number(gimbals),
       })
     setEventType(eventType)
-
     navigation.navigate("Available Days Selection")
   }
   const onCheckBoxPress = () => {
     setMarkedCheckbox((prev) => !prev)
     setHourlyRate(hourlyRate)
   }
-  const onEventTypeChange = (type: EventType) => _setEventType(type)
+  const onEventTypeChange = (type: any) => _setEventType(type)
+  const formStyles = Object.assign(
+    {},
+    inputStyles,
+    isLightMode ? formStyleLight : formStyleDark
+  )
 
   return (
     <Layout scrollable>
@@ -93,130 +108,121 @@ export const NewEventDescription = ({ navigation }: Props) => {
             />
           </Pressable>
         </View>
-        <HeaderText
-          customStyles={{ marginBottom: Sizing.x10 }}
-          colorScheme={colorScheme}>
-          What would you like to name the event?
-        </HeaderText>
-        <CustomPlainInput
-          label="Event Title"
-          maxChar={40}
-          onEndEditingCallback={onEventTitleChange}
-        />
-        <HeaderText
-          customStyles={{ marginBottom: Sizing.x10 }}
-          colorScheme={colorScheme}>
-          Give a brief description of what services you will provide
-        </HeaderText>
-        <CustomPlainInput
-          label="Description"
-          maxChar={250}
-          multiline
-          numberOfLines={8}
-          onEndEditingCallback={onDescriptionChange}
-        />
-        <HeaderText
-          customStyles={{ marginBottom: Sizing.x10 }}
-          colorScheme={colorScheme}>
-          Select the type
-        </HeaderText>
-        <ButtonToggle
-          highlightBackgroundColor={
-            isLightMode ? Colors.primary.s800 : Colors.primary.neutral
-          }
-          highlightTextColor={
-            isLightMode ? Colors.primary.neutral : Colors.primary.s800
-          }
-          inactiveBackgroundColor={"transparent"}
-          inactiveTextColor={
-            isLightMode ? Colors.primary.s800 : Colors.primary.neutral
-          }
-          values={["One-Time", "Recurring"]}
-          value={eventType}
-          textStyle={Typography.header.x25}
-          style={{
-            borderRadius: Outlines.borderRadius.base,
-            borderWidth: Outlines.borderWidth.thin,
-            padding: Sizing.x5,
-            backgroundColor: applyOpacity(
-              isLightMode ? Colors.primary.s800 : Colors.primary.neutral,
-              0.1
-            ),
-            marginBottom: Sizing.x10,
+        <Formik
+          validationSchema={newEventScheme()}
+          initialValues={{
+            name: "",
+            username: "",
           }}
-          //@ts-ignore
-          onSelect={onEventTypeChange}
-        />
-        <HeaderText
-          customStyles={{ marginBottom: Sizing.x10 }}
-          colorScheme={colorScheme}>
-          Specify your hourly rate
-        </HeaderText>
-        <CustomPlainInput
-          label="Ada/hour"
-          keyboardType="numeric"
-          defaultValue={String(_hourlyRate.ada)}
-          onEndEditingCallback={onAdaHourlyRateChange}
-          isDisabled={markedCheckbox}
-        />
-        <CustomPlainInput
-          label="Gimbals/hour"
-          keyboardType="numeric"
-          defaultValue={String(_hourlyRate.gimbals)}
-          onEndEditingCallback={onGimbalsHourlyRateChange}
-          isDisabled={markedCheckbox}
-        />
-        {hourlyRate?.ada && (
-          <View style={styles.messageWrapper}>
-            <Pressable
-              onPress={onCheckBoxPress}
-              hitSlop={5}
-              style={[
-                styles.checkbox,
-                {
-                  borderWidth: isLightMode ? Outlines.borderWidth.thin : 0,
-                  backgroundColor:
-                    isLightMode && markedCheckbox
-                      ? Colors.primary.s600
-                      : Colors.primary.neutral,
-                  borderColor:
-                    isLightMode && markedCheckbox
-                      ? Colors.primary.s600
-                      : "black",
-                },
-              ]}>
-              <CheckIcon
-                width="15"
-                height="15"
-                strokeWidth="3.5"
-                stroke={
-                  isLightMode
-                    ? Colors.primary.neutral
-                    : !isLightMode && markedCheckbox
-                    ? Colors.primary.s600
-                    : Colors.primary.neutral
-                }
+          onSubmit={onSubmit}>
+          {({ handleSubmit, isValid, validateForm }) => (
+            <>
+              <HeaderText
+                customStyles={{ marginBottom: Sizing.x10 }}
+                colorScheme={colorScheme}>
+                What's the Event?
+              </HeaderText>
+              <Field
+                key="title"
+                name="title"
+                label="Title"
+                maxChar={40}
+                customOnChange={onEventTitleChange}
+                component={CustomInput}
+                submitted={submitted}
+                validateForm={validateForm}
+                styles={formStyles}
               />
-            </Pressable>
-            <BodyText
-              customStyle={{
-                fontFamily: "Roboto-Regular",
-                fontSize: Sizing.x14,
-                width: "90%",
-              }}
-              changingColorScheme
-              colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              Use my profile default rate
-            </BodyText>
-          </View>
-        )}
-        <FullWidthButton
-          text="Next"
-          colorScheme={colorScheme}
-          disabled={isDisabledButton}
-          onPressCallback={onNextPress}
-          style={{ marginTop: Sizing.x15, marginBottom: Sizing.x15 }}
-        />
+              <HeaderText
+                customStyles={{ marginBottom: Sizing.x10 }}
+                colorScheme={colorScheme}>
+                Short Summary? (optional)
+              </HeaderText>
+              <Field
+                key="description"
+                name="description"
+                label="Description"
+                component={CustomInput}
+                maxChar={250}
+                multiline
+                numberOfLines={8}
+                submitted={submitted}
+                validateForm={validateForm}
+                styles={formStyles}
+              />
+              <HeaderText
+                customStyles={{ marginBottom: Sizing.x10 }}
+                colorScheme={colorScheme}>
+                Select Type
+              </HeaderText>
+              <ToggleButton
+                options={["One-Time", "Recurring"]}
+                animationDuration={250}
+                onSelect={onEventTypeChange}
+              />
+              <HeaderText
+                customStyles={{ marginBottom: Sizing.x10 }}
+                colorScheme={colorScheme}>
+                Your Rate/hr
+              </HeaderText>
+              <Field
+                component={CustomInput}
+                key="ada"
+                name="ada"
+                label="Ada"
+                keyboardType="numeric"
+                defaultValue={String(_hourlyRate.ada)}
+                customOnChange={onAdaHourlyRateChange}
+                isDisabled={markedCheckbox}
+                submitted={submitted}
+                validateForm={validateForm}
+                styles={formStyles}
+              />
+              <Field
+                component={CustomInput}
+                key="gimbals"
+                name="gimbals"
+                label="Gimbals"
+                keyboardType="numeric"
+                customOnChange={onGimbalsHourlyRateChange}
+                defaultValue={String(_hourlyRate.gimbals)}
+                onEndEditingCallback={onGimbalsHourlyRateChange}
+                isDisabled={markedCheckbox}
+                submitted={submitted}
+                validateForm={validateForm}
+                styles={formStyles}
+              />
+              {hourlyRate?.ada ? (
+                <View style={styles.checkboxWrapper}>
+                  <Checkbox
+                    onCheckBoxPress={onCheckBoxPress}
+                    acceptedCheckbox={markedCheckbox}>
+                    <BodyText
+                      customStyle={{
+                        fontFamily: "Roboto-Medium",
+                        fontSize: Sizing.x15,
+                        width: "90%",
+                      }}
+                      changingColorScheme
+                      colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                      Use my profile's default rate
+                    </BodyText>
+                  </Checkbox>
+                </View>
+              ) : (
+                <></>
+              )}
+
+              <FullWidthButton
+                text="Next"
+                colorScheme={colorScheme}
+                disabled={isDisabledButton}
+                onPressCallback={handleSubmit}
+                style={{ marginVertical: Sizing.x15 }}
+              />
+            </>
+          )}
+        </Formik>
       </KeyboardAwareScrollView>
     </Layout>
   )
@@ -234,12 +240,13 @@ const styles = StyleSheet.create({
   eventInfoContainer: {
     marginBottom: Sizing.x25,
   },
-  messageWrapper: {
+  checkboxWrapper: {
     width: "90%",
     marginLeft: "auto",
     marginRight: "auto",
     flexDirection: "row",
-    marginVertical: Sizing.x5,
+    alignItems: "center",
+    marginBottom: Sizing.x5,
   },
   checkbox: {
     alignItems: "center",
