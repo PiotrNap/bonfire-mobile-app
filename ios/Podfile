@@ -12,7 +12,7 @@ target 'bonfire' do
     :hermes_enabled => false
   )
 
-  pod 'react-native-haskell-shelley', :path => '../node_modules/@emurgo/react-native-haskell-shelley'
+  pod 'csl-mobile-bridge', :path => '../node_modules/@emurgo/csl-mobile-bridge'
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 

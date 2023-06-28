@@ -1,4 +1,6 @@
 module.exports = function (api) {
+  api.cache.forever()
+
   const presets = ["module:metro-react-native-babel-preset"]
   const plugins = [
     [
@@ -47,8 +49,6 @@ module.exports = function (api) {
     // reanimated has to be listed as last plugin.
     "react-native-reanimated/plugin",
   ]
-
-  if (api.env("production")) plugins.push("transform-remove-console")
 
   return {
     presets,
