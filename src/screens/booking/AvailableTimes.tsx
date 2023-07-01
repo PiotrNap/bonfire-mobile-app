@@ -120,7 +120,7 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
   return (
     <EventBookingLayout
       onBackPress={onBackNavigationPress}
-      screenHeader={"Select available time"}
+      screenHeader={"Pick a Time"}
       eventCardColor={color}
       eventCardImage={image}
       eventCardTitle={title}

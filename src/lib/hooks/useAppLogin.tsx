@@ -23,7 +23,7 @@ export const useAppLogin = () => {
         let userSettings = await getFromEncryptedStorage("user-settings")
         const isExpired = new Date() > new Date(authCred?.expiresAt)
 
-        console.log(authCred, isExpired)
+        console.log("Auth Cred: ", authCred)
         if (!pub) throw new Error(`Missing public key. User not authorized`)
 
         if (authCred && !isExpired) {
@@ -38,18 +38,9 @@ export const useAppLogin = () => {
         // const tz = await TZ.getTimeZone()
 
         if (sec && pub) {
-          const accessTokenDto = await startChallengeSequence(
-            pub,
-            authCred.id,
-            false
-          )
+          const accessTokenDto = await startChallengeSequence(pub, authCred.id)
 
           if (accessTokenDto) {
-            console.log(
-              "access token? ",
-              accessTokenDto.accessToken,
-              accessTokenDto.username
-            )
             setUser({
               username: accessTokenDto.username,
               profileType: accessTokenDto.profileType,

@@ -11,8 +11,8 @@ const WalletStack = createStackNavigator<WalletStackParamList>()
 
 export const WalletScreenStack = () => {
   return (
-    <WalletStack.Navigator headerMode="none" initialRouteName="Wallet">
-      <WalletStack.Screen name={"Wallet"} component={WalletScreen} />
+    <WalletStack.Navigator headerMode="none" initialRouteName="Wallet Main">
+      <WalletStack.Screen name={"Wallet Main"} component={WalletScreen} />
       <WalletStack.Screen
         name={"Import Mnemonics"}
         component={ImportMnemonicsScreen}

@@ -13,7 +13,7 @@ import {
 } from "react-native"
 
 import { Colors, Sizing } from "styles/index"
-import { formStyleDark, formStyleLight } from "../../styles/forms"
+import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
 
 export type CustomPlainInputProps = TextInputProps & {
   label?: string
@@ -28,6 +28,7 @@ export type CustomPlainInputProps = TextInputProps & {
   onChangeCallback?: (e: any) => void
   onPressInCallback?: (e: any) => void
   onEndEditingCallback?: (e: any, id?: any) => void
+  validate?: (val: string) => boolean
 }
 
 export const CustomPlainInput = ({
@@ -48,8 +49,10 @@ export const CustomPlainInput = ({
   textContentType,
   defaultValue,
   isDisabled,
+  validate,
 }: CustomPlainInputProps) => {
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
+  const [isValid, setIsValid] = React.useState<boolean>(true)
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
   const Icon = icon
@@ -68,12 +71,36 @@ export const CustomPlainInput = ({
   }
 
   if (isLightMode) {
-    styles = Object.assign({}, defaultStyles, styles, formStyleLight)
+    styles = Object.assign(
+      {},
+      defaultStyles,
+      styles,
+      inputStyles,
+      formStyleLight
+    )
   } else {
-    styles = Object.assign({}, defaultStyles, styles, formStyleDark)
+    styles = Object.assign(
+      {},
+      defaultStyles,
+      styles,
+      inputStyles,
+      formStyleDark
+    )
+  }
+  //@ts-ignore
+  const valid = (val) => (!validate(val) ? setIsValid(false) : setIsValid(true))
+
+  const validateInput = (val: string, onBlur: boolean = false) => {
+    if (!validate) return
+    if (!val) return setIsValid(true)
+    if (onBlur && val.length < 3) return setIsValid(false)
+
+    if (onBlur && val.length === 3) return valid(val)
+    if (val.length > 3) return valid(val)
   }
 
   const onChangeText = (val: string) => {
+    validateInput(val)
     if (maxChar && val.length >= maxChar - maxChar / 5) {
       setCharsLeft(val.length)
       onChangeCallback && onChangeCallback(val)
@@ -100,6 +127,7 @@ export const CustomPlainInput = ({
             styles.input,
             multiline != null && { height: 120, textAlignVertical: "top" },
             isDisabled && { backgroundColor: Colors.neutral.s200 },
+            !isValid && styles.errorInput,
           ]}
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}
@@ -113,6 +141,7 @@ export const CustomPlainInput = ({
             onEndEditingCallback(e.nativeEvent.text, idx)
           }
           placeholderTextColor={styles.placeholderText.color}
+          onBlur={(e) => validate && validateInput(e.nativeEvent.text, true)}
           defaultValue={defaultValue}
           editable={!isDisabled}
           {...additionalProps}
@@ -129,18 +158,6 @@ export const CustomPlainInput = ({
 }
 
 const defaultStyles = StyleSheet.create({
-  inputContainer: {
-    width: "100%",
-    marginBottom: Sizing.x10,
-  },
-  labelContainer: {
-    width: "100%",
-  },
-  textInputWrapper: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-  },
   iconWrapper: {
     left: -40,
     width: Sizing.x35,

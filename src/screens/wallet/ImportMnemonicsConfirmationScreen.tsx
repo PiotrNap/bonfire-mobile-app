@@ -49,8 +49,7 @@ export const ImportMnemonicsConfirmation = ({ navigation, route }: Props) => {
       {params.baseAddress ? (
         <>
           <View style={styles.addressWrapper}>
-            <BodyText
-              customStyle={{ ...monospace.base, color: Colors.primary.s800 }}>
+            <BodyText customStyle={{ ...monospace.base }}>
               {params.baseAddress}
             </BodyText>
           </View>
@@ -61,8 +60,7 @@ export const ImportMnemonicsConfirmation = ({ navigation, route }: Props) => {
                 customStyle={Typography.fontWeight.semibold}>
                 Checksum:{" "}
               </SubHeaderText>
-              <BodyText
-                customStyle={{ ...monospace.base, color: Colors.primary.s800 }}>
+              <BodyText customStyle={{ ...monospace.base }}>
                 {_walletChecksum}
               </BodyText>
             </View>

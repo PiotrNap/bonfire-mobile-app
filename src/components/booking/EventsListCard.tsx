@@ -21,7 +21,7 @@ export interface EventsListCardProps {
   image: any
   color: string
   titleColor: string
-  hourlyRate: any
+  hourlyRate?: any
   defaultCardColor?: boolean
   isEventCardPreview?: boolean
   isBrowseScreenPreview?: boolean
@@ -80,9 +80,11 @@ export const EventsListCard = ({
             styles.container,
             {
               backgroundColor:
-                defaultCardColor || !image
+                (!image && isEventCardPreview) ||
+                (defaultCardColor && isEventCardPreview) ||
+                (!isEventCardPreview && isTransparent && !image)
                   ? placeholderColor
-                  : isTransparent
+                  : isTransparent && image
                   ? "transparent"
                   : color,
             },

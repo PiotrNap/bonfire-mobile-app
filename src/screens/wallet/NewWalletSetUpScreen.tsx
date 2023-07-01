@@ -2,6 +2,8 @@ import * as React from "react"
 import { View, StyleSheet, ScrollView } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
+import { generateKeyPair } from "lib/tweetnacl"
+import Keychain, { getSupportedBiometryType } from "react-native-keychain"
 
 import { Users } from "Api/Users"
 import { WalletStackParamList } from "common/types/navigationTypes"
@@ -19,73 +21,150 @@ import { Wallet } from "lib/wallet"
 import { WalletSetUpFormValues } from "lib/wallet/types"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
+import { encryptWithPassword } from "lib/helpers"
 
 type Props = StackScreenProps<WalletStackParamList, "New Wallet Set Up">
 
 export const NewWalletSetUp = ({ route, navigation }: Props) => {
   const { colorScheme, textContent } = appContext()
   const { id } = React.useContext(ProfileContext)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [walletFormValues, setWalletFormValues] =
-    React.useState<WalletSetUpFormValues | null>(null)
+  const [biometricsAccepted, setBiometricsAccepted] =
+    React.useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
+  const [biometryType, setBiometryType] =
+    React.useState<Keychain.BIOMETRY_TYPE | null>(null)
   const { params } = route
   const isLightMode = colorScheme === "light"
 
+  React.useEffect(() => {
+    ;(async () => {
+      const type = await getSupportedBiometryType()
+      setBiometryType(type)
+    })()
+  }, [])
+
+  const onCheckBoxPress = () => setBiometricsAccepted((prev) => !prev)
   const onBackNavigation = () => navigation.goBack()
-  const onSubmitCallback = (walletForm: WalletSetUpFormValues) => {
-    setIsLoading(true)
-    setIsModalVisible(true)
-    setWalletFormValues(walletForm)
-  }
   const closeRiskAckModal = () => {
     setIsModalVisible((prev) => !prev)
   }
-  const createWallet = async () => {
-    if (!walletFormValues) return
-    const { password, name } = walletFormValues
+  const createWallet = async (walletForm: WalletSetUpFormValues) => {
+    if (!walletForm) throw new Error(`Missing new wallet setup form values`)
+    const { name, password } = walletForm
 
-    if (params.isNewWalletCreation) {
-      navigation.navigate("Mnemonic Preview", walletFormValues)
-    }
+    const { mnemonic, createWalletSetupType } = route.params
+    if (!mnemonic) throw new Error(`Missing mnemonic phrase`)
+    if (!createWalletSetupType) throw new Error(`Missing wallet setup type`)
 
-    setIsLoading(true)
+    // if (params.isNewWalletCreation) {
+    //   navigation.navigate("Mnemonic Preview", walletFormValues)
+    // }
+
+    // -- create wallet --
+    // 1.0 generate wallet address and secret key based on mnemonic passed as param
+    // 1.1 store wallets' base address and wallet type(!) on a device & update User record in DB
+    //
+    // 1. no-mnemonic
+    //   1.1. encrypt mnemonic with password and store it on device (use 'encrypt_with_password')
+    //   1.2. (IF biometric enabled) create encryption key, use this as a replacement for password
+    //      and store it behind biometric auth-guard
+    // 2. without-mnemonic
+    //   2.1. (...)
+    //
+
     setIsModalVisible(false)
     // - send base address to our back end (to know where to fetch tx from, have insight to wallet history ic of a dispute,
     //   and to track tx of each user)
     // - store keys to encrypted storage, encrypted with the password
     // - save the name and base address unencrypted (to display on wallet screen, fetch all tx's)
     try {
-      const wallet = new Wallet()
+      // means user comes from "creat wallet"
+      if (createWalletSetupType) {
+        const wallet = new Wallet()
+        const walletCredentials = await wallet.init(mnemonic)
+        if (!walletCredentials)
+          throw new Error(`Unable to initialize a new wallet`)
+        const { baseAddress, rootKey } = walletCredentials
 
-      await Users.updateUser({ walletBaseAddress: params.baseAddress }, id)
-
-      if (params.rootKey && params.mnemonics && params.baseAddress) {
+        await Users.updateUser({ walletBaseAddress: baseAddress }, id)
         await wallet.encryptAndStoreOnDevice(
-          params.rootKey,
+          rootKey,
           password,
           "wallet-root-key"
         )
-        await wallet.encryptAndStoreOnDevice(
-          Object.values(params.mnemonics).join(" "),
-          password,
-          "mnemonic"
+
+        // Password Encrypted Mnemonic
+        const passwordEncryptedMnemonic = await encryptWithPassword(
+          mnemonic,
+          password
         )
-        await setToEncryptedStorage("wallet-name", name)
+        if (!passwordEncryptedMnemonic)
+          throw new Error(`Unable to encrypt mnemonic with password`)
+        await Keychain.setGenericPassword(
+          "passwordEncryptedMnemonic",
+          passwordEncryptedMnemonic,
+          {
+            accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+            service: "@Bonfire:passwordEncryptedMnemonic",
+          }
+        )
+
+        if (
+          biometricsAccepted &&
+          createWalletSetupType === "without-mnemonic"
+        ) {
+          const { secretKey } = generateKeyPair()
+          if (!secretKey) throw new Error(`Missing encryption key for mnemonic`)
+          // Encryption Key
+          const base64SecretKey = Buffer.from(secretKey).toString("base64")
+          await Keychain.setGenericPassword("encryptionKey", base64SecretKey, {
+            accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+            service: "@Bonfire:encryptionKey",
+          })
+          // Secret Key Encrypted Mnemonic
+          const secretKeyEncryptedMnemonic = await encryptWithPassword(
+            base64SecretKey,
+            mnemonic
+          )
+          if (!secretKeyEncryptedMnemonic)
+            throw new Error(`Unable to encrypt mnemonic encryption key`)
+          await Keychain.setGenericPassword(
+            "secretKeyEncryptedMnemonic",
+            secretKeyEncryptedMnemonic,
+            {
+              accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+              service: "@Bonfire:secretKeyEncryptedMnemonic",
+            }
+          )
+        }
+
+        name && (await setToEncryptedStorage("wallet-name", name))
         await setToEncryptedStorage("wallet-base-address", params.baseAddress)
 
-        setIsLoading(false)
-        navigation.navigate("Wallet")
+        if (createWalletSetupType === "without-mnemonic") {
+          navigation.navigate("Success", {
+            baseAddress,
+            isNewWalletCreation: true,
+            navigationScreen: "Wallet Main",
+            bodyText:
+              "Wallet created successfully. You can make your first deposit and start browsing for events.",
+          })
+        } else navigation.navigate("Mnemonic Preview", { baseAddress })
+      } else {
+        // if user is importing mnemonic we have wallet already initialized...
+        // store keys with password (& biometric)
       }
+
+      // navigation.navigate("Wallet Main")
     } catch (e) {
+      //@TODO do a better error handling
       console.error(e)
-      setIsLoading(false)
     }
   }
 
   return (
     <>
-      <Layout backNavigationIcon backNavigationCb={onBackNavigation}>
+      <Layout scrollable backNavigationIcon backNavigationCb={onBackNavigation}>
         <View style={styles.header}>
           <HeaderText
             colorScheme={colorScheme}
@@ -93,11 +172,18 @@ export const NewWalletSetUp = ({ route, navigation }: Props) => {
             {textContent.wallet.common.wallet_set_up.header}
           </HeaderText>
           <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            {textContent.wallet.common.wallet_set_up.body}
+            {textContent.wallet.common.wallet_set_up.body}{" "}
+            {route.params?.createWalletSetupType === "without-mnemonic" &&
+              textContent.wallet.common.wallet_set_up.body_add}
           </SubHeaderText>
         </View>
         <View style={styles.form}>
-          <WalletSetUpForm onSubmitCallback={onSubmitCallback} />
+          <WalletSetUpForm
+            biometryType={biometryType}
+            onCheckBoxPress={onCheckBoxPress}
+            checkboxAccepted={biometricsAccepted}
+            onSubmitCallback={createWallet}
+          />
         </View>
       </Layout>
       <SmallModal

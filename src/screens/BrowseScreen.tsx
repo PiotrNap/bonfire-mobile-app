@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, Animated, Linking } from "react-native"
+import { View, StyleSheet, Animated } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import { StackScreenProps } from "@react-navigation/stack"
@@ -12,9 +12,7 @@ import { useEventsResults } from "lib/hooks/useEventsResults"
 import { SearchIcon } from "assets/icons"
 import SearchBar from "@pnap/react-native-search-bar"
 import { ProfileContext } from "contexts/profileContext"
-import { Events } from "Api/Events"
-import { bufferToBase64 } from "lib/utils"
-import { isUUID } from "lib/helpers"
+import { useEventShareLinking } from "lib/hooks/useEventShareLinking"
 
 export interface BrowseProps
   extends StackScreenProps<BookingStackParamList, "Browse"> {
@@ -30,6 +28,7 @@ export const BrowseScreen = ({ navigation, route }: BrowseProps) => {
     getEventsBySearchQuery,
     setEvents,
   } = useEventsResults(id)
+  const { navigateToEvent } = useEventShareLinking(navigation)
 
   const animatedOpacity = React.useRef(new Animated.Value(0)).current
   const isLightMode = colorScheme !== "dark"
@@ -78,40 +77,9 @@ export const BrowseScreen = ({ navigation, route }: BrowseProps) => {
   //   navigation.navigate("Available Dates", params);
   // };
 
-  const navigateToEvent = async (_id: string) => {
-    if (_id)
-      try {
-        const event = await Events.getEventById(_id)
-        navigation.navigate("Event Description", {
-          fromShareLink: true,
-          title: event.title,
-          description: event.description,
-          fromDate: event.fromDate,
-          toDate: event.toDate,
-          image: bufferToBase64(event.eventCardImage.data),
-          eventId: event.id,
-          organizerId: event.organizerId,
-          organizerAlias: event.organizerAlias,
-          color: event.eventCardColor,
-          titleColor: event.eventTitleColor,
-          ...event,
-        })
-      } catch (e) {
-        console.error(e.message)
-      }
-  }
-
-  const eventListener = async (event: { url: string }) => {
-    const eventId = event.url.split("/").reverse()[0]
-    if (isUUID(eventId)) await navigateToEvent(eventId)
-  }
-
   React.useEffect(() => {
     if (route.params?.["event-id"])
       (async () => await navigateToEvent(route.params?.["event-id"]))()
-
-    Linking.addEventListener("url", eventListener)
-    return () => Linking.removeEventListener("url", eventListener)
   }, [])
 
   return (

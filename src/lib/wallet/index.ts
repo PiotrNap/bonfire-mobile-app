@@ -1,11 +1,10 @@
-import { generateMnemonic as bip39, mnemonicToEntropy } from "bip39"
-import { randomBytes } from "react-native-randombytes"
+import { mnemonicToEntropy } from "bip39"
 import {
   BaseAddress,
   Bip32PrivateKey,
   Bip32PublicKey,
   StakeCredential,
-} from "@emurgo/react-native-haskell-shelley"
+} from "@emurgo/csl-mobile-bridge"
 import {
   getFromEncryptedStorage,
   setToEncryptedStorage,
@@ -22,8 +21,6 @@ import { CARDANO_NETWORK } from "@env"
 import { AnyObject } from "yup/lib/types"
 import { WalletKeys } from "./types"
 
-export const generateMnemonic = () => bip39(128, randomBytes)
-
 export class Wallet {
   chainConfig: AnyObject
 
@@ -35,7 +32,9 @@ export class Wallet {
   /**
    * Creates root key and account keys with base address
    */
-  async init(mnemonic: string): Promise<WalletKeys | void> {
+  async init(mnemonic: string | undefined): Promise<WalletKeys | void> {
+    if (!mnemonic) throw new Error(`Missing mnemonic in Wallet.init`)
+
     try {
       const rootKeyPtr: Bip32PrivateKey = await this.createRootKey(mnemonic)
       const rootKey: string = Buffer.from(await rootKeyPtr.as_bytes()).toString(
@@ -108,11 +107,13 @@ export class Wallet {
     return await setToEncryptedStorage(storageKey, encryptedValue)
   }
 
-  async decryptAndRetrieveFromDevice(
+  async retrieveAndDecryptFromDevice(
     password: string,
     storageKey: StoragePropertyKeys
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     const value = await getFromEncryptedStorage(storageKey)
+    if (!value)
+      throw new Error(`Missing value to decrypt from encrypted storage`)
     return await decryptWithPassword(value, password)
   }
 

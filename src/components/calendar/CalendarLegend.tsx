@@ -29,7 +29,7 @@ export const CalendarLegend = ({
                 styles.text,
                 isLightMode && { color: Colors.primary.s800 },
               ]}>
-              Available dates
+              Available
             </Text>
           </View>
           {/*<View style={styles.dotLine}>

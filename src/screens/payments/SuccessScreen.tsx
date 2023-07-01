@@ -8,36 +8,17 @@ import { Colors, Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
-import { DepositSuccessfulIcon, LeftArrowIcon } from "assets/icons"
+import { SuccessIcon, LeftArrowIcon } from "assets/icons"
 import { AppStackParamList } from "common/types/navigationTypes"
 
-type Props = StackScreenProps<AppStackParamList, "Deposit Successful">
+type Props = StackScreenProps<AppStackParamList, "Success">
 
-export const DepositSuccessful = ({ navigation, route }: Props) => {
-  const { colorScheme, ref } = appContext()
-  const buttonTitle = route.params?.isBookingWalletTopUp
-    ? "Continue booking"
-    : "Go back"
+export const SuccessScreen = ({ navigation, route }: Props) => {
+  const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
-
-  const navigateBack = async () => {
-    const { params } = route
-
-    if (params?.fromScreen != null) {
-      // This will set the index of page on "User Registration Screens"
-      if (ref) await ref.current.setPage(2)
-
-      if (params?.fromScreen) {
-        const fromScreen = params.fromScreen
-        navigation.navigate(fromScreen)
-      }
-    } else {
-      navigation.goBack()
-    }
-  }
-
-  const onButtonPress = () => navigateBack()
-  const onBackNavigationPress = () => navigateBack()
+  const { navigationScreen, bodyText } = route.params
+  const navigateBack = () =>
+    navigation.navigate(navigationScreen || "Navigation Screens")
 
   return (
     <SafeAreaView
@@ -50,7 +31,7 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
         },
       ]}>
       <View style={styles.navigation}>
-        <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+        <Pressable onPress={navigateBack} hitSlop={10}>
           <LeftArrowIcon
             width={24}
             height={24}
@@ -59,7 +40,7 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
         </Pressable>
       </View>
       <View style={styles.container}>
-        <DepositSuccessfulIcon width={200} height={200} style={styles.icon} />
+        <SuccessIcon width={200} height={200} style={styles.icon} />
         <View style={styles.textContainer}>
           <Text
             style={
@@ -71,14 +52,13 @@ export const DepositSuccessful = ({ navigation, route }: Props) => {
             customStyle={styles.bodyText}
             changingColorScheme={true}
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
-            Your deposit has been made. A transaction confirmation will appear
-            shortly in your wallet.
+            {bodyText}
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>
           <FullWidthButton
-            onPressCallback={onButtonPress}
-            text={buttonTitle}
+            onPressCallback={navigateBack}
+            text={"Close"}
             colorScheme={colorScheme}
           />
         </View>

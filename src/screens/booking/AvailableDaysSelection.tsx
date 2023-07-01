@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, } from "react-native"
+import { View, StyleSheet } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
 import {
@@ -69,7 +69,7 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
   return (
     <EventBookingLayout
       onBackPress={onBackNavigationPress}
-      screenHeader={"Select an available day"}
+      screenHeader={"Pick a Day"}
       eventCardColor={color}
       eventCardImage={image}
       eventCardTitle={title}
@@ -100,6 +100,7 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   calendarWrapper: {
     flex: 1,
+    maxWidth: "100%",
   },
   buttonContainer: {
     alignItems: "center",
@@ -114,5 +115,6 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     flexDirection: "row",
     marginTop: Sizing.x5,
+    alignItems: "center",
   },
 })

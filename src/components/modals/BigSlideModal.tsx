@@ -12,6 +12,7 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface BidSlideModalProps {
   children?: React.ReactNode
@@ -24,15 +25,13 @@ export interface BidSlideModalProps {
   buttonCb: () => void
   secondButtonTitle?: string
   secondButtonCb?: () => void
+  buttonDisabled?: boolean
+  secondButtonDisabled?: boolean
 }
 
 export const BigSlideModal = ({
   isVisible,
   hideModal,
-<<<<<<<< HEAD:src/components/modals/bigSlideModal.tsx
-  icon,
-========
->>>>>>>> b2cfda9 (feat: New wallet import flow):src/components/modals/BigSlideModal.tsx
   header,
   body,
   buttonTitle,
@@ -40,11 +39,9 @@ export const BigSlideModal = ({
   buttonCb,
   secondButtonCb,
   children,
+  buttonDisabled,
+  secondButtonDisabled,
 }: BidSlideModalProps) => {
-<<<<<<<< HEAD:src/components/modals/bigSlideModal.tsx
-  const { setHasSyncedWallet } = React.useContext(ProfileContext)
-========
->>>>>>>> b2cfda9 (feat: New wallet import flow):src/components/modals/BigSlideModal.tsx
   const { colorScheme } = appContext()
   const [visible, setVisible] = React.useState<boolean>(isVisible)
   const windowWidth = useWindowDimensions().width
@@ -55,79 +52,73 @@ export const BigSlideModal = ({
   const onHidedModal = () => hideModal()
 
   return (
-    <View>
-      <Modal
-        onSwipeComplete={onHideModal}
-        onBackButtonPress={onHideModal}
-        onBackdropPress={onHideModal}
-        onModalHide={onHidedModal}
-        useNativeDriverForBackdrop
-        useNativeDriver
-        hideModalContentWhileAnimating
-        swipeThreshold={100}
-        swipeDirection={["down"]}
-        deviceWidth={windowWidth}
-        deviceHeight={windowHeight}
-        isVisible={visible}
-        style={[styles.modal, { width: windowWidth }]}>
-        <View
-          style={[
-            styles.container,
-            isLightMode
-              ? { backgroundColor: Colors.primary.neutral }
-              : { backgroundColor: Colors.neutral.s600 },
-          ]}>
-          <View style={styles.main}>
-            <Pressable
-              hitSlop={Sizing.x20}
-              style={[
-                styles.topSwipeLine,
-                isLightMode
-                  ? { backgroundColor: Colors.primary.s800 }
-                  : { backgroundColor: Colors.primary.neutral },
-              ]}
-              onPress={onHideModal}
+    <Modal
+      onSwipeComplete={onHideModal}
+      onBackButtonPress={onHideModal}
+      onBackdropPress={onHideModal}
+      onModalHide={onHidedModal}
+      useNativeDriverForBackdrop
+      useNativeDriver
+      hideModalContentWhileAnimating
+      swipeThreshold={100}
+      swipeDirection={["down"]}
+      deviceWidth={windowWidth}
+      deviceHeight={windowHeight}
+      isVisible={visible}
+      style={styles.modal}>
+      <View
+        style={[
+          styles.container,
+          isLightMode
+            ? { backgroundColor: Colors.primary.neutral }
+            : { backgroundColor: Colors.neutral.s600 },
+        ]}>
+        <View style={styles.main}>
+          <Pressable
+            hitSlop={Sizing.x20}
+            style={[
+              styles.topSwipeLine,
+              isLightMode
+                ? { backgroundColor: Colors.primary.s800 }
+                : { backgroundColor: Colors.primary.neutral },
+            ]}
+            onPress={onHideModal}
+          />
+          <View style={styles.textContainer}>
+            <Text
+              style={
+                isLightMode ? styles.headerText_light : styles.headerText_dark
+              }>
+              {header}
+            </Text>
+            {body && (
+              <BodyText
+                changingColorScheme
+                colors={[Colors.primary.s600, Colors.primary.neutral]}>
+                {body}
+              </BodyText>
+            )}
+            {children}
+          </View>
+          <View style={styles.buttonContainer}>
+            <FullWidthButton
+              onPressCallback={buttonCb}
+              text={buttonTitle}
+              colorScheme={colorScheme}
+              disabled={buttonDisabled}
             />
-            {/*
-             // icons are not visible in dark mode
-            <View style={{ backgroundColor: Colors.primary.neutral }}>
-              {icon}
-            </View>
-            */}
-            <View style={styles.textContainer}>
-              <Text
-                style={
-                  isLightMode ? styles.headerText_light : styles.headerText_dark
-                }>
-                {header}
-              </Text>
-              {body && (
-                <BodyText
-                  changingColorScheme
-                  colors={[Colors.primary.s600, Colors.primary.neutral]}>
-                  {body}
-                </BodyText>
-              )}
-              {children}
-            </View>
-            <View style={styles.buttonContainer}>
+            {secondButtonCb && secondButtonTitle && (
               <FullWidthButton
-                onPressCallback={buttonCb}
-                text={buttonTitle}
+                onPressCallback={secondButtonCb}
+                text={secondButtonTitle}
                 colorScheme={colorScheme}
+                disabled={secondButtonDisabled}
               />
-              {secondButtonCb && secondButtonTitle && (
-                <FullWidthButton
-                  onPressCallback={secondButtonCb}
-                  text={secondButtonTitle}
-                  colorScheme={colorScheme}
-                />
-              )}
-            </View>
+            )}
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   )
 }
 
@@ -135,6 +126,7 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     height: "95%",
+    width: "100%",
     margin: 0,
     position: "absolute",
     bottom: 0,
@@ -160,6 +152,7 @@ const styles = StyleSheet.create({
   textContainer: {
     marginTop: "auto",
     marginBottom: "auto",
+    width: "100%",
   },
   headerText_light: {
     ...Typography.header.x55,

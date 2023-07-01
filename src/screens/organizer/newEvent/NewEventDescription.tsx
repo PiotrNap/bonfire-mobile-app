@@ -26,17 +26,18 @@ import {
   formStyleLight,
   inputStyles,
 } from "../../../styles/forms"
-import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
 export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const { hourlyRate } = React.useContext(ProfileContext)
-  const { setTextContent, setHourlyRate, setEventType } = eventCreationContext()
+  const { setTextContent, setHourlyRate, setEventType, setPrivateEvent } =
+    eventCreationContext()
   const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [eventTitle, setEventTitle] = React.useState<string>("")
-  const [eventType, _setEventType] = React.useState<EventType>("One-Time")
+  const [_eventType, _setEventType] = React.useState<EventType>("One-Time")
+  const [_privateEvent, _setPrivateEvent] = React.useState<boolean>(false)
   const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
     ada: 0,
     gimbals: 0,
@@ -80,7 +81,8 @@ export const NewEventDescription = ({ navigation }: Props) => {
         ada: Number(ada),
         gimbals: Number(gimbals),
       })
-    setEventType(eventType)
+    setEventType(_eventType)
+    setPrivateEvent(_privateEvent)
     navigation.navigate("Available Days Selection")
   }
   const onCheckBoxPress = () => {
@@ -88,6 +90,8 @@ export const NewEventDescription = ({ navigation }: Props) => {
     setHourlyRate(hourlyRate)
   }
   const onEventTypeChange = (type: any) => _setEventType(type)
+  const onEventVisibilityChange = (type: any) =>
+    _setPrivateEvent((prev) => !prev)
   const formStyles = Object.assign(
     {},
     inputStyles,
@@ -159,6 +163,11 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 options={["One-Time", "Recurring"]}
                 animationDuration={250}
                 onSelect={onEventTypeChange}
+              />
+              <ToggleButton
+                options={["Public", "Private"]}
+                animationDuration={250}
+                onSelect={onEventVisibilityChange}
               />
               <HeaderText
                 customStyles={{ marginBottom: Sizing.x10 }}

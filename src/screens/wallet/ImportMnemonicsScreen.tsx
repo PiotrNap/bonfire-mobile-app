@@ -16,6 +16,7 @@ import { getRandomKey } from "lib/utils"
 import { SlideTopModal } from "components/modals/SlideTopModal"
 import { ErrorIcon } from "assets/icons"
 import { useWalletInit } from "lib/hooks/useWalletInit"
+import { validateMnemonic, wordlists } from "bip39"
 
 type Props = StackScreenProps<WalletStackParamList, "Import Mnemonics">
 const MAX_MNEMONICS_LENGTH = 24
@@ -23,31 +24,42 @@ const MAX_MNEMONICS_LENGTH = 24
 export const ImportMnemonicsScreen = ({ navigation }: Props) => {
   const [isErrorModalVisible, setIsErrorModalVisible] =
     React.useState<boolean>(false)
+  const [words, _] = React.useState<Set<string>>(new Set(wordlists.english))
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const { colorScheme, textContent } = appContext()
-  const { error, mnemonics, setMnemonics, init } = useWalletInit()
+  const { error, mnemonic, setMnemonic, init, validMnemonic } = useWalletInit()
 
   const isDisabledInput = (idx: number) => {
     if (idx === 1) return false
-    if (idx !== 1 && !mnemonics) return true
-    if (mnemonics && !mnemonics[idx - 1]) return true
+    if (idx !== 1 && !mnemonic) return true
+    if (mnemonic) {
+      if (!mnemonic[idx - 1]) return true
+      const emptyFieldIdx = Object.values(mnemonic).findIndex((val) => !val) + 1
+      if (!emptyFieldIdx) return false
+
+      return idx > emptyFieldIdx
+    }
     return false
   }
   const isDisabledButton =
-    !mnemonics ||
+    !mnemonic ||
     !RECOVERY_PHRASE_LENGTHS.includes(
-      Object.values(mnemonics).filter((m) => !!m).length
+      Object.values(mnemonic).filter((m) => !!m).length
     )
 
-  const onBackNavigationPress = () => navigation.navigate("Wallet")
+  const onBackNavigationPress = () => navigation.navigate("Wallet Main")
   const onConfirmPress = async () => {
-    setIsLoading(true)
+    // setIsLoading(true)
+
+    let valid = validMnemonic()
+    debugger
+    return
     try {
       const wallet = await init()
       setIsLoading(false)
       navigation.navigate("Import Mnemonics Confirmation", {
         ...wallet,
-        mnemonics,
+        mnemonic,
       })
       setIsErrorModalVisible(false)
     } catch (e) {
@@ -56,17 +68,21 @@ export const ImportMnemonicsScreen = ({ navigation }: Props) => {
     }
   }
   const onInputBoxUpdate = (value: string, idx: number) => {
-    if (!mnemonics) {
-      setMnemonics({ [String(idx)]: value })
-    } else setMnemonics((prev) => ({ ...prev, [String(idx)]: value }))
+    if (!mnemonic) {
+      setMnemonic({ [String(idx)]: value })
+    } else setMnemonic((prev) => ({ ...prev, [String(idx)]: value }))
   }
   const errorModalHideCallback = () => setIsErrorModalVisible(false)
+  const validateMnemonicInputField = (val: string): boolean => {
+    return words.has(val)
+  }
+
   const renderTextInputs = () => {
     const inputs = []
     let rowInputsSum = 0
     for (let i = 0; i < MAX_MNEMONICS_LENGTH / 3; i++) {
       inputs.push(
-        <View style={styles.inputRow}>
+        <View style={styles.inputRow} key={i}>
           <View style={styles.inputRowItem}>
             <SubHeaderText
               customStyle={styles.recoveryPhraseInputNumber}
@@ -77,6 +93,7 @@ export const ImportMnemonicsScreen = ({ navigation }: Props) => {
               onEndEditingCallback={onInputBoxUpdate}
               isDisabled={isDisabledInput(1 + rowInputsSum)}
               idx={1 + rowInputsSum}
+              validate={validateMnemonicInputField}
             />
           </View>
           <View style={styles.inputRowItem}>
@@ -89,6 +106,7 @@ export const ImportMnemonicsScreen = ({ navigation }: Props) => {
               onEndEditingCallback={onInputBoxUpdate}
               isDisabled={isDisabledInput(2 + rowInputsSum)}
               idx={2 + rowInputsSum}
+              validate={validateMnemonicInputField}
             />
           </View>
           <View style={styles.inputRowItem}>
@@ -101,6 +119,7 @@ export const ImportMnemonicsScreen = ({ navigation }: Props) => {
               onEndEditingCallback={onInputBoxUpdate}
               isDisabled={isDisabledInput(3 + rowInputsSum)}
               idx={3 + rowInputsSum}
+              validate={validateMnemonicInputField}
             />
           </View>
         </View>
@@ -171,6 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "90%",
     justifyContent: "space-between",
+    marginBottom: Sizing.x8,
   },
   inputRowItem: {
     flexDirection: "row",

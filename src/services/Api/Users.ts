@@ -73,7 +73,6 @@ export class Users {
     id: string,
     currCalendarDate?: Date
   ): Promise<any | void> {
-    console.log("args ...", id, currCalendarDate)
     try {
       const res = await axios.get(`/users/${id}/events`, {
         params: { date: currCalendarDate ?? new Date() },

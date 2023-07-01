@@ -43,6 +43,7 @@ export interface RiskAcknowledgement {
 export interface WalletSetUp {
   header: string
   body: string
+  body_add: string
 }
 
 export interface BodyItem {

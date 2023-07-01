@@ -1,3 +1,1 @@
-import wallet from "./wallet.json"
-
-export { wallet }
+export { wallet } from "./wallet.js"

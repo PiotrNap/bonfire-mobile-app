@@ -1,5 +1,5 @@
 import * as React from "react"
-import { StyleSheet, StyleProp } from "react-native"
+import { StyleSheet, StyleProp, View } from "react-native"
 
 import { Field, Formik } from "formik"
 
@@ -11,19 +11,32 @@ import { CustomInput } from "./CustomInput"
 import { CustomPasswordInput } from "./CustomPasswordInput"
 import { inputStyles, formStyleDark, formStyleLight } from "../../styles/forms"
 import { WalletSetUpFormValues } from "lib/wallet/types"
+import { Checkbox } from "components/forms/Checkbox"
 
 export interface Props {
-  onSubmitCallback: (values: WalletSetUpFormValues) => void
+  onSubmitCallback: (values: WalletSetUpFormValues) => Promise<void>
+  checkboxAccepted: boolean
+  biometryType: any
+  onCheckBoxPress: () => void
 }
 
-export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
+export const WalletSetUpForm = ({
+  onSubmitCallback,
+  checkboxAccepted,
+  onCheckBoxPress,
+  biometryType,
+}: Props) => {
   const { colorScheme } = appContext()
   const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [hidePassword, setHidePassword] = React.useState<boolean>(true)
 
   const isLightMode = colorScheme === "light"
-  const onChangeCallback = () => {}
+  const onSubmit = async (arg: any) => {
+    setIsLoading(true)
+    await onSubmitCallback(arg)
+    setIsLoading(false)
+  }
 
   let formStyles: StyleProp<any>
   if (isLightMode) {
@@ -35,12 +48,13 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
     <Formik
       validationSchema={walletSetUpValidationScheme()}
       initialValues={{
-        name: "",
-        password: "",
-        password_confirm: "",
+        //@TODO remove these default values
+        name: "my-wallet",
+        password: "qwert12345",
+        password_confirm: "qwert12345",
       }}
       validateForm={async (values: any) => console.log(values)}
-      onSubmit={onSubmitCallback}>
+      onSubmit={onSubmit}>
       {({ handleSubmit, isValid, validateForm }) => (
         <>
           <Field
@@ -48,7 +62,6 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
             name="name"
             label="Name"
             component={CustomInput}
-            onChange={onChangeCallback}
             defaultValue={""}
             keyboardType="default"
             textContentType="name"
@@ -61,10 +74,9 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
           <Field
             key="password"
             name="password"
-            label="Password"
+            label="New Password"
             defaultValue={""}
             component={CustomPasswordInput}
-            onChange={onChangeCallback}
             keyboardType="default"
             textContentType="newPassword"
             autoCompleteType="password"
@@ -82,7 +94,6 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
             label="Confirm Password"
             defaultValue={""}
             component={CustomPasswordInput}
-            onChange={onChangeCallback}
             keyboardType="default"
             textContentType="newPassword"
             autoCompleteType="password"
@@ -94,10 +105,20 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
             isPasswordConfirmation
           />
 
+          {biometryType && (
+            <View style={styles.checkboxWrapper}>
+              <Checkbox
+                acceptedCheckbox={checkboxAccepted}
+                onCheckBoxPress={onCheckBoxPress}>
+                Enable biometric authentication
+              </Checkbox>
+            </View>
+          )}
+
           <FullWidthButton
             text="Confirm"
             disabled={!isValid}
-            style={{ marginTop: "auto", marginBottom: Sizing.x15 }}
+            style={{ marginBottom: Sizing.x15 }}
             colorScheme={colorScheme}
             onPressCallback={handleSubmit}
             loadingIndicator={isLoading}
@@ -108,4 +129,10 @@ export const WalletSetUpForm = ({ onSubmitCallback }: Props) => {
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  checkboxWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: Sizing.x5,
+  },
+})

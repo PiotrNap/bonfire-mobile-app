@@ -74,7 +74,7 @@ export const CreateAccountForm = ({
     setIsLoading(true)
 
     // generate key pair
-    const keyPair = await generateKeyPair()
+    const keyPair = generateKeyPair()
     const secretKey = keyPair?.secretKey
     const publicKey = keyPair?.publicKey
 

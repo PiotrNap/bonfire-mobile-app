@@ -6,13 +6,15 @@ import { appContext } from "contexts/contextApi"
 
 export interface Props {
   onPress: () => void
-  icon: React.ReactNode
+  icon?: React.ReactNode
   title?: string
+  customStyle?: any
 }
 
-export const SmallButton = ({ onPress, icon, title }: Props) => {
+export const SmallButton = ({ onPress, icon, title, customStyle }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
+
   return (
     <Pressable
       onPress={onPress}
@@ -22,7 +24,9 @@ export const SmallButton = ({ onPress, icon, title }: Props) => {
           styles.button,
           isLightMode
             ? { backgroundColor: Colors.primary.s800 }
-            : { backgroundColor: Colors.primary.s600 }
+            : { backgroundColor: Colors.primary.s600 },
+          icon ? styles.withIcon : {},
+          customStyle
         )
       )}>
       {title && <Text style={styles.buttonText}>{title}</Text>}
@@ -43,7 +47,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     ...Typography.header.x20,
-    marginRight: Sizing.x5,
     color: Colors.primary.neutral,
+  },
+  withIcon: {
+    marginRight: Sizing.x5,
   },
 })

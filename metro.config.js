@@ -5,6 +5,8 @@
  * @format
  */
 
+const exclusionList = require("metro-config/src/defaults/exclusionList")
+
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
@@ -13,5 +15,10 @@ module.exports = {
         inlineRequires: true,
       },
     }),
+  },
+  resolver: {
+    blockList: exclusionList([
+      /node_modules\/bip39\/src\/wordlists\/(?!english\.json$)[\s\S]*/,
+    ]),
   },
 }

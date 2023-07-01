@@ -10,12 +10,12 @@ export type AppStackParamList = {
   Initial: undefined
   Pricing: undefined
   "Create Account": undefined
-  "Deposit Successful":
-    | {
-        isBookingWalletTopUp: boolean | undefined
-        fromScreen: any
-      }
-    | undefined
+  Success: {
+    isBookingWalletTopUp?: boolean | undefined
+    baseAddress?: string
+    isNewWalletCreation?: boolean
+    navigationScreen: any
+  }
   Confirmation:
     | {
         isBookingWalletTopUp: boolean | undefined
@@ -81,7 +81,7 @@ export type EventCreationParamList = {
     | undefined
 }
 
-export type MyEventsStackParamList = {
+export type MyEventsStackParamList = EventCreationParamList & {
   "My Events": undefined
   "Event Description": EventDescription
   "Event Details": EventDescription
@@ -94,7 +94,7 @@ export type ProfileStackParamList = {
 }
 
 export type WalletStackParamList = {
-  Wallet: undefined
+  "Wallet Main": { baseAddress: string } | undefined
   "Import Mnemonics": undefined
   "Import Mnemonics Confirmation": WalletNavigationParams
   "New Wallet Set Up": WalletNavigationParams

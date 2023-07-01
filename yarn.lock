@@ -1942,6 +1942,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-native-keychain@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-keychain/-/react-native-keychain-3.1.0.tgz#68e3bcb12b6037d8e5da57cb39830a4ec32676b8"
+  integrity sha512-L2YWEAESxivmuCnipXepK3kv/SCJ2mcekWwfc8AoKcZb+BVOWMQgabPovuLacf3xcbN10kbF7MEvfRTH9FZaaw==
+  dependencies:
+    react-native-keychain "*"
+
 "@types/react-native@^0.64.4":
   version "0.64.33"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.64.33.tgz#9947bf56cd52a11f8a95af9523d7840f281f6702"
@@ -6119,7 +6126,7 @@ react-native-keyboard-aware-scroll-view@^0.9.4:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
-react-native-keychain@^8.1.1:
+react-native-keychain@*, react-native-keychain@^8.1.1:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-8.1.1.tgz#3bb5e37946b964a7bcf7df2fe470dd244e01a340"
   integrity sha512-8fxgeHKwGcL657eAYpdBTkDIxNhbIHI+kyyO0Yac2dgVAN184JoIwQcW2z6snahwDaCObQOu0biLFHnsH+4KSg==

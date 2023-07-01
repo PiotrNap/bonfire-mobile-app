@@ -1,5 +1,12 @@
 import * as React from "react"
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native"
 
 import { EyeIcon, EyeOffIcon } from "icons/index"
 import { Sizing, Colors } from "styles/index"
@@ -22,6 +29,20 @@ export const CustomPasswordInput = (props: any) => {
     isPasswordConfirmation,
     ...inputProps
   } = props
+  const [focused, setFocused] = React.useState(false)
+
+  React.useEffect(() => {
+    if (
+      (!touched.password && name === "password" && focused) ||
+      (!touched.password_confirm && name === "password_confirm" && focused)
+    ) {
+      const subscriber = Keyboard.addListener("keyboardDidHide", () => {
+        console.log("dissmised")
+        setFieldTouched(name)
+      })
+      return () => subscriber.remove()
+    }
+  }, [touched, focused])
 
   const PasswordEyeIcon = !hidePassword ? EyeIcon : EyeOffIcon
   const hasError = errors[name] && touched[name]
@@ -43,7 +64,10 @@ export const CustomPasswordInput = (props: any) => {
           label={label}
           placeholder={placeholder}
           placeholderTextColor={styles.placeholderText.color}
-          onChangeText={(text) => onChange(name)(text)}
+          onChangeText={(text) => {
+            console.log("change")
+            onChange(name)(text)
+          }}
           secureTextEntry={hidePassword}
           textContentType={textContentType}
           onBlur={() => {
@@ -51,11 +75,9 @@ export const CustomPasswordInput = (props: any) => {
             onBlur(name)
           }}
           onFocus={() => {
-            if (isPasswordConfirmation) {
-              setFieldTouched(name)
-              onBlur(name)
-            }
+            setFocused(true)
           }}
+          showSoftInputOnFocus
           {...inputProps}
         />
         {showIcon && (

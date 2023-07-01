@@ -442,7 +442,6 @@ const styles = StyleSheet.create({
   },
   headerMonthNavigation: {
     flexDirection: "row",
-    width: Sizing.x80,
     height: "100%",
     marginRight: Sizing.x8,
     justifyContent: "space-between",

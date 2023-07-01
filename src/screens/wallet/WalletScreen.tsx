@@ -7,6 +7,7 @@ import {
   LayoutChangeEvent,
   ActivityIndicator,
   useWindowDimensions,
+  Animated,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -22,40 +23,70 @@ import {
   Address,
   BaseAddress,
   Bip32PrivateKey,
-} from "@emurgo/react-native-haskell-shelley"
+} from "@emurgo/csl-mobile-bridge"
 import { generateMnemonic } from "bip39"
 import { Wallet } from "lib/wallet"
 import { BigSlideModal } from "components/modals/BigSlideModal"
 import { getFromEncryptedStorage } from "lib/encryptedStorage"
+import { Checkbox } from "components/forms/Checkbox"
+import { BodyText } from "components/rnWrappers/bodyText"
+import { useWalletInit } from "lib/hooks/useWalletInit"
 
 // @TODO: Implement navigationTypes type
 export interface WalletScreenProps
-  extends StackScreenProps<WalletStackParamList, "Wallet"> {}
+  extends StackScreenProps<WalletStackParamList, "Wallet Main"> {}
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { colorScheme, textContent } = appContext()
   const { walletBalance, setWalletName, setWalletBaseAddress, walletName } =
     React.useContext(ProfileContext)
+  const { generateMnemonic } = useWalletInit()
   const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
   const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [checkboxesVisible, setCheckboxesVisible] =
+    React.useState<boolean>(false)
+  const [acceptedCheckbox, setAcceptedCheckbox] = React.useState<
+    string | undefined
+  >("")
+
+  const animatedOpacity = React.useRef(new Animated.Value(0)).current
+  const fadeIn = () => {
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      // if (finished) setAcceptedChecbox(true)
+    })
+  }
+  const fadeOut = () => {
+    Animated.timing(animatedOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      // if (finished) setAcceptedChecbox(false)
+    })
+  }
+
+  React.useEffect(() => {
+    if (checkboxesVisible) {
+      fadeIn()
+    } else fadeOut()
+  }, [checkboxesVisible])
 
   React.useEffect(() => {
     ;(async () => {
       try {
-        console.log("here")
         const _walletName = await getFromEncryptedStorage("wallet-name")
         const _walletBaseAddress = await getFromEncryptedStorage(
           "wallet-base-address"
         )
 
-        console.log(_walletName, _walletBaseAddress)
-        if (_walletName && _walletBaseAddress) {
-          console.log(setWalletName, setWalletBaseAddress)
-          setWalletName(_walletName)
-          setWalletBaseAddress(_walletBaseAddress)
-        }
+        setWalletName(_walletName)
+        setWalletBaseAddress(_walletBaseAddress)
       } catch (e) {
         console.error(e)
       }
@@ -82,18 +113,78 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
       setIsSmallScreen(true)
     }
   }
-  // const onRefreshPress = async () => {
-  //   setIsTxListLoading(true)
-  //   await wait(2000)
-  //   setIsTxListLoading(false)
-  // }
-  const onCreateWalletPress = () => {
-    navigation.navigate("New Wallet Set Up", { isNewWalletCreation: true })
+  const onBackPress = () => setCheckboxesVisible(false)
+  const onWalletCreateNextPress = () => {
+    if (acceptedCheckbox === "with-mnemonic") {
+      setAcceptedCheckbox(undefined)
+    } else if (acceptedCheckbox === "without-mnemonic") {
+      setAcceptedCheckbox(undefined)
+      navigation.navigate("New Wallet Set Up", {
+        isNewWalletCreation: true,
+        mnemonic: generateMnemonic(),
+        createWalletSetupType: acceptedCheckbox,
+      })
+    }
   }
-  const onImportWalletPress = () => {
-    navigation.navigate("Import Mnemonics")
-  }
+  const onCreateWalletPress = () => setCheckboxesVisible(true)
+  const onImportWalletPress = () => navigation.navigate("Import Mnemonics")
   const hideModal = () => setIsModalVisible(false)
+  const onCheckBoxPress = (tag: string | undefined) =>
+    tag && setAcceptedCheckbox(tag)
+  const onModalHide = () => {
+    setAcceptedCheckbox("")
+    setCheckboxesVisible(false)
+    setIsModalVisible(false)
+  }
+
+  const modalComponent = React.useMemo(() => {
+    return isModalVisible ? (
+      <BigSlideModal
+        hideModal={onModalHide}
+        isVisible={isModalVisible}
+        icon={<PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />}
+        header={textContent.wallet.add_new_wallet.modal.header}
+        body={textContent.wallet.add_new_wallet.modal.body}
+        buttonTitle={
+          checkboxesVisible
+            ? "Next Step"
+            : textContent.wallet.add_new_wallet.modal.button_title
+        }
+        secondButtonTitle={
+          checkboxesVisible
+            ? "Back"
+            : textContent.wallet.add_new_wallet.modal.secondButton_title
+        }
+        buttonCb={
+          checkboxesVisible ? onWalletCreateNextPress : onImportWalletPress
+        }
+        secondButtonCb={checkboxesVisible ? onBackPress : onCreateWalletPress}
+        buttonDisabled={!acceptedCheckbox && checkboxesVisible}>
+        <Animated.View
+          style={[styles.animatedView, { opacity: animatedOpacity }]}>
+          <View style={styles.checkboxWrapper}>
+            <Checkbox
+              tag={"with-mnemonic"}
+              acceptedCheckbox={acceptedCheckbox === "with-mnemonic"}
+              onCheckBoxPress={onCheckBoxPress}>
+              I want to write down my recovery phrase
+            </Checkbox>
+          </View>
+          <View style={styles.checkboxWrapper}>
+            <Checkbox
+              tag={"without-mnemonic"}
+              acceptedCheckbox={acceptedCheckbox === "without-mnemonic"}
+              onCheckBoxPress={onCheckBoxPress}>
+              I want my recovery phrase to be stored on this device (accessible
+              later on)
+            </Checkbox>
+          </View>
+        </Animated.View>
+      </BigSlideModal>
+    ) : (
+      <></>
+    )
+  }, [isModalVisible, checkboxesVisible, acceptedCheckbox, animatedOpacity])
 
   return (
     <SafeAreaView
@@ -211,26 +302,8 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             isSmallScreen={isSmallScreen}
           />
           */}
+          {modalComponent}
         </View>
-        {isModalVisible ? (
-          <BigSlideModal
-            hideModal={() => setIsModalVisible(false)}
-            isVisible={isModalVisible}
-            icon={
-              <PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />
-            }
-            header={textContent.wallet.add_new_wallet.modal.header}
-            body={textContent.wallet.add_new_wallet.modal.body}
-            buttonTitle={textContent.wallet.add_new_wallet.modal.button_title}
-            secondButtonTitle={
-              textContent.wallet.add_new_wallet.modal.secondButton_title
-            }
-            buttonCb={onImportWalletPress}
-            secondButtonCb={onCreateWalletPress}
-          />
-        ) : (
-          <></>
-        )}
       </View>
     </SafeAreaView>
   )
@@ -250,6 +323,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "90%",
+  },
+  animatedView: {
+    marginTop: Sizing.x10,
+  },
+  checkboxWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: Sizing.x5,
   },
   searchToolContainer: {
     alignItems: "flex-end",

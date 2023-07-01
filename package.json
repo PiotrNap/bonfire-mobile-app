@@ -1,7 +1,7 @@
 {
   "name": "Bonfire",
   "author": "Piotr Napierala",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start:android": "yarn android:reverse ; NODE_ENV=development react-native start",
@@ -124,6 +124,7 @@
     "@types/jest": "^26.0.23",
     "@types/react": "^17.0.4",
     "@types/react-native": "^0.64.4",
+    "@types/react-native-keychain": "^3.1.0",
     "@types/react-navigation": "^3.4.0",
     "@types/react-test-renderer": "^17.0.1",
     "babel-plugin-module-resolver": "^5.0.0",

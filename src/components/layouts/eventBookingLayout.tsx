@@ -1,7 +1,7 @@
 import * as React from "react"
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native"
 
-import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { appContext } from "contexts/contextApi"
 import { LeftArrowIcon } from "assets/icons"
@@ -30,7 +30,9 @@ export const EventBookingLayout = ({
 
   const isLightMode = colorScheme !== "dark"
   const insets = useSafeAreaInsets()
-
+  const placeholderColor = isLightMode
+    ? Colors.primary.s600
+    : Colors.primary.neutral
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
       <View style={styles.topContainer}>
@@ -40,18 +42,24 @@ export const EventBookingLayout = ({
           <View
             style={[
               styles.topInnerContainer,
-              { backgroundColor: eventCardColor },
+              {
+                backgroundColor:
+                  eventCardColor === "transparent"
+                    ? placeholderColor
+                    : eventCardColor,
+              },
             ]}>
             <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
-              <View style={styles.navigation}>
-                <Pressable onPress={onBackPress} hitSlop={10}>
-                  <LeftArrowIcon
-                    width={24}
-                    height={24}
-                    color={Colors.primary.neutral}
-                  />
-                </Pressable>
-              </View>
+              <Pressable
+                style={Buttons.applyOpacity(styles.navigation)}
+                onPress={onBackPress}
+                hitSlop={10}>
+                <LeftArrowIcon
+                  width={24}
+                  height={24}
+                  color={Colors.primary.s600}
+                />
+              </Pressable>
             </View>
             <View
               style={[
@@ -95,9 +103,14 @@ export const EventBookingLayout = ({
 
 const styles = StyleSheet.create({
   navigation: {
-    flexDirection: "row",
-    width: "90%",
-    marginVertical: Sizing.x15,
+    borderRadius: Outlines.borderRadius.max,
+    backgroundColor: Colors.primary.neutral,
+    marginBottom: "auto",
+    width: Sizing.x40,
+    height: Sizing.x40,
+    marginTop: Sizing.x15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   topContainer: {
     height: Sizing.x100,
@@ -143,7 +156,6 @@ const styles = StyleSheet.create({
   topInnerWrapper: {
     width: "90%",
     flexDirection: "row",
-    justifyContent: "space-between",
   },
   eventTitleWrapper: {
     width: "90%",

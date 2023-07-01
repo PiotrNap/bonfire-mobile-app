@@ -81,14 +81,15 @@ export function hourlyRateValidationScheme() {
  * */
 export function walletSetUpValidationScheme() {
   return yup.object().shape({
-    name: yup.string().required("Wallet name is required"),
+    name: yup.string(),
     password: yup
       .string()
       .required("Password is required")
-      .min(6, "Min. 6 characters are required"),
+      .matches(/\d/, "Must contain number")
+      .min(10, "Min. 6 characters are required"),
     password_confirm: yup
       .string()
-      .required("Password confirmation is required")
+      .required("Confirmation is required")
       .oneOf([yup.ref("password")], "Passwords do not match"),
   })
 }

@@ -68,8 +68,7 @@ export const getRecurringMonthDays = (
  */
 export const startChallengeSequence = async (
   credential: string,
-  id: string,
-  isSigningUp: boolean
+  id: string
 ): Promise<{ [index: string]: string } | null> => {
   try {
     let res = await Auth.requestChallenge({ credential, id })
@@ -79,7 +78,6 @@ export const startChallengeSequence = async (
       let signature: any = await signChallenge(
         base64.toByteArray(challengeString)
       )
-
       if (signature) {
         // request JWT
         let res = await Auth.requestAccessToken(challengeString, signature, {
@@ -142,6 +140,7 @@ export const shareEvent = async (id: string) => {
 
 export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 
+//@TODO throw error if password is incorrect
 export const encryptWithPassword = async (
   value: string,
   password: string
