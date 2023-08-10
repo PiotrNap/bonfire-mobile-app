@@ -196,9 +196,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
                 title="Share Event"
                 icon={
                   <ShareIcon
-                    color={
-                      isLightMode ? Colors.primary.neutral : Colors.primary.s800
-                    }
+                    color={Colors.primary.neutral}
                     width={Sizing.x14}
                     height={Sizing.x14}
                     strokeWidth={4}

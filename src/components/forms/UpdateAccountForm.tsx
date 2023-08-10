@@ -160,22 +160,10 @@ export const UpdateAccountForm = ({
               />
               <Field
                 id="hourlyRate-ada"
-                key="ada"
-                name="ada"
+                key="hourlyRateAda"
+                name="hourlyRateAda"
                 label="Hourly Rate (ADA)"
-                defaultValue={String(userInfo.hourlyRate?.ada) ?? "0"}
-                component={CustomInput}
-                keyboardType="numeric"
-                validateForm={validateForm}
-                submitted={submitted}
-                styles={formStyles}
-              />
-              <Field
-                id="hourlyRate-gimbals"
-                key="gimbals"
-                name="gimbals"
-                label="Hourly Rate (Gimbals)"
-                defaultValue={String(userInfo.hourlyRate?.gimbals) ?? "0"}
+                defaultValue={String(userInfo.hourlyRateAda) ?? "0"}
                 component={CustomInput}
                 keyboardType="numeric"
                 validateForm={validateForm}

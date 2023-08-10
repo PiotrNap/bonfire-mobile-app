@@ -22,6 +22,7 @@ import {
 } from "common/interfaces/newEventInterface"
 import { EventCreationTypes } from "common/types/contextTypes"
 import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
+import { WalletContext } from "./walletContext"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -338,6 +339,27 @@ export const myCalendarContext = () => {
       dispatch({
         type: "UPDATE_CALENDAR_MONTH",
         payload: { calendarArgs },
+      })
+    },
+  }
+}
+
+export const walletContext = () => {
+  const { state, dispatch } = React.useContext(WalletContext)
+
+  return {
+    mnemonic: state.mnemonic,
+    lovelaceBalance: state.lovelaceBalance,
+    setLovelaceBalance: (lovelace: BigInt) => {
+      dispatch({
+        type: "SET_LOVELACE_BALANCE",
+        payload: { lovelace },
+      })
+    },
+    setMnemonic: (mnemonic: {}) => {
+      dispatch({
+        type: "SET_MNEMONIC",
+        payload: { mnemonic },
       })
     },
   }

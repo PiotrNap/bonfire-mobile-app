@@ -1,5 +1,5 @@
-export type Organizer = {
-  organizer_id?: string
+export type User = {
+  user_id?: string
 }
 
 export interface PaginationRequestDto {

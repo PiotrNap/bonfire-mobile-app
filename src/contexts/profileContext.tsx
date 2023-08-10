@@ -62,7 +62,6 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [publicKey, setPublicKey] = useState<string>("")
   const [bio, setBio] = useState<string>("")
   const [imageBase64, setImageBase64] = useState<string>("")
-  const [timeZone, setTimeZone] = useState<string>("")
   const [timeBlockLengthMin, setTimeBlockLengthMin] = useState<number | null>(0)
   const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
     0
@@ -100,7 +99,6 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     timeZone,
     timeBlockLengthMin,
     timeBlockCostADA,
-    timeZone,
     profession,
     jobTitle,
     description,
@@ -155,7 +153,6 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setJobTitle,
         setDescription,
         setSkills,
-        setTimeZone,
         resetProfileState,
       }}>
       {children}

@@ -45,11 +45,6 @@ export const CalendarEventsList = ({
   const isCurrMonth: boolean =
     new Date().getMonth() === monthsByName[calendarHeader.month] &&
     new Date().getFullYear() === calendarHeader.year
-  const isSelectedDayAtViewMonth =
-    currentSelectedDay &&
-    new Date(currentSelectedDay).getMonth() ===
-      monthsByName[calendarHeader.month] &&
-    new Date(currentSelectedDay).getFullYear() === calendarHeader.year
 
   const renderItem = React.useCallback(
     ({ item, index, section }: any) => (

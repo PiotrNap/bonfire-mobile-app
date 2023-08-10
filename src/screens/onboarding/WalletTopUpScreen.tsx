@@ -67,18 +67,18 @@ export const WalletTopUpScreen = ({
 
     // this means we are on the onboarding screen
     if (isRegistrationScreen) {
-      navigation.navigate("Deposit Successful", {
+      navigation.navigate("Success", {
         fromScreen: "User Registration Screens",
       })
     }
 
     if (route != null && route.params?.fromScreen == "Duration Choice") {
-      navigation.navigate("Deposit Successful", {
+      navigation.navigate("Success", {
         fromScreen: route.params.fromScreen,
       })
     }
 
-    navigation.navigate("Deposit Successful", {
+    navigation.navigate("Success", {
       ...route.params,
       isBookingWalletTopUp: true,
     })

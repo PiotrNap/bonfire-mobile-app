@@ -1,5 +1,4 @@
 import * as React from "react"
-import { View } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
@@ -13,7 +12,7 @@ export interface HomeProps
   extends StackScreenProps<EventCreationParamList, "Home"> {}
 
 export const HomeScreen = ({ navigation }: HomeProps) => {
-  const { appBgColor, accountType } = appContext()
+  const { accountType } = appContext()
 
   const navigateCb = (
     name: keyof EventCreationParamList,
@@ -21,7 +20,7 @@ export const HomeScreen = ({ navigation }: HomeProps) => {
   ) => navigation.navigate(name, params)
 
   return accountType ? (
-    <View style={{ flex: 1, backgroundColor: appBgColor }}>
+    <>
       <MyCalendarProvider>
         <ErrorHandler>
           <Calendar
@@ -37,7 +36,7 @@ export const HomeScreen = ({ navigation }: HomeProps) => {
         <View style={styles.main}>
           <CalendarEventsList navigateCb={navigateCb} isHomeScreen={true} />
         </View>*/}
-    </View>
+    </>
   ) : (
     <></>
   )

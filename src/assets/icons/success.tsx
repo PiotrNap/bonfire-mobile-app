@@ -1,7 +1,7 @@
 import * as React from "react"
 import Svg, { SvgProps, Path, Circle } from "react-native-svg"
 
-export const DepositSuccessfulIcon = (props: SvgProps) => {
+export const SuccessIcon = (props: SvgProps) => {
   return (
     <Svg
       data-name="Layer 1"

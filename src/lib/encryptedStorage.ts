@@ -39,17 +39,7 @@ export const isAvailableEncryptedStorage = async (): Promise<boolean> => {
 export const getFromEncryptedStorage = async (
   key: StoragePropertyKeys
 ): Promise<any> => {
-  try {
-    const val = await ES.getItem(generateKey(key))
-
-    if (val != null) {
-      return JSON.parse(val)
-    } else {
-      return null
-    }
-  } catch (e) {
-    throw new Error(e)
-  }
+  return await ES.getItem(generateKey(key))
 }
 
 export const clearEncryptedStorage = async (): Promise<boolean> => {

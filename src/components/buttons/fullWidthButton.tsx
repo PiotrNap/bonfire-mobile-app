@@ -11,7 +11,7 @@ import {
 import { Buttons, Colors } from "styles/index"
 
 export interface FullWidthButtonProps {
-  onPressCallback: () => any | Promise<void>
+  onPressCallback: any
   text: string
   loadingIndicatorStyle?: ViewStyle
   loadingIndicator?: boolean

@@ -9,7 +9,7 @@ export const showInappropriateContentModal = () =>
 
 export const showNSFWImageModal = () => {
   showFailedModal(
-    "The image that you've provided was deemed as inappropriate by us. Please try a different one.",
+    "The image that you've provided was deemed as inappropriate by us. Please, try a different one.",
     "Couldn't proceed"
   )
 }
@@ -29,7 +29,9 @@ export const showFailedModal = (message: string, title?: string) => {
   )
 }
 
-export const showCredentialsWarningModal = (onPressCb: () => Promise<void>) => {
+export const showCredentialsLossWarningModal = (
+  onPressCb: () => Promise<void>
+) => {
   Alert.alert(
     "Beware!",
     "This action is irreversible, you will loose access to your current wallet and account credentials on this device.",

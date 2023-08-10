@@ -162,7 +162,7 @@ export const AvailableDaysSelection = (props: Props) => {
           {hintBoxVisible && eventType === "Recurring" && (
             <HintBox
               text="Press on a day to
-        select one, or tap on a day name to select them all."
+        select one, or tap on a day name to select 'em all."
               closeable={true}
               closeCallback={onHintClose}
             />

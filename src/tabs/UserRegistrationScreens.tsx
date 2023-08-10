@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Animated, StyleSheet, Dimensions } from "react-native"
+import { View, Animated, StyleSheet, Dimensions, Pressable } from "react-native"
 
 import {
   UserDetailsScreen,
@@ -8,14 +8,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
-import { Colors, Outlines } from "styles/index"
+import { Colors, Outlines, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
+import { MnemonicPreview } from "screens/wallet/MnemonicPreviewScreen"
+import { ImportMnemonicScreen } from "screens/wallet/ImportMnemonicScreen"
+import { LeftArrowIcon } from "assets/icons"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
 const SCREENS = [
   { component: UserDetailsScreen },
-  // { component: WalletTopUpScreen },
+  { component: MnemonicPreview },
+  { component: ImportMnemonicScreen },
   { component: RegistrationConfirmationScreen },
 ]
 
@@ -36,7 +40,9 @@ export const UserRegistrationScreens = () => {
 
   React.useEffect(() => {
     // set ref of View Pager so that we can manipulate page index
-    if (ref) setRef(ref)
+    if (ref) {
+      setRef(ref)
+    }
   }, [])
 
   // This is only working with useMemo/useCallback
@@ -78,6 +84,20 @@ export const UserRegistrationScreens = () => {
         {SCREENS.map(renderScreens)}
       </AnimatedPagerView>
       <View style={styles.dotContainer}>
+        {/* @ts-ignore */}
+        {ref.current?.state?.page > 0 && (
+          <View style={styles.navigation}>
+            <Pressable
+              onPress={() => ref.current?.setPage(ref.current.state.page - 1)}
+              hitSlop={10}>
+              <LeftArrowIcon
+                width={24}
+                height={24}
+                color={Colors.primary.neutral}
+              />
+            </Pressable>
+          </View>
+        )}
         <ScalingDot
           data={SCREENS}
           //@ts-ignore
@@ -95,7 +115,7 @@ export const UserRegistrationScreens = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.primary.s600,
+    backgroundColor: Colors.primary.s800,
     marginHorizontal: "auto",
   },
   animatedPager: {
@@ -115,5 +135,9 @@ const styles = StyleSheet.create({
     borderWidth: Outlines.borderWidth.base,
     borderColor: Colors.primary.brand,
     padding: 8,
+  },
+  navigation: {
+    marginTop: Sizing.x15,
+    width: "90%",
   },
 })

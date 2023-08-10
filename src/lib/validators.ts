@@ -35,17 +35,10 @@ export function formValidationSchema() {
   })
 }
 
-/**
- * @description This will specify validation schema for creating a new
- * account or updating an existing one.
- */
 export function newEventScheme() {
   return yup.object().shape({
     title: yup.string().required("Title is required"),
     ada: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-    gimbals: yup
       .string()
       .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
   })
@@ -56,22 +49,17 @@ export function newEventScheme() {
  * account or updating an existing one.
  */
 export function accountValidationScheme() {
-  const baseScheme = yup.object().shape({
-    name: yup.string().required("Name is required"),
+  return yup.object().shape({
     username: yup
       .string()
       .min(2, "User name is to short (minimum 2 characters)")
       .required("Username is required"),
   })
-  return baseScheme.concat(hourlyRateValidationScheme())
 }
 
 export function hourlyRateValidationScheme() {
   return yup.object().shape({
     ada: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
-    gimbals: yup
       .string()
       .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
   })
@@ -81,14 +69,15 @@ export function hourlyRateValidationScheme() {
  * */
 export function walletSetUpValidationScheme() {
   return yup.object().shape({
-    name: yup.string().required("Wallet name is required"),
+    name: yup.string(),
     password: yup
       .string()
       .required("Password is required")
-      .min(6, "Min. 6 characters are required"),
+      .matches(/\d/, "Must contain number")
+      .min(10, "Min. 6 characters are required"),
     password_confirm: yup
       .string()
-      .required("Password confirmation is required")
+      .required("Confirmation is required")
       .oneOf([yup.ref("password")], "Passwords do not match"),
   })
 }

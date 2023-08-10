@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 999,
-    backgroundColor: applyOpacity(Colors.primary.s350, 0.3),
+    backgroundColor: applyOpacity(Colors.primary.s350, 0.2),
   },
   dayButtonText: {
     ...Typography.body.x30,

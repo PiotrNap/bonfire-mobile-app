@@ -38,7 +38,7 @@ export const MonthItem = ({
     (year, month, number) => {
       return !!selectedDays?.[getTime(year, monthsByName[month], number)]
     },
-    [Object.values(selectedDays)]
+    [selectedDays && Object.values(selectedDays)]
   )
 
   const onPressCallback = (val: number) =>

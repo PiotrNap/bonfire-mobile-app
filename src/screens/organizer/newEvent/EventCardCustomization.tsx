@@ -71,14 +71,15 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   const [titleColor, setTitleColor] = React.useState<any>(INITIAL_TITLE_COLOR)
   const [currColor, setCurrColor] =
     React.useState<SliderColor>(INITIAL_CURR_COLOR)
-  const [opacity, setOpacity] = React.useState<number>(0)
+  const [opacity, setOpacity] = React.useState<number>(!imageURI ? 1 : 0)
   const [titleOpacity, setTitleOpacity] = React.useState<number>(1)
+  const [bgOpacity, setBgOpacity] = React.useState<number>(1)
   const [transparent, setTransparent] = React.useState<boolean>(false)
   const [colorChanged, setColorChanged] = React.useState<boolean>(false)
   const [activeSelection, setActiveSelection] = React.useState<
     "background" | "title"
   >("background")
-  const _color = tinyColor(bgColor).setAlpha(opacity).toRgbString()
+  const _color = tinyColor(bgColor).setAlpha(bgOpacity).toRgbString()
   const _titleColor = tinyColor(titleColor).setAlpha(titleOpacity).toRgbString()
 
   React.useEffect(() => {
@@ -152,7 +153,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   }
   const onOpacityChange = (val: number) => {
     if (activeSelection === "background") {
-      setOpacity(val)
+      setBgOpacity(val)
     } else {
       setTitleOpacity(val)
     }
@@ -171,6 +172,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   }
   const onTitleSelected = () => {
     setCurrColor(toHsvString(titleColor))
+
     setActiveSelection("title")
   }
   return (
@@ -242,6 +244,22 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             </Text>
           </Pressable>
         </View>
+        <View style={styles.main}>
+          {fromDate && toDate && (
+            <EventsListCard
+              isEventCardPreview={true}
+              title={textContent.title}
+              description={textContent.description}
+              fromDate={fromDate}
+              toDate={toDate}
+              image={imageURI}
+              defaultCardColor={!imageURI && transparent}
+              color={applyOpacity(toHexString(bgColor), bgOpacity)}
+              titleColor={applyOpacity(toHexString(titleColor), titleOpacity)}
+              isTransparent={transparent}
+            />
+          )}
+        </View>
         <View style={styles.colorPickerWrapper}>
           <SliderHuePicker
             oldColor={toHexString({
@@ -250,7 +268,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               v: 1,
               a: 1,
             })}
-            trackStyle={[{ height: Sizing.x10, width: "100%" }]}
+            trackStyle={styles.trackStyle}
             thumbStyle={styles.thumb}
             onColorChange={(val: SliderColor, res: string) =>
               onColorChange(val, res, "hue")
@@ -266,7 +284,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               v: 1,
               a: 1,
             })}
-            trackStyle={[{ height: Sizing.x10, width: "100%" }]}
+            trackStyle={styles.trackStyle}
             thumbStyle={styles.thumb}
             onColorChange={(val: SliderColor, res: string) =>
               onColorChange(val, res, "saturation")
@@ -294,7 +312,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             })}
             minumumValue={0.2}
             step={0.05}
-            trackStyle={[{ height: Sizing.x10, width: "100%" }]}
+            trackStyle={styles.trackStyle}
             thumbStyle={styles.thumb}
             onColorChange={(val: SliderColor, res: string) =>
               onColorChange(val, res, "value")
@@ -318,18 +336,17 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               justifyContent: "center",
             }}>
             <Slider
-              value={activeSelection === "background" ? opacity : titleOpacity}
+              value={
+                activeSelection === "background" ? bgOpacity : titleOpacity
+              }
               minumumValue={0.1}
               maximumValue={1}
               minimumTrackTintColor={"#3f3f3f"}
               maximumTrackTintColor={"#b3b3b3"}
               thumbStyle={styles.thumb}
               trackStyle={[
-                {
-                  height: Sizing.x10,
-                  width: "100%",
-                  borderRadius: Sizing.x10 / 2,
-                },
+                styles.trackStyle,
+                { borderRadius: Outlines.borderRadius.max },
               ]}
               useNativeDriver={false}
               style={[styles.colorPicker]}
@@ -358,22 +375,6 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             onValueChange={() => setTransparent((prev) => !prev)}
             value={!transparent}
           />
-        </View>
-        <View style={styles.main}>
-          {fromDate && toDate && (
-            <EventsListCard
-              isEventCardPreview={true}
-              title={textContent.title}
-              description={textContent.description}
-              fromDate={fromDate}
-              toDate={toDate}
-              image={imageURI}
-              defaultCardColor={!imageURI && (transparent || !colorChanged)}
-              color={applyOpacity(toHexString(bgColor), opacity)}
-              titleColor={applyOpacity(toHexString(titleColor), titleOpacity)}
-              isTransparent={transparent}
-            />
-          )}
         </View>
         <FullWidthButton
           text="Next"
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
   },
   colorPickerWrapper: {
     height: Sizing.x30,
-    width: "90%",
+    width: "80%",
     marginTop: Sizing.x5,
   },
   colorPicker: {
@@ -477,5 +478,9 @@ const styles = StyleSheet.create({
   colorSelectionButtonText: {
     ...Typography.header.x20,
     marginRight: Sizing.x5,
+  },
+  trackStyle: {
+    height: Sizing.x12,
+    width: "100%",
   },
 })

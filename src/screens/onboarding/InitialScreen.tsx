@@ -6,21 +6,25 @@ import { LiveCollaborationIcon } from "icons/index"
 import { Colors, Typography, Sizing } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { scale } from "lib/utils"
+import { ModalState, SlideDownModal } from "components/modals/SlideDownModal"
 
 export interface InitialScreenProps {
   pagerRef: React.RefObject<PagerView>
 }
 
 export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
-  const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false)
+  const [modalState, setModalState] = React.useState<ModalState>({
+    visible: false,
+    type: null,
+  })
 
-  const navigateToNextScreen = () => {
-    pagerRef.current?.setPage(1)
+  const onCreateAccountPress = () => {
+    setModalState({ visible: true, type: "create-account" })
   }
 
-  // const onPressLearnMore = () => {
-  //   setIsVisibleModal(true)
-  // }
+  const onSignInPress = () => {
+    setModalState({ visible: true, type: "sign-in" })
+  }
 
   return (
     <View style={styles.container}>
@@ -39,26 +43,24 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
         </View>
       </View>
       <View style={styles.buttons}>
-        {/*
         <FullWidthButton
           colorScheme="dark"
-          onPressCallback={onPressLearnMore}
-          text="Learn more"
-          buttonType="neutral"
-        /> */}
-        <FullWidthButton
-          colorScheme="dark"
-          onPressCallback={navigateToNextScreen}
+          onPressCallback={onCreateAccountPress}
           buttonType="transparent"
-          text="Next"
+          text="Create Account"
+        />
+        <FullWidthButton
+          colorScheme="dark"
+          onPressCallback={onSignInPress}
+          buttonType="transparent"
+          text="Log In"
         />
       </View>
-      {/*
-      <LearnMoreModal
-        setIsVisibleModal={setIsVisibleModal}
-        isVisibleModal={isVisibleModal}
+      <SlideDownModal
+        modalType={modalState.type}
+        setModalState={setModalState}
+        isVisibleModal={modalState.visible}
       />
-      */}
     </View>
   )
 }

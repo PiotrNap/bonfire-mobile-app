@@ -1,11 +1,7 @@
 import * as React from "react"
 import { View, Animated, StyleSheet, Dimensions } from "react-native"
 
-import {
-  CreateAccountScreen,
-  InitialScreen,
-  PricingScreen,
-} from "screens/onboarding"
+import { CreateAccountScreen, InitialScreen } from "screens/onboarding"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
 import { Colors, Outlines } from "styles/index"
@@ -15,8 +11,7 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
 const SCREENS = [
   { component: InitialScreen },
-  { component: PricingScreen },
-  { component: CreateAccountScreen },
+  // { component: CreateAccountScreen },
 ]
 
 export const OnboardingScreens = () => {
@@ -70,17 +65,21 @@ export const OnboardingScreens = () => {
         style={styles.animatedPager}>
         {SCREENS.map(renderScreens)}
       </AnimatedPagerView>
-      <View style={styles.dotContainer}>
-        <ScalingDot
-          data={SCREENS}
-          //@ts-ignore
-          scrollX={scrollX}
-          inActiveDotColor={Colors.transparent.clear}
-          activeDotScale={0.95}
-          activeDotColor={Colors.primary.neutral}
-          dotStyle={styles.dot}
-        />
-      </View>
+      {SCREENS.length < 2 ? (
+        <></>
+      ) : (
+        <View style={styles.dotContainer}>
+          <ScalingDot
+            data={SCREENS}
+            //@ts-ignore
+            scrollX={scrollX}
+            inActiveDotColor={Colors.transparent.clear}
+            activeDotScale={0.95}
+            activeDotColor={Colors.primary.neutral}
+            dotStyle={styles.dot}
+          />
+        </View>
+      )}
     </SafeAreaView>
   )
 }
@@ -88,7 +87,7 @@ export const OnboardingScreens = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.primary.s600,
+    backgroundColor: Colors.primary.s800,
     marginHorizontal: "auto",
   },
   animatedPager: {

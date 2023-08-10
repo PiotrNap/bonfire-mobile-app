@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "85%",
-    marginBottom: Sizing.x20,
+    marginVertical: Sizing.x10,
   },
   settingsItemTitle: {
     ...Typography.subHeader.x30,

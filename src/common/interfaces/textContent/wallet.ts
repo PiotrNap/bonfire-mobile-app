@@ -31,7 +31,7 @@ export interface MnemonicInfoModal {
 }
 
 export interface ImportWallet {
-  import_mnemonics: MnemonicInfoModal
+  import_mnemonic: MnemonicInfoModal
   address_confirmation: MnemonicInfoModal
 }
 
@@ -43,6 +43,7 @@ export interface RiskAcknowledgement {
 export interface WalletSetUp {
   header: string
   body: string
+  body_add: string
 }
 
 export interface BodyItem {

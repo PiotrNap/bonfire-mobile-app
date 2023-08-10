@@ -1,7 +1,6 @@
 import * as React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
-import { HomeScreen } from "screens/index"
 import { OrganizerTabParamList } from "common/types/navigationTypes"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
 import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
@@ -9,6 +8,7 @@ import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
 import { WalletScreen } from "screens/wallet/WalletScreen"
+import { HomeScreenStack } from "stacks/HomeScreenStack"
 
 const AttendeeNavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
 
@@ -32,9 +32,13 @@ export const AttendeeNavigationScreens = ({ route }: any) => {
 
   return (
     <AttendeeNavigationTabs.Navigator
+      screenOptions={{ headerShown: false }}
       //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
-      <AttendeeNavigationTabs.Screen name="Home Stack" component={HomeScreen} />
+      <AttendeeNavigationTabs.Screen
+        name="Home Stack"
+        component={HomeScreenStack}
+      />
       <AttendeeNavigationTabs.Screen
         name="Browse Stack"
         component={BrowseScreensStack}

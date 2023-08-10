@@ -187,7 +187,7 @@ export const isPastDate = (year: number, month: string, day: number) => {
  * @param date1
  * @param date2
  */
-export const isSameDay = (date1: number, date2: string) => {
+export const isSameDay = (date1: number | string, date2: number | string) => {
   const sameYear = dayjs(date1).year() === dayjs(date2).year()
   const sameMonth = dayjs(date1).month() === dayjs(date2).month()
   const sameDay = dayjs(date1).day() === dayjs(date2).day()

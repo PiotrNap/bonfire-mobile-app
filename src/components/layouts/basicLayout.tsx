@@ -21,7 +21,14 @@ export const Layout = ({
   backNavigationCb,
 }: Props) => {
   const { colorScheme } = appContext()
-  const isLightMode = colorScheme === "light"
+      const isLightMode = colorScheme === "light"
+  const [isScrolledToBottom, setIsScrolledToBottom] = React.useState(false);
+
+  const onScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height;
+    setIsScrolledToBottom(isBottom);
+  };
 
   return !scrollable ? (
     <SafeAreaView
@@ -46,6 +53,8 @@ export const Layout = ({
     <SafeAreaView
       style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <KeyboardAwareScrollView
+      onScroll={onScroll}
+      scrollEventThrottle={400} // how long to wait before firing up scroll event
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         keyboardOpeningTime={Number.MAX_SAFE_INTEGER}

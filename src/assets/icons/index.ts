@@ -9,7 +9,7 @@ import { CogIcon } from "./cog"
 import { ColorsPalleteIcon } from "./colorsPallete"
 import { CreditCardIcon } from "./creditCard"
 import { CurvedArrow } from "./curvedArrow"
-import { DepositSuccessfulIcon } from "./depositSuccessful"
+import { SuccessIcon } from "./success"
 import { DescriptionIcon } from "./description"
 import { DotIcon } from "./dot"
 import { DoubleColorDot } from "./doubleColorDot"
@@ -63,7 +63,7 @@ export {
   DotIcon,
   DoubleColorDot,
   DuplicateIcon,
-  DepositSuccessfulIcon,
+  SuccessIcon,
   DescriptionIcon,
   DownIcon,
   LeftArrowIcon,

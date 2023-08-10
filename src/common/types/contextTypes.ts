@@ -1,3 +1,4 @@
+import { BigNum } from "@emurgo/csl-mobile-bridge"
 import {
   EventCardInfo,
   OrganizerRate,
@@ -54,6 +55,12 @@ export enum EventCreationTypes {
   SetEventCardColor = "SET_EVENT_CARD_COLOR",
   SetEventTitleColor = "SET_EVENT_TITLE_COLOR",
   SetGCalEventsBooking = "SET_GCAL_EVENTS_BOOKING",
+  ResetState = "RESET_STATE",
+}
+
+export enum WalletTypes {
+  SetLovelaceBalance = "SET_LOVELACE_BALANCE",
+  SetMnemonic = "SET_MNEMONIC",
   ResetState = "RESET_STATE",
 }
 
@@ -270,9 +277,22 @@ export type MyCalendarPaylaod = {
   ["unknown"]: any
 }
 
+export type WalletPayload = {
+  [WalletTypes.SetLovelaceBalance]: {
+    lovelace: BigNum
+  }
+  [WalletTypes.SetMnemonic]: {
+    mnemonic: {}
+  }
+  [WalletTypes.ResetState]: {}
+  ["unknown"]: any
+}
+
 export type MyCalendarActions =
   ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
 export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
+export type WalletActions =
+  ActionMap<WalletPayload>[keyof ActionMap<WalletPayload>]
 export type BookingActions =
   ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
 export type EventCreationActions =

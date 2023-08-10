@@ -120,7 +120,7 @@ export const EventConfirmationDetails = ({
       lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
         ? [
             {
-              content: `Start: ${
+              content: `Starts: ${
                 weekDays[getDay(organizerEvent?.fromDate)]
               } - ${months[getMonth(organizerEvent?.fromDate)]} ${getDate(
                 organizerEvent?.fromDate
@@ -128,7 +128,7 @@ export const EventConfirmationDetails = ({
               icon: sectionsIcons.calendar,
             },
             {
-              content: `End: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
+              content: `Ends: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
                 months[getMonth(organizerEvent?.toDate)]
               } ${getDate(organizerEvent?.toDate)}`,
               icon: sectionsIcons.calendar,
@@ -136,7 +136,7 @@ export const EventConfirmationDetails = ({
           ]
         : [
             {
-              content: `${weekDays[getDay(organizerEvent?.fromDate)]}`,
+              content: `${new Date(organizerEvent?.fromDate).toLocaleString()}`,
               icon: sectionsIcons.calendar,
             },
           ],
@@ -199,33 +199,32 @@ export const EventConfirmationDetails = ({
         icon: sectionsIcons.description,
       },
     },
-    selectedDays && {
-      label: "Date & Time",
-      callbackFn: {
-        label: "Edit",
-        callbackFnScreen: "Available Days Selection",
-      },
-      lineContent:
-        !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate) &&
-        fromDate &&
-        toDate
+    selectedDays &&
+      fromDate &&
+      toDate && {
+        label: "Date & Time",
+        callbackFn: {
+          label: "Edit",
+          callbackFnScreen: "Available Days Selection",
+        },
+        lineContent: !isSameDay(fromDate, toDate)
           ? [
               {
-                content: `Start: ${new Date(fromDate).toLocaleString()}`,
+                content: `Starts: ${new Date(fromDate).toLocaleString()}`,
                 icon: sectionsIcons.calendar,
               },
               {
-                content: `End: ${new Date(toDate).toLocaleString()}`,
+                content: `Ends: ${new Date(toDate).toLocaleString()}`,
                 icon: sectionsIcons.calendar,
               },
             ]
           : [
               {
-                content: `${weekDays[getDay(fromDate)]}`,
+                content: `${new Date(fromDate).toLocaleString()}`,
                 icon: sectionsIcons.calendar,
               },
             ],
-    },
+      },
     {
       label: "Hourly Rate",
       lineContent: [
@@ -239,7 +238,7 @@ export const EventConfirmationDetails = ({
         },
       ],
     },
-    {
+    eventCardColor !== "transparent" && {
       label: "Event Card",
       callbackFn: {
         label: "Edit",
@@ -261,7 +260,6 @@ export const EventConfirmationDetails = ({
       ],
     },
   ].filter((s) => !!s)
-
   const bookingEventSections: SectionDetail[] = [
     previewingEvent?.title && {
       label: "Event",
@@ -353,7 +351,6 @@ export const EventConfirmationDetails = ({
       isLastItem={isLastItem(index)}
     />
   )
-  debugger
   const keyExtractor = (item: any, index: number) => `${item?.label}_${index}`
 
   return (

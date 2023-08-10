@@ -16,7 +16,6 @@ import { wallet } from "../assets/textContent"
 
 // Get the user preffered color scheme (light or dark)
 const colorScheme: ColorSchemeName = Appearance.getColorScheme()
-
 const appTextContent = { wallet }
 
 const initialAppState: AppState = {
@@ -127,7 +126,6 @@ export const AppContext = React.createContext<AppContextProps>({
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   //@ts-ignore
   const [state, dispatch] = React.useReducer(reducer, initialAppState)
-
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}

@@ -26,7 +26,7 @@ import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { SlideTopModal } from "components/modals/SlideTopModal"
 
 export interface UserProfileProps
-  extends StackScreenProps<ProfileStackParamList, "Profile"> {}
+  extends StackScreenProps<ProfileStackParamList, "Profile Main"> {}
 
 export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
@@ -196,11 +196,13 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           </Pressable>
         </View>
         <View style={styles.mainNavigation}>
+          {/*
           <SettingsNavigationItem
             icon={HearthIcon}
             onPressCallback={() => {}}
             title="Favorites"
           />
+          */}
           <SettingsNavigationItem
             icon={CogIcon}
             onPressCallback={() => navigation.navigate("Profile Settings")}

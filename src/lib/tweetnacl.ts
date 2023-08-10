@@ -7,13 +7,8 @@ interface KeyPair {
   secretKey: Uint8Array
 }
 
-export const generateKeyPair = async (): Promise<KeyPair | void> => {
-  try {
-    const keypair = nacl.sign.keyPair()
-    return keypair
-  } catch (e) {
-    console.error(e)
-  }
+export const generateKeyPair = (): KeyPair => {
+  return nacl.sign.keyPair()
 }
 
 export const signChallenge = async (
@@ -25,9 +20,10 @@ export const signChallenge = async (
   _secretKey = secretKey || (await getFromEncryptedStorage("privKey"))
 
   if (!_secretKey || !challenge) return
-  _secretKey = base64.toByteArray(_secretKey)
+  _secretKey = Buffer.from(_secretKey, "base64")
 
-  // TODO: use a byte-array when the device API's support that type, and fill the buffer with zeros immediately after use.
+  // TODO: use a byte-array when the device API's support that type,
+  // and fill the buffer with zeros immediately after use.
   try {
     signedChallenge = nacl.sign.detached(challenge, _secretKey)
 

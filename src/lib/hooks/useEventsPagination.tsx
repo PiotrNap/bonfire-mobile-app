@@ -18,7 +18,7 @@ export const useEventsPagination = (id: string) => {
     try {
       const res = await Events.getAllEvents({
         limit: eventsLimit,
-        organizer_id: id,
+        user_id: id,
         page: page ?? eventsPage,
       })
 

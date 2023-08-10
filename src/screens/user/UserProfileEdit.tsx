@@ -10,6 +10,7 @@ import { appContext } from "contexts/contextApi"
 import { UpdateAccountForm } from "components/forms/UpdateAccountForm"
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
+import { HeaderText } from "components/rnWrappers/headerText"
 
 interface UserProfileEditProps
   extends StackScreenProps<ProfileStackParamList, "Edit Profile"> {}
@@ -66,14 +67,11 @@ export const UserProfileEdit = ({
         </View>
         <View style={styles.formContainer}>
           <View style={styles.pageHeader}>
-            <Text
-              style={
-                isLightMode
-                  ? styles.pageHeaderText_light
-                  : styles.pageHeaderText_dark
-              }>
+            <HeaderText
+              customStyles={{ marginBottom: Sizing.x10 }}
+              colorScheme={colorScheme}>
               Add or change info
-            </Text>
+            </HeaderText>
           </View>
           <UpdateAccountForm
             userInfo={route.params.userInfo}

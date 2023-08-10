@@ -1,4 +1,4 @@
-import { Organizer, PaginationRequestDto } from "common/types/dto"
+import { User, PaginationRequestDto } from "common/types/dto"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
 import { EventBookingDto } from "common/types/dto/event-booking.dto"
 import { getFormDataFromFilePath } from "lib/helpers"
@@ -64,7 +64,7 @@ export class Events {
   }
 
   public static async getAllEvents(
-    query: Organizer & PaginationRequestDto
+    query: User & PaginationRequestDto
   ): Promise<any | void> {
     try {
       const res = await axios.get(
@@ -73,7 +73,7 @@ export class Events {
           params: {
             limit: query.limit,
             page: query.page,
-            organizer_id: query.organizer_id,
+            organizer_id: query.user_id,
           },
         }
       )

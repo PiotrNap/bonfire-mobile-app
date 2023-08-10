@@ -41,7 +41,6 @@ export const NavigationScreens = ({ route }: any) => {
   return (
     <NavigationTabs.Navigator
       screenOptions={{ headerShown: false }}
-      //@ts-ignore
       tabBar={(props) => <NavigationTabBar {...props} />}>
       <NavigationTabs.Screen name="Home Stack" component={HomeScreenStack} />
       <NavigationTabs.Screen

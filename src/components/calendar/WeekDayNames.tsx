@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
   dayContainer: {
     width: `${100 / 7}%`,
     height: `${100 / 6}%`,
-    justifyContent: "flex-start",
     alignItems: "center",
+    paddingBottom: Sizing.x5,
   },
   dayPlaceholder: {
     width: 33,

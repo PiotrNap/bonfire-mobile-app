@@ -24,7 +24,7 @@ export const CustomInput = (props: any) => {
     ...inputProps
   } = props
   const hasError = errors[name] && touched[name]
-  const isNumeric = props.field.name === "ada" || props.field.name === "gimbals"
+  const isNumeric = props.field.name === "ada"
 
   return (
     <>
@@ -55,6 +55,10 @@ export const CustomInput = (props: any) => {
             customOnChange && customOnChange(text)
           }}
           onBlur={() => {
+            setFieldTouched(name)
+            onBlur(name)
+          }}
+          onSubmitEditing={() => {
             setFieldTouched(name)
             onBlur(name)
           }}

@@ -12,10 +12,14 @@ import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
 import { HourlyRate } from "common/interfaces/newEventInterface"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { Field, Formik } from "formik"
-import { hourlyRateValidationScheme } from "lib/validators"
+import {
+  accountValidationScheme,
+  hourlyRateValidationScheme,
+} from "lib/validators"
 import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
 import { appContext } from "contexts/contextApi"
 import { CustomInput } from "components/forms/CustomInput"
+import { SlideDownModal } from "components/modals/SlideDownModal"
 
 export interface UserDetailScreenProps {}
 
@@ -40,27 +44,29 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
     gimbals: 0,
   })
   const [_skills, _setSkills] = React.useState<string>("")
+  const [_username, _setUsername] = React.useState<string>("")
   const [submitted, setSubmitted] = React.useState<boolean>(false)
+  const [modalState, setModalState] = React.useState<any>({
+    type: "safety-warning",
+    visible: false,
+  })
+  const [formValues, setFormValues] = React.useState<any>(null)
+  const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
-  const onSubmit = (hourlyRateValues: any) => {
-    const badWords = new Filter().isProfane(
-      [_profession, _jobTitle, _bio, _skills].join(" ")
-    )
+  const onSubmit = (values: any) => {
+    const badWords = new Filter().isProfane(Object.values(values).join(" "))
     if (badWords) return showInappropriateContentModal()
-    const { ada, gimbals } = hourlyRateValues
 
-    setHourlyRate({
-      ..._hourlyRate,
-      ada: Number(ada || 0),
-      gimbals: Number(gimbals || 0),
-    })
-    setProfession(_profession.trim())
-    setJobTitle(_jobTitle.trim())
-    setBio(_bio.trim())
-    setSkills(_skills.trim())
+    // store the values in context or pass as a route param, don't create account yet
+
+    setFormValues(values)
+    return setModalState({ type: "safety-warning", visible: true })
+  }
+  const onModalConfirm = () => {
+    pagerRef.current.state = formValues
+    pagerRef.current.state.page = 1
     pagerRef.current.setPage(1)
   }
-  const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
   return (
     <KeyboardAwareScrollView
@@ -72,92 +78,121 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
         <HeaderText>Tell us a little bit about you</HeaderText>
       </View>
       <View style={styles.formContainer}>
-        {/* we have to include 'labelStyle' due to StyleSheet inconsistency */}
-        <CustomPlainInput
-          label="Profession"
-          labelStyle={formStyleDark.label}
-          placeholder="Doctor, therapist, developer..."
-          styles={formStyleDark}
-          defaultValue={profession}
-          onEndEditingCallback={(val) => _setProfession(val)}
-        />
-        <CustomPlainInput
-          label="Job Title"
-          labelStyle={formStyleDark.label}
-          placeholder="Full Stack Engineer, Sr Business..."
-          styles={formStyleDark}
-          textContentType="jobTitle"
-          defaultValue={jobTitle}
-          onEndEditingCallback={(val) => _setJobTitle(val)}
-        />
-        {/* when handling events with multiline, use ref._lastNativeText */}
-        <CustomPlainInput
-          label="About Yourself"
-          labelStyle={formStyleDark.label}
-          multiline={true}
-          numberOfLines={8}
-          maxChar={250}
-          defaultValue={bio}
-          placeholder="Passionate in helping others draw business goals and needs..."
-          styles={formStyleDark}
-          onEndEditingCallback={(val) => _setBio(val)}
-        />
-        <CustomPlainInput
-          label="Skills"
-          labelStyle={formStyleDark.label}
-          placeholder="Organized, Motivated, Critical Th..."
-          styles={formStyleDark}
-          defaultValue={skills}
-          onEndEditingCallback={(val) => _setSkills(val)}
-        />
+        <Formik
+          validationSchema={accountValidationScheme()}
+          initialValues={{
+            username: "",
+          }}
+          onSubmit={onSubmit}>
+          {({ handleSubmit, isValid, validateForm }) => (
+            <>
+              {/* we have to include 'labelStyle' due to StyleSheet inconsistency */}
+              <Field
+                component={CustomInput}
+                label="Username *"
+                key="username"
+                name="username"
+                labelStyle={formStyleDark.label}
+                defaultValue="@CryptoPunk"
+                styles={formStyles}
+                placeholder="@cryptoPunk"
+                placeholderTextColor={inputStyles.placeholderText.color}
+                validateForm={validateForm}
+                submitted={submitted}
+                onCustomChange={validateForm}
+              />
+              <Field
+                component={CustomInput}
+                label="Profession"
+                key="profession"
+                name="profession"
+                labelStyle={formStyleDark.label}
+                placeholder="Doctor, therapist, developer..."
+                defaultValue={profession}
+                styles={formStyles}
+                placeholderTextColor={inputStyles.placeholderText.color}
+                validateForm={validateForm}
+                submitted={submitted}
+                onCustomChange={validateForm}
+              />
+              <Field
+                component={CustomInput}
+                label="Job Title"
+                key="jobTitle"
+                name="jobTitle"
+                labelStyle={formStyleDark.label}
+                placeholder="Full Stack Engineer, Sr Business..."
+                textContentType="jobTitle"
+                defaultValue={jobTitle}
+                styles={formStyles}
+                placeholderTextColor={inputStyles.placeholderText.color}
+                validateForm={validateForm}
+                submitted={submitted}
+                onCustomChange={validateForm}
+              />
+              {/* when handling events with multiline, use ref._lastNativeText */}
+              <Field
+                component={CustomInput}
+                label="About Yourself"
+                key="bio"
+                name="bio"
+                labelStyle={formStyleDark.label}
+                multiline={true}
+                numberOfLines={8}
+                maxChar={250}
+                defaultValue={bio}
+                placeholder="Passionate in helping others draw business goals and needs..."
+                styles={formStyles}
+                placeholderTextColor={inputStyles.placeholderText.color}
+                validateForm={validateForm}
+                submitted={submitted}
+                onCustomChange={validateForm}
+              />
+
+              <Field
+                component={CustomInput}
+                label="Skills"
+                key="Skills"
+                name="skills"
+                labelStyle={formStyleDark.label}
+                placeholder="Organized, Motivated, Critical Th..."
+                defaultValue={skills}
+                styles={formStyles}
+                placeholderTextColor={inputStyles.placeholderText.color}
+                validateForm={validateForm}
+                submitted={submitted}
+                onCustomChange={validateForm}
+              />
+              <Field
+                component={CustomInput}
+                key="ada"
+                name="hourlyRateAda"
+                label="Hourly Rate (ADA)"
+                keyboardType="numeric"
+                submitted={submitted}
+                validateForm={validateForm}
+                placeholder="35 ₳ an hour"
+                placeholderTextColor={inputStyles.placeholderText.color}
+                styles={formStyles}
+                onCustomChange={validateForm}
+              />
+              <FullWidthButton
+                onPressCallback={handleSubmit}
+                text="Next"
+                buttonType="transparent"
+                disabled={!isValid}
+                colorScheme="dark"
+              />
+            </>
+          )}
+        </Formik>
       </View>
-      <Formik
-        validationSchema={hourlyRateValidationScheme()}
-        initialValues={{
-          name: "",
-          username: "",
-        }}
-        onSubmit={onSubmit}>
-        {({ handleSubmit, isValid, validateForm }) => (
-          <>
-            <Field
-              component={CustomInput}
-              key="ada"
-              name="ada"
-              label="Hourly Rate (ADA)"
-              keyboardType="numeric"
-              defaultValue={String(hourlyRate?.ada || 0)}
-              submitted={submitted}
-              validateForm={validateForm}
-              placeholder="35 ₳ an hour"
-              placeholderTextColor={inputStyles.placeholderText.color}
-              styles={formStyles}
-              onCustomChange={validateForm}
-            />
-            <Field
-              component={CustomInput}
-              key="gimbals"
-              name="gimbals"
-              label="Hourly Rate (Gimbals)"
-              keyboardType="numeric"
-              placeholder="5000 GMBL an hour"
-              defaultValue={String(hourlyRate?.gimbals || 0)}
-              submitted={submitted}
-              validateForm={validateForm}
-              placeholderTextColor={inputStyles.placeholderText.color}
-              styles={formStyles}
-              onCustomChange={validateForm}
-            />
-            <FullWidthButton
-              onPressCallback={handleSubmit}
-              text="Next"
-              buttonType="transparent"
-              disabled={!isValid}
-              colorScheme="dark"
-            />
-          </>
-        )}
-      </Formik>
+      <SlideDownModal
+        modalType={modalState.type}
+        setModalState={setModalState}
+        isVisibleModal={modalState.visible}
+        modalCallback={onModalConfirm}
+      />
     </KeyboardAwareScrollView>
   )
 }
@@ -183,32 +218,3 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x10,
   },
 })
-// /**
-//  * styles passed as prop to CustomPlainInput
-//  */
-// const inputStyles = StyleSheet.create({
-//   inputContainer: {
-//     flex: 1,
-//     width: "100%",
-//     alignItems: "center",
-//     marginBottom: Sizing.x10,
-//   },
-//   labelContainer: {
-//     width: "100%",
-//   },
-//   label: {
-//     ...Forms.inputLabel.primary_dark,
-//   },
-//   textInputWrapper: {
-//     width: "100%",
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   input: {
-//     width: "100%",
-//     ...Forms.input.primary,
-//   },
-//   placeholderText: {
-//     color: Colors.primary.s300,
-//   },
-// })

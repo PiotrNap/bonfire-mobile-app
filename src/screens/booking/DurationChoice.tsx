@@ -100,7 +100,7 @@ export const DurationChoice = ({ navigation, route }: Props) => {
   return (
     <EventBookingLayout
       onBackPress={onBackNavigationPress}
-      screenHeader={"Select duration and confirm"}
+      screenHeader={"Select Duration"}
       eventCardColor={color}
       eventCardImage={image}
       eventCardTitle={title}
@@ -109,6 +109,7 @@ export const DurationChoice = ({ navigation, route }: Props) => {
         <View style={styles.estimatedCostWrapper}>
           <AnimatedNumber
             value={cost}
+            time={300}
             style={[isLightMode ? styles.totalAda_light : styles.totalAda_dark]}
           />
           <Text

@@ -83,8 +83,12 @@ export const CalendarTopNavigation = ({
         ? styles.monthSwitchButton_light
         : styles.monthSwitchButton_dark
     const shadow = currentPressed === direction ? Outlines.shadow.base : {}
+    const spacing =
+      direction === "next"
+        ? { marginLeft: Sizing.x5 }
+        : { marginRight: Sizing.x5 }
 
-    return { ...buttonStyle, ...disabled, ...shadow }
+    return { ...buttonStyle, ...disabled, ...shadow, ...spacing }
   }
 
   const onPress = (direction: Direction) => {
@@ -146,7 +150,7 @@ export const CalendarTopNavigation = ({
 const styles = StyleSheet.create({
   monthSwitchButton_light: {
     padding: 5,
-    width: Sizing.x35,
+    width: Sizing.x50,
     height: Sizing.x35,
     borderRadius: Outlines.borderRadius.max,
     backgroundColor: Colors.primary.s800,
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
   },
   monthSwitchButton_dark: {
     padding: 5,
-    width: Sizing.x35,
+    width: Sizing.x60,
     height: Sizing.x35,
     borderRadius: Outlines.borderRadius.max,
     backgroundColor: Colors.primary.s600,

@@ -1,3 +1,3 @@
-export { DepositSuccessful } from "./DepositSuccessful"
+export { SuccessScreen } from "./SuccessScreen"
 export { Confirmation } from "./Confirmation"
 export { DetailedConfirmation } from "./DetailedConfirmation"

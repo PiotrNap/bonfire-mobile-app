@@ -24,8 +24,6 @@ export interface CalendarEventsDetailProps extends Event {
   bookedDuration: number | undefined
   eventTitle: string | undefined
   eventDescription: string | undefined
-  maxAvailableMonthDate: number | undefined
-  minAvailableMonthDate: number | undefined
   currentSelectedDay: Date | undefined
   navigateCb: (
     name: keyof EventCreationParamList,
@@ -54,8 +52,6 @@ export const CalendarEventsDetail = ({
   eventTitle,
   eventDescription,
   availabilityDate,
-  maxAvailableMonthDate,
-  minAvailableMonthDate,
   currentSelectedDay,
   navigateCb,
 }: CalendarEventsDetailProps) => {
@@ -73,8 +69,8 @@ export const CalendarEventsDetail = ({
       ? getDate(availableAt)
       : getDate(bookedDate || availabilityDate || fromDate || "")
   const eventMonth = months[getMonth(bookedDate || fromDate)]
-  const fromDayActiveEvent = getDate(minAvailableMonthDate)
-  const toDayActiveEvent = getDate(maxAvailableMonthDate)
+  const fromDayActiveEvent = getDate(fromDate)
+  const toDayActiveEvent = getDate(toDate)
   const oneDayEvent = fromDate === toDate
   const isLastCard = index === listLength - 1
   const isFirstCard = index === 0

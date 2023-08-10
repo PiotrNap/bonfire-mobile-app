@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useNavigation } from "@react-navigation/native"
 import { ProfileContext } from "contexts/profileContext"
 import { Users } from "Api/Users"
-import { OrganizerProfileDto } from "common/types/dto/organizer.dto"
+import { UserProfileDto } from "common/types/dto/user.dto"
 import {
   getFromEncryptedStorage,
   setToEncryptedStorage,
@@ -41,7 +41,7 @@ export const RegistrationConfirmationScreen = () => {
       const secretKey = await getFromEncryptedStorage("privKey")
 
       if (publicKey && secretKey) {
-        var organizerProfileDto = new OrganizerProfileDto(
+        var organizerProfileDto = new UserProfileDto(
           bio,
           hourlyRate ?? { ada: 0, gimbals: 0 },
           profession,
