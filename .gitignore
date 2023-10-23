@@ -67,3 +67,5 @@ escrow-contract/output
 # key files
 *.priv
 *.pub
+
+.env
