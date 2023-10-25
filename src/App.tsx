@@ -1,5 +1,5 @@
 import "react-native-gesture-handler"
-import "./global"
+import "../global"
 
 import * as React from "react"
 import { Platform, UIManager } from "react-native"
@@ -14,17 +14,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { enableScreens } from "react-native-screens"
 import SplashScreen from "react-native-splash-screen"
 
-import { WalletTopUpScreen } from "screens/onboarding"
+// import { WalletTopUpScreen } from "screens/onboarding"
 import { Confirmation, SuccessScreen } from "screens/payments"
 import { NavigationScreens } from "tabs/NavigationScreens"
 import { OnboardingScreens } from "tabs/OnboardingScreens"
-import { UserRegistrationScreens } from "tabs/UserRegistrationScreens"
+import { InitialUserScreens } from "tabs/InitialUserScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
-import {
-  authorizedLinkingConfig,
-  unauthorizedLinkingConfig,
-} from "lib/navigation"
-import { useFirebaseMessaging } from "lib/hooks/useFirebaseMessaging"
+import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
+// import { useFirebaseMessaging } from "lib/hooks/useFirebaseMessaging"
 
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
 enableScreens() // enable native screens for navigation instead of using Views
@@ -42,7 +39,7 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
-  const { token } = useFirebaseMessaging(user?.id, isAuthorized)
+  // const { token } = useFirebaseMessaging(user?.id, isAuthorized)
   const onNavigationReady = () => SplashScreen.hide()
 
   // React.useEffect(() => {
@@ -60,9 +57,7 @@ function App() {
             <WalletContextProvider>
               <NavigationContainer
                 linking={
-                  isAuthorized
-                    ? authorizedLinkingConfig
-                    : unauthorizedLinkingConfig
+                  isAuthorized ? authorizedLinkingConfig : unauthorizedLinkingConfig
                 }
                 onReady={onNavigationReady}>
                 <Stack.Navigator
@@ -80,8 +75,8 @@ function App() {
                     }}
                   />
                   <Stack.Screen
-                    name="User Registration Screens"
-                    component={UserRegistrationScreens}
+                    name="Initial User Screens"
+                    component={InitialUserScreens}
                     options={{
                       headerShown: false,
                     }}
@@ -90,7 +85,7 @@ function App() {
                     name="Navigation Screens"
                     component={NavigationScreens}
                     options={{ headerShown: false }}
-                    initialParams={{ ...user, token }}
+                    initialParams={{ ...user }}
                   />
                   <Stack.Screen
                     name="Success"
@@ -102,11 +97,13 @@ function App() {
                     options={{ headerShown: false, gestureEnabled: false }}
                     component={Confirmation}
                   />
+                  {/*
                   <Stack.Screen
                     name="Add Funds"
                     options={{ headerShown: false, gestureEnabled: false }}
                     component={WalletTopUpScreen}
                   />
+                  */}
                 </Stack.Navigator>
               </NavigationContainer>
             </WalletContextProvider>
