@@ -2,11 +2,8 @@ import { Platform, Share } from "react-native"
 
 import { ANDROID_API_URL, IOS_API_URL } from "@env"
 import { signChallenge } from "./tweetnacl"
-import {
-  decrypt_with_password,
-  encrypt_with_password,
-} from "@emurgo/csl-mobile-bridge"
-import crs from "crypto-random-string"
+import Aes from "react-native-aes-crypto"
+import Crypto from "crypto"
 import base64 from "base64-js"
 
 import { monthsByName } from "common/types/calendarTypes"
@@ -142,14 +139,16 @@ export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 
 //@TODO throw error if password is incorrect
 export const encryptWithPassword = async (
-  value: string,
+  value: {},
   password: string
 ): Promise<undefined | string> => {
-  const saltHex = crs({ length: 2 * 32 })
-  const nonceHex = crs({ length: 2 * 12 })
-  const hexValue = Buffer.from(value).toString("hex")
+  const saltHex = Crypto.randomBytes(32).toString("hex")
+  const nonceHex = Crypto.randomBytes(12).toString("hex")
+  const hexValue = Buffer.from(JSON.stringify(value)).toString("hex")
   const hexPassword = Buffer.from(password).toString("hex")
-  return await encrypt_with_password(hexPassword, saltHex, nonceHex, hexValue)
+  const key = await Aes.pbkdf2(hexPassword, saltHex, 5000, 256, "sha512") // 5000 iterations
+
+  return await Aes.encrypt(hexValue, key, nonceHex, "aes-256-ctr")
 }
 
 //@TODO throw error if password is incorrect
@@ -157,6 +156,10 @@ export const decryptWithPassword = async (
   cipherText: string,
   password: string
 ): Promise<undefined | string> => {
+  const saltHex = Crypto.randomBytes(32).toString("hex")
+  const nonceHex = Crypto.randomBytes(12).toString("hex")
   const hexPassword = Buffer.from(password).toString("hex")
-  return await decrypt_with_password(hexPassword, cipherText)
+  const key = await Aes.pbkdf2(hexPassword, saltHex, 5000, 256, "sha512")
+
+  return await Aes.decrypt(cipherText, key, nonceHex, "aes-256-ctr")
 }

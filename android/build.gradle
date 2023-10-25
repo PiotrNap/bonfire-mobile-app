@@ -27,7 +27,6 @@ buildscript {
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:4.3.15'
         classpath "com.android.tools.build:gradle:4.2.2"
-        classpath "org.mozilla.rust-android-gradle:plugin:0.9.3"
         classpath "com.facebook.react:react-native-gradle-plugin"
     }
 }

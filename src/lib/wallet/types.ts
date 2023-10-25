@@ -1,5 +1,3 @@
-import { Optional } from "@emurgo/csl-mobile-bridge"
-
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean
   mnemonic?: string
@@ -8,14 +6,14 @@ export type WalletNavigationParams = {
   accountKey?: string
   accountPubKey?: string
 }
-export type WalletSetUpFormValues = {
+export type PasswordSetUpFormValues = {
   name?: string
   password: string
   password_confirm: string
 }
-export type WalletKeys = {
-  baseAddress: Optional<string>
-  rootKey: string
-  accountKey: string
-  accountPubKey: string
+export interface WalletKeys {
+  baseAddress: string
+  rootKeyHex: string
+  accountKeyHex: string
+  accountPubKeyHex: string
 }
