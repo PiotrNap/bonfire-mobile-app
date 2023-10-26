@@ -91,6 +91,7 @@
     "react-native-svg": "^12.1.1",
     "react-native-tcp": "https://github.com/PiotrNap/react-native-tcp",
     "react-native-timezone": "^2.3.0",
+    "react-native-toast-message": "^2.1.7",
     "react-native-typography": "^1.4.1",
     "react-native-udp": "^2.1.0",
     "readable-stream": "1.0.33",
@@ -107,6 +108,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@react-native/metro-config": "^0.74.0",
     "@types/react": "^17.0.4",
     "@types/react-native": "^0.64.4",
     "babel-plugin-module-resolver": "^5.0.0",

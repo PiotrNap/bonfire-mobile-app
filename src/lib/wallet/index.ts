@@ -1,6 +1,3 @@
-import { generateMnemonic } from "bip39"
-import axios from "../../services/Api/base"
-
 import {
   getFromEncryptedStorage,
   setToEncryptedStorage,
@@ -14,19 +11,19 @@ import {
   HASKELL_SHELLEY_TESTNET,
   NetworkConfig,
 } from "./config"
-import { CARDANO_NETWORK, BLOCKFROST_KEY } from "@env"
+import { CARDANO_NETWORK, BLOCKFROST_API_KEY } from "@env"
 import { WalletKeys } from "./types"
 import { randomBytes } from "react-native-randombytes"
 import {
   BlockfrostV0,
   Address,
-  TxInput,
   RootPrivateKey,
   bytesToHex,
   Bip32PrivateKey,
-  Assets,
 } from "@hyperionbt/helios"
-import { fromAssetUnit } from "./utils"
+import { generateMnemonic } from "bip39"
+import axios from "axios"
+import { checkBech32Address } from "./utils"
 
 export const WALLET_IMPLEMENTATION_ID = "haskell-shelley"
 export const DISCOVERY_GAP_SIZE = 20
@@ -39,6 +36,33 @@ export const HARD_DERIVATION_START = 2147483648
 export const CHIMERIC_ACCOUNT = 2
 export const STAKING_KEY_INDEX = 0
 
+export async function blockFrostFetch(endpoint: string) {
+  const networkName = CARDANO_NETWORK
+  const blockfrostApiKey = BLOCKFROST_API_KEY
+
+  if (endpoint && typeof endpoint === "string") {
+    try {
+      const response = await fetch(
+        `https://cardano-${networkName}.blockfrost.io/api/v0/${endpoint}`,
+        {
+          method: "GET",
+          headers: {
+            project_id: blockfrostApiKey,
+          },
+        }
+      )
+
+      return await response.json()
+    } catch (e) {
+      throw e
+    }
+  } else throw new Error(`Unrecognized endpoint: ${endpoint}`)
+}
+
+export function blockFrost() {
+  return new BlockfrostV0(CARDANO_NETWORK, BLOCKFROST_API_KEY)
+}
+
 export class Wallet {
   chainConfig: NetworkConfig
 
@@ -46,11 +70,6 @@ export class Wallet {
   constructor() {
     this.chainConfig =
       CARDANO_NETWORK === "mainnet" ? HASKELL_SHELLEY : HASKELL_SHELLEY_TESTNET
-  }
-
-  get BlockfrostAPI() {
-    //@ts-ignore
-    return new BlockfrostV0(CARDANO_NETWORK, BLOCKFROST_KEY)
   }
 
   /**
@@ -129,60 +148,30 @@ export class Wallet {
     return await decryptWithPassword(value, password)
   }
 
-  static txInputsToAssets(txInputs: TxInput[]): Assets[] {
-    return txInputs.map((txIn) => txIn.value.assets)
-  }
-
-  static assetsToUnits(assetsArray: Assets[]) {
-    let units = []
-
-    for (let assets of assetsArray) {
-      let tokens = assets.dump()
-
-      for (let parentKey in tokens) {
-        for (let childKey in tokens[parentKey]) {
-          const { policyId, name, label } = fromAssetUnit(parentKey + childKey)
-
-          const newObj = {
-            policyId,
-            name,
-            label,
-            count: tokens[parentKey][childKey],
-          }
-          units.push(newObj)
-        }
-      }
-    }
-
-    return units.flat()
-  }
-
   async signTransaction() {}
 
-  async getTransactions() {}
+  static async getTransactionsAtAddress(address: string, page: number = 0) {
+    return Wallet.promiseHandler(
+      blockFrostFetch(`/addresses/${address}/transactions?page=${page}`)
+    )
+  }
 
-  async getUtxosAtAddress(addr: string) {
-    let error
-    let data
-    try {
-      data = await this.BlockfrostAPI.getUtxos(new Address(addr))
-    } catch (e) {
-      error = e
-    }
+  static async getUtxosAtAddress(addr: string) {
+    return Wallet.promiseHandler(blockFrost().getUtxos(new Address(addr)))
+  }
 
-    return { error, data }
+  static async getAssetInfo(unit: string) {
+    return Wallet.promiseHandler(blockFrostFetch(`/assets/${unit}`))
+  }
+
+  static async getTxUtxos(txHash: string) {
+    return Wallet.promiseHandler(blockFrostFetch(`/txs/${txHash}/utxos`))
   }
 
   static async getNetworkParams() {
-    try {
-      const response = await fetch(
-        `https://d1t0d7c2nekuk0.cloudfront.net/${process.env.CARDANO_NETWORK}.json`
-      )
-      const data = await response.json()
-      return data
-    } catch (e) {
-      throw e
-    }
+    return Wallet.promiseHandler(
+      fetch(`https://d1t0d7c2nekuk0.cloudfront.net/${process.env.CARDANO_NETWORK}.json`)
+    )
   }
 
   static async validatePlutusScriptOffchain(
@@ -202,5 +191,25 @@ export class Wallet {
       console.error(e.data)
       throw e
     }
+  }
+
+  static async promiseHandler(promise: any) {
+    let error
+    let data
+    try {
+      const res = await promise
+      // console.log("res ?", JSON.stringify(res, null, 4))
+      if (res.json) {
+        data = await res.json()
+      } else if (res.data) {
+        data = res.data
+      } else if (res.error) {
+        error = res.error
+      } else data = res
+    } catch (e) {
+      console.error(e)
+      error = e
+    }
+    return { error, data }
   }
 }

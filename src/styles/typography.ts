@@ -247,16 +247,7 @@ export const header: Record<Header, TextStyle> = {
   },
 }
 
-type SubHeader =
-  | "x5"
-  | "x8"
-  | "x10"
-  | "x20"
-  | "x25"
-  | "x30"
-  | "x35"
-  | "x40"
-  | "x50"
+type SubHeader = "x5" | "x8" | "x10" | "x20" | "x25" | "x30" | "x35" | "x40" | "x50"
 export const subHeader: Record<SubHeader, TextStyle> = {
   x5: {
     ...fontSize.x5,
@@ -406,4 +397,8 @@ export const roboto: Record<Roboto, TextStyle> = {
     fontFamily: "Roboto-Black",
     letterSpacing: letterSpacing.x20,
   },
+}
+
+export function schemeBasedFontColor(scheme: "light" | "dark"): string {
+  return scheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100
 }

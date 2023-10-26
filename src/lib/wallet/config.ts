@@ -1,6 +1,23 @@
 import { ANDROID_API_URL, IOS_API_URL } from "@env"
 import { isIOS } from "lib/helpers"
 
+export interface NetworkConfig {
+  PROVIDER_ID: number
+  NETWORK_ID: number
+  CHAIN_NETWORK_ID: string
+  IS_MAINNET: boolean
+  EXPLORER_URL_FOR_ADDRESS: (address: string) => any
+  EXPLORER_URL_FOR_TX: (tx: string) => any
+  BASE_CONFIG: [
+    {
+      // shelley-era
+      START_AT: number
+      SLOTS_PER_EPOCH: number
+      SLOT_DURATION: number
+    }
+  ]
+}
+
 export const CONFIG_NUMBERS = {
   HARD_DERIVATION_START: 2147483648,
   WALLET_TYPE_PURPOSE: {
@@ -39,10 +56,10 @@ export const GENERAL_CONFIG = {
   KEY_DEPOSIT: "2000000",
 }
 
-export const HASKELL_SHELLEY_TESTNET = {
+export const HASKELL_SHELLEY_TESTNET: NetworkConfig = {
   PROVIDER_ID: NETWORK_REGISTRY.HASKELL_SHELLEY_TESTNET,
   NETWORK_ID: NETWORK_REGISTRY.HASKELL_SHELLEY_TESTNET,
-  CHAIN_NETWORK_ID: 0,
+  CHAIN_NETWORK_ID: "0",
   IS_MAINNET: false,
   EXPLORER_URL_FOR_ADDRESS: (address: string) =>
     `https://explorer.cardano-testnet.iohkdev.io/address?address=${address}`,
@@ -59,11 +76,10 @@ export const HASKELL_SHELLEY_TESTNET = {
   ...GENERAL_CONFIG,
 }
 
-export const HASKELL_SHELLEY = {
+export const HASKELL_SHELLEY: NetworkConfig = {
   PROVIDER_ID: NETWORK_REGISTRY.HASKELL_SHELLEY,
   NETWORK_ID: NETWORK_REGISTRY.HASKELL_SHELLEY,
-  MARKETING_NAME: "Cardano Mainnet",
-  CHAIN_NETWORK_ID: 1,
+  CHAIN_NETWORK_ID: "1",
   IS_MAINNET: true,
   EXPLORER_URL_FOR_ADDRESS: (address: string) =>
     `https://explorer.cardano.org/en/address?address=${address}`,
