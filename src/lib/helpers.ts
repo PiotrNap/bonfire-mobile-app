@@ -29,27 +29,19 @@ export const isIOS = Platform.OS === "ios"
  *  @param month
  *  @returns elected days array in milliseconds
  */
-export const getRecurringMonthDays = (
-  index: number,
-  year: number,
-  month: string
-) => {
+export const getRecurringMonthDays = (index: number, year: number, month: string) => {
   const daysArray: number[] = []
 
   const numOfDays = new Date(year, monthsByName[month] + 1, 0).getDate()
   const firstDayOfWeek = new Date(year, monthsByName[month]).getDay()
 
   var firstDayToSelect =
-    firstDayOfWeek > index
-      ? 7 - firstDayOfWeek + index + 1
-      : 1 + (index - firstDayOfWeek)
+    firstDayOfWeek > index ? 7 - firstDayOfWeek + index + 1 : 1 + (index - firstDayOfWeek)
   // Calculate number of weeks (+1 because starting from current selected day)
   var numOfWeeks = Math.floor((numOfDays - firstDayToSelect) / 7 + 1)
 
   for (; numOfWeeks > 0; numOfWeeks--) {
-    daysArray.push(
-      new Date(year, monthsByName[month], firstDayToSelect).getTime()
-    )
+    daysArray.push(new Date(year, monthsByName[month], firstDayToSelect).getTime())
     firstDayToSelect = firstDayToSelect + 7
   }
 
@@ -58,36 +50,44 @@ export const getRecurringMonthDays = (
 
 /**
  * Starts challenge sequence to obtain JWT from the server.
- * Returns {id, username, accessToken, expiresIn} or  `null` if failed.
+ * Returns {id, username, accessToken, expiresIn , ???} or  `null` if failed.
  *
- * @param credential
+ * @param privKey (base 64 string)
+ * @param deviceID (uuid)
+ * @param id (uuid)
  * @returns jwt | null
  */
 export const startChallengeSequence = async (
-  credential: string,
+  privKey: string,
+  deviceID: string,
   id: string
-): Promise<{ [index: string]: string } | null> => {
+): Promise<{ [index: string]: string } | void> => {
   try {
-    let res = await Auth.requestChallenge({ credential, id })
-    let { challengeString } = res
+    let res = await Auth.requestChallenge({
+      deviceID,
+      id,
+    })
+    let { challenge } = res
 
-    if (challengeString) {
+    if (challenge) {
       let signature: any = await signChallenge(
-        base64.toByteArray(challengeString)
+        base64.toByteArray(challenge),
+        base64.toByteArray(privKey)
       )
       if (signature) {
-        // request JWT
-        let res = await Auth.requestAccessToken(challengeString, signature, {
+        let res = await Auth.requestAccessToken({
+          challenge: challenge,
+          signature,
           id,
-          publicKey: credential,
+          deviceID,
         })
         if (res) return res
       }
     }
-
-    return null
   } catch (e) {
-    throw new Error(e.message)
+    throw new Error(e)
+  } finally {
+    privKey = ""
   }
 }
 
@@ -137,29 +137,44 @@ export const shareEvent = async (id: string) => {
 
 export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 
-//@TODO throw error if password is incorrect
 export const encryptWithPassword = async (
   value: {},
   password: string
 ): Promise<undefined | string> => {
-  const saltHex = Crypto.randomBytes(32).toString("hex")
-  const nonceHex = Crypto.randomBytes(12).toString("hex")
-  const hexValue = Buffer.from(JSON.stringify(value)).toString("hex")
-  const hexPassword = Buffer.from(password).toString("hex")
-  const key = await Aes.pbkdf2(hexPassword, saltHex, 5000, 256, "sha512") // 5000 iterations
+  const salt = Crypto.randomBytes(16)
+  const nonce = Crypto.randomBytes(12)
+  const base64Value = Buffer.from(JSON.stringify(value)).toString("base64")
+  const key = await Aes.pbkdf2(password, salt.toString("hex"), 5000, 256, "sha512")
 
-  return await Aes.encrypt(hexValue, key, nonceHex, "aes-256-ctr")
+  const encrypted = await Aes.encrypt(
+    base64Value,
+    key,
+    nonce.toString("hex"),
+    "aes-256-ctr"
+  )
+
+  // Concatenating salt, nonce, and encrypted data
+  return salt.toString("hex") + nonce.toString("hex") + encrypted
 }
 
-//@TODO throw error if password is incorrect
 export const decryptWithPassword = async (
   cipherText: string,
   password: string
 ): Promise<undefined | string> => {
-  const saltHex = Crypto.randomBytes(32).toString("hex")
-  const nonceHex = Crypto.randomBytes(12).toString("hex")
-  const hexPassword = Buffer.from(password).toString("hex")
-  const key = await Aes.pbkdf2(hexPassword, saltHex, 5000, 256, "sha512")
+  // Extracting salt, nonce, and encrypted data from cipherText
+  const salt = Buffer.from(cipherText.slice(0, 32), "hex")
+  const nonce = Buffer.from(cipherText.slice(32, 56), "hex")
+  const encrypted = cipherText.slice(56)
 
-  return await Aes.decrypt(cipherText, key, nonceHex, "aes-256-ctr")
+  const key = await Aes.pbkdf2(password, salt.toString("hex"), 5000, 256, "sha512")
+
+  const decryptedBase64 = await Aes.decrypt(
+    encrypted,
+    key,
+    nonce.toString("hex"),
+    "aes-256-ctr"
+  )
+
+  // Converting decrypted base64 back to JSON object
+  return JSON.parse(Buffer.from(decryptedBase64, "base64").toString())
 }
