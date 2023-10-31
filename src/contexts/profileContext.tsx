@@ -3,14 +3,15 @@
  * @desc Context container for the profile data
  */
 import React, { useState, createContext } from "react"
-import { ProfileState } from "interfaces/profileInterface"
-import { HourlyRate } from "common/interfaces/newEventInterface"
+import { ProfileState, UserBaseDTO } from "interfaces/profileInterface"
+import { TxInput } from "@hyperionbt/helios"
 
 export const initialState: ProfileState = {
   username: "",
   name: "",
   publicKey: "",
   id: "",
+  deviceID: "",
   bio: "",
   imageBase64: "",
   profession: "",
@@ -21,23 +22,23 @@ export const initialState: ProfileState = {
   timeZone: "",
   timeBlockLengthMin: 0,
   timeBlockCostADA: 0,
-  walletBalance: 0,
+  walletBalance: { inputs: [], lovelace: 0 },
   walletName: "",
   walletBaseAddress: "",
-  profileType: "",
-  hourlyRate: { ada: 0, gimbals: 0 },
+  hourlyRateAda: 0,
+  profile: null,
   getUserProfile: () => {},
   setName: () => {},
   setUsername: () => {},
-  setProfileType: () => {},
-  setId: () => {},
+  setID: () => {},
+  setDeviceID: () => {},
   setPublicKey: () => {},
   setBio: () => {},
   setImageBase64: () => {},
   setTimeZone: () => {},
   setTimeBlockLengthMin: () => {},
   setTimeBlockCostADA: () => {},
-  setHourlyRate: () => {},
+  setHourlyRateAda: () => {},
   setHasSyncedWallet: () => {},
   setWalletBalance: () => {},
   setWalletName: () => {},
@@ -46,6 +47,7 @@ export const initialState: ProfileState = {
   setJobTitle: () => {},
   setDescription: () => {},
   setSkills: () => {},
+  setProfile: () => {},
   resetProfileState: () => {},
 }
 
@@ -58,36 +60,30 @@ export const ProfileContext = createContext<ProfileState>(initialState)
 export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [username, setUsername] = useState<string>("")
   const [name, setName] = useState<string>("")
-  const [id, setId] = useState<string>("")
+  const [id, setID] = useState<string>("")
+  const [deviceID, setDeviceID] = useState<string>("")
   const [publicKey, setPublicKey] = useState<string>("")
   const [bio, setBio] = useState<string>("")
   const [imageBase64, setImageBase64] = useState<string>("")
   const [timeBlockLengthMin, setTimeBlockLengthMin] = useState<number | null>(0)
-  const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(
-    0
-  )
+  const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(0)
   const [timeZone, setTimeZone] = useState<string | undefined>("")
-  const [hourlyRate, setHourlyRate] = useState<HourlyRate>({
-    ada: 0,
-    gimbals: 0,
-  })
+  const [hourlyRateAda, setHourlyRateAda] = useState<number>(0)
   const [profession, setProfession] = useState<string | undefined>("")
   const [jobTitle, setJobTitle] = useState<string | undefined>("")
   const [description, setDescription] = useState<string | undefined>("")
   const [skills, setSkills] = useState<string | undefined>("")
   const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
-  //@TODO change this...
-  const [walletBalance, setWalletBalance] = useState<number>(0)
+  const [walletBalance, setWalletBalance] = useState<any>(initialState.walletBalance)
   const [walletBaseAddress, setWalletBaseAddress] = useState<string>("")
   const [walletName, setWalletName] = useState<string>("")
-  const [profileType, setProfileType] = useState<"" | "attendee" | "organizer">(
-    ""
-  )
+  const [profile, setProfile] = useState<UserBaseDTO | null>(null)
 
   const userProfile = {
     username,
     name,
     id,
+    deviceID,
     publicKey,
     walletBalance,
     walletName,
@@ -95,7 +91,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     bio,
     imageBase64,
     hasSyncedWallet,
-    hourlyRate,
+    hourlyRateAda,
     timeZone,
     timeBlockLengthMin,
     timeBlockCostADA,
@@ -103,7 +99,6 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     jobTitle,
     description,
     skills,
-    profileType,
   }
 
   const getUserProfile = () => userProfile
@@ -111,22 +106,22 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const resetProfileState = () => {
     setUsername("")
     setName("")
-    setId("")
+    setID("")
+    setDeviceID("")
     setPublicKey("")
     setBio("")
     setImageBase64("")
     setTimeBlockLengthMin(0)
     setTimeBlockCostADA(0)
     setTimeZone("")
-    setHourlyRate({ ada: 0, gimbals: 0 })
+    setHourlyRateAda(0)
     setProfession("")
     setJobTitle("")
     setDescription("")
     setSkills("")
     setTimeZone("")
     setHasSyncedWallet(false)
-    setWalletBalance(0)
-    setProfileType("")
+    setWalletBalance({ assets: [], lovelace: 0 })
   }
 
   return (
@@ -134,10 +129,10 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
       value={{
         ...userProfile,
         getUserProfile,
-        setProfileType,
         setUsername,
         setName,
-        setId,
+        setDeviceID,
+        setID,
         setPublicKey,
         setBio,
         setImageBase64,
@@ -148,11 +143,13 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setTimeBlockLengthMin,
         setTimeBlockCostADA,
         setTimeZone,
-        setHourlyRate,
+        setHourlyRateAda,
         setProfession,
         setJobTitle,
         setDescription,
         setSkills,
+        setProfile,
+        profile,
         resetProfileState,
       }}>
       {children}

@@ -29,7 +29,7 @@ export type BlockfrostTx = {
   block_height: number
   block_time: string
 }
-export type BlockFrostInOut = Array<{
+export type BlockFrostUtxoInfo = Array<{
   address: string
   amount: Array<{
     unit: string
@@ -43,10 +43,10 @@ export type BlockFrostInOut = Array<{
   collateral: boolean
   reference: boolean
 }>
-export type BlockFrostTx = {
+export type BlockFrostDetailedTx = {
   hash: string
   block_time: string // added manually
   user_address: string // added manually
-  inputs: BlockFrostInOut
-  outputs: BlockFrostInOut
+  inputs: BlockFrostUtxoInfo
+  outputs: BlockFrostUtxoInfo
 }

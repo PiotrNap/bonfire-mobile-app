@@ -23,6 +23,7 @@ import {
 import { EventCreationTypes } from "common/types/contextTypes"
 import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
 import { WalletContext } from "./walletContext"
+import { WalletKeys } from "lib/wallet/types"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -36,10 +37,14 @@ export const appContext = () => {
     validGoogleOAuth: state.validGoogleOAuth,
     favoriteOrganizers: state.favoriteOrganizers,
     receivingAddr: state.receivingAddr,
+    bottomNavigationHeight: state.bottomNavigationHeight,
     ref: state.ref,
     textContent: state.textContent,
     userSettings: state.userSettings,
+    qrCodeValue: state.qrCodeValue,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
+    setQrCodeValue: (qrCodeValue: string) =>
+      dispatch({ type: "SET_QRCODE_VALUE", payload: { qrCodeValue } }),
     setUserSettings: (userSettings: UserSettings) =>
       dispatch({ type: "SET_USER_SETTINGS", payload: { userSettings } }),
     setRef: (ref: React.RefObject<any>) =>
@@ -59,6 +64,9 @@ export const appContext = () => {
     },
     setFavoriteOrganizer: (alias: string) => {
       dispatch({ type: "SET_FAVORITE_ORGANIZER", payload: { alias } })
+    },
+    setBottomNavigationHeight: (height: number) => {
+      dispatch({ type: "SET_BOTTOMNAVIGATION_HEIGHT", payload: { height } })
     },
     setColorScheme: (newColorScheme: ColorSchemeName) => {
       dispatch({
@@ -184,10 +192,8 @@ export const eventCreationContext = () => {
         payload: { gCalEventsBooking },
       })
     },
-    removeSelectedDays: () =>
-      dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
-    removeSelectedWeeks: () =>
-      dispatch({ type: EventCreationTypes.RemoveSelectedWeeks }),
+    removeSelectedDays: () => dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
+    removeSelectedWeeks: () => dispatch({ type: EventCreationTypes.RemoveSelectedWeeks }),
     resetEventCreationState: () => {
       dispatch({ type: EventCreationTypes.ResetState })
     },
@@ -305,10 +311,7 @@ export const myCalendarContext = () => {
     loadInitialMyCalendar: () => {
       dispatch({ type: "LOAD_INITIAL_MY_CALENDAR" })
     },
-    setAvailCalendar: (
-      availabilities: any,
-      calendarArgs?: NewCalendarMonths
-    ) => {
+    setAvailCalendar: (availabilities: any, calendarArgs?: NewCalendarMonths) => {
       dispatch({
         type: "SET_AVAIL_CALENDAR",
         payload: { availabilities, calendarArgs },
@@ -350,6 +353,12 @@ export const walletContext = () => {
   return {
     mnemonic: state.mnemonic,
     lovelaceBalance: state.lovelaceBalance,
+    baseAddress: state.baseAddress,
+    rootKeyHex: state.rootKeyHex,
+    accountPubKeyHex: state.accountPubKeyHex,
+    accountKeyHex: state.accountKeyHex,
+    isOfflineMnemonic: state.isOfflineMnemonic,
+    txHistory: state.txHistory,
     setLovelaceBalance: (lovelace: BigInt) => {
       dispatch({
         type: "SET_LOVELACE_BALANCE",
@@ -361,6 +370,27 @@ export const walletContext = () => {
         type: "SET_MNEMONIC",
         payload: { mnemonic },
       })
+    },
+    setWalletKeys: (walletKeys: WalletKeys) => {
+      dispatch({
+        type: "SET_WALLET_KEYS",
+        payload: { walletKeys },
+      })
+    },
+    setIsOfflineMnemonic: (isOfflineMnemonic: boolean) => {
+      dispatch({
+        type: "SET_IS_OFFLINE_MNEMONIC",
+        payload: { isOfflineMnemonic },
+      })
+    },
+    setTxHistory: (txHistory: any[]) => {
+      dispatch({
+        type: "SET_TXHISTORY",
+        payload: { txHistory },
+      })
+    },
+    resetSecrets: () => {
+      dispatch({ type: "RESET_SECRETS" })
     },
   }
 }

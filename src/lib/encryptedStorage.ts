@@ -9,7 +9,7 @@ export const setToEncryptedStorage = async (
   value: any
 ): Promise<void> => {
   try {
-    value = JSON.stringify(value)
+    if (typeof value !== "string") value = JSON.stringify(value)
 
     await ES.setItem(generateKey(key), value)
   } catch (e) {
@@ -44,18 +44,37 @@ export const getFromEncryptedStorage = async (
 
 export const clearEncryptedStorage = async (): Promise<boolean> => {
   try {
-    await ES.clear()
+    for (const property of storagePropertyKeys) {
+      await ES.removeItem(generateKey(property))
+    }
     return true
   } catch (e) {
     return false
   }
 }
 
+export const storagePropertyKeys: StoragePropertyKeys[] = [
+  "user-settings",
+  "auth-credentials",
+  "device-pubKey",
+  "device-privKey",
+  "device-id",
+  "messaging-token",
+  "time-zone",
+  "test",
+  "wallet-root-key",
+  "wallet-name",
+  "wallet-base-address",
+  "account-key",
+  "account-pub-key",
+  "mnemonic",
+]
 export type StoragePropertyKeys =
   | "user-settings"
   | "auth-credentials"
-  | "pubKey"
-  | "privKey"
+  | "device-pubKey"
+  | "device-privKey"
+  | "device-id"
   | "messaging-token"
   | "time-zone"
   | "test"

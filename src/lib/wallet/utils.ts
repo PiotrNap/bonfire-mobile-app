@@ -1,5 +1,12 @@
-import { Address, Assets, TxInput } from "@hyperionbt/helios"
+import { Address, Assets, NetworkParams, TxInput } from "@hyperionbt/helios"
 import { crc8 } from "crc"
+import { CARDANO_NETWORK } from "@env"
+import MainnetParams from "../../on_chain/configs/mainnet.json"
+import PreprodParams from "../../on_chain/configs/preprod.json"
+
+export const networkParams: NetworkParams = new NetworkParams(
+  CARDANO_NETWORK === "mainnet" ? MainnetParams : PreprodParams
+)
 
 function checksum(num) {
   return crc8(Buffer.from(num, "hex")).toString(16).padStart(2, "0")
@@ -48,6 +55,10 @@ export function fromAssetUnit(unit) {
 
 export function lovelaceValueOfInputs(inputs: TxInput[]): BigInt {
   return inputs.reduce((prev, curr) => prev + curr.value.lovelace, 0n)
+}
+
+export function filterLovelaceOnlyInputs(inputs: TxInput[]): TxInput[] {
+  return inputs.filter((txIn) => !txIn.value.assets.mintingPolicies.length)
 }
 
 export function txInputsToAssets(txInputs: TxInput[]): Assets[] {
