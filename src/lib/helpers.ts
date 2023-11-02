@@ -2,17 +2,18 @@ import { Platform, Share } from "react-native"
 
 import { ANDROID_API_URL, IOS_API_URL } from "@env"
 import { signChallenge } from "./tweetnacl"
-// import Aes from "react-native-aes-crypto"
-// import Crypto from "crypto"
+import Aes from "react-native-aes-crypto"
+import Crypto from "crypto"
 import base64 from "base64-js"
-import { decrypt_with_password, encrypt_with_password } from "@emurgo/csl-mobile-bridge"
-import crs from "crypto-random-string"
 
 import { monthsByName } from "common/types/calendarTypes"
 import { Auth } from "../services/Api/Auth"
 import { getDeepLinkUri } from "./utils"
 import { createNestedPath } from "./navigation"
 import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
+import Toast from "react-native-toast-message"
+
+const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
 
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"
@@ -139,25 +140,59 @@ export const shareEvent = async (id: string) => {
 
 export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 
-//@TODO throw error if password is incorrect
-//@TODO test if it's working
 export const encryptWithPassword = async (
   value: {},
   password: string
 ): Promise<undefined | string> => {
-  const saltHex = crs({ length: 2 * 32 })
-  const nonceHex = crs({ length: 2 * 12 })
-  const hexValue = Buffer.from(JSON.stringify(value)).toString("hex")
-  const hexPassword = Buffer.from(password).toString("hex")
-  return await encrypt_with_password(hexPassword, saltHex, nonceHex, hexValue)
+  const salt = Crypto.randomBytes(16)
+  const nonce = Crypto.randomBytes(12)
+  const base64Value = Buffer.from(JSON.stringify(value)).toString("base64")
+  const key = await Aes.pbkdf2(password, salt.toString("hex"), 5000, 256, "sha512")
+
+  const encrypted = await Aes.encrypt(
+    base64Value,
+    key,
+    nonce.toString("hex"),
+    "aes-256-ctr"
+  )
+
+  // Concatenating salt, nonce, and encrypted data
+  return salt.toString("hex") + nonce.toString("hex") + encrypted
 }
 
-//@TODO throw error if password is incorrect
-//@TODO test if it's working
 export const decryptWithPassword = async (
   cipherText: string,
   password: string
 ): Promise<undefined | string> => {
-  const hexPassword = Buffer.from(password).toString("hex")
-  return await decrypt_with_password(hexPassword, cipherText)
+  // Extracting salt, nonce, and encrypted data from cipherText
+  const salt = Buffer.from(cipherText.slice(0, 32), "hex")
+  const nonce = Buffer.from(cipherText.slice(32, 56), "hex")
+  const encrypted = cipherText.slice(56)
+
+  const key = await Aes.pbkdf2(password, salt.toString("hex"), 5000, 256, "sha512")
+
+  const decryptedBase64 = await Aes.decrypt(
+    encrypted,
+    key,
+    nonce.toString("hex"),
+    "aes-256-ctr"
+  )
+
+  // Converting decrypted base64 back to JSON object
+  return JSON.parse(Buffer.from(decryptedBase64, "base64").toString())
+}
+
+export function showSuccessToast(header: string, body: string): void {
+  Toast.show({ text1: header, text2: body })
+}
+
+export function showErrorToast(e?: any, header?: string): void {
+  const isDev = typeof __DEV__ === "boolean" && __DEV__
+  if (isDev) console.error(e)
+
+  Toast.show({
+    type: "error",
+    text1: header || "Error",
+    text2: e.message || e.msg || DEFAULT_ERROR_MSG,
+  })
 }
