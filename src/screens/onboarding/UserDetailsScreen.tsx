@@ -4,67 +4,56 @@ import { View, StyleSheet } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import Filter from "bad-words"
 
-import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { Typography, Colors, Sizing } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { ProfileContext } from "contexts/profileContext"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
-import { HourlyRate } from "common/interfaces/newEventInterface"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { Field, Formik } from "formik"
-import {
-  accountValidationScheme,
-  hourlyRateValidationScheme,
-} from "lib/validators"
+import { accountValidationScheme } from "lib/validators"
 import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
-import { appContext } from "contexts/contextApi"
 import { CustomInput } from "components/forms/CustomInput"
 import { SlideDownModal } from "components/modals/SlideDownModal"
+import { ProfileContext } from "contexts/profileContext"
+import { Users } from "Api/Users"
+import { showErrorToast } from "lib/helpers"
 
 export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef }: any) => {
-  const {
-    setProfession,
-    setJobTitle,
-    setBio,
-    setSkills,
-    setHourlyRate,
-    profession,
-    jobTitle,
-    bio,
-    hourlyRate,
-    skills,
-  } = React.useContext(ProfileContext)
-  const [_profession, _setProfession] = React.useState<string>("")
-  const [_jobTitle, _setJobTitle] = React.useState<string>("")
-  const [_bio, _setBio] = React.useState<string>("")
-  const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
-    ada: 0,
-    gimbals: 0,
-  })
-  const [_skills, _setSkills] = React.useState<string>("")
-  const [_username, _setUsername] = React.useState<string>("")
   const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [modalState, setModalState] = React.useState<any>({
     type: "safety-warning",
     visible: false,
   })
   const [formValues, setFormValues] = React.useState<any>(null)
+  const { setUsername, setBio, setSkills, setJobTitle, setHourlyRateAda, setProfession } =
+    React.useContext(ProfileContext)
   const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
-  const onSubmit = (values: any) => {
-    const badWords = new Filter().isProfane(Object.values(values).join(" "))
-    if (badWords) return showInappropriateContentModal()
+  const onSubmit = async (values: any) => {
+    try {
+      const badWords = new Filter().isProfane(Object.values(values).join(" "))
+      if (badWords) return showInappropriateContentModal()
 
-    // store the values in context or pass as a route param, don't create account yet
+      // check if chosen username is available
+      const usernameFree = await Users.checkUsernameAvailability(values.username)
+      if (!usernameFree) return showErrorToast({ message: "Username already taken" })
 
-    setFormValues(values)
-    return setModalState({ type: "safety-warning", visible: true })
+      // store the values in context or pass as a route param, don't create account yet
+      setFormValues(values)
+      return setModalState({ type: "safety-warning", visible: true })
+    } catch (e) {
+      showErrorToast(e)
+    }
   }
   const onModalConfirm = () => {
-    pagerRef.current.state = formValues
-    pagerRef.current.state.page = 1
+    setUsername(formValues.username)
+    setBio(formValues.bio)
+    setProfession(formValues.profession)
+    setSkills(formValues.skills)
+    setJobTitle(formValues.jobTitle)
+    setHourlyRateAda(formValues.hourlyRateAda)
+
     pagerRef.current.setPage(1)
   }
 
@@ -93,7 +82,6 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
                 key="username"
                 name="username"
                 labelStyle={formStyleDark.label}
-                defaultValue="@CryptoPunk"
                 styles={formStyles}
                 placeholder="@cryptoPunk"
                 placeholderTextColor={inputStyles.placeholderText.color}
@@ -108,7 +96,6 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
                 name="profession"
                 labelStyle={formStyleDark.label}
                 placeholder="Doctor, therapist, developer..."
-                defaultValue={profession}
                 styles={formStyles}
                 placeholderTextColor={inputStyles.placeholderText.color}
                 validateForm={validateForm}
@@ -123,7 +110,6 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
                 labelStyle={formStyleDark.label}
                 placeholder="Full Stack Engineer, Sr Business..."
                 textContentType="jobTitle"
-                defaultValue={jobTitle}
                 styles={formStyles}
                 placeholderTextColor={inputStyles.placeholderText.color}
                 validateForm={validateForm}
@@ -140,7 +126,6 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
                 multiline={true}
                 numberOfLines={8}
                 maxChar={250}
-                defaultValue={bio}
                 placeholder="Passionate in helping others draw business goals and needs..."
                 styles={formStyles}
                 placeholderTextColor={inputStyles.placeholderText.color}
@@ -156,7 +141,6 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
                 name="skills"
                 labelStyle={formStyleDark.label}
                 placeholder="Organized, Motivated, Critical Th..."
-                defaultValue={skills}
                 styles={formStyles}
                 placeholderTextColor={inputStyles.placeholderText.color}
                 validateForm={validateForm}
