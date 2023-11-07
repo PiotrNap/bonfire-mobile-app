@@ -53,7 +53,7 @@ export function fromAssetUnit(unit) {
   return { policyId, name, label }
 }
 
-export function lovelaceValueOfInputs(inputs: TxInput[]): BigInt {
+export function lovelaceValueOfInputs(inputs: TxInput[]): bigint {
   return inputs.reduce((prev, curr) => prev + curr.value.lovelace, 0n)
 }
 
@@ -104,6 +104,10 @@ export function numberToHex(n: number) {
   return hex
 }
 
+export function hexToText(hexString: string){
+  return Buffer.from(hexString, 'hex').toString('utf8')
+}
+
 export function ipfsToHttp(ipfsUrl: string | string[]) {
   if (Array.isArray(ipfsUrl)) ipfsUrl = ipfsUrl.join("")
   const ipfsGateway = process.env.IPFS_GATEWAY
@@ -117,4 +121,8 @@ export function ipfsToHttp(ipfsUrl: string | string[]) {
 
 export function checkBech32Address(addr: string) {
   return Address.fromBech32(addr)?.toBech32()
+}
+
+export function lovelaceToAda(lovelace: bigint) {
+  return Number(lovelace) / 1_000_000
 }

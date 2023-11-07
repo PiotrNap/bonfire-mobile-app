@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { WalletTabList } from "components/wallet/walletTabList"
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
+import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from "react-native"
 import { Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { schemeBasedFontColor } from "../../styles/typography"
@@ -12,13 +12,25 @@ export const WalletTabs = ({
   onAssetsListUpdate,
   onTxListUpdate,
   onTxListEndReached,
+  isPaginationLoading,
   isLoading,
 }: any) => {
   const { colorScheme, bottomNavigationHeight } = appContext()
   const [activeTab, setActiveTab] = useState("assets")
+  const [layoutHeight, setLayoutHeight] = useState(0)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const onLayout = (e: LayoutChangeEvent) => {
+    setLayoutHeight(e.nativeEvent.layout.height)
+
+    if (layoutHeight && layoutHeight < 300) {
+      setIsSmallScreen(true)
+    }
+  }
 
   return (
-    <View style={[styles.container, { marginBottom: bottomNavigationHeight / 2 }]}>
+    <View
+      onLayout={onLayout}
+      style={[styles.container, { marginBottom: bottomNavigationHeight / 2 }]}>
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[
@@ -50,6 +62,7 @@ export const WalletTabs = ({
             onUpdateList={onAssetsListUpdate}
             onEndReached={noop}
             isLoading={isLoading}
+            isSmallScreen={isSmallScreen}
             type="assets"
           />
         </View>
@@ -60,7 +73,9 @@ export const WalletTabs = ({
             listData={transactions}
             onUpdateList={onTxListUpdate}
             onEndReached={onTxListEndReached}
+            isPaginationLoading={isPaginationLoading}
             isLoading={isLoading}
+            isSmallScreen={isSmallScreen}
             type="transactions"
           />
         </View>
@@ -89,9 +104,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#000",
   },
   tabContent: {
-    height: "100%",
-    widht: "100%",
-    marginHorizontal: Sizing.x10,
+    margin: Sizing.x10,
   },
   tabText: {
     ...Typography.header.x20,

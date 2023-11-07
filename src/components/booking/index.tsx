@@ -1,3 +1,3 @@
 export { OrganizerProfile } from "./OrganizerProfile"
-export { EventConfirmationDetails } from "./EventConfirmationDetails"
-export { EventConfirmationDetail } from "./EventConfirmationDetail"
+export { ConfirmationDetails } from "./ConfirmationDetails"
+export { ConfirmationDetail } from "./ConfirmationDetail"

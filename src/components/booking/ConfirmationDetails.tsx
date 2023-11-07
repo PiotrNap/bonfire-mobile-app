@@ -1,12 +1,8 @@
 import * as React from "react"
 import { FlatList } from "react-native"
 
-import {
-  appContext,
-  bookingContext,
-  eventCreationContext,
-} from "contexts/contextApi"
-import { EventConfirmationDetail } from "./EventConfirmationDetail"
+import { appContext, bookingContext, eventCreationContext } from "contexts/contextApi"
+import { ConfirmationDetail } from "./ConfirmationDetail"
 import {
   AdaIcon,
   CalendarIcon,
@@ -32,14 +28,14 @@ import {
 import { AnyObject } from "yup/lib/types"
 import tz from "react-native-timezone"
 
-interface EventConfirmationDetails {
+interface ConfirmationDetails {
   isNewEvent: boolean
   isCalendarEventPreview: boolean
   organizerEvent?: AnyObject
   bookedEvent?: AnyObject
 }
 
-export const EventConfirmationDetails = ({
+export const ConfirmationDetails = ({
   isNewEvent = false,
   isCalendarEventPreview,
   organizerEvent,
@@ -120,11 +116,9 @@ export const EventConfirmationDetails = ({
       lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
         ? [
             {
-              content: `Starts: ${
-                weekDays[getDay(organizerEvent?.fromDate)]
-              } - ${months[getMonth(organizerEvent?.fromDate)]} ${getDate(
-                organizerEvent?.fromDate
-              )}`,
+              content: `Starts: ${weekDays[getDay(organizerEvent?.fromDate)]} - ${
+                months[getMonth(organizerEvent?.fromDate)]
+              } ${getDate(organizerEvent?.fromDate)}`,
               icon: sectionsIcons.calendar,
             },
             {
@@ -336,14 +330,8 @@ export const EventConfirmationDetails = ({
       ? index === organizerEventSections.length - 1
       : index === bookingEventSections.length - 1
 
-  const renderSections = ({
-    item,
-    index,
-  }: {
-    item: SectionDetail
-    index: number
-  }) => (
-    <EventConfirmationDetail
+  const renderSections = ({ item, index }: { item: SectionDetail; index: number }) => (
+    <ConfirmationDetail
       key={index}
       label={item?.label}
       lineContent={item?.lineContent}

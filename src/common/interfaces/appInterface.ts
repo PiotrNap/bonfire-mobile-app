@@ -16,9 +16,11 @@ export interface AppState {
   validGoogleOAuth: boolean
   pageIndex: number
   ref: any
+  bottomNavigationHeight: number
   JWT?: JWTPayload | null
   userSettings: UserSettings | null
   textContent: { wallet: Wallet }
+  qrCodeValue: string | null
 }
 
 export interface JWTPayload {
@@ -33,13 +35,6 @@ export interface AppContextProviderProps {
 export interface AppContextProps {
   state: AppState
   dispatch: React.Dispatch<any>
-}
-
-export interface Transaction {
-  withUser: string
-  oldUtxo: number
-  newUtxo: number
-  date: number
 }
 
 export interface UserSettings {

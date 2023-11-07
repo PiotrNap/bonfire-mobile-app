@@ -9,12 +9,11 @@ export interface HeaderTextProps {
 }
 
 export const HeaderText = ({
-  colorScheme,
+  colorScheme = "dark",
   children,
   customStyles,
 }: HeaderTextProps) => {
-  const textStyle =
-    colorScheme === "light" ? styles.text_light : styles.text_dark
+  const textStyle = colorScheme === "light" ? styles.text_light : styles.text_dark
 
   return <Text style={[textStyle, customStyles]}>{children}</Text>
 }

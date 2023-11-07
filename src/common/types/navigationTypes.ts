@@ -1,8 +1,5 @@
-import {
-  UserBaseDTO,
-  UserOrganizerDTO,
-} from "common/interfaces/profileInterface"
-import { WalletNavigationParams, WalletSetUpFormValues } from "lib/wallet/types"
+import { UserBaseDTO } from "common/interfaces/profileInterface"
+import { WalletNavigationParams, PasswordSetUpFormValues } from "lib/wallet/types"
 import { AnyObject } from "yup/lib/types"
 
 export type AppStackParamList = {
@@ -29,23 +26,22 @@ export type AppStackParamList = {
   "User Registration Screens": undefined
   "Onboarding Screens": undefined
   "Duration Choice": any
+  "Legal Document": { type: "terms-of-service" | "privacy-policy" }
+  "Qr-Code Scanner": any
   Wallet: undefined
 }
 
-export type AttendeeTabParamList = {
-  "Home Stack": { id: string }
-  "Browse Stack": any
+export type NavigationTabParamList = {
+  Calendar: { id: string }
+  Browse: any
+  "My Events": undefined
   Wallet: undefined
   "Add Funds": { fromScreen: string }
   Profile: undefined
 }
 
-export type OrganizerTabParamList = AttendeeTabParamList & {
-  "My Events": undefined
-}
-
 export type BookingStackParamList = {
-  Browse: any
+  "Search List": any
   "Available Dates":
     | {
         alias: string | undefined
@@ -82,14 +78,14 @@ export type EventCreationParamList = {
 }
 
 export type MyEventsStackParamList = EventCreationParamList & {
-  "My Events": undefined
+  "User Events": undefined
   "Event Description": EventDescription
   "Event Details": EventDescription
 }
 
 export type ProfileStackParamList = {
   "Profile Main": undefined
-  "Edit Profile": { userInfo: UserBaseDTO | UserOrganizerDTO }
+  "Edit Profile": { userInfo: UserBaseDTO }
   "Profile Settings": undefined
 }
 
@@ -98,7 +94,10 @@ export type WalletStackParamList = {
   "Import Mnemonic": undefined
   "Import Mnemonic Confirmation": WalletNavigationParams
   "New Wallet Set Up": WalletNavigationParams
-  "Mnemonic Preview": WalletSetUpFormValues
+  "Mnemonic Preview": PasswordSetUpFormValues
+  "Receive Transaction": any
+  "Send Transaction": any
+  "Preview Transaction": any
 }
 
 /**

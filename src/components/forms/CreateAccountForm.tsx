@@ -28,7 +28,7 @@ export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,
 }: CreateAccountFormProps) => {
-  const { profileType, setUsername, setId, setName, setTimeZone } =
+  const { setUsername, setID, setName, setTimeZone } =
     React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
@@ -56,10 +56,10 @@ export const CreateAccountForm = ({
     })
   }
 
-  React.useEffect(() => {
-    setAcceptedChecbox(false)
-    fadeOut()
-  }, [profileType])
+  // React.useEffect(() => {
+  //   setAcceptedChecbox(false)
+  //   fadeOut()
+  // }, [profileType])
 
   const onCheckBoxPress = () => {
     onChangeCallback()
@@ -80,13 +80,13 @@ export const CreateAccountForm = ({
 
     if (publicKey && secretKey) {
       // store private key in encrypted storage as base64
-      setToEncryptedStorage("privKey", base64.fromByteArray(secretKey))
-      setToEncryptedStorage("pubKey", base64.fromByteArray(publicKey))
+      setToEncryptedStorage("device-privKey", base64.fromByteArray(secretKey))
+      setToEncryptedStorage("device-pubKey", base64.fromByteArray(publicKey))
 
       try {
-        values.publicKey = base64.fromByteArray(publicKey)
-        values.profileType = profileType
-        values.timeZone = await TZone.getTimeZone()
+        //   values.publicKey = base64.fromByteArray(publicKey)
+        //   values.profileType = profileType
+        //   values.timeZone = await TZone.getTimeZone()
 
         // get new user object
         const user = await Users.createAccount(values)
@@ -94,33 +94,33 @@ export const CreateAccountForm = ({
         if (user != null) {
           const { id, name, username, timeZone } = user
 
-          setId(id)
+          setID(id)
           setUsername(username)
           setName(name)
           setTimeZone(timeZone ?? "")
 
-          // start challenge and get JWT
-          const authResponseDTO = await startChallengeSequence(
-            values.publicKey,
-            id,
-            true
-          )
+          // // start challenge and get JWT
+          // const authResponseDTO = await startChallengeSequence(
+          //   values.publicKey,
+          //   id,
+          //   true
+          // )
 
-          if (authResponseDTO) {
-            const { accessToken } = authResponseDTO
-            setAuthorizationToken(accessToken)
-            setToEncryptedStorage("time-zone", timeZone)
-            setToEncryptedStorage("auth-credentials", authResponseDTO)
-          }
+          // if (authResponseDTO) {
+          //   const { accessToken } = authResponseDTO
+          //   setAuthorizationToken(accessToken)
+          //   setToEncryptedStorage("time-zone", timeZone)
+          //   setToEncryptedStorage("auth-credentials", authResponseDTO)
+          // }
 
-          setSubmitted(true)
-          toggleAuth(true, profileType)
+          // setSubmitted(true)
+          // toggleAuth(true, profileType)
 
-          if (profileType === "attendee") {
-            navigation.navigate("Attendee Navigation Screens")
-          } else if (profileType === "organizer") {
-            navigation.navigate("User Registration Screens")
-          }
+          // if (profileType === "attendee") {
+          //   navigation.navigate("Attendee Navigation Screens")
+          // } else if (profileType === "organizer") {
+          //   navigation.navigate("User Registration Screens")
+          // }
 
           setIsLoading(false)
         }

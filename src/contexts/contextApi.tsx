@@ -23,7 +23,8 @@ import {
 import { EventCreationTypes } from "common/types/contextTypes"
 import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
 import { WalletContext } from "./walletContext"
-import { WalletKeys } from "lib/wallet/types"
+import { SendTxInfo, WalletKeys } from "lib/wallet/types"
+import { TxInput } from "@hyperionbt/helios"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -359,10 +360,24 @@ export const walletContext = () => {
     accountKeyHex: state.accountKeyHex,
     isOfflineMnemonic: state.isOfflineMnemonic,
     txHistory: state.txHistory,
-    setLovelaceBalance: (lovelace: BigInt) => {
+    walletUtxos: state.walletUtxos,
+    sendTxInfo: state.sendTxInfo,
+    setLovelaceBalance: (lovelace: bigint) => {
       dispatch({
         type: "SET_LOVELACE_BALANCE",
         payload: { lovelace },
+      })
+    },
+    setBaseAddress: (baseAddress: string) => {
+      dispatch({
+        type: "SET_BASE_ADDRESS",
+        payload: { baseAddress },
+      })
+    },
+    setSendTxInfo: (sendTxInfo: SendTxInfo) => {
+      dispatch({
+        type: "SET_SEND_TX_INFO",
+        payload: { sendTxInfo },
       })
     },
     setMnemonic: (mnemonic: {}) => {
@@ -387,6 +402,12 @@ export const walletContext = () => {
       dispatch({
         type: "SET_TXHISTORY",
         payload: { txHistory },
+      })
+    },
+    setWalletUtxos: (txIns: TxInput[]) => {
+      dispatch({
+        type: "SET_WALLET_UTXOS",
+        payload: { walletUtxos: txIns },
       })
     },
     resetSecrets: () => {

@@ -1,5 +1,4 @@
 import { appContext } from "contexts/contextApi"
-import { getRandomKey } from "lib/utils"
 import * as React from "react"
 import {
   View,
@@ -10,6 +9,7 @@ import {
   TextInputProps,
   TextStyle,
   StyleProp,
+  ViewStyle,
 } from "react-native"
 
 import { Colors, Sizing } from "styles/index"
@@ -19,6 +19,8 @@ export type CustomPlainInputProps = TextInputProps & {
   label?: string
   idx?: string | number
   styles?: any
+  customInputStyle?: ViewStyle
+  customInputWrapperStyle?: ViewStyle
   onPressHandler?: () => void
   icon?: any
   customChild?: React.ReactNode
@@ -28,7 +30,8 @@ export type CustomPlainInputProps = TextInputProps & {
   onChangeCallback?: (e: any) => void
   onPressInCallback?: (e: any) => void
   onEndEditingCallback?: (e: any, id?: any) => void
-  validate?: (val: string) => boolean
+  validate?: (val: string, idx: string | number | undefined) => boolean
+  onError?: (val: boolean, idx: any) => void
 }
 
 export const CustomPlainInput = ({
@@ -40,6 +43,8 @@ export const CustomPlainInput = ({
   customChild,
   onPressHandler,
   styles,
+  customInputStyle,
+  customInputWrapperStyle,
   multiline,
   numberOfLines,
   maxChar,
@@ -49,6 +54,7 @@ export const CustomPlainInput = ({
   textContentType,
   defaultValue,
   isDisabled,
+  onError,
   validate,
 }: CustomPlainInputProps) => {
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
@@ -71,32 +77,25 @@ export const CustomPlainInput = ({
   }
 
   if (isLightMode) {
-    styles = Object.assign(
-      {},
-      defaultStyles,
-      styles,
-      inputStyles,
-      formStyleLight
-    )
+    styles = Object.assign({}, defaultStyles, styles, inputStyles, formStyleLight)
   } else {
-    styles = Object.assign(
-      {},
-      defaultStyles,
-      styles,
-      inputStyles,
-      formStyleDark
-    )
+    styles = Object.assign({}, defaultStyles, styles, inputStyles, formStyleDark)
   }
   //@ts-ignore
-  const valid = (val) => (!validate(val) ? setIsValid(false) : setIsValid(true))
+  const valid = (val) => validate(val, idx)
 
   const validateInput = (val: string, onBlur: boolean = false) => {
-    if (!validate) return
-    if (!val) return setIsValid(true)
-    if (onBlur && val.length < 3) return setIsValid(false)
+    onError = onError || (() => {})
 
-    if (onBlur && val.length === 3) return valid(val)
-    if (val.length > 3) return valid(val)
+    if (!validate || !val) {
+      return
+    } else if (val.length < 3) {
+      setIsValid(false)
+      onError(false, idx)
+    } else {
+      setIsValid(valid(val))
+      onError(valid(val), idx)
+    }
   }
 
   const onChangeText = (val: string) => {
@@ -121,24 +120,23 @@ export const CustomPlainInput = ({
           </Text>
         </View>
       )}
-      <View style={styles.textInputWrapper}>
+      <View style={[styles.textInputWrapper, customInputWrapperStyle]}>
         <TextInput
           style={[
             styles.input,
             multiline != null && { height: 120, textAlignVertical: "top" },
             isDisabled && { backgroundColor: Colors.neutral.s200 },
             !isValid && styles.errorInput,
+            customInputStyle,
           ]}
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}
           onChangeText={onChangeText}
           onChange={(e) =>
-            onEndEditingCallback &&
-            onEndEditingCallback(e.nativeEvent.text, idx)
+            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
           }
           onEndEditing={(e) =>
-            onEndEditingCallback &&
-            onEndEditingCallback(e.nativeEvent.text, idx)
+            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
           }
           placeholderTextColor={styles.placeholderText.color}
           onBlur={(e) => validate && validateInput(e.nativeEvent.text, true)}

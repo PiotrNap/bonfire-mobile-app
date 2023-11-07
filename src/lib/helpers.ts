@@ -141,12 +141,12 @@ export const shareEvent = async (id: string) => {
 export const isUUID = (val: string): boolean => /((\w{4,12}-?)){5}/.test(val)
 
 export const encryptWithPassword = async (
-  value: {},
+  value: string,
   password: string
 ): Promise<undefined | string> => {
   const salt = Crypto.randomBytes(16)
   const nonce = Crypto.randomBytes(12)
-  const base64Value = Buffer.from(JSON.stringify(value)).toString("base64")
+  const base64Value = Buffer.from(value).toString("base64")
   const key = await Aes.pbkdf2(password, salt.toString("hex"), 5000, 256, "sha512")
 
   const encrypted = await Aes.encrypt(
@@ -178,8 +178,7 @@ export const decryptWithPassword = async (
     "aes-256-ctr"
   )
 
-  // Converting decrypted base64 back to JSON object
-  return JSON.parse(Buffer.from(decryptedBase64, "base64").toString())
+  return Buffer.from(decryptedBase64, "base64").toString()
 }
 
 export function showSuccessToast(header: string, body: string): void {
@@ -190,9 +189,12 @@ export function showErrorToast(e?: any, header?: string): void {
   const isDev = typeof __DEV__ === "boolean" && __DEV__
   if (isDev) console.error(e)
 
+  const body = e.message || e.msg || DEFAULT_ERROR_MSG
+
+  //@TODO send possible erorr to Sentry
   Toast.show({
     type: "error",
     text1: header || "Error",
-    text2: e.message || e.msg || DEFAULT_ERROR_MSG,
+    text2: body,
   })
 }

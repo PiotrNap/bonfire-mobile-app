@@ -8,8 +8,9 @@ import { Colors, Outlines, Sizing } from "styles/index"
 export interface Props {
   acceptedCheckbox: boolean
   onCheckBoxPress: (tag?: string) => void
-  children: React.ReactNode
+  children?: React.ReactNode
   customStyle?: ViewStyle
+  customContainerStyle?: ViewStyle
   colorMode?: "light" | "dark"
   tag?: string
 }
@@ -18,18 +19,20 @@ export const Checkbox = ({
   acceptedCheckbox,
   onCheckBoxPress,
   customStyle,
+  customContainerStyle,
   children,
   colorMode,
   tag,
 }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = (colorMode ?? colorScheme) === "light"
+  const onPress = tag ? () => onCheckBoxPress(tag) : onCheckBoxPress
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, customContainerStyle]}>
       <Pressable
         //@ts-ignore
-        onPress={tag ? () => onCheckBoxPress(tag) : onCheckBoxPress}
-        hitSlop={10}
+        onPress={onPress}
+        hitSlop={12}
         style={[
           styles.checkbox,
           {
@@ -38,8 +41,7 @@ export const Checkbox = ({
               isLightMode && acceptedCheckbox
                 ? Colors.primary.s600
                 : Colors.primary.neutral,
-            borderColor:
-              isLightMode && acceptedCheckbox ? Colors.primary.s600 : "black",
+            borderColor: isLightMode && acceptedCheckbox ? Colors.primary.s600 : "black",
           },
           customStyle,
         ]}>
@@ -56,23 +58,25 @@ export const Checkbox = ({
           }
         />
       </Pressable>
-      <Pressable
-        //@ts-ignore
-        onPress={tag ? () => onCheckBoxPress(tag) : onCheckBoxPress}
-        style={{
-          width: "90%",
-        }}>
-        <BodyText
-          customStyle={{
-            fontFamily: "Roboto-Regular",
-            fontSize: Sizing.x14,
-          }}
-          changingColorScheme
-          customColorScheme="dark"
-          colors={[Colors.primary.s800, Colors.primary.neutral]}>
-          {children}
-        </BodyText>
-      </Pressable>
+      {children && (
+        <Pressable
+          //@ts-ignore
+          onPress={onPress}
+          style={{
+            width: "90%",
+          }}>
+          <BodyText
+            customStyle={{
+              fontFamily: "Roboto-Regular",
+              fontSize: Sizing.x14,
+            }}
+            changingColorScheme
+            customColorScheme="dark"
+            colors={[Colors.primary.s800, Colors.primary.neutral]}>
+            {children}
+          </BodyText>
+        </Pressable>
+      )}
     </View>
   )
 }

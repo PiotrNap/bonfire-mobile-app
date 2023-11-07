@@ -130,11 +130,11 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
       return !prev
     })
     // update the reference of current open picker
-    if (!openPicker && !showPicker) {
-      onOpenChange(label)
-    } else {
-      onOpenChange(null)
-    }
+    // if (!openPicker && !showPicker) {
+    //   onOpenChange(label)
+    // } else {
+    //   onOpenChange(null)
+    // }
     Animated.parallel(animations).start()
   }
 
@@ -167,7 +167,7 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
           </Text>
           <AnimatedIcon
             style={[styles.icon, { transform: [{ rotate: spin }] }]}
-            stroke={Colors.primary.s350}
+            stroke={Colors.primary.s600}
           />
         </View>
         {os === "ios" && showPicker && (

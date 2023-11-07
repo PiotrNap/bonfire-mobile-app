@@ -28,13 +28,14 @@ const initialAppState: AppState = {
   //   accessToken: null,
   // },
   colorScheme: colorScheme == null ? "light" : colorScheme,
-  appBgColor:
-    colorScheme === "dark" ? Colors.neutral.s600 : Colors.primary.neutral,
+  appBgColor: colorScheme === "dark" ? Colors.neutral.s600 : Colors.primary.neutral,
   favoriteOrganizers: [],
   pageIndex: 0,
+  bottomNavigationHeight: 0,
   ref: null,
   userSettings: null,
   textContent: { wallet },
+  qrCodeValue: "",
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -64,9 +65,7 @@ const reducer = (state: AppState, action: AppActions) => {
       return {
         ...state,
         authentication:
-          action.payload.auth != null
-            ? action.payload.auth
-            : !state.authentication,
+          action.payload.auth != null ? action.payload.auth : !state.authentication,
         accountType: action.payload.accountType,
       }
     case AppTypes.SetPageIndex:
@@ -78,6 +77,11 @@ const reducer = (state: AppState, action: AppActions) => {
       return {
         ...state,
         userSettings: action.payload.userSettings,
+      }
+    case AppTypes.SetBottomnavigationHeight:
+      return {
+        ...state,
+        bottomNavigationHeight: action.payload.height,
       }
     case AppTypes.SetColorScheme:
       const isDarkMode = action.payload.newColorScheme === "dark"
@@ -101,6 +105,12 @@ const reducer = (state: AppState, action: AppActions) => {
         favoriteOrganizers: [...state.favoriteOrganizers, action.payload.alias],
       }
       return newState
+    case AppTypes.SetQrCodeValue: {
+      return {
+        ...state,
+        qrCodeValue: action.payload.qrCodeValue,
+      }
+    }
     case AppTypes.ResetState: {
       return {
         ...state,
@@ -126,9 +136,5 @@ export const AppContext = React.createContext<AppContextProps>({
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   //@ts-ignore
   const [state, dispatch] = React.useReducer(reducer, initialAppState)
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  )
+  return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>
 }

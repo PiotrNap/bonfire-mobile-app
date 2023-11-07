@@ -37,7 +37,6 @@ export const CustomPasswordInput = (props: any) => {
       (!touched.password_confirm && name === "password_confirm" && focused)
     ) {
       const subscriber = Keyboard.addListener("keyboardDidHide", () => {
-        console.log("dissmised")
         setFieldTouched(name)
       })
       return () => subscriber.remove()
@@ -65,7 +64,6 @@ export const CustomPasswordInput = (props: any) => {
           placeholder={placeholder}
           placeholderTextColor={styles.placeholderText.color}
           onChangeText={(text) => {
-            console.log("change")
             onChange(name)(text)
           }}
           secureTextEntry={hidePassword}

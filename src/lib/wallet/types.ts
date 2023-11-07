@@ -1,3 +1,4 @@
+export type Unit = string
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean
   mnemonic?: string
@@ -49,4 +50,9 @@ export type BlockFrostDetailedTx = {
   user_address: string // added manually
   inputs: BlockFrostUtxoInfo
   outputs: BlockFrostUtxoInfo
+}
+export type SendTxInfo = {
+  receiverAddress: string
+  lovelace: number
+  assets: Map<Unit, number> | null
 }

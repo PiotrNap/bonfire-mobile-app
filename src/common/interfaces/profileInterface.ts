@@ -1,11 +1,12 @@
-import { HourlyRate } from "./newEventInterface"
+import { TxInput } from "@hyperionbt/helios"
 
 export interface ProfileState {
   username: string
   name: string
   publicKey: string
   id: string
-  walletBalance: number
+  deviceID: string
+  walletBalance: { inputs: TxInput[]; lovelace: number }
   walletName: string
   walletBaseAddress: string
   bio: string
@@ -14,32 +15,33 @@ export interface ProfileState {
   timeZone?: string
   timeBlockLengthMin: number | null
   timeBlockCostADA: number | undefined
-  hourlyRate: HourlyRate
+  hourlyRateAda: number
   profession: string | undefined
   jobTitle: string | undefined
   description: string | undefined
   skills: string | undefined
-  profileType: "attendee" | "organizer" | ""
+  profile: UserBaseDTO | null
   getUserProfile: () => any
   setName: (input: string) => void
   setUsername: (input: string) => void
   setPublicKey: (input: string) => void
-  setId: (input: string) => void
+  setID: (input: string) => void
+  setDeviceID: (input: string) => void
   setBio: (input: string) => void
   setImageBase64: (input: string) => void
   setTimeZone: (input: string) => void
   setTimeBlockLengthMin: (input: number) => void
   setTimeBlockCostADA: (input: number) => void
-  setHourlyRate: (inputs: HourlyRate) => void
+  setHourlyRateAda: (inputs: number) => void
   setHasSyncedWallet: (arg: boolean) => void
-  setWalletBalance: (input: number) => void
+  setWalletBalance: (balance: { inputs: TxInput[]; lovelace: number }) => void
   setWalletBaseAddress: (input: string) => void
   setWalletName: (input: string) => void
   setProfession: (input: string) => void
   setJobTitle: (input: string) => void
   setDescription: (input: string) => void
   setSkills: (input: string) => void
-  setProfileType: (input: "organizer" | "attendee" | "") => void
+  setProfile: (input: Partial<UserBaseDTO> | null) => void
   resetProfileState: () => void
 }
 
@@ -47,12 +49,18 @@ export interface UserBaseDTO {
   username: string
   name: string
   id: string
+  deviceID: string
   timeZone?: string
-  publicKey: string
+  publicKey?: string
   baseAddress: string
   profession?: string
   jobTitle?: string
   skills?: string
   bio?: string
-  hourlyRate?: number
+  hourlyRateAda?: number
+}
+
+export interface AddDeviceDTO {
+  devicePubKey: string
+  walletPublicKey: string
 }

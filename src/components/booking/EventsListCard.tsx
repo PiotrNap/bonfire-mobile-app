@@ -67,7 +67,7 @@ export const EventsListCard = ({
 
   return (
     <Pressable
-      disabled={isEventCardPreview ?? false}
+      disabled={isEventCardPreview ? true : false}
       onPress={onCardPress}
       style={styles.main}>
       <FastImage

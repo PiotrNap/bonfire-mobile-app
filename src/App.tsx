@@ -67,21 +67,11 @@ function App() {
     ),
   }
 
-  const DevWrapper = React.useCallback(({ children }) => {
-    const isDev = typeof __DEV__ === "boolean" && __DEV__
-
-    if (isDev) {
-      return <React.StrictMode>{children}</React.StrictMode>
-    } else {
-      return <>{children}</>
-    }
-  }, [])
-
   if (!isAuthLoaded) {
     return <></>
   } else {
     return (
-      <DevWrapper>
+      <>
         <SafeAreaProvider>
           <AppContextProvider>
             <ProfileContextProvider>
@@ -152,7 +142,7 @@ function App() {
           </AppContextProvider>
         </SafeAreaProvider>
         <Toast config={toastConfig} />
-      </DevWrapper>
+      </>
     )
   }
 }

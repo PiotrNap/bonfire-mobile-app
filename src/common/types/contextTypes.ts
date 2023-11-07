@@ -1,8 +1,5 @@
-import { BigNum } from "@emurgo/csl-mobile-bridge"
-import {
-  EventCardInfo,
-  OrganizerRate,
-} from "common/interfaces/bookingInterface"
+import { TxInput } from "@hyperionbt/helios"
+import { EventCardInfo, OrganizerRate } from "common/interfaces/bookingInterface"
 import {
   EventAvailability,
   EventType,
@@ -10,11 +7,7 @@ import {
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
-import {
-  ColorSchemeName,
-  JWTPayload,
-  UserSettings,
-} from "interfaces/appInterface"
+import { ColorSchemeName, JWTPayload, UserSettings } from "interfaces/appInterface"
 import {
   Availabilities,
   CalendarHeader,
@@ -23,6 +16,7 @@ import {
   PreviewingDayEvents,
   Events,
 } from "interfaces/myCalendarInterface"
+import { SendTxInfo, WalletKeys } from "lib/wallet/types"
 
 export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
@@ -34,6 +28,8 @@ export enum AppTypes {
   SetColorScheme = "SET_COLOR_SCHEME",
   SetValidGoogleOAuth = "SET_VALID_GOOGLE_OAUTH",
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
+  SetBottomnavigationHeight = "SET_BOTTOMNAVIGATION_HEIGHT",
+  SetQrCodeValue = "SET_QRCODE_VALUE",
   ResetState = "RESET_STATE",
 }
 
@@ -60,7 +56,14 @@ export enum EventCreationTypes {
 
 export enum WalletTypes {
   SetLovelaceBalance = "SET_LOVELACE_BALANCE",
+  SetWalletUtxos = "SET_WALLET_UTXOS",
+  SetTxHistory = "SET_TXHISTORY",
   SetMnemonic = "SET_MNEMONIC",
+  SetWalletKeys = "SET_WALLET_KEYS",
+  SetSendTxInfo = "SET_SEND_TX_INFO",
+  SetBaseAddress = "SET_BASE_ADDRESS",
+  SetIsOfflineMnemonic = "SET_IS_OFFLINE_MNEMONIC",
+  ResetSecrets = "RESET_SECRETS",
   ResetState = "RESET_STATE",
 }
 
@@ -122,6 +125,9 @@ export type AppPayload = {
   [AppTypes.SetJWT]: {
     jwtPayload: JWTPayload
   }
+  [AppTypes.SetBottomnavigationHeight]: {
+    height: number
+  }
   [AppTypes.SetPageIndex]: {
     pageIndex: number
   }
@@ -139,6 +145,9 @@ export type AppPayload = {
   }
   [AppTypes.SetValidGoogleOAuth]: {
     validGoogleOAuth: boolean
+  }
+  [AppTypes.SetQrCodeValue]: {
+    qrCodeValue: string
   }
   [AppTypes.ResetState]: {}
   ["unknown"]: any
@@ -279,11 +288,30 @@ export type MyCalendarPaylaod = {
 
 export type WalletPayload = {
   [WalletTypes.SetLovelaceBalance]: {
-    lovelace: BigNum
+    lovelace: bigint
+  }
+  [WalletTypes.SetWalletUtxos]: {
+    walletUtxos: TxInput[]
+  }
+  [WalletTypes.SetTxHistory]: {
+    txHistory: any[]
+  }
+  [WalletTypes.SetSendTxInfo]: {
+    sendTxInfo: SendTxInfo
   }
   [WalletTypes.SetMnemonic]: {
     mnemonic: {}
   }
+  [WalletTypes.SetBaseAddress]: {
+    baseAddress: {}
+  }
+  [WalletTypes.SetWalletKeys]: {
+    walletKeys: WalletKeys
+  }
+  [WalletTypes.SetIsOfflineMnemonic]: {
+    isOfflineMnemonic: boolean
+  }
+  [WalletTypes.ResetSecrets]: {}
   [WalletTypes.ResetState]: {}
   ["unknown"]: any
 }
@@ -291,9 +319,7 @@ export type WalletPayload = {
 export type MyCalendarActions =
   ActionMap<MyCalendarPaylaod>[keyof ActionMap<MyCalendarPaylaod>]
 export type AppActions = ActionMap<AppPayload>[keyof ActionMap<AppPayload>]
-export type WalletActions =
-  ActionMap<WalletPayload>[keyof ActionMap<WalletPayload>]
-export type BookingActions =
-  ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
+export type WalletActions = ActionMap<WalletPayload>[keyof ActionMap<WalletPayload>]
+export type BookingActions = ActionMap<BookingPayload>[keyof ActionMap<BookingPayload>]
 export type EventCreationActions =
   ActionMap<EventCreationPayload>[keyof ActionMap<EventCreationPayload>]

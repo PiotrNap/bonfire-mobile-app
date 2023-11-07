@@ -1,4 +1,9 @@
 import * as yup from "yup"
+import { Crypto } from "@hyperionbt/helios"
+import { lovelaceToAda } from "./wallet/utils"
+
+const { verifyBech32 } = Crypto
+
 /**
  * @description Use this function to validate form input that
  * has to contain only numbers
@@ -13,6 +18,24 @@ export function validateNumberInput(val: string): boolean {
     }
   }
   return false
+}
+
+export function txSendValidationSchema(lovelaceBalance: bigint) {
+  return yup.object().shape({
+    receivingAddress: yup
+      .string()
+      .test("address-verify", "Wrong address", (value) => verifyBech32(value || ""))
+      .required("Address is required"),
+    ada: yup
+      .string()
+      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers")
+      .test(
+        "ada-amount-verify",
+        `Max amount is ${lovelaceToAda(lovelaceBalance)}`,
+        (val) => (!val ? true : Number(val) < Number(lovelaceBalance) / 1_000_000)
+      ),
+    // .min(params.shelleyGenesis.protocolParams.minUTxOValue),
+  })
 }
 
 /**
@@ -65,16 +88,15 @@ export function hourlyRateValidationScheme() {
   })
 }
 
-/** @description Validation schema for setting up new Wallet name and spending password
+/** @description Validation schema for setting up spending password
  * */
-export function walletSetUpValidationScheme() {
+export function passwordSetUpValidationScheme() {
   return yup.object().shape({
-    name: yup.string(),
     password: yup
       .string()
       .required("Password is required")
       .matches(/\d/, "Must contain number")
-      .min(10, "Min. 6 characters are required"),
+      .min(10, "Min. 10 characters are required"),
     password_confirm: yup
       .string()
       .required("Confirmation is required")

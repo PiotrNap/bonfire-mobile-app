@@ -4,30 +4,37 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  FlatListProps,
   ActivityIndicator,
 } from "react-native"
 
-import { appContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { Colors, Sizing, Typography } from "styles/index"
 
 import { TransactionItem } from "./transactionItem"
 import { AssetItem } from "./assetItem"
 import Crypto from "crypto"
-import { noop } from "lib/utils"
 
 export interface TransactionListProps {
   listData: Map<string, any>
-  // isSmallScreen: boolean
-  isLoading: boolean
-  onUpdateList: () => any
+  isSmallScreen?: boolean
+  isLoading?: boolean
+  isPaginationLoading?: boolean
+  isSendTransactionScreen?: boolean
+  onUpdateList?: () => any
   onEndReached?: () => any
+  onCheckboxPress?: (unit: string, count: number) => void
   type: "assets" | "transactions"
+  selectedAssets?: Map<string,number>
 }
 
-export const WalletTabList = ({
+export const WalletTabList = React.memo(({
   listData,
-  isLoading,
+  isLoading = false,
+  isSmallScreen = true,
+  isPaginationLoading = false,
+  isSendTransactionScreen = false,
+  onCheckboxPress,
+  selectedAssets,
   onUpdateList,
   onEndReached,
   type,
@@ -35,31 +42,33 @@ export const WalletTabList = ({
   const { colorScheme } = appContext()
   const [containerWidth, setContainerWidth] = React.useState<any>(0)
   const isLightMode = colorScheme === "light"
+
   const renderItem = React.useCallback(
-    ({ item }: any) =>
-      type === "transactions" ? (
+    ({ item }: any) =>{
+
+    return  type === "transactions" ? (
         <TransactionItem item={item} />
       ) : (
-        <AssetItem item={item} />
-      ),
-    []
+        <AssetItem
+          item={item}
+          isSendTransactionScreen={isSendTransactionScreen}
+          onCheckboxPress={onCheckboxPress}
+          isSelected={!!selectedAssets?.has(item?.policyId + item?.name)}
+        />
+      )},
+    [type, isSendTransactionScreen, selectedAssets]
   )
 
   const keyExtractor = () => Crypto.randomBytes(16).toString("base64")
 
-  var flatListProps: FlatListProps<any> = {
-    data: Array.from(listData.values()),
-    renderItem: renderItem,
-    keyExtractor: keyExtractor,
-    contentOffset: { x: 0, y: -25 },
-    refreshControl: (
-      <RefreshControl
-        tintColor={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
-        refreshing={isLoading}
-        onRefresh={onUpdateList}
-      />
-    ),
-  }
+  const refreshControl = (
+    <RefreshControl
+      tintColor={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
+      refreshing={isLoading}
+      onRefresh={onUpdateList}
+    />
+  )
+
   const getItemLayout = React.useCallback(
     (_, index: number) => ({
       length: containerWidth,
@@ -71,37 +80,35 @@ export const WalletTabList = ({
   const onLayout = (e) => setContainerWidth(e.nativeEvent.layout.width)
 
   return (
-    <View
+    <FlatList
       onLayout={onLayout}
-      style={[styles.container, isLoading ? { opacity: 0.5 } : {}]}>
-      <FlatList
-        {...flatListProps}
-        scrollEnabled={!isLoading}
-        disableScrollViewPanResponder={isLoading}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.1}
-        getItemLayout={getItemLayout}
-        windowSize={8}
-      />
-      {/*
-      {isLoading && (
-        <ActivityIndicator
-          size={isSmallScreen ? "small" : "large"}
-          color={Colors.primary.s800}
-          style={styles.spinner}
-        />
-      )}
-      */}
-    </View>
+      contentContainerStyle={isLoading ? { opacity: 0.5 } : {}}
+      refreshControl={!isSendTransactionScreen ? refreshControl : undefined}
+      data={Array.from(listData.values())}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      scrollEnabled={!isLoading}
+      disableScrollViewPanResponder={isLoading}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.3}
+      getItemLayout={getItemLayout}
+      ListFooterComponent={
+        isPaginationLoading ? (
+          <ActivityIndicator
+            size={isSmallScreen ? "small" : "large"}
+            color={Colors.primary.s800}
+            style={styles.spinner}
+          />
+        ) : null
+      }
+      windowSize={8}
+    />
   )
-}
+})
 
 const styles = StyleSheet.create({
-  container: { flex: 1, marginVertical: 10 },
   spinner: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    marginBottom: Sizing.x10,
   },
   innerHeader: {
     alignSelf: "center",

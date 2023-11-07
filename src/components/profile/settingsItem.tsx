@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x10,
   },
   settingsItemTitle: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     width: "75%",
   },
   icon: {

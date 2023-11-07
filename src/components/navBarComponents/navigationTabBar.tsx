@@ -1,47 +1,38 @@
 import * as React from "react"
-import { View, Text, Pressable, StyleSheet } from "react-native"
+import { View, Text, Pressable, StyleSheet, LayoutChangeEvent } from "react-native"
 
-import {
-  CalendarIcon,
-  SearchIcon,
-  HomeIcon,
-  UserIcon,
-  WalletIcon,
-} from "icons/index"
+import { CalendarIcon, SearchIcon, HomeIcon, UserIcon, WalletIcon } from "icons/index"
 import { Colors, Typography, Outlines } from "styles/index"
-import { OrganizerTabParamList } from "common/types/navigationTypes"
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
+// import { OrganizerTabParamList } from "common/types/navigationTypes"
+// import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { appContext } from "contexts/contextApi"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-type NavigationTabBarProps = BottomTabBarProps<OrganizerTabParamList>
+// type NavigationTabBarProps = BottomTabBarProps<OrganizerTabParamList>
 
 enum NAVIGATION_TITLE {
-  "Home Stack" = "Home",
-  "Browse Stack" = "Browse",
+  "Calendar" = "Calendar",
+  "Browse" = "Browse",
   "Wallet" = "Wallet",
   "My Events" = "My Events",
   "Profile" = "Profile",
 }
 
-export const NavigationTabBar = ({
-  state,
-  descriptors,
-  navigation,
-}: NavigationTabBarProps) => {
+export const NavigationTabBar = ({ state, descriptors, navigation }: any) => {
+  const { setBottomNavigationHeight, bottomNavigationHeight } = appContext()
   const { colorScheme } = appContext()
   const { bottom: bottomInset } = useSafeAreaInsets()
 
   const getNavBarIcon = (routeName: string) => {
     switch (routeName) {
-      case "Home Stack":
-        return HomeIcon
-      case "Browse Stack":
+      case "Calendar":
+        return CalendarIcon
+      case "Browse":
         return SearchIcon
       case "Wallet":
         return WalletIcon
       case "My Events":
-        return CalendarIcon
+        return HomeIcon
       case "Profile":
         return UserIcon
       default:
@@ -86,28 +77,16 @@ export const NavigationTabBar = ({
 
     const navBarButtonStyle = () => {
       if (colorScheme == "light" && isFocused) {
-        return [
-          styles.navBarButton_light,
-          { backgroundColor: Colors.primary.s800 },
-        ]
+        return [styles.navBarButton_light, { backgroundColor: Colors.primary.s800 }]
       }
       if (colorScheme == "light" && !isFocused) {
-        return [
-          styles.navBarButton_light,
-          { backgroundColor: Colors.primary.s200 },
-        ]
+        return [styles.navBarButton_light, { backgroundColor: Colors.primary.s200 }]
       }
       if (colorScheme == "dark" && isFocused) {
-        return [
-          styles.navBarButton_dark,
-          { backgroundColor: Colors.primary.s600 },
-        ]
+        return [styles.navBarButton_dark, { backgroundColor: Colors.primary.s600 }]
       }
       if (colorScheme == "dark" && !isFocused) {
-        return [
-          styles.navBarButton_dark,
-          { backgroundColor: Colors.primary.neutral },
-        ]
+        return [styles.navBarButton_dark, { backgroundColor: Colors.primary.neutral }]
       }
     }
 
@@ -136,10 +115,7 @@ export const NavigationTabBar = ({
           onPress={onPress}
           onLongPress={onLongPress}
           key={route.key}
-          style={[
-            navBarButtonStyle(),
-            isFocused ? { ...Outlines.shadow.lifted } : {},
-          ]}>
+          style={[navBarButtonStyle(), isFocused ? { ...Outlines.shadow.lifted } : {}]}>
           <Icon width={24} height={24} stroke={iconStyle()} strokeWidth={2} />
         </Pressable>
         <Text
@@ -153,8 +129,14 @@ export const NavigationTabBar = ({
       </View>
     )
   }
+
+  const onLayoutChange = (e: LayoutChangeEvent) => {
+    const { height } = e.nativeEvent.layout
+    setBottomNavigationHeight(height)
+  }
   return (
     <View
+      onLayout={onLayoutChange}
       style={[
         { marginBottom: bottomInset },
         colorScheme == "light" ? styles.container_light : styles.container_dark,

@@ -1,92 +1,80 @@
 import * as React from "react"
-import { View, Text, StyleSheet, Image } from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-// FastImage seem not to work with static resources (?)
-// import { FastImage } from "react-native-fast-image";
-import { Typography, Colors, Sizing, Outlines } from "styles/index"
-import { Transaction } from "common/interfaces/appInterface"
+import { Colors, Sizing } from "styles/index"
 
-//@ts-ignore
-import ProfilePic from "assets/images/profilePicTwo.png"
 import { appContext } from "contexts/contextApi"
-import { getDate, getDay, getMonth } from "lib/utils"
-import { months } from "common/types/calendarTypes"
+import { BlockFrostDetailedTx } from "lib/wallet/types"
+import { RightArrowIcon, UpArrow } from "assets/icons"
+import { DownArrow } from "assets/icons/downArrow"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { useNavigation } from "@react-navigation/native"
 
-export interface TransactionItemInterface {
-  item: Transaction
-}
+export const TransactionItem = React.memo(
+  ({ item: transaction }: { item: BlockFrostDetailedTx }) => {
+    const { colorScheme } = appContext()
+    const isOutgoing = transaction.inputs.some(
+      (input) => input.address === transaction.user_address
+    )
+    const onTxItemPress = () => {}
+    const navigation = useNavigation()
 
-export const TransactionItem = ({ item }: TransactionItemInterface) => {
-  const { colorScheme } = appContext()
-  const { withUser, oldUtxo, newUtxo, date } = item
+    const assetCount = transaction.outputs[0].amount.length - 1 // Assuming lovelace is listed first
+    const adaAmount = Number(transaction.outputs[0].amount[0].quantity) / 1000000 // Convert lovelace to ADA
 
-  const txAmount = newUtxo - oldUtxo
-
-  return (
-    <View style={styles.container}>
-      <Image source={ProfilePic} style={styles.transactionPic} />
-      <View style={styles.transactionDetails}>
-        <Text
-          style={
-            colorScheme === "light"
-              ? styles.userName_light
-              : styles.userName_dark
-          }>
-          {withUser}
-        </Text>
-        <Text
-          style={
-            colorScheme === "light"
-              ? styles.transactionInfo_light
-              : styles.transactionInfo_dark
-          }>
-          {newUtxo} ₳ - {months[getMonth(date)]} {getDate(date)}
-        </Text>
+    return (
+      <View style={styles.container}>
+        {isOutgoing ? (
+          <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
+        ) : (
+          <DownArrow
+            width={22}
+            height={22}
+            stroke={Colors.success.s400}
+            strokeWidth={2}
+          />
+        )}
+        <View style={styles.txInfo}>
+          <Text>
+            {new Date(Number(transaction.block_time) * 1000).toLocaleDateString() +
+              " " +
+              new Date(Number(transaction.block_time) * 1000).toLocaleTimeString()}
+          </Text>
+          <SubHeaderText
+            customStyle={{ marginBottom: 0 }}
+            colors={[Colors.primary.s800, Colors.primary.neutral]}>
+            {`${adaAmount} ADA ${
+              assetCount > 0
+                ? `+ ${assetCount} ${assetCount > 1 ? "Assets" : "Asset"}`
+                : ""
+            }`}
+          </SubHeaderText>
+        </View>
+        <Pressable hitSlop={Sizing.x10} onPress={onTxItemPress}>
+          <RightArrowIcon
+            width="20"
+            height="20"
+            strokeWidth={2}
+            stroke={
+              colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral
+            }
+            style={{ marginRight: "auto" }}
+          />
+        </Pressable>
       </View>
-      <Text
-        style={[
-          styles.amount,
-          { color: txAmount < 0 ? "#EF4444" : "#10B981" },
-        ]}>
-        {txAmount >= 0 && "+"}
-        {txAmount} ₳
-      </Text>
-    </View>
-  )
-}
+    )
+  }
+)
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Sizing.x25,
-  },
-  transactionPic: {
-    borderRadius: 999,
-    width: Sizing.x55,
+    marginVertical: Sizing.x10,
     height: Sizing.x55,
   },
-  transactionDetails: {
-    marginLeft: Sizing.x15,
-  },
-  userName_light: {
-    ...Typography.header.x30,
-    color: Colors.primary.s800,
-  },
-  userName_dark: {
-    ...Typography.header.x30,
-    color: Colors.primary.neutral,
-  },
-  transactionInfo_light: {
-    ...Typography.subHeader.x20,
-    color: Colors.primary.s600,
-  },
-  transactionInfo_dark: {
-    ...Typography.subHeader.x20,
-    color: Colors.primary.s180,
-  },
-  amount: {
-    marginLeft: "auto",
-    ...Typography.header.x35,
+  txInfo: {
+    flex: 1,
+    marginLeft: Sizing.x10,
   },
 })

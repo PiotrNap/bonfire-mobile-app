@@ -8,7 +8,7 @@ import { appContext } from "contexts/contextApi"
 import { useNavigation } from "@react-navigation/native"
 import { fontWeight } from "../../styles/typography"
 
-export const EventConfirmationDetail = ({
+export const ConfirmationDetail = ({
   label,
   lineContent,
   isLastItem,
@@ -31,9 +31,7 @@ export const EventConfirmationDetail = ({
         styles.container,
         !isLastItem && {
           borderBottomWidth: Outlines.borderWidth.base,
-          borderBottomColor: isLightMode
-            ? Colors.primary.s350
-            : Colors.primary.s300,
+          borderBottomColor: isLightMode ? Colors.primary.s350 : Colors.primary.s300,
         },
       ]}>
       {Array.isArray(lineContent) ? (
@@ -41,14 +39,14 @@ export const EventConfirmationDetail = ({
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
               children={label}
-              colors={[Colors.primary.s600, Colors.primary.neutral]}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}
               customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
             />
             {callbackFn ? (
               <SubHeaderText
                 customStyle={{ ...fontWeight.semibold }}
                 children={callbackFn.label}
-                colors={[Colors.primary.s350, Colors.primary.s200]}
+                colors={[Colors.primary.s800, Colors.primary.s200]}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
               />
             ) : (
@@ -57,9 +55,7 @@ export const EventConfirmationDetail = ({
           </View>
           {(lineContent as any).map((line: EventLine, index: number) =>
             line ? (
-              <View
-                style={styles.subHeaderContent}
-                key={`${line.content}_${index}`}>
+              <View style={styles.subHeaderContent} key={`${line.content}_${index}`}>
                 {line.icon}
                 <SubHeaderText
                   children={line.content}
@@ -76,13 +72,13 @@ export const EventConfirmationDetail = ({
         <>
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
-              colors={[Colors.primary.s600, Colors.primary.neutral]}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}
               customStyle={{ marginRight: "auto", ...fontWeight.semibold }}>
               {label}
             </SubHeaderText>
             {callbackFn ? (
               <SubHeaderText
-                colors={[Colors.primary.s350, Colors.primary.s200]}
+                colors={[Colors.primary.s800, Colors.primary.s200]}
                 customStyle={{ ...fontWeight.semibold }}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}>
                 {callbackFn.label}
@@ -122,6 +118,7 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x5,
   },
   text: {
-    ...Typography.header.x25,
+    ...Typography.subHeader.x30,
+    marginLeft: Sizing.x2,
   },
 })
