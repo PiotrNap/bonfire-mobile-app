@@ -23,6 +23,7 @@ import { useAppLogin } from "lib/hooks/useAppLogin"
 import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
 import Toast, { ErrorToast } from "react-native-toast-message"
 import { Typography } from "./styles"
+import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 
 // setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
 enableScreens() // enable native screens for navigation instead of using Views
@@ -66,11 +67,21 @@ function App() {
     ),
   }
 
+  const DevWrapper = React.useCallback(({ children }) => {
+    const isDev = typeof __DEV__ === "boolean" && __DEV__
+
+    if (isDev) {
+      return <React.StrictMode>{children}</React.StrictMode>
+    } else {
+      return <>{children}</>
+    }
+  }, [])
+
   if (!isAuthLoaded) {
     return <></>
   } else {
     return (
-      <>
+      <DevWrapper>
         <SafeAreaProvider>
           <AppContextProvider>
             <ProfileContextProvider>
@@ -122,6 +133,11 @@ function App() {
                       options={{ headerShown: false, gestureEnabled: false }}
                       component={QrCodeScannerScreen}
                     />
+                    <Stack.Screen
+                      name="Legal Document"
+                      options={{ headerShown: false, gestureEnabled: false }}
+                      component={LegalDocumentScreen}
+                    />
                     {/*
                   <Stack.Screen
                     name="Add Funds"
@@ -136,7 +152,7 @@ function App() {
           </AppContextProvider>
         </SafeAreaProvider>
         <Toast config={toastConfig} />
-      </>
+      </DevWrapper>
     )
   }
 }

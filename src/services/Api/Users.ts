@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, Method } from "axios"
-import { UserBaseDTO } from "common/interfaces/profileInterface"
+import { AddDeviceDTO, UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
 import { getFormDataFromFilePath } from "lib/helpers"
 import { AnyObject } from "yup/lib/types"
@@ -12,18 +12,27 @@ export class Users {
       const data = res.data
       return data
     } catch (e: any) {
+      throw e?.response?.data || e
+    }
+  }
+  public static async getUserByBaseAddr(baseAddress: string): Promise<any> {
+    try {
+      const res = await axios.get(`users/base-address/${baseAddress}`)
+      const data = res.data
+      return data
+    } catch (e: any) {
       console.error(e)
-      if (e.response) {
-        if (e.status === 401) {
-          throw new Error("User not authorized")
-        } else {
-          throw new Error(e.toJSON())
-        }
-      } else if (e.request) {
-        throw new Error("Something went wrong. Please try again later.")
-      } else {
-        // report problem with creating the request ** e.config **
-      }
+      throw e?.response?.data || e
+    }
+  }
+  public static async checkUsernameAvailability(username: string) {
+    try {
+      const res = await axios.get(`users/check-username?username=${username}`)
+      const data = res.data
+      return data
+    } catch (e: any) {
+      console.error(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -44,7 +53,19 @@ export class Users {
         return res.data
       }
     } catch (e) {
-      if (e.response) console.error(e.response.data)
+      throw e?.response?.data || e
+    }
+  }
+
+  public static async registerDevice(values: AddDeviceDTO): Promise<UserBaseDTO | void> {
+    try {
+      const res = await axios.post("/users/register-device", values)
+
+      if (res) {
+        return res.data
+      }
+    } catch (e: any) {
+      throw e?.response?.data || e
     }
   }
 
@@ -56,7 +77,7 @@ export class Users {
         return res.data
       }
     } catch (e: any) {
-      throw new Error(e.response.data.message)
+      throw e?.response?.data || e
     }
   }
 
@@ -65,7 +86,7 @@ export class Users {
       const res = await axios.put(`/users/${id}`, values)
       if (res) return res.data
     } catch (e: any) {
-      throw new Error(e.response.data.message)
+      throw e?.response?.data || e
     }
   }
 
@@ -80,7 +101,7 @@ export class Users {
 
       if (res) return res.data
     } catch (e) {
-      throw new Error(e.response.data.message)
+      throw e?.response?.data || e
     }
   }
 
@@ -97,7 +118,7 @@ export class Users {
       )
       return res
     } catch (e) {
-      throw e
+      throw e?.response?.data || e
     }
   }
 
@@ -107,7 +128,7 @@ export class Users {
 
       return profileImage
     } catch (e) {
-      console.error(e.response.data.message)
+      throw e?.response?.data || e
     }
   }
 
@@ -116,7 +137,7 @@ export class Users {
       const res = await axios.delete(`/users/files/profile-image/${id}`)
       return res
     } catch (e) {
-      console.error(e.response.data.message)
+      throw e?.response?.data || e
     }
   }
 
@@ -125,7 +146,23 @@ export class Users {
       const res = await axios.delete(`/users/${id}`)
       return res
     } catch (e) {
-      console.error(e.response.data.message)
+      throw e?.response?.data || e
+    }
+  }
+
+  public static async getIsBetaTestingActive() {
+    try {
+      return await axios.get("/users/beta-tokens/")
+    } catch (e) {
+      throw e?.response?.data || e
+    }
+  }
+
+  public static async registerForBetaTesting(betaCode: string, baseAddress: string) {
+    try {
+      return await axios.get(`/users/beta-tokens/${betaCode}/${baseAddress}`)
+    } catch (e) {
+      throw e?.response?.data || e
     }
   }
 
@@ -138,7 +175,7 @@ export class Users {
     try {
       return await axios[method](url, data || {}, config)
     } catch (e) {
-      throw e.response.data
+      throw e?.response?.data || e
     }
   }
 }
