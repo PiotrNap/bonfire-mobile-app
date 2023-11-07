@@ -1,6 +1,5 @@
 import nacl from "@pnap/react-native-tweetnacl"
 import base64 from "base64-js"
-import { getFromEncryptedStorage } from "./encryptedStorage"
 
 interface KeyPair {
   publicKey: Uint8Array
@@ -13,27 +12,21 @@ export const generateKeyPair = (): KeyPair => {
 
 export const signChallenge = async (
   challenge: Uint8Array,
-  secretKey?: Uint8Array
+  secretKey: Uint8Array
 ): Promise<string | void> => {
-  var _secretKey, signedChallenge
+  var signedChallenge
 
-  _secretKey = secretKey || (await getFromEncryptedStorage("privKey"))
-
-  if (!_secretKey || !challenge) return
-  _secretKey = Buffer.from(_secretKey, "base64")
-
-  // TODO: use a byte-array when the device API's support that type,
-  // and fill the buffer with zeros immediately after use.
+  if (!challenge || !secretKey)
+    throw new Error(
+      `Missing challenge or secret key. Unable to sign a challenge`
+    )
   try {
-    signedChallenge = nacl.sign.detached(challenge, _secretKey)
-
-    _secretKey = null
-    secretKey = new Uint8Array([])
-    challenge = new Uint8Array([])
-
+    signedChallenge = nacl.sign.detached(challenge, secretKey)
     return base64.fromByteArray(signedChallenge)
   } catch (e) {
-    _secretKey = null
     console.error(e)
+  } finally {
+    secretKey = new Uint8Array([])
+    challenge = new Uint8Array([])
   }
 }

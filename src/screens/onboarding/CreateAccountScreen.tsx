@@ -4,11 +4,7 @@ import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native"
 import PagerView from "react-native-pager-view"
 import { CreateAccountForm } from "components/forms/CreateAccountForm"
 import { Buttons, Colors, Sizing, Typography } from "styles/index"
-import {
-  BusinessDecisionsIcon,
-  LeftArrowIcon,
-  ModernProfessionalIcon,
-} from "icons/index"
+import { BusinessDecisionsIcon, LeftArrowIcon, ModernProfessionalIcon } from "icons/index"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { ProfileContext } from "contexts/profileContext"
 import { SlideTopModal } from "components/modals/SlideTopModal"
@@ -23,8 +19,7 @@ export interface CreateAccountScreenProps {
 }
 
 export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
-  const { profileType, setProfileType, setUsername } =
-    React.useContext(ProfileContext)
+  const { setUsername } = React.useContext(ProfileContext)
   const [modalVisible, setModalVisible] = React.useState<boolean>(false)
   const [errorType, setErrorType] = React.useState<string>("")
 
@@ -66,17 +61,9 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
         contentContainerStyle={{ alignItems: "center" }}>
         <View style={styles.imageContainer}>
           {profileType === "attendee" ? (
-            <ModernProfessionalIcon
-              style={styles.image}
-              width="80%"
-              height="80%"
-            />
+            <ModernProfessionalIcon style={styles.image} width="80%" height="80%" />
           ) : profileType === "organizer" ? (
-            <BusinessDecisionsIcon
-              style={styles.image}
-              width="80%"
-              height="80%"
-            />
+            <BusinessDecisionsIcon style={styles.image} width="80%" height="80%" />
           ) : (
             <></>
           )}

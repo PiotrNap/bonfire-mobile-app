@@ -53,11 +53,11 @@ export const SlideDownModal = ({
   const onButtonPress = () => {
     switch (modalType) {
       case "create-account": {
-        //@ts-ignore
-        navigate("User Registration Screens")
+        navigate("Initial User Screens", "create-account")
         break
       }
       case "sign-in": {
+        navigate("Initial User Screens", "sign-in")
         break
       }
       case "safety-warning": {
@@ -192,8 +192,8 @@ const modalContent = {
     buttonTitle: "I'm ready",
   },
   "sign-in": {
-    header: "",
-    body: "",
+    header: "Before We Start",
+    body: "In the following screens you will be asked to insert your mnemonic phrase. We will derive an address to check whether a given user exists. Bonfire doesn't store any of your private keys on our servers.",
     buttonTitle: "I'm ready",
   },
   "safety-warning": {

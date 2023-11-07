@@ -9,8 +9,12 @@ export const wallet = {
   },
   import_wallet: {
     address_confirmation: {
-      header: "Confirm Your Wallet Address",
-      body: "Please confirm that given base address is known to you. If it's not, your previous wallet may be using a different method of address derivation. Or, you've inserted wrongly your recovery phrase.",
+      header: "Confirm Your Credentials",
+      // body: "Please confirm that the provided base address and username are familiar to you. If they are not, there are two possibilities:",
+      body: "Please confirm that the provided base address and username are familiar to you.",
+      first_bullet:
+        "Your previous wallet may be using a different method for address derivation.",
+      snd_bullet: "You may have entered your recovery phrase incorrectly.",
     },
   },
   create_wallet: {
@@ -20,7 +24,7 @@ export const wallet = {
     },
     mnemonic_preview: {
       header: "Your Recovery Phrase",
-      body: "Please store a copy of this somewhere secure. If you lose this phrase, you will not be able to access your funds or account. Bonfire doesn't take any responsibility in case of a loss.",
+      body: "Please store a copy of this somewhere secure. If you lose this phrase, you will not be able to reconstruct your account and access funds. Bonfire doesn't take any responsibility in case of a loss.",
       checkbox_text: "I have made a back up copy",
     },
     mnemonic_confirmation: {

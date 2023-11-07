@@ -121,7 +121,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
     }
   }
   const onAcceptedTerms = () => setAcceptedTerms((p) => !p)
-  const onConfirm = React.useCallback(async () => {
+  const onConfirm = async () => {
     setIsLoading(true)
     try {
       const keyPair = generateKeyPair()
@@ -187,7 +187,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }
 
   const TextComponent = React.useCallback(
     ({ children, isLink }) => (

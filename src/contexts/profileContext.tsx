@@ -4,7 +4,6 @@
  */
 import React, { useState, createContext } from "react"
 import { ProfileState, UserBaseDTO } from "interfaces/profileInterface"
-import { TxInput } from "@hyperionbt/helios"
 
 export const initialState: ProfileState = {
   username: "",

@@ -14,6 +14,10 @@ export interface SlideTopModalProps {
   hideCallback?: () => void
 }
 
+/**
+ * DEPRACATED
+ * Use Toast modal instead (see helper function 'showErrorToast' & 'showSuccessToast')
+ */
 export const SlideTopModal = ({
   isModalVisible,
   hideCallback,
@@ -22,45 +26,43 @@ export const SlideTopModal = ({
   contentStyle,
   icon,
 }: SlideTopModalProps) => {
-  const [isVisible, setIsVisible] = React.useState<boolean>(isModalVisible)
-  const { width, height } = useWindowDimensions()
-
-  React.useEffect(() => {
-    if (isModalVisible) {
-      setIsVisible(isModalVisible)
-      let timeout = setTimeout(() => {
-        setIsVisible(false)
-        hideCallback && hideCallback()
-      }, 3500)
-      return () => clearTimeout(timeout)
-    } else {
-      setIsVisible(false)
-    }
-  }, [isModalVisible])
-
-  return (
-    <Modal
-      animationIn={"slideInDown"}
-      animationInTiming={200}
-      animationOut={"slideOutUp"}
-      animationOutTiming={400}
-      isVisible={isVisible}
-      onSwipeCancel={() => setIsVisible(false)}
-      deviceWidth={width}
-      deviceHeight={height}
-      hasBackdrop={false}
-      coverScreen={false}
-      swipeDirection="up"
-      onSwipeComplete={() => setIsVisible(false)}
-      style={styles.modal}>
-      <View style={[styles.main, { backgroundColor }]}>
-        {icon}
-        <SubHeaderText customStyle={[styles.text, contentStyle]}>
-          {modalContent}
-        </SubHeaderText>
-      </View>
-    </Modal>
-  )
+  // const [isVisible, setIsVisible] = React.useState<boolean>(isModalVisible)
+  // const { width, height } = useWindowDimensions()
+  // React.useEffect(() => {
+  //   if (isModalVisible) {
+  //     setIsVisible(isModalVisible)
+  //     let timeout = setTimeout(() => {
+  //       setIsVisible(false)
+  //       hideCallback && hideCallback()
+  //     }, 3500)
+  //     return () => clearTimeout(timeout)
+  //   } else {
+  //     setIsVisible(false)
+  //   }
+  // }, [isModalVisible])
+  // return (
+  //   <Modal
+  //     animationIn={"slideInDown"}
+  //     animationInTiming={200}
+  //     animationOut={"slideOutUp"}
+  //     animationOutTiming={400}
+  //     isVisible={isVisible}
+  //     onSwipeCancel={() => setIsVisible(false)}
+  //     deviceWidth={width}
+  //     deviceHeight={height}
+  //     hasBackdrop={false}
+  //     coverScreen={false}
+  //     swipeDirection="up"
+  //     onSwipeComplete={() => setIsVisible(false)}
+  //     style={styles.modal}>
+  //     <View style={[styles.main, { backgroundColor }]}>
+  //       {icon}
+  //       <SubHeaderText customStyle={[styles.text, contentStyle]}>
+  //         {modalContent}
+  //       </SubHeaderText>
+  //     </View>
+  //   </Modal>
+  // )
 }
 
 const styles = StyleSheet.create({

@@ -1,9 +1,4 @@
-import {
-  Dimensions,
-  Platform,
-  PermissionsAndroid,
-  Permission,
-} from "react-native"
+import { Dimensions, Platform, PermissionsAndroid, Permission } from "react-native"
 import { randomBytes } from "react-native-randombytes"
 import {
   AvailabilitiesDay,
@@ -19,6 +14,10 @@ import { AnyObject } from "yup/lib/types"
 import dayjs from "dayjs"
 
 const IS_ANDROID = Platform.OS === "android"
+
+export function noop() {
+  return
+}
 
 export function scale(size: number, factor = 1) {
   return +((Dimensions.get("window").width / 390) * size * factor).toFixed(2)
@@ -176,10 +175,7 @@ export function areEqualDates(val1: number, val2: number): boolean {
  * @param day
  */
 export const isPastDate = (year: number, month: string, day: number) => {
-  return dayjs(new Date(year, monthsByName[month], day)).isBefore(
-    dayjs(),
-    "day"
-  )
+  return dayjs(new Date(year, monthsByName[month], day)).isBefore(dayjs(), "day")
 }
 
 /**
@@ -195,13 +191,10 @@ export const isSameDay = (date1: number | string, date2: number | string) => {
   return sameYear && sameMonth && sameDay
 }
 
-export const availableDaysLeftInCurrMonth = (
-  availabilities: number[]
-): boolean =>
+export const availableDaysLeftInCurrMonth = (availabilities: number[]): boolean =>
   !!availabilities.find(
     (date) =>
-      dayjs(date).month() === dayjs().month() &&
-      dayjs(date).date() > dayjs().date()
+      dayjs(date).month() === dayjs().month() && dayjs(date).date() > dayjs().date()
   )
 
 /**
@@ -223,8 +216,7 @@ export function getCalendarMonth(
 ): Month[] {
   var month = fromMonth != null ? fromMonth : new Date().getMonth()
   var year = fromYear != null ? fromYear : new Date().getFullYear()
-  var currMonthIndex =
-    fromMonth != null && !startFromCustomMonth ? month + 1 : month
+  var currMonthIndex = fromMonth != null && !startFromCustomMonth ? month + 1 : month
 
   // if current month is December and fromYear isn't specified, meaning
   // we are at the last month of the current year
@@ -254,8 +246,7 @@ export function getCalendarMonth(
     scheduledEvents &&
     scheduledEvents.find((schedEvts: any) => schedEvts.year === currYear)
   var availableYear =
-    availabilities &&
-    availabilities.find((avail: any) => avail.year === currYear)
+    availabilities && availabilities.find((avail: any) => avail.year === currYear)
 
   if (nextMonths) {
     if (month === 11) {
@@ -324,18 +315,8 @@ export function getCalendarMonth(
         numOfDays++
         days.push(day)
       }
-      days = insertFirstWeekPlaceholders(
-        firstDay,
-        days,
-        currMonthIndex,
-        currYear
-      )
-      days = insertLastWeekPlaceholders(
-        firstDay,
-        days,
-        currMonthIndex,
-        currYear
-      )
+      days = insertFirstWeekPlaceholders(firstDay, days, currMonthIndex, currYear)
+      days = insertLastWeekPlaceholders(firstDay, days, currMonthIndex, currYear)
 
       monthsWithDays.push({
         name: months[currMonthIndex],
@@ -435,12 +416,7 @@ export function getCalendarMonth(
       }
 
       days = insertFirstWeekPlaceholders(firstDay, days, currMonthIndex, year)
-      days = insertLastWeekPlaceholders(
-        firstDay,
-        days,
-        currMonthIndex,
-        currYear
-      )
+      days = insertLastWeekPlaceholders(firstDay, days, currMonthIndex, currYear)
 
       monthsWithDays.push({
         name: months[currMonthIndex],
@@ -551,10 +527,7 @@ export function isLastWeek(currDay: number, firstDay: number): boolean {
  *  @property time - time in milliseconds or date string
  *  @property offset - clock offset, either '12' or '24' (default '24')
  */
-export function getDigitalTime(
-  time: number | string | Date,
-  offset = "24"
-): string {
+export function getDigitalTime(time: number | string | Date, offset = "24"): string {
   var hours = new Date(time).getHours()
   var minutes = new Date(time).getMinutes()
   var abbreviation
@@ -567,9 +540,7 @@ export function getDigitalTime(
     }
   }
 
-  return `${hours}:${minutes <= 9 ? "0" + minutes : minutes} ${
-    abbreviation ?? ""
-  }`
+  return `${hours}:${minutes <= 9 ? "0" + minutes : minutes} ${abbreviation ?? ""}`
 }
 
 /**
@@ -630,11 +601,7 @@ export function getEventCardDate(
   // if the events happens in the same month
   if (getMonthName(fromDate) === getMonthName(toDate)) {
     dateString +=
-      getDate(fromDate) +
-      "-" +
-      getDate(toDate) +
-      " " +
-      getMonthName(fromDate).slice(0, 3)
+      getDate(fromDate) + "-" + getDate(toDate) + " " + getMonthName(fromDate).slice(0, 3)
 
     return dateString
   }
@@ -650,8 +617,7 @@ export function getEventCardDate(
   if (getDate(toDate) === 1) {
     dateString += " - " + getMonthName(toDate).slice(0, 3)
   } else {
-    dateString +=
-      " - " + getMonthName(toDate).slice(0, 3) + " " + getDate(toDate)
+    dateString += " - " + getMonthName(toDate).slice(0, 3) + " " + getDate(toDate)
   }
 
   return dateString
@@ -703,12 +669,8 @@ export const convertToCalendarAvailabilities = (
   availableDayTimeSlots: any[]
 ): Availabilities[] => {
   const timesInMill: number[] = Object.values(selectedDays)
-  const sortedAvailableSlots = sortEventAvailabilities(
-    availableDayTimeSlots,
-    "asc"
-  )
-  const lastAvailableDayTimeSlot =
-    sortedAvailableSlots[sortedAvailableSlots.length - 1]
+  const sortedAvailableSlots = sortEventAvailabilities(availableDayTimeSlots, "asc")
+  const lastAvailableDayTimeSlot = sortedAvailableSlots[sortedAvailableSlots.length - 1]
   // TODO this will eventually be allowed to change by organizers when creating a new event
   const availableUntil =
     new Date(lastAvailableDayTimeSlot.to).getTime() -
@@ -740,9 +702,7 @@ export const convertToCalendarAvailabilities = (
       currentMonth = month
       currentDay = day
 
-      const yearToPushIndex = calendarAvailabilities.findIndex(
-        (val) => val.year === year
-      )
+      const yearToPushIndex = calendarAvailabilities.findIndex((val) => val.year === year)
 
       calendarAvailabilities[yearToPushIndex].months.push({
         month,
@@ -755,16 +715,12 @@ export const convertToCalendarAvailabilities = (
     if (currentDay !== day) {
       currentDay = day
 
-      const yearToPushIndex = calendarAvailabilities.findIndex(
-        (val) => val.year === year
+      const yearToPushIndex = calendarAvailabilities.findIndex((val) => val.year === year)
+      const monthToPushIndex = calendarAvailabilities[yearToPushIndex].months.findIndex(
+        (val: any) => val.month === month
       )
-      const monthToPushIndex = calendarAvailabilities[
-        yearToPushIndex
-      ].months.findIndex((val: any) => val.month === month)
 
-      calendarAvailabilities[yearToPushIndex].months[
-        monthToPushIndex
-      ].days.push({
+      calendarAvailabilities[yearToPushIndex].months[monthToPushIndex].days.push({
         day,
         availableUntil,
       })
@@ -775,9 +731,7 @@ export const convertToCalendarAvailabilities = (
   return calendarAvailabilities
 }
 
-export const convertToCalendarEvents = (organizerEvents: {
-  [index: string]: any[]
-}) => {
+export const convertToCalendarEvents = (organizerEvents: { [index: string]: any[] }) => {
   var bookedSlots = organizerEvents?.bookedSlots
   var scheduledSlots = organizerEvents?.scheduledSlots
   var activeEvents = organizerEvents?.events
@@ -809,9 +763,7 @@ export const convertToCalendarEvents = (organizerEvents: {
                   {
                     id: event.id,
                     days: Object.values(event.selectedDays)
-                      .filter(
-                        (sd: any) => getMonthName(sd) === getMonthName(day)
-                      )
+                      .filter((sd: any) => getMonthName(sd) === getMonthName(day))
                       .sort(),
                   },
                 ],
@@ -882,17 +834,13 @@ export const convertToCalendarEvents = (organizerEvents: {
 
       if (type === "active slot") {
         if (currEventId != val.id) {
-          sortedAvailabilites = sortEventAvailabilities(
-            val.availabilities,
-            "desc"
-          )
+          sortedAvailabilites = sortEventAvailabilities(val.availabilities, "desc")
           currEventId = val.id
         }
         // we need to know what's the max available day in a month
         // for a particular event
         slotObject.toTimeSlot = sortedAvailabilites[0].to
-        slotObject.fromTimeSlot =
-          sortedAvailabilites[sortedAvailabilites.length - 1].from
+        slotObject.fromTimeSlot = sortedAvailabilites[sortedAvailabilites.length - 1].from
         slotObject.availabilities = val.availabilities
         slotObject.availableAt = val.availableAt
 
@@ -909,11 +857,7 @@ export const convertToCalendarEvents = (organizerEvents: {
       }
 
       // Case when it's the first time or year has changed
-      if (
-        year !== currentYear &&
-        month !== currentMonth &&
-        day !== currentDay
-      ) {
+      if (year !== currentYear && month !== currentMonth && day !== currentDay) {
         currentYear = year
         currentMonth = month
         currentDay = day
@@ -994,9 +938,7 @@ export const convertToCalendarEvents = (organizerEvents: {
       }
 
       // if it's the same day
-      calendarEvents[yearIndex].months[monthIndex].days[dayIndex].events.push(
-        slotObject
-      )
+      calendarEvents[yearIndex].months[monthIndex].days[dayIndex].events.push(slotObject)
     }
   }
 

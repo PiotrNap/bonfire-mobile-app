@@ -33,8 +33,8 @@ export const showCredentialsLossWarningModal = (
   onPressCb: () => Promise<void>
 ) => {
   Alert.alert(
-    "Beware!",
-    "This action is irreversible, you will loose access to your current wallet and account credentials on this device.",
+    "Beware",
+    "This action is irreversible, you will lose access to your current wallet and account credentials on this device.",
     [
       {
         text: "Yes, I understand",
@@ -59,8 +59,8 @@ export const showAccountDeletionWarningModal = (
   onPressCb: () => Promise<void>
 ) => {
   Alert.alert(
-    "Beware!",
-    "This action is irreversible, you will loose access to your account.",
+    "Beware",
+    "This action is irreversible. You will lose access to your account, and other users won't be able to book your events anymore.",
     [
       {
         text: "Yes, I understand",
@@ -72,8 +72,8 @@ export const showAccountDeletionWarningModal = (
         style: "cancel",
         onPress: () =>
           Alert.alert(
-            "Your account is safe!",
-            "You can continue to enjoy this application."
+            "Your account is safe",
+            "You can continue using this application."
           ),
       },
     ],

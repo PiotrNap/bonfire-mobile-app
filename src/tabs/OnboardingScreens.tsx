@@ -1,7 +1,7 @@
 import * as React from "react"
 import { View, Animated, StyleSheet, Dimensions } from "react-native"
 
-import { CreateAccountScreen, InitialScreen } from "screens/onboarding"
+import { InitialScreen } from "screens/onboarding"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
 import { Colors, Outlines } from "styles/index"
@@ -9,10 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
-const SCREENS = [
-  { component: InitialScreen },
-  // { component: CreateAccountScreen },
-]
+const SCREENS = [{ component: InitialScreen }]
 
 export const OnboardingScreens = () => {
   const ref = React.useRef<PagerView>(null)

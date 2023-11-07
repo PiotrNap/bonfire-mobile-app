@@ -18,7 +18,7 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
     type: null,
   })
 
-  const onCreateAccountPress = () => {
+  const onCreateAccountPress = async () => {
     setModalState({ visible: true, type: "create-account" })
   }
 
@@ -35,10 +35,9 @@ export const InitialScreen = ({ pagerRef }: InitialScreenProps) => {
         <Text style={styles.header}>Welcome to Bonfire</Text>
         <View style={styles.subHeaderWrapper}>
           <Text style={styles.subHeader}>
-            A scheduling dApp that enables event organizers and attendees to
-            exchange crypto payments for booked time. Trustless Cardano smart
-            contracts grant you with a privacy-first approach where personal
-            information stays personal.
+            A scheduling dApp that enables event organizers and attendees to exchange
+            crypto payments for booked time. Trustless Cardano smart contract grant you
+            with a privacy-first approach where personal information stays personal.
           </Text>
         </View>
       </View>

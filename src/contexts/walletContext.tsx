@@ -1,19 +1,21 @@
 import { TxInput } from "@hyperionbt/helios"
 import { WalletActions, WalletTypes } from "common/types/contextTypes"
+import { SendTxInfo } from "lib/wallet/types"
 import * as React from "react"
 
 interface InitialState {
-  lovelaceBalance: number
+  lovelaceBalance: bigint
   assetsBalance: {}
   txHistory: any[]
   signedTx: {}
   mnemonic: {}
-  txInputs: TxInput[]
+  walletUtxos: TxInput[]
   rootKeyHex: string
   baseAddress: string
   accountPubKeyHex: string
   accountKeyHex: string
   isOfflineMnemonic: boolean
+  sendTxInfo: SendTxInfo
 }
 interface WalletContextProps {
   state: InitialState
@@ -21,25 +23,26 @@ interface WalletContextProps {
 }
 
 const initState: InitialState = {
-  lovelaceBalance: 0,
+  lovelaceBalance: 0n,
   assetsBalance: {},
   txHistory: [],
   signedTx: {},
   mnemonic: {},
-  txInputs: [],
+  walletUtxos: [],
   rootKeyHex: "",
   baseAddress: "",
   accountKeyHex: "",
   accountPubKeyHex: "",
   isOfflineMnemonic: false,
+  sendTxInfo: { receiverAddress: "", lovelace: 0, assets: null },
 }
 
 const reducer = (state: InitialState, action: WalletActions) => {
   switch (action.type) {
-    case WalletTypes.SetTxInputs:
+    case WalletTypes.SetWalletUtxos:
       return {
         ...state,
-        txInputs: action.payload.txInputs,
+        walletUtxos: action.payload.walletUtxos,
       }
     case WalletTypes.SetTxHistory:
       return {
@@ -51,6 +54,11 @@ const reducer = (state: InitialState, action: WalletActions) => {
         ...state,
         mnemonic: action.payload.mnemonic,
       }
+    case WalletTypes.SetSendTxInfo:
+      return {
+        ...state,
+        sendTxInfo: action.payload.sendTxInfo,
+      }
     case WalletTypes.SetLovelaceBalance:
       return {
         ...state,
@@ -60,6 +68,11 @@ const reducer = (state: InitialState, action: WalletActions) => {
       return {
         ...state,
         isOfflineMnemonic: action.payload.isOfflineMnemonic,
+      }
+    case WalletTypes.SetBaseAddress:
+      return {
+        ...state,
+        baseAddress: action.payload.baseAddress,
       }
     case WalletTypes.SetWalletKeys:
       const { walletKeys } = action.payload

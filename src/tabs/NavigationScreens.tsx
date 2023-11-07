@@ -1,54 +1,50 @@
 import * as React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
-import { TabParamList } from "common/types/navigationTypes"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
-import { BrowseScreensStack } from "stacks/BrowseScreensStack"
-import { HomeScreenStack } from "stacks/HomeScreenStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
-import { ProfileScreenStack } from "stacks/ProfileScreenStack"
-import { MyEventsStack } from "stacks/MyEventsStack"
-import { WalletScreenStack } from "stacks/WalletScreenStack"
+import { NavigationTabParamList } from "common/types/navigationTypes"
+import {
+  ProfileScreenStack,
+  MyEventsStack,
+  WalletScreenStack,
+  BrowseScreensStack,
+  CalendarScreenStack,
+} from "stacks/index"
 
-const NavigationTabs = createBottomTabNavigator<TabParamList>()
+const NavigationTabs = createBottomTabNavigator<NavigationTabParamList>()
 
 export const NavigationScreens = ({ route }: any) => {
-  const { setId, setHourlyRate, setUsername, setProfileType } =
-    React.useContext(ProfileContext)
-  const { toggleAuth, setUserSettings } = appContext()
+  const { setID, setUsername, setHourlyRateAda } = React.useContext(ProfileContext)
+  const { setUserSettings, bottomNavigationHeight } = appContext()
 
   React.useEffect(() => {
     // if the params aren't empty, we are redirected from
     // main screens stack during login
     if (Object.entries(route.params).length != 0) {
-      const { profileType, username, id, hourlyRate, userSettings } =
-        route.params
+      const { username, id, hourlyRateAda, userSettings } = route.params
 
-      profileType && toggleAuth(true, profileType)
-      id && setId(id)
-      profileType && setProfileType(profileType)
+      id && setID(id)
       username && setUsername(username)
-      hourlyRate &&
-        setHourlyRate({
-          ada: hourlyRate?.ada || 0,
-          gimbals: hourlyRate?.gimbals || 0,
-        })
+      hourlyRateAda && setHourlyRateAda(hourlyRateAda)
       setUserSettings(userSettings)
     }
   }, [])
 
   return (
     <NavigationTabs.Navigator
+      sceneContainerStyle={
+        {
+          // paddingBottom: bottomNavigationHeight ? bottomNavigationHeight : 0,
+        }
+      }
       screenOptions={{ headerShown: false }}
       tabBar={(props) => <NavigationTabBar {...props} />}>
-      <NavigationTabs.Screen name="Home Stack" component={HomeScreenStack} />
-      <NavigationTabs.Screen
-        name="Browse Stack"
-        component={BrowseScreensStack}
-      />
       <NavigationTabs.Screen name="Wallet" component={WalletScreenStack} />
+      <NavigationTabs.Screen name="Browse" component={BrowseScreensStack} />
       <NavigationTabs.Screen name="My Events" component={MyEventsStack} />
+      <NavigationTabs.Screen name="Calendar" component={CalendarScreenStack} />
       <NavigationTabs.Screen name="Profile" component={ProfileScreenStack} />
     </NavigationTabs.Navigator>
   )
