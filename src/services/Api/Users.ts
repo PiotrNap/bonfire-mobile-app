@@ -5,6 +5,11 @@ import { getFormDataFromFilePath } from "lib/helpers"
 import { AnyObject } from "yup/lib/types"
 import axios from "./base"
 
+type UserByPublickey = {
+  username: string
+  baseAddress: string
+}
+
 export class Users {
   public static async getUser(id: string): Promise<any> {
     try {
@@ -15,9 +20,21 @@ export class Users {
       throw e?.response?.data || e
     }
   }
-  public static async getUserByBaseAddr(baseAddress: string): Promise<any> {
+  public static async getUserByPublickey(baseAddress: string): Promise<any> {
     try {
       const res = await axios.get(`users/base-address/${baseAddress}`)
+      const data = res.data
+      return data
+    } catch (e: any) {
+      console.error(e)
+      throw e?.response?.data || e
+    }
+  }
+  public static async checkIfUserExistsForPublicKey(
+    publickey: string
+  ): Promise<UserByPublickey | void> {
+    try {
+      const res = await axios.get(`users/check-publickey?publickey=${publickey}`)
       const data = res.data
       return data
     } catch (e: any) {
@@ -35,7 +52,6 @@ export class Users {
       throw e?.response?.data || e
     }
   }
-
   public static async getAllOrganizers(
     query?: PaginationRequestDto
   ): Promise<any | void> {
