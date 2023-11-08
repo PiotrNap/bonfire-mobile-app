@@ -6,26 +6,16 @@ import { AnyObject } from "yup/lib/types"
 import axios from "./base"
 
 export class Events {
-  private static throwCustomError(e: any) {
-    throw Error(
-      `${e.message} (${String(e.config.method).toUpperCase()} | ${
-        e.config.url
-      })`
-    )
-  }
   public static async createEvent(event: CreateEventDto): Promise<any> {
     try {
       const res = await axios.post("/events", event)
       if (res.data) return res.data
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
-  public static async uploadEventImage(
-    filePath: string,
-    eventId: string
-  ): Promise<any> {
+  public static async uploadEventImage(filePath: string, eventId: string): Promise<any> {
     try {
       return await axios.post(
         `events/${eventId}/image`,
@@ -37,7 +27,7 @@ export class Events {
         }
       )
     } catch (e) {
-      throw e
+      throw e?.response?.data || e
     }
   }
 
@@ -47,7 +37,7 @@ export class Events {
 
       if (res.data) return res.data
     } catch (e) {
-      throw e
+      throw e?.response?.data || e
     }
   }
 
@@ -56,7 +46,7 @@ export class Events {
       const res = await axios.get(`/${id}/events`)
       if (res.data) return res.data
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -65,7 +55,7 @@ export class Events {
       const res = await axios.get(`events/${id}`)
       if (res.data) return res.data
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -87,7 +77,7 @@ export class Events {
         return res.data
       }
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -106,7 +96,7 @@ export class Events {
         },
       })
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -117,7 +107,7 @@ export class Events {
       const res = await axios.get("auth/google-cal-events", query)
       if (res) return res.data
     } catch (e) {
-      this.throwCustomError(e)
+      throw e?.response?.data || e
     }
   }
 
@@ -126,8 +116,7 @@ export class Events {
       const res = await axios.delete(`events/${id}`)
       if (res) return res.data
     } catch (e) {
-      this.throwCustomError(e)
-      if (e.response.data) throw e.response.data
+      throw e?.response?.data || e
     }
   }
 }

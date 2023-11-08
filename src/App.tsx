@@ -41,7 +41,6 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
-  // const { token } = useFirebaseMessaging(user?.id, isAuthorized)
   const onNavigationReady = () => SplashScreen.hide()
 
   // React.useEffect(() => {
@@ -67,11 +66,9 @@ function App() {
     ),
   }
 
-  if (!isAuthLoaded) {
-    return <></>
-  } else {
-    return (
-      <>
+  return (
+    <>
+      {isAuthLoaded && (
         <SafeAreaProvider>
           <AppContextProvider>
             <ProfileContextProvider>
@@ -141,10 +138,10 @@ function App() {
             </ProfileContextProvider>
           </AppContextProvider>
         </SafeAreaProvider>
-        <Toast config={toastConfig} />
-      </>
-    )
-  }
+      )}
+      <Toast topOffset={20} config={toastConfig} />
+    </>
+  )
 }
 
 export default App

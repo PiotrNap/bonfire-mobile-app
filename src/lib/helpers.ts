@@ -25,12 +25,6 @@ export const isIOS = Platform.OS === "ios"
  *  For example:
  *   - Sunday (1-08-2021)
  *   - Sunday (8-08-2021)
- *   ...
- *
- *  @param index - the selected index of a week day
- *  @param year
- *  @param month
- *  @returns elected days array in milliseconds
  */
 export const getRecurringMonthDays = (index: number, year: number, month: string) => {
   const daysArray: number[] = []
@@ -54,44 +48,34 @@ export const getRecurringMonthDays = (index: number, year: number, month: string
 /**
  * Starts challenge sequence to obtain JWT from the server.
  * Returns {id, username, accessToken, expiresIn , ???} or  `null` if failed.
- *
- * @param privKey (base 64 string)
- * @param deviceID (uuid)
- * @param id (uuid)
- * @returns jwt | null
  */
 export const startChallengeSequence = async (
   privKey: string,
   deviceID: string,
-  id: string
+  id: string // user-ID
 ): Promise<{ [index: string]: string } | void> => {
-  try {
-    let res = await Auth.requestChallenge({
-      deviceID,
-      id,
-    })
-    let { challenge } = res
+  let res = await Auth.requestChallenge({
+    deviceID,
+    id,
+  })
+  let { challenge } = res
 
-    if (challenge) {
-      let signature: any = await signChallenge(
-        base64.toByteArray(challenge),
-        base64.toByteArray(privKey)
-      )
-      if (signature) {
-        let res = await Auth.requestAccessToken({
-          challenge: challenge,
-          signature,
-          id,
-          deviceID,
-        })
-        if (res) return res
-      }
+  if (challenge) {
+    let signature: any = await signChallenge(
+      base64.toByteArray(challenge),
+      base64.toByteArray(privKey)
+    )
+    if (signature) {
+      let res = await Auth.requestAccessToken({
+        challenge,
+        signature,
+        id,
+        deviceID,
+      })
+      if (res) return res
     }
-  } catch (e) {
-    throw new Error(e)
-  } finally {
-    privKey = ""
   }
+  privKey = ""
 }
 
 export const getApiUrl = (url: string): string => {
@@ -187,7 +171,7 @@ export function showSuccessToast(header: string, body: string): void {
 
 export function showErrorToast(e?: any, header?: string): void {
   const isDev = typeof __DEV__ === "boolean" && __DEV__
-  if (isDev) console.error(e)
+  if (isDev) console.error("From Toast: ", e)
 
   const body = e.message || e.msg || DEFAULT_ERROR_MSG
 
