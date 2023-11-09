@@ -26,6 +26,10 @@
 		<string>Editor</string>
 		<key>CFBundleURLName</key>
 		<string>bonfire</string>
+        <key>NSFaceIDUsageDescription</key>
+        <string>Allow ${PRODUCT_NAME} to authenticate with Face ID</string>
+        <key>NSCameraUsageDescription</key>
+        <string>Allow $(PRODUCT_NAME) to use the camera</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
 			<string>bonfire</string>

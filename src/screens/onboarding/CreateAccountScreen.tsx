@@ -90,13 +90,6 @@ export const CreateAccountScreen = ({ pagerRef }: CreateAccountScreenProps) => {
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
-      <SlideTopModal
-        icon={<ErrorModalIcon />}
-        modalContent={Errors[`${errorType}`]}
-        hideCallback={errorHideCallback}
-        isModalVisible={modalVisible}
-        backgroundColor={Colors.danger.s300}
-      />
     </>
   )
 }

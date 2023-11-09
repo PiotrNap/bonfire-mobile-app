@@ -20,7 +20,6 @@ export class Auth {
   public static async requestAccessToken(
     reqArg: JWTRequestPayload
   ): Promise<{ index: string } | void> {
-    console.log("req obj: ", reqArg)
     try {
       const res = await axios.post(`/auth/login`, reqArg)
       if (res.data) return res.data

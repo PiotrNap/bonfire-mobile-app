@@ -2,7 +2,14 @@ import ES from "react-native-encrypted-storage"
 
 // Just to minimize chance of collision with other apps when
 // encrypted storage is shared among other apps.
-const generateKey = (val: any) => `${val}_bonfire`
+export const generateUniqueEncryptedStorageKey = (val: any) => `${val}_bonfire`
+
+/**
+ * IMPORTANT !!!
+ *
+ * Never store sensitive credentials without first encrypting it.
+ * (checkout helper functions for password-based encryption/decryption)
+ */
 
 export const setToEncryptedStorage = async (
   key: StoragePropertyKeys,
@@ -11,7 +18,7 @@ export const setToEncryptedStorage = async (
   try {
     if (typeof value !== "string") value = JSON.stringify(value)
 
-    await ES.setItem(generateKey(key), value)
+    await ES.setItem(generateUniqueEncryptedStorageKey(key), value)
   } catch (e) {
     console.error(e)
     throw new Error(e)
@@ -20,7 +27,7 @@ export const setToEncryptedStorage = async (
 
 export const removeFromEncryptedStorage = async (key: StoragePropertyKeys) => {
   try {
-    await ES.removeItem(generateKey(key))
+    await ES.removeItem(generateUniqueEncryptedStorageKey(key))
   } catch (e) {
     throw new Error(e)
   }
@@ -36,24 +43,21 @@ export const isAvailableEncryptedStorage = async (): Promise<boolean> => {
   }
 }
 
-export const getFromEncryptedStorage = async (
-  key: StoragePropertyKeys
-): Promise<any> => {
-  return await ES.getItem(generateKey(key))
+export const getFromEncryptedStorage = async (key: StoragePropertyKeys): Promise<any> => {
+  return await ES.getItem(generateUniqueEncryptedStorageKey(key))
 }
 
-export const clearEncryptedStorage = async (): Promise<boolean> => {
+export const clearEncryptedStorage = async (): Promise<void> => {
   try {
-    for (const property of storagePropertyKeys) {
-      await ES.removeItem(generateKey(property))
+    for (const property of STORAGE_PROPERTY_KEYS) {
+      await ES.removeItem(generateUniqueEncryptedStorageKey(property))
     }
-    return true
   } catch (e) {
-    return false
+    throw e
   }
 }
 
-export const storagePropertyKeys: StoragePropertyKeys[] = [
+export const STORAGE_PROPERTY_KEYS: StoragePropertyKeys[] = [
   "user-settings",
   "auth-credentials",
   "device-pubKey",
@@ -62,11 +66,11 @@ export const storagePropertyKeys: StoragePropertyKeys[] = [
   "messaging-token",
   "time-zone",
   "test",
-  "wallet-root-key",
+  "root-key",
   "wallet-name",
-  "wallet-base-address",
-  "account-key",
-  "account-pub-key",
+  "base-address",
+  "account-#0-key",
+  "account-#0-pub-key",
   "mnemonic",
 ]
 export type StoragePropertyKeys =
@@ -78,9 +82,9 @@ export type StoragePropertyKeys =
   | "messaging-token"
   | "time-zone"
   | "test"
-  | "wallet-root-key"
+  | "root-key"
   | "wallet-name"
-  | "wallet-base-address"
-  | "account-key"
-  | "account-pub-key"
+  | "base-address"
+  | "account-#0-key" // key from 1852/1815/0/0/0
+  | "account-#0-pub-key"
   | "mnemonic"

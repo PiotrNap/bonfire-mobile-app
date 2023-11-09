@@ -88,15 +88,25 @@ export function hourlyRateValidationScheme() {
   })
 }
 
-/** @description Validation schema for setting up spending password
- * */
-export function passwordSetUpValidationScheme() {
+/**
+ * @description Validation schema for authenticating user for access to stored wallet keys
+ */
+export function passwordValidationSchema() {
   return yup.object().shape({
     password: yup
       .string()
       .required("Password is required")
       .matches(/\d/, "Must contain number")
       .min(10, "Min. 10 characters are required"),
+  })
+}
+
+/**
+ * @description Validation schema for setting up spending password
+ */
+export function passwordSetUpValidationScheme() {
+  return yup.object().shape({
+    password: passwordValidationSchema(),
     password_confirm: yup
       .string()
       .required("Confirmation is required")

@@ -2,19 +2,19 @@ import { Alert } from "react-native"
 import { isAndroid } from "./helpers"
 
 export const showInappropriateContentModal = () =>
-  showFailedModal(
+  showStandardModal(
     "Looks like some of the fields contain inappropriate content. Please edit those.",
     "Couldn't proceed"
   )
 
 export const showNSFWImageModal = () => {
-  showFailedModal(
+  showStandardModal(
     "The image that you've provided was deemed as inappropriate by us. Please, try a different one.",
     "Couldn't proceed"
   )
 }
 
-export const showFailedModal = (message: string, title?: string) => {
+export const showStandardModal = (message: string, title?: string) => {
   Alert.alert(
     title || "Something went wrong",
     message,
@@ -29,9 +29,7 @@ export const showFailedModal = (message: string, title?: string) => {
   )
 }
 
-export const showCredentialsLossWarningModal = (
-  onPressCb: () => Promise<void>
-) => {
+export const showCredentialsLossWarningModal = (onPressCb: () => Promise<void>) => {
   Alert.alert(
     "Beware",
     "This action is irreversible, you will lose access to your current wallet and account credentials on this device.",
@@ -55,9 +53,7 @@ export const showCredentialsLossWarningModal = (
   )
 }
 
-export const showAccountDeletionWarningModal = (
-  onPressCb: () => Promise<void>
-) => {
+export const showAccountDeletionWarningModal = (onPressCb: () => Promise<void>) => {
   Alert.alert(
     "Beware",
     "This action is irreversible. You will lose access to your account, and other users won't be able to book your events anymore.",
@@ -71,10 +67,7 @@ export const showAccountDeletionWarningModal = (
         text: "Cancel",
         style: "cancel",
         onPress: () =>
-          Alert.alert(
-            "Your account is safe",
-            "You can continue using this application."
-          ),
+          Alert.alert("Your account is safe", "You can continue using this application."),
       },
     ],
     isAndroid ? { cancelable: true } : {}

@@ -1,32 +1,26 @@
 import * as React from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-} from "react-native"
+import { View, Text, StyleSheet, useWindowDimensions, Pressable } from "react-native"
 
 import Modal from "react-native-modal"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { ProfileContext } from "contexts/profileContext"
 
 export interface BidSlideModalProps {
   children?: React.ReactNode
   isVisible: boolean
   hideModal: () => void
   icon?: JSX.Element
-  header: string
+  header?: string
   body?: string
-  buttonTitle: string
-  buttonCb: () => void
+  buttonTitle?: string
+  buttonCb?: () => void
   secondButtonTitle?: string
-  secondButtonCb?: () => void
+  secondButtonCb?: (arg?: any) => void
   buttonDisabled?: boolean
   secondButtonDisabled?: boolean
+  customStyles?: any
 }
 
 export const BigSlideModal = ({
@@ -41,6 +35,7 @@ export const BigSlideModal = ({
   children,
   buttonDisabled,
   secondButtonDisabled,
+  customStyles,
 }: BidSlideModalProps) => {
   const { colorScheme } = appContext()
   const [visible, setVisible] = React.useState<boolean>(isVisible)
@@ -65,7 +60,7 @@ export const BigSlideModal = ({
       deviceWidth={windowWidth}
       deviceHeight={windowHeight}
       isVisible={visible}
-      style={styles.modal}>
+      style={[styles.modal, customStyles]}>
       <View
         style={[
           styles.container,
@@ -85,12 +80,12 @@ export const BigSlideModal = ({
             onPress={onHideModal}
           />
           <View style={styles.textContainer}>
-            <Text
-              style={
-                isLightMode ? styles.headerText_light : styles.headerText_dark
-              }>
-              {header}
-            </Text>
+            {header && (
+              <Text
+                style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
+                {header}
+              </Text>
+            )}
             {body && (
               <BodyText
                 changingColorScheme
@@ -101,12 +96,14 @@ export const BigSlideModal = ({
             {children}
           </View>
           <View style={styles.buttonContainer}>
-            <FullWidthButton
-              onPressCallback={buttonCb}
-              text={buttonTitle}
-              colorScheme={colorScheme}
-              disabled={buttonDisabled}
-            />
+            {buttonTitle && buttonCb && (
+              <FullWidthButton
+                onPressCallback={buttonCb}
+                text={buttonTitle}
+                colorScheme={colorScheme}
+                disabled={buttonDisabled}
+              />
+            )}
             {secondButtonCb && secondButtonTitle && (
               <FullWidthButton
                 onPressCallback={secondButtonCb}
@@ -150,19 +147,18 @@ const styles = StyleSheet.create({
     borderRadius: Outlines.borderRadius.max,
   },
   textContainer: {
-    marginTop: "auto",
-    marginBottom: "auto",
+    marginTop: Sizing.x10,
     width: "100%",
   },
   headerText_light: {
-    ...Typography.header.x55,
+    ...Typography.header.x45,
     color: Colors.primary.s800,
-    marginVertical: Sizing.x20,
+    marginVertical: Sizing.x10,
   },
   headerText_dark: {
-    ...Typography.header.x55,
+    ...Typography.header.x50,
     color: Colors.primary.neutral,
-    marginVertical: Sizing.x20,
+    marginVertical: Sizing.x10,
   },
   buttonContainer: {
     width: "100%",

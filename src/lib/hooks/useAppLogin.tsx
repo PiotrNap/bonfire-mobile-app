@@ -1,53 +1,60 @@
 import * as React from "react"
 
 import { setAuthorizationToken } from "Api/base"
-import {
-  getFromEncryptedStorage,
-  setToEncryptedStorage,
-} from "lib/encryptedStorage"
-import { startChallengeSequence } from "lib/helpers"
-import TZ from "react-native-timezone"
+import { getFromEncryptedStorage, setToEncryptedStorage } from "lib/encryptedStorage"
+import { showErrorToast, startChallengeSequence } from "lib/helpers"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const useAppLogin = () => {
   const [isAuthorized, setIsAuthorized] = React.useState<boolean>(false)
   const [isAuthLoaded, setIsAuthLoaded] = React.useState<boolean>(false)
   const [user, setUser] = React.useState<any>(null)
-  // const isExpired = (expiration: Date) => expiration > new Date()
 
   React.useEffect(() => {
     ;(async () => {
       try {
         let authCred = await getFromEncryptedStorage("auth-credentials")
-        let sec = await getFromEncryptedStorage("privKey")
-        let pub = await getFromEncryptedStorage("pubKey")
+        let privKey = await getFromEncryptedStorage("device-privKey")
+        let pubKey = await getFromEncryptedStorage("device-pubKey")
+        let deviceID = await getFromEncryptedStorage("device-id")
         let userSettings = await getFromEncryptedStorage("user-settings")
-        const isExpired = new Date() > new Date(authCred?.expiresAt)
+        let walletBaseAddress = await AsyncStorage.getItem("account-#0-baseAddress")
+        const isExpired = new Date() >= new Date(authCred?.expiresAt)
 
-        console.log("Auth Cred: ", authCred)
-        if (!pub) throw new Error(`Missing public key. User not authorized`)
+        console.log(`
+        retrieving from encrypted storage:
+            authCred: ${authCred}
+            deviceID: ${deviceID}
+            devicePubKey: ${pubKey}
+            deviceSecKey: ${privKey}
+            baseAddress: ${walletBaseAddress}
+            `)
 
+        if (typeof authCred == "string") authCred = JSON.parse(authCred)
         if (authCred && !isExpired) {
           setAuthorizationToken(authCred.accessToken)
           setIsAuthorized(true)
           setUser({
             username: authCred.username,
-            profileType: authCred.profileType,
             id: authCred.id,
+            deviceID,
           })
         }
-        // const tz = await TZ.getTimeZone()
 
-        if (sec && pub) {
-          const accessTokenDto = await startChallengeSequence(pub, authCred.id)
+        if (privKey && pubKey && deviceID) {
+          const accessTokenDto = await startChallengeSequence(
+            privKey,
+            deviceID,
+            authCred.id
+          )
 
           if (accessTokenDto) {
             setUser({
               username: accessTokenDto.username,
-              profileType: accessTokenDto.profileType,
               id: accessTokenDto.id,
-              hourlyRate: accessTokenDto?.hourlyRate,
               timeZone: accessTokenDto?.timeZone,
               userSettings,
+              deviceID,
             })
             setToEncryptedStorage("auth-credentials", accessTokenDto)
             setAuthorizationToken(accessTokenDto.accessToken)
@@ -57,7 +64,7 @@ export const useAppLogin = () => {
           if (isAuthorized) setIsAuthorized(false)
         }
       } catch (e) {
-        console.error(e)
+        showErrorToast(e)
         setIsAuthorized(false)
       }
       setIsAuthLoaded(true)

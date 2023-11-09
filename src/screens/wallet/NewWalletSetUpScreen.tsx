@@ -10,11 +10,14 @@ import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { appContext, walletContext } from "contexts/contextApi"
 import { setToEncryptedStorage } from "lib/encryptedStorage"
 import { PasswordSetUpFormValues } from "lib/wallet/types"
-import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Colors, Outlines, Sizing } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
-import { encryptWithPassword, showErrorToast, startChallengeSequence } from "lib/helpers"
+import { showErrorToast, startChallengeSequence } from "lib/helpers"
 import { PasswordSetUpForm } from "components/forms/PasswordSetUpForm"
 import { useNavigation } from "@react-navigation/native"
+import { addKeysToStorage } from "lib/wallet/storage"
+import { Bip32PrivateKey, bytesToHex } from "@hyperionbt/helios"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
   const [biometricsAccepted, setBiometricsAccepted] = React.useState<boolean>(false)
@@ -26,6 +29,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
     rootKeyHex,
     isOfflineMnemonic,
     baseAddress,
+    accountKeyHex,
     accountPubKeyHex,
     resetSecrets,
   } = walletContext()
@@ -44,81 +48,33 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
   const createWallet = React.useCallback(
     async (walletForm: PasswordSetUpFormValues) => {
       if (!walletForm) throw new Error(`Missing new wallet setup form values`)
-      const { password, password_confirm } = walletForm
+      let { password, password_confirm } = walletForm
       if (password !== password_confirm)
         throw new Error(`Passwords do not match. Please correct any errors.`)
 
       if (!rootKeyHex) throw new Error(`Missing wallets root key`)
+      // for not having to derive it each time from root key...
+      const privKeyArray = Array.from(Buffer.from(accountKeyHex, "hex"))
+      const baseAddressKey = bytesToHex(
+        new Bip32PrivateKey(privKeyArray).derive(0).derive(0).bytes
+      )
 
-      // - store keys to encrypted storage, encrypted with the password
       try {
-        await setToEncryptedStorage("wallet-base-address", baseAddress)
-        // if this works we need to change type passed as first param in other instances
-        const passwordEncryptedRootKey = await encryptWithPassword(rootKeyHex, password)
-        if (!passwordEncryptedRootKey)
-          return showErrorToast({ message: "Unable to encrypt keys with password" })
-
-        if (!passwordEncryptedRootKey)
-          throw new Error(`Unable to encrypt root-key with password`)
-        await Keychain.setGenericPassword(
-          "passwordEncryptedRootKey",
-          passwordEncryptedRootKey,
-          {
-            accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-            service: "@Bonfire:passwordEncryptedRootKey",
-          }
+        // store root key + base address (+ mnemonic) securely
+        await addKeysToStorage(
+          isOfflineMnemonic,
+          biometricsAccepted,
+          password,
+          rootKeyHex,
+          baseAddress,
+          baseAddressKey,
+          isOfflineMnemonic ? mnemonic : undefined
         )
+        // whether to show the mnemonic preview option in user settings
+        await AsyncStorage.setItem("isOfflineMnemonic", String(isOfflineMnemonic))
 
-        /**
-         * User opted-in to store mnemonic offline on the device
-         */
-        if (isOfflineMnemonic) {
-          const mnemonicPhrase = Object.values(mnemonic).join(" ")
-          // return console.log(mnemonic, password)
-          const passwordEncryptedMnemonic = await encryptWithPassword(
-            mnemonicPhrase,
-            password
-          )
-          if (!passwordEncryptedMnemonic)
-            throw new Error(`Unable to encrypt mnemonic with password`)
-          await Keychain.setGenericPassword(
-            "passwordEncryptedMnemonic",
-            passwordEncryptedMnemonic,
-            {
-              accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-              service: "@Bonfire:passwordEncryptedMnemonic",
-            }
-          )
-
-          /**
-           * User choose biometry as an alternative to password
-           */
-          if (biometricsAccepted) {
-            const { secretKey } = generateKeyPair()
-            if (!secretKey) throw new Error(`Missing encryption key for mnemonic`)
-            // Encryption Key
-            const base64SecretKey = Buffer.from(secretKey).toString("base64")
-            await Keychain.setGenericPassword("secretKey", base64SecretKey, {
-              accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-              service: "@Bonfire:secretKey",
-            })
-            // Secret Key Encrypted Mnemonic
-            const secretKeyEncryptedMnemonic = await encryptWithPassword(
-              mnemonicPhrase,
-              base64SecretKey
-            )
-            if (!secretKeyEncryptedMnemonic)
-              throw new Error(`Unable to encrypt mnemonic encryption key`)
-            await Keychain.setGenericPassword(
-              "secretKeyEncryptedMnemonic",
-              secretKeyEncryptedMnemonic,
-              {
-                accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-                service: "@Bonfire:secretKeyEncryptedMnemonic",
-              }
-            )
-          }
-        }
+        password = ""
+        password_confirm = ""
 
         if (prop === "sign-in") {
           const keyPair = generateKeyPair()
@@ -187,65 +143,6 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
           onSubmitCallback={createWallet}
         />
       </View>
-      {/*
-      <SmallModal
-        modalVisible={isModalVisible}
-        onCloseModal={closeRiskAckModal}
-        onRequestClose={closeRiskAckModal}
-        transparent={true}>
-        <View style={styles.modalView}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: isLightMode
-                  ? Colors.primary.neutral
-                  : Colors.neutral.s600,
-              },
-            ]}>
-            <SubHeaderText
-              customStyle={{ ...Typography.fontWeight.semibold }}
-              colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              {false
-                ? textContent.wallet.risk_acknowledgement.header
-                : textContent.wallet.create_wallet.mnemonic_info_modal.header}
-            </SubHeaderText>
-            <ScrollView style={styles.modalScrollContent}>
-              {!false ? (
-                textContent.wallet.risk_acknowledgement.body_items.map(
-                  (item) => (
-                    <View style={styles.modalItemWrapper}>
-                      <BodyText>{item.text}</BodyText>
-                    </View>
-                  )
-                )
-              ) : (
-                <View style={styles.modalItemWrapper}>
-                  <BodyText>
-                    {textContent.wallet.create_wallet.mnemonic_info_modal.body}
-                  </BodyText>
-                </View>
-              )}
-            </ScrollView>
-            <View style={styles.modalButtonsWrapper}>
-              <FullWidthButton
-                text="I Understand"
-                style={styles.modalButton}
-                textStyle={{ ...Typography.fontSize.x25 }}
-                colorScheme={colorScheme}
-                onPressCallback={createWallet}
-              />
-              <FullWidthButton
-                text="Cancel"
-                style={styles.modalButton}
-                textStyle={{ ...Typography.fontSize.x25 }}
-                colorScheme={colorScheme}
-                onPressCallback={() => setIsModalVisible(false)}
-              />
-            </View>
-          </View>
-        </View>
-      </SmallModal> */}
     </View>
   )
 }
