@@ -1,20 +1,19 @@
 import * as React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
-import { OrganizerTabParamList } from "common/types/navigationTypes"
+// import { UserTabParamList } from "common/types/navigationTypes"
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
 import { BrowseScreensStack } from "../stacks/BrowseScreensStack"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { ProfileScreenStack } from "stacks/ProfileScreenStack"
 import { WalletScreen } from "screens/wallet/WalletScreen"
-import { HomeScreenStack } from "stacks/HomeScreenStack"
+import { CalendarScreenStack } from "stacks/HomeScreenStack"
 
-const AttendeeNavigationTabs = createBottomTabNavigator<OrganizerTabParamList>()
+const AttendeeNavigationTabs = createBottomTabNavigator<any>()
 
 export const AttendeeNavigationScreens = ({ route }: any) => {
-  const { setId, setUsername, setProfileType } =
-    React.useContext(ProfileContext)
+  const { setID, setUsername } = React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
 
   React.useEffect(() => {
@@ -24,8 +23,8 @@ export const AttendeeNavigationScreens = ({ route }: any) => {
       const { profileType, username, id } = route.params
 
       profileType && toggleAuth(true, profileType)
-      id && setId(id)
-      profileType && setProfileType(profileType)
+      id && setID(id)
+      // profileType && setProfileType(profileType)
       username && setUsername(username)
     }
   }, [])
@@ -37,7 +36,7 @@ export const AttendeeNavigationScreens = ({ route }: any) => {
       tabBar={(props) => <NavigationTabBar {...props} />}>
       <AttendeeNavigationTabs.Screen
         name="Home Stack"
-        component={HomeScreenStack}
+        component={CalendarScreenStack}
       />
       <AttendeeNavigationTabs.Screen
         name="Browse Stack"

@@ -16,7 +16,7 @@ export const CheckIcon = React.forwardRef((props: SvgProps, ref) => {
       <Path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={strokeWidth ? strokeWidth : 2.4}
+        strokeWidth={strokeWidth || 2.4}
         d="M5 13l4 4L19 7"
       />
     </Svg>

@@ -16,7 +16,13 @@ import {
   PreviewingDayEvents,
   Events,
 } from "interfaces/myCalendarInterface"
-import { SendTxInfo, WalletKeys } from "lib/wallet/types"
+import {
+  SendRegularTxInfo,
+  SendLockingTxInfo,
+  SendUnlockingTxInfo,
+  WalletKeys,
+  WalletAssets,
+} from "lib/wallet/types"
 
 export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
@@ -60,6 +66,7 @@ export enum WalletTypes {
   SetTxHistory = "SET_TXHISTORY",
   SetMnemonic = "SET_MNEMONIC",
   SetWalletKeys = "SET_WALLET_KEYS",
+  SetWalletAssets = "SET_WALLET_ASSETS",
   SetSendTxInfo = "SET_SEND_TX_INFO",
   SetBaseAddress = "SET_BASE_ADDRESS",
   SetIsOfflineMnemonic = "SET_IS_OFFLINE_MNEMONIC",
@@ -297,7 +304,7 @@ export type WalletPayload = {
     txHistory: any[]
   }
   [WalletTypes.SetSendTxInfo]: {
-    sendTxInfo: SendTxInfo
+    sendTxInfo: SendRegularTxInfo | SendLockingTxInfo | SendUnlockingTxInfo
   }
   [WalletTypes.SetMnemonic]: {
     mnemonic: {}
@@ -307,6 +314,9 @@ export type WalletPayload = {
   }
   [WalletTypes.SetWalletKeys]: {
     walletKeys: WalletKeys
+  }
+  [WalletTypes.SetWalletAssets]: {
+    walletAssets: WalletAssets
   }
   [WalletTypes.SetIsOfflineMnemonic]: {
     isOfflineMnemonic: boolean

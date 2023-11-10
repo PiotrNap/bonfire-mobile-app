@@ -28,10 +28,10 @@ export const bar: Record<Bar, ViewStyle> = {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.primary.s800,
+    backgroundColor: Colors.primary.s600,
     paddingVertical: Sizing.x10,
     borderWidth: Sizing.x3,
-    borderColor: Colors.primary.s800,
+    borderColor: Colors.primary.s600,
     borderRadius: Outlines.borderRadius.base,
     marginTop: Sizing.x15,
     ...Outlines.shadow.lifted,
@@ -95,16 +95,16 @@ export const barText: Record<BarText, TextStyle> = {
   primary_dark: {
     ...Typography.subHeader.x35,
     fontFamily: "Roboto-Medium",
-    color: Colors.primary.neutral,
+    color: "white",
   },
   transparent_light: {
     ...Typography.subHeader.x35,
-    fontFamily: "Roboto-Bold",
+    fontFamily: "Roboto-Medium",
     color: Colors.primary.s800,
   },
   transparent_dark: {
     ...Typography.subHeader.x35,
-    fontFamily: "Roboto-Bold",
+    fontFamily: "Roboto-Medium",
     color: Colors.primary.neutral,
   },
   small: {
@@ -136,15 +136,12 @@ const opacity = (state: PressableStateCallbackType, style: any): ViewStyle => {
 
   return {
     opacity: 0.8,
-    borderColor: style.borderColor
-      ? applyColorOpacity(style.borderColor, 0.65)
-      : "none",
+    borderColor: style.borderColor ? applyColorOpacity(style.borderColor, 0.65) : "none",
   }
 }
 
 export const applyOpacity = (style: ViewStyle | ViewStyle[]) => {
-  if ((style as any).length !== undefined)
-    style = Object.assign({}, ...(style as any))
+  if ((style as any).length !== undefined) style = Object.assign({}, ...(style as any))
   return (state: PressableStateCallbackType): ViewStyle => {
     return {
       ...style,

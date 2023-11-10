@@ -14,6 +14,7 @@ import { DescriptionIcon } from "./description"
 import { DotIcon } from "./dot"
 import { DoubleColorDot } from "./doubleColorDot"
 import { DownIcon } from "./down"
+import { UpIcon } from "./up"
 import { DuplicateIcon } from "./duplicate"
 import { EditIcon } from "./edit"
 import { EmptyDocumentsIcon } from "./emptyDocuments"
@@ -25,6 +26,8 @@ import { HearthIcon } from "./hearth"
 import { HomeIcon } from "./home"
 import { IdeaIcon } from "./idea"
 import { LeftArrowIcon } from "./leftArrow"
+import { DownArrow } from "./downArrow"
+import { UpArrow } from "./upArrow"
 import { LightBulbIcon } from "./lightBulb"
 import { LiveCollaborationIcon } from "./liveCollaboration"
 import { ModernProfessionalIcon } from "./modernProfessional"
@@ -47,6 +50,7 @@ import { TimeIcon } from "./time"
 import { TrashIcon } from "./trash"
 import { UserIcon } from "./user"
 import { WalletIcon } from "./wallet"
+import { QrCodeIcon } from "./qrCode"
 
 export {
   AdaIcon,
@@ -66,6 +70,9 @@ export {
   SuccessIcon,
   DescriptionIcon,
   DownIcon,
+  DownArrow,
+  UpIcon,
+  UpArrow,
   LeftArrowIcon,
   LightBulbIcon,
   RightArrowIcon,
@@ -98,4 +105,5 @@ export {
   WalletIcon,
   TimeIcon,
   TrashIcon,
+  QrCodeIcon,
 }

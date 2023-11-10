@@ -16,18 +16,15 @@ type Props = StackScreenProps<AppStackParamList, "Success">
 export const SuccessScreen = ({ navigation, route }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
-  const { navigationScreen, bodyText } = route.params
-  const navigateBack = () =>
-    navigation.navigate(navigationScreen || "Navigation Screens")
+  const { navigationScreen, bodyText, headerText } = route.params
+  const navigateBack = () => navigation.navigate(navigationScreen || "Navigation Screens")
 
   return (
     <SafeAreaView
       style={[
         styles.safeArea,
         {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
         },
       ]}>
       <View style={styles.navigation}>
@@ -42,11 +39,8 @@ export const SuccessScreen = ({ navigation, route }: Props) => {
       <View style={styles.container}>
         <SuccessIcon width={200} height={200} style={styles.icon} />
         <View style={styles.textContainer}>
-          <Text
-            style={
-              isLightMode ? styles.headerText_light : styles.headerText_dark
-            }>
-            Success!
+          <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
+            {headerText ?? "Success!"}
           </Text>
           <BodyText
             customStyle={styles.bodyText}

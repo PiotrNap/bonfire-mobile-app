@@ -31,19 +31,33 @@ const MNEMONIC_ERRORS = {
 }
 
 //TODO  DO NOT use this mnemonic in production
+// const DEV_MNEMONIC = {
+// "0": "expand",
+// "1": "good",
+// "2": "gun",
+// "3": "morning",
+// "4": "wall",
+// "5": "assault",
+// "6": "heart",
+// "7": "punch",
+// "8": "access",
+// "9": "magic",
+// "10": "spoon",
+// "11": "tag",
+// }
 const DEV_MNEMONIC = {
-"0": "expand",
-"1": "good",
-"2": "gun",
-"3": "morning",
-"4": "wall",
-"5": "assault",
-"6": "heart",
-"7": "punch",
-"8": "access",
-"9": "magic",
-"10": "spoon",
-"11": "tag",
+  "0": "top",
+  "1": "polar",
+  "2": "minute",
+  "3": "special",
+  "4": "rival",
+  "5": "adjust",
+  "6": "burger",
+  "7": "wasp",
+  "8": "session",
+  "9": "dinosaur",
+  "10": "conduct",
+  "11": "cabbage",
 }
 
 export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {

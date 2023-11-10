@@ -19,22 +19,26 @@ export interface assetItemInterface {
 }
 
 export const AssetItem = React.memo(
-  ({ item, isSendTransactionScreen,isSelected, onCheckboxPress }: assetItemInterface) => {
+  ({
+    item,
+    isSendTransactionScreen,
+    isSelected,
+    onCheckboxPress,
+  }: assetItemInterface) => {
     const [imageUrl, setImageUrl] = React.useState<any>("")
     const [selectedCheckbox, setSelectedCheckbox] = React.useState<boolean>(isSelected)
-    const { policyId, name, labelNum, count } = item
+    const { policyId, name, label, count } = item
     const { colorScheme } = appContext()
     const assetName = Buffer.from(name, "hex").toString()
     const handlePress = () => {
       if (onCheckboxPress) {
-        onCheckboxPress(toAssetUnit(policyId, name, labelNum), Number(count))
+        onCheckboxPress(toAssetUnit(policyId, name, label), Number(count))
         setSelectedCheckbox((p) => !p)
       }
     }
 
     const getAssetInfo = React.useCallback(async () => {
-      const label = labelNum ? toLabel(labelNum) : ""
-      const unit = policyId + (label ? label : "") + name
+      const unit = policyId + label + name
       const { error, data } = await Wallet.getAssetInfo(unit)
 
       if (error) {

@@ -2,23 +2,18 @@ import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import {
-  appContext,
-  bookingContext,
-  eventCreationContext,
-} from "contexts/contextApi"
-import { CheckIcon, ErrorIcon, LeftArrowIcon, ShareIcon } from "assets/icons"
+import { appContext, bookingContext, eventCreationContext } from "contexts/contextApi"
+import { LeftArrowIcon, ShareIcon } from "assets/icons"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { EventConfirmationDetails } from "components/booking"
+import { ConfirmationDetails } from "components/booking"
 import { ProfileContext } from "contexts/profileContext"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
-import { SlideTopModal } from "components/modals/SlideTopModal"
 import { useEventDeletion } from "lib/hooks/useEventDeletion"
 import { Events } from "Api/Events"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { SmallButton } from "components/buttons/smallButton"
-import { shareEvent } from "lib/helpers"
+import { shareEvent, showErrorToast, showSuccessToast } from "lib/helpers"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -38,8 +33,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     availabilities,
     gCalEventsBooking,
   } = eventCreationContext()
-  const { duration, pickedDate, previewingEvent, createGoogleCalEvent } =
-    bookingContext()
+  const { duration, pickedDate, previewingEvent, createGoogleCalEvent } = bookingContext()
   const { username, id } = React.useContext(ProfileContext)
   const {
     errorMsg,
@@ -48,26 +42,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     deleteEvent,
   } = useEventDeletion(params.organizerEvent?.eventId)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
-  const [_errMsg, setErrMsg] = React.useState<string>("")
 
   const isLightMode = colorScheme === "light"
-  const ModalIcon =
-    _errMsg || errorMsg ? (
-      <ErrorIcon
-        stroke={Colors.primary.neutral}
-        width={Sizing.x60}
-        height={Sizing.x60}
-        strokeWidth={1.5}
-      />
-    ) : (
-      <CheckIcon
-        stroke={Colors.success.s400}
-        width={Sizing.x60}
-        height={Sizing.x60}
-        strokeWidth={1.5}
-      />
-    )
   const onBackNavigationPress = () => navigation.goBack()
   const onButtonPress = async () => {
     setIsLoading(true)
@@ -105,12 +81,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           isNewEvent: true,
         })
       } catch (e) {
-        console.error(e)
         setIsLoading(false)
         if (e.response.status === 422) return showNSFWImageModal()
-
-        setErrMsg(e.response.data.message)
-        setIsModalVisible(true)
+        showErrorToast(e)
       }
     } else {
       try {
@@ -128,10 +101,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           })
         }
       } catch (e) {
-        console.error(e)
-        if (e.response.data.message) setErrMsg(e.response.data.message)
-        setIsModalVisible(true)
-
+        showErrorToast(e)
         setIsLoading(false)
       }
 
@@ -141,117 +111,90 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const onDeleteEvent = async () => {
     if (!params.organizerEvent.eventId) return
     await deleteEvent()
-    setIsModalVisible(true)
+
+    if (errorMsg) {
+      showErrorToast(errorMsg)
+    } else showSuccessToast("Success!", successMsg)
   }
-  const onSharePress = async () =>
-    await shareEvent(params?.organizerCalendarEvent.id)
-  const modalHideCallback = () => setIsModalVisible(false)
+  const onSharePress = async () => await shareEvent(params?.organizerCalendarEvent.id)
 
   return (
-    <>
-      <SafeAreaView
-        style={[
-          styles.safeArea,
-          {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.neutral.s600,
-          },
-        ]}>
-        <View
-          style={[
-            styles.container,
-            !params?.organizerCalendarEvent && { flex: 1 },
-          ]}>
-          <View style={styles.navigation}>
-            <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-              <LeftArrowIcon
-                width={24}
-                height={24}
-                color={
-                  isLightMode ? Colors.primary.s600 : Colors.primary.neutral
-                }
-              />
-            </Pressable>
-          </View>
-          <View style={styles.header}>
-            <Text
-              style={
-                isLightMode ? styles.headerText_light : styles.headerText_dark
-              }>
-              {params?.header || "Confirmation"}
-            </Text>
-          </View>
-          <EventConfirmationDetails
-            isCalendarEventPreview={params?.isCalendarEventPreview}
-            organizerEvent={
-              params?.organizerEvent || params?.organizerCalendarEvent
-            }
-            bookedEvent={params?.bookedEvent}
-            isNewEvent={params?.isNewEvent}
-          />
-          {params?.organizerCalendarEvent && (
-            <View style={styles.shareButtonWrapper}>
-              <SmallButton
-                title="Share Event"
-                icon={
-                  <ShareIcon
-                    color={Colors.primary.neutral}
-                    width={Sizing.x14}
-                    height={Sizing.x14}
-                    strokeWidth={4}
-                  />
-                }
-                onPress={onSharePress}
-              />
-            </View>
-          )}
-          <View style={styles.buttonContainer}>
-            {params?.organizerEvent &&
-            !params?.organizerEvent.numOfBookedSlots ? (
-              !successMsg ? (
-                <FullWidthButton
-                  onPressCallback={onDeleteEvent}
-                  text="Close Event"
-                  colorScheme={colorScheme}
-                  loadingIndicator={isEventDeletionLoading}
-                  textStyle={{ color: Colors.primary.neutral }}
-                  style={{
-                    backgroundColor: Colors.danger.s300,
-                    borderColor: Colors.danger.s300,
-                  }}
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
+        },
+      ]}>
+      <View style={[styles.container, { flex: 1 }]}>
+        <View style={styles.navigation}>
+          <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+            <LeftArrowIcon
+              width={24}
+              height={24}
+              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
+            />
+          </Pressable>
+        </View>
+        <View style={styles.header}>
+          <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
+            {params?.header || "Confirmation"}
+          </Text>
+        </View>
+        <ConfirmationDetails
+          isCalendarEventPreview={params?.isCalendarEventPreview}
+          organizerEvent={params?.organizerEvent || params?.organizerCalendarEvent}
+          bookedEvent={params?.bookedEvent}
+          isNewEvent={params?.isNewEvent}
+        />
+        {params?.organizerCalendarEvent && (
+          <View style={styles.shareButtonWrapper}>
+            <SmallButton
+              title="Share Event"
+              icon={
+                <ShareIcon
+                  color={Colors.primary.neutral}
+                  width={Sizing.x14}
+                  height={Sizing.x14}
+                  strokeWidth={4}
                 />
-              ) : (
-                <></>
-              )
-            ) : !params?.isCalendarEventPreview &&
-              !params?.organizerCalendarEvent &&
-              !params?.bookedEvent ? (
+              }
+              onPress={onSharePress}
+            />
+          </View>
+        )}
+        <View style={styles.buttonContainer}>
+          {params?.organizerEvent && !params?.organizerEvent.numOfBookedSlots ? (
+            !successMsg ? (
               <FullWidthButton
-                onPressCallback={onButtonPress}
-                text={"Confirm"}
+                onPressCallback={onDeleteEvent}
+                text="Close Event"
                 colorScheme={colorScheme}
-                loadingIndicator={isLoading}
+                loadingIndicator={isEventDeletionLoading}
+                textStyle={{ color: Colors.primary.neutral }}
+                style={{
+                  backgroundColor: Colors.danger.s300,
+                  borderColor: Colors.danger.s300,
+                }}
               />
             ) : (
               <></>
-            )}
-          </View>
+            )
+          ) : !params?.isCalendarEventPreview &&
+            !params?.organizerCalendarEvent &&
+            !params?.bookedEvent ? (
+            <FullWidthButton
+              onPressCallback={onButtonPress}
+              text={"Confirm"}
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+            />
+          ) : (
+            <></>
+          )}
         </View>
-      </SafeAreaView>
-      {isModalVisible && (
-        <SlideTopModal
-          icon={ModalIcon}
-          isModalVisible={isModalVisible}
-          modalContent={errorMsg ?? _errMsg ?? successMsg}
-          backgroundColor={
-            errorMsg || _errMsg ? Colors.danger.s300 : Colors.primary.s180
-          }
-          contentStyle={successMsg ? { color: Colors.success.s400 } : {}}
-          hideCallback={modalHideCallback}
-        />
-      )}
-    </>
+      </View>
+    </SafeAreaView>
   )
 }
 

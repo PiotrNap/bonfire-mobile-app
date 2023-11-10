@@ -55,7 +55,7 @@ export const WalletTabs = ({
           </Text>
         </TouchableOpacity>
       </View>
-      {activeTab === "assets" && (
+      {activeTab === "assets" && assets && (
         <View style={styles.tabContent}>
           <WalletTabList
             listData={assets}
@@ -67,7 +67,7 @@ export const WalletTabs = ({
           />
         </View>
       )}
-      {activeTab === "history" && (
+      {activeTab === "history" && transactions && (
         <View style={styles.tabContent}>
           <WalletTabList
             listData={transactions}

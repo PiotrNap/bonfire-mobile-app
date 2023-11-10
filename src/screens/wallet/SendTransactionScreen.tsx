@@ -11,37 +11,43 @@ import { txSendValidationSchema } from "lib/validators"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { CustomInput } from "components/forms/CustomInput"
 import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
-import { assetsToUnitsMap, txInputsToAssets } from "lib/wallet/utils"
 import { WalletTabList } from "components/wallet/walletTabList"
 import { noop } from "lib/utils"
+import { showErrorToast } from "lib/helpers"
+import { AssetUnit } from "lib/wallet/types"
 
 export const SendTransactionScreen = ({ navigation }: any) => {
+  const { walletAssets } = walletContext()
   const { colorScheme, qrCodeValue } = appContext()
-  const { setSendTxInfo, walletUtxos, lovelaceBalance } = walletContext()
-  const [selectedAssets, setSelectedAssets] = React.useState<Map<string, number>>(
+  const { setSendTxInfo, lovelaceBalance } = walletContext()
+  const [selectedAssets, setSelectedAssets] = React.useState<Map<string, AssetUnit>>(
     new Map()
   )
   const [isValidForm, setIsValidForm] = React.useState<boolean>(false)
-  const [adaAmount, setAdaAmount ] = React.useState<string>('')
-  const [receiverAddress, setReceiverAddress] =React.useState<string>('')
+  const [adaAmount, setAdaAmount] = React.useState<string>("")
+  const [receiverAddress, setReceiverAddress] = React.useState<string>("")
   const formikRef = React.useRef<any>(null)
   const isLightMode = colorScheme === "light"
 
   const onBackNavigationPress = () => navigation.goBack()
 
   const onPreviewPress = () => {
-    setSendTxInfo({ receiverAddress, lovelace: Number(adaAmount) * 1_000_000, assets: selectedAssets })
+    setSendTxInfo({
+      receiverAddress,
+      lovelace: Number(adaAmount) * 1_000_000,
+      assets: selectedAssets,
+    })
     navigation.navigate("Preview Transaction")
   }
   const onScanPress = () => navigation.navigate("Qr-Code Scanner")
   const onAdaAmountChange = (e: any) => setAdaAmount(e.nativeEvent.text)
   const onReceiverAddressChange = (e: any) => setReceiverAddress(e.nativeEvent.text)
 
-  const tokens = React.useMemo(
-    () => assetsToUnitsMap(txInputsToAssets(walletUtxos)),
-    [walletUtxos]
-  )
-  const onCheckboxPress = (unit: string, count: number) => {
+  const onCheckboxPress = (unit: string) => {
+    const walletAsset = walletAssets?.get(unit)
+    if (!walletAsset)
+      return showErrorToast("Unable to find selected asset in user wallet")
+
     const isSelected = selectedAssets.has(unit)
     let newSelectedAssets = selectedAssets
 
@@ -51,7 +57,7 @@ export const SendTransactionScreen = ({ navigation }: any) => {
 
       return setSelectedAssets(newSelectedAssets)
     } else {
-      newSelectedAssets.set(unit, count)
+      newSelectedAssets.set(unit, walletAsset)
       setSelectedAssets(newSelectedAssets)
     }
   }
@@ -63,8 +69,7 @@ export const SendTransactionScreen = ({ navigation }: any) => {
     formStyles = Object.assign({}, inputStyles, styles, formStyleDark)
   }
 
-
-    return (
+  return (
     <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
       <View style={styles.mainContainer}>
         <View style={styles.navigation}>
@@ -83,7 +88,8 @@ export const SendTransactionScreen = ({ navigation }: any) => {
           validationSchema={txSendValidationSchema(lovelaceBalance)}
           initialValues={{
             //@TODO revert this
-            receivingAddress:'addr_test1qzrdax5shce7x979dn5x93ehye7u6j3d4t0ztf9h5uep4n08a9ece0a90sdv7d66685jcrgxdn4ej8kvydjpfr2yrw4s3zjvha', //qrCodeValue || "",
+            receivingAddress:
+              "addr_test1qzrdax5shce7x979dn5x93ehye7u6j3d4t0ztf9h5uep4n08a9ece0a90sdv7d66685jcrgxdn4ej8kvydjpfr2yrw4s3zjvha", //qrCodeValue || "",
             ada: 2,
           }}
           innerRef={formikRef}
@@ -152,14 +158,16 @@ export const SendTransactionScreen = ({ navigation }: any) => {
           }}
         </Formik>
         <View style={styles.tabContent}>
-      <WalletTabList
-        isSendTransactionScreen
-        listData={tokens}
-        onEndReached={noop}
-        selectedAssets={selectedAssets}
-        onCheckboxPress={onCheckboxPress}
-        type="assets"
-      />
+          {walletAssets && (
+            <WalletTabList
+              isSendTransactionScreen
+              listData={walletAssets}
+              onEndReached={noop}
+              selectedAssets={selectedAssets}
+              onCheckboxPress={onCheckboxPress}
+              type="assets"
+            />
+          )}
         </View>
 
         <View>

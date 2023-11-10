@@ -15,19 +15,12 @@ import { DetailedConfirmation } from "screens/payments"
 
 const Stack = createStackNavigator<EventCreationParamList>()
 
-export const HomeScreenStack = ({ route }: any) => {
+export const CalendarScreenStack = ({ route }: any) => {
   return (
     <EventCreationContextProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          initialParams={route.params}
-        />
-        <Stack.Screen
-          name="New Event Description"
-          component={NewEventDescription}
-        />
+        <Stack.Screen name="Home" component={HomeScreen} initialParams={route.params} />
+        <Stack.Screen name="New Event Description" component={NewEventDescription} />
         <Stack.Screen
           name="Available Days Selection"
           component={AvailableDaysSelection}
@@ -36,10 +29,7 @@ export const HomeScreenStack = ({ route }: any) => {
           name="Available Time Selection"
           component={AvailableTimeSelection}
         />
-        <Stack.Screen
-          name="Image Cover Selection"
-          component={ImageCoverSelection}
-        />
+        <Stack.Screen name="Image Cover Selection" component={ImageCoverSelection} />
         <Stack.Screen
           name="Event Card Customization"
           component={EventCardCustomization}

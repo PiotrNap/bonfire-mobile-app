@@ -20,11 +20,8 @@ export const MyEventsStack = () => {
   return (
     <EventCreationContextProvider>
       <Stack.Navigator initialRouteName="My Events" headerMode="none">
-        <Stack.Screen name="My Events" component={MyEvents} />
-        <Stack.Screen
-          name="New Event Description"
-          component={NewEventDescription}
-        />
+        <Stack.Screen name="User Events" component={MyEvents} />
+        <Stack.Screen name="New Event Description" component={NewEventDescription} />
         <Stack.Screen
           name="Available Days Selection"
           component={AvailableDaysSelection}
@@ -33,10 +30,7 @@ export const MyEventsStack = () => {
           name="Available Time Selection"
           component={AvailableTimeSelection}
         />
-        <Stack.Screen
-          name="Image Cover Selection"
-          component={ImageCoverSelection}
-        />
+        <Stack.Screen name="Image Cover Selection" component={ImageCoverSelection} />
         <Stack.Screen
           name="Event Card Customization"
           component={EventCardCustomization}

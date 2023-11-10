@@ -1,7 +1,14 @@
 import { TxInput } from "@hyperionbt/helios"
 import { WalletActions, WalletTypes } from "common/types/contextTypes"
-import { SendTxInfo } from "lib/wallet/types"
+import {
+  SendLockingTxInfo,
+  SendRegularTxInfo,
+  SendUnlockingTxInfo,
+  WalletAssets,
+} from "lib/wallet/types"
 import * as React from "react"
+
+type SendTxInfo = SendRegularTxInfo | SendLockingTxInfo | SendUnlockingTxInfo
 
 interface InitialState {
   lovelaceBalance: bigint
@@ -10,12 +17,13 @@ interface InitialState {
   signedTx: {}
   mnemonic: {}
   walletUtxos: TxInput[]
+  walletAssets: WalletAssets | null
   rootKeyHex: string
   baseAddress: string
   accountPubKeyHex: string
   accountKeyHex: string
   isOfflineMnemonic: boolean
-  sendTxInfo: SendTxInfo
+  sendTxInfo: SendTxInfo | null
 }
 interface WalletContextProps {
   state: InitialState
@@ -29,12 +37,13 @@ const initState: InitialState = {
   signedTx: {},
   mnemonic: {},
   walletUtxos: [],
+  walletAssets: null,
   rootKeyHex: "",
   baseAddress: "",
   accountKeyHex: "",
   accountPubKeyHex: "",
   isOfflineMnemonic: false,
-  sendTxInfo: { receiverAddress: "", lovelace: 0, assets: null },
+  sendTxInfo: null,
 }
 
 const reducer = (state: InitialState, action: WalletActions) => {
@@ -43,6 +52,11 @@ const reducer = (state: InitialState, action: WalletActions) => {
       return {
         ...state,
         walletUtxos: action.payload.walletUtxos,
+      }
+    case WalletTypes.SetWalletAssets:
+      return {
+        ...state,
+        walletAssets: action.payload.walletAssets,
       }
     case WalletTypes.SetTxHistory:
       return {

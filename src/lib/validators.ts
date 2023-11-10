@@ -106,7 +106,7 @@ export function passwordValidationSchema() {
  */
 export function passwordSetUpValidationScheme() {
   return yup.object().shape({
-    password: passwordValidationSchema(),
+    ...passwordValidationSchema().fields,
     password_confirm: yup
       .string()
       .required("Confirmation is required")

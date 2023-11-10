@@ -1,11 +1,20 @@
-import { Address, Assets, NetworkParams, TxInput } from "@hyperionbt/helios"
+import {
+  Address,
+  Assets,
+  hexToBytes,
+  MintingPolicyHash,
+  NetworkParams,
+  TxInput,
+  TxOutput,
+} from "@hyperionbt/helios"
 import { crc8 } from "crc"
 import { CARDANO_NETWORK } from "@env"
-import MainnetParams from "../../on_chain/configs/mainnet.json"
-import PreprodParams from "../../on_chain/configs/preprod.json"
+import { mainnet } from "../../on_chain/configs/mainnet.js"
+import { preprod } from "../../on_chain/configs/preprod.js"
+import { WalletAssets } from "./types"
 
 export const networkParams: NetworkParams = new NetworkParams(
-  CARDANO_NETWORK === "mainnet" ? MainnetParams : PreprodParams
+  CARDANO_NETWORK === "mainnet" ? mainnet : preprod
 )
 
 function checksum(num) {
@@ -32,7 +41,7 @@ export function fromLabel(label) {
 }
 
 export function toAssetUnit(policyId, name, label) {
-  const hexLabel = Number.isInteger(label) ? toLabel(label) : ""
+  const hexLabel = Number.isInteger(label) ? toLabel(label) : label
   const n = name ? name : ""
   if ((n + hexLabel).length > 64) {
     throw new Error("Asset name size exceeds 32 bytes.")
@@ -53,6 +62,10 @@ export function fromAssetUnit(unit) {
   return { policyId, name, label }
 }
 
+export function lovelaceToAda(lovelace: bigint) {
+  return Number(lovelace) / 1_000_000
+}
+
 export function lovelaceValueOfInputs(inputs: TxInput[]): bigint {
   return inputs.reduce((prev, curr) => prev + curr.value.lovelace, 0n)
 }
@@ -65,6 +78,9 @@ export function txInputsToAssets(txInputs: TxInput[]): Assets[] {
   return txInputs.map((txIn) => txIn.value.assets)
 }
 
+// converts Map of <Unit, count> (native assets) to Helios
+
+// converts Helios Assets to Map of <Unit, UnitDetails> , which is used in wallet UI components
 export function assetsToUnitsMap(assetsArray: Assets[]) {
   let units = new Map()
   for (let assets of assetsArray) {
@@ -78,7 +94,7 @@ export function assetsToUnitsMap(assetsArray: Assets[]) {
         const newObj = {
           policyId,
           name,
-          labelNum: label,
+          label: label ? toLabel(label) : "",
           count: tokens[parentKey][childKey],
         }
 
@@ -95,6 +111,23 @@ export function assetsToUnitsMap(assetsArray: Assets[]) {
   return units
 }
 
+// converts Map of <Unit, UnitDetails> to Assets which can be used to construct Helios Value
+export function unitsMapToAssets(unitsMap: WalletAssets): Assets | undefined {
+  if (!unitsMap) return
+
+  let tokens: any[] = []
+
+  for (let unitDetails of unitsMap.values()) {
+    let mph = new MintingPolicyHash(unitDetails.policyId)
+    let token: [number[], bigint][] = [
+      [hexToBytes(unitDetails.label + unitDetails.name), BigInt(unitDetails.count)],
+    ]
+    tokens.push([mph, token])
+  }
+
+  return new Assets(tokens)
+}
+
 export function numberToHex(n: number) {
   let hex = ""
   while (n) {
@@ -104,8 +137,8 @@ export function numberToHex(n: number) {
   return hex
 }
 
-export function hexToText(hexString: string){
-  return Buffer.from(hexString, 'hex').toString('utf8')
+export function hexToText(hexString: string) {
+  return Buffer.from(hexString, "hex").toString("utf8")
 }
 
 export function ipfsToHttp(ipfsUrl: string | string[]) {
@@ -121,8 +154,4 @@ export function ipfsToHttp(ipfsUrl: string | string[]) {
 
 export function checkBech32Address(addr: string) {
   return Address.fromBech32(addr)?.toBech32()
-}
-
-export function lovelaceToAda(lovelace: bigint) {
-  return Number(lovelace) / 1_000_000
 }

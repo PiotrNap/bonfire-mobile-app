@@ -1,5 +1,4 @@
 import { useWindowDimensions } from "react-native"
-
 type Screen = "height" | "width"
 export const screen = (): Record<Screen, number> => {
   return {
@@ -21,6 +20,7 @@ type Layout =
   | "x14"
   | "x15"
   | "x20"
+  | "x22"
   | "x25"
   | "x30"
   | "x35"
@@ -55,6 +55,7 @@ export const layout: Record<Layout, number> = {
   x14: 13,
   x15: 14,
   x20: 18,
+  x22: 20,
   x25: 22,
   x30: 27,
   x35: 30,
@@ -90,6 +91,7 @@ export const x12 = layout.x12
 export const x14 = layout.x14
 export const x15 = layout.x15
 export const x20 = layout.x20
+export const x22 = layout.x22
 export const x25 = layout.x25
 export const x30 = layout.x30
 export const x35 = layout.x35

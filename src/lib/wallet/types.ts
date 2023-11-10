@@ -1,4 +1,10 @@
+import { Redeemer } from "@emurgo/csl-mobile-bridge"
+import { AnyObject } from "yup/lib/types"
+
+export type TxHash = string
 export type Unit = string
+export type RedeemerType = "Cancel" | "Complete" | "Recycle"
+
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean
   mnemonic?: string
@@ -18,11 +24,12 @@ export interface WalletKeys {
   accountKeyHex: string
   accountPubKeyHex: string
 }
+export type WalletAssets = Map<string, AssetUnit>
 export type AssetUnit = {
   policyId: string
   name: string
   count: string
-  labelNum: number | null
+  label: string
 }
 export type BlockfrostTx = {
   tx_hash: string
@@ -51,8 +58,15 @@ export type BlockFrostDetailedTx = {
   inputs: BlockFrostUtxoInfo
   outputs: BlockFrostUtxoInfo
 }
-export type SendTxInfo = {
+export type SendRegularTxInfo = {
   receiverAddress: string
   lovelace: number
-  assets: Map<Unit, number> | null
+  assets: WalletAssets
+}
+export type SendLockingTxInfo = SendRegularTxInfo & {
+  datum: AnyObject
+}
+export type SendUnlockingTxInfo = SendRegularTxInfo & {
+  datum: AnyObject
+  redeemer: Redeemer
 }

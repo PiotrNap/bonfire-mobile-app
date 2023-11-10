@@ -4,194 +4,204 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  LayoutChangeEvent,
   ActivityIndicator,
-  useWindowDimensions,
   Animated,
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import LinearGradient from "react-native-linear-gradient"
-import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
+import { useFocusEffect } from "@react-navigation/native"
 import { StackScreenProps } from "@react-navigation/stack"
+import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { WalletStackParamList } from "common/types/navigationTypes"
-import { appContext } from "contexts/contextApi"
-import { PaymentIcon, RefreshIcon, SearchIcon } from "icons/index"
-import { TransactionsList } from "components/wallet/transactionsList"
+import { appContext, walletContext } from "contexts/contextApi"
+import { DownIcon, UpIcon } from "icons/index"
 import { ProfileContext } from "contexts/profileContext"
-import {
-  Address,
-  BaseAddress,
-  Bip32PrivateKey,
-} from "@emurgo/csl-mobile-bridge"
-import { generateMnemonic } from "bip39"
-import { Wallet } from "lib/wallet"
-import { BigSlideModal } from "components/modals/BigSlideModal"
 import { getFromEncryptedStorage } from "lib/encryptedStorage"
-import { Checkbox } from "components/forms/Checkbox"
-import { BodyText } from "components/rnWrappers/bodyText"
-import { useWalletInit } from "lib/hooks/useWalletInit"
+import {
+  assetsToUnitsMap,
+  filterLovelaceOnlyInputs,
+  lovelaceToAda,
+  lovelaceValueOfInputs,
+  txInputsToAssets,
+} from "lib/wallet/utils"
+import { TX_GET_SIZE, Wallet } from "lib/wallet"
+import { WalletTabs } from "components/tabs/walletTabs"
+import { Toast } from "react-native-toast-message/lib/src/Toast"
+import { Crypto } from "@hyperionbt/helios"
+import { BlockFrostDetailedTx } from "lib/wallet/types"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { showErrorToast } from "lib/helpers"
 
-// @TODO: Implement navigationTypes type
 export interface WalletScreenProps
   extends StackScreenProps<WalletStackParamList, "Wallet Main"> {}
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
-  const { colorScheme, textContent } = appContext()
-  const { walletBalance, setWalletName, setWalletBaseAddress, walletName } =
-    React.useContext(ProfileContext)
-  const { generateMnemonic } = useWalletInit()
-  const [layoutHeight, setLayoutHeight] = React.useState<any>(null)
-  const [isSmallScreen, setIsSmallScreen] = React.useState<boolean>(false)
-  const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false)
+  const { colorScheme } = appContext()
+  const {
+    txHistory,
+    setTxHistory,
+    baseAddress,
+    setBaseAddress,
+    setLovelaceBalance,
+    setWalletUtxos,
+    walletAssets,
+    setWalletAssets,
+    lovelaceBalance,
+  } = walletContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [checkboxesVisible, setCheckboxesVisible] =
-    React.useState<boolean>(false)
-  const [acceptedCheckbox, setAcceptedCheckbox] = React.useState<
-    string | undefined
-  >("")
+  const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false)
+  const [txListPage, setTxListPage] = React.useState<number>(1)
+  const [txHistoryEndReached, setTxHistoryEndReached] = React.useState<boolean>(false)
+  const [lockedLovelaceBalance, setLockedLovelaceBalance] = React.useState<bigint>(0n)
 
-  const animatedOpacity = React.useRef(new Animated.Value(0)).current
-  const fadeIn = () => {
-    Animated.timing(animatedOpacity, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      // if (finished) setAcceptedChecbox(true)
-    })
-  }
-  const fadeOut = () => {
-    Animated.timing(animatedOpacity, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      // if (finished) setAcceptedChecbox(false)
-    })
-  }
+  const [aU, setaU] = React.useState<any>(1)
+  const [tU, settU] = React.useState<any>(1)
 
-  React.useEffect(() => {
-    if (checkboxesVisible) {
-      fadeIn()
-    } else fadeOut()
-  }, [checkboxesVisible])
-
-  React.useEffect(() => {
-    ;(async () => {
+  const updateWalletBalance = React.useCallback(
+    async (addr?: string) => {
       try {
-        const _walletName = await getFromEncryptedStorage("wallet-name")
-        const _walletBaseAddress = await getFromEncryptedStorage(
-          "wallet-base-address"
-        )
+        console.log("tokens update :", aU)
+        setaU((p) => p + 1)
 
-        setWalletName(_walletName)
-        setWalletBaseAddress(_walletBaseAddress)
+        setIsLoading(true)
+        addr = addr ?? baseAddress
+
+        const isGoodAddr = Crypto.verifyBech32(addr)
+        if (!isGoodAddr)
+          Toast.show({
+            type: "error",
+            text1: "Unexpected address",
+            text2: "Cannot fetch address assets.",
+          })
+
+        const { data, error } = await Wallet.getUtxosAtAddress(addr)
+
+        if (!data || error)
+          Toast.show({
+            type: "error",
+            text1: error?.error || "Unable to get assets",
+            text2: "Maybe try again?",
+          })
+        if (!data.length) return setIsLoading(false)
+
+        const availableLovelace = lovelaceValueOfInputs(filterLovelaceOnlyInputs(data))
+        const lockedLovelace = lovelaceValueOfInputs(data) - availableLovelace
+        setLovelaceBalance(availableLovelace)
+        setLockedLovelaceBalance(lockedLovelace)
+
+        // extracts assets from TxInputs into a Map
+        const assets = assetsToUnitsMap(txInputsToAssets(data))
+        setWalletAssets(assets)
+
+        setWalletUtxos(data)
+        setIsLoading(false)
       } catch (e) {
-        console.error(e)
+        showErrorToast(e)
       }
-    })()
+    },
+    [baseAddress]
+  )
+  const updateWalletTxHistory = React.useCallback(
+    async (addr?: string, refresh = true) => {
+      try {
+        if (!refresh) {
+          if (txHistoryEndReached) return // no more pagination
+          setIsPaginationLoading(true)
+        }
 
-    const listener = navigation.addListener("blur", () => {
-      hideModal()
-    })
+        console.log("txs update :", tU)
+        settU((p) => p + 1)
 
-    return listener
-  }, [route])
+        addr = addr ?? baseAddress
+        const isGoodAddr = Crypto.verifyBech32(addr)
+        if (!isGoodAddr)
+          Toast.show({
+            type: "error",
+            text1: "Unexpected address",
+            text2: "Cannot fetch address transactions.",
+          })
+
+        const { data: transactions, error } = await Wallet.getTransactionsAtAddress(
+          addr,
+          refresh ? 1 : txListPage
+        )
+        if (!transactions || error)
+          Toast.show({
+            type: "error",
+            text1: error?.error || "Unable to get transactions",
+            text2: "Maybe try again?",
+          })
+        if (!transactions.length) {
+          setTxHistoryEndReached(true) // no tx's left at this address
+          return setIsPaginationLoading(false)
+        }
+        if (transactions.length < TX_GET_SIZE) {
+          setTxHistoryEndReached(true) // we've reached the end
+        }
+
+        let fullInfoTxs: BlockFrostDetailedTx[] = []
+
+        for (let transaction of transactions) {
+          const { data: tx, error } = await Wallet.getTxUtxos(transaction?.tx_hash)
+
+          if (error)
+            Toast.show({
+              type: "error",
+              text1: error?.error || "Unable to get transaction info",
+              text2: "Tx-hash: " + transaction?.tx_hash,
+            })
+          tx.block_time = transaction.block_time
+          tx.user_address = addr
+          fullInfoTxs.push(tx)
+        }
+        fullInfoTxs = fullInfoTxs.reverse() // because Blockfrost can't sort them
+        if (refresh) {
+          setTxHistory(fullInfoTxs)
+          setTxListPage(1)
+        } else {
+          setTxHistory([...txHistory, ...fullInfoTxs])
+          setTxListPage((prev) => prev + 1)
+        }
+        setIsPaginationLoading(false)
+      } catch (e) {
+        showErrorToast(e)
+      }
+    },
+    [baseAddress, txHistory, txListPage]
+  )
+  const getNextPageWalletTxHistory = () => updateWalletTxHistory(baseAddress, false)
+
+  /** Update wallet Utxos and ADA balance **/
+  useFocusEffect(
+    React.useCallback(() => {
+      ;(async () => {
+        let addr: any = baseAddress
+        if (!addr) {
+          addr = await AsyncStorage.getItem("account-#0-baseAddress")
+          setBaseAddress(addr || "")
+        }
+        updateWalletBalance(addr)
+        updateWalletTxHistory(addr)
+      })()
+    }, [])
+  )
 
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
-  const windowWidth = useWindowDimensions().width
-
-  const onAddWalletPress = () => {
-    setIsModalVisible(true)
+  const onSendPress = () => {
+    navigation.navigate("Send Transaction")
   }
-  const onLayout = (e: LayoutChangeEvent) => {
-    setLayoutHeight(e.nativeEvent.layout.height)
-
-    if (layoutHeight && layoutHeight < 300) {
-      setIsSmallScreen(true)
-    }
+  const onReceivePress = () => {
+    navigation.navigate("Receive Transaction")
   }
-  const onBackPress = () => setCheckboxesVisible(false)
-  const onWalletCreateNextPress = () => {
-    if (acceptedCheckbox === "with-mnemonic") {
-      setAcceptedCheckbox(undefined)
-    } else if (acceptedCheckbox === "without-mnemonic") {
-      setAcceptedCheckbox(undefined)
-      navigation.navigate("New Wallet Set Up", {
-        isNewWalletCreation: true,
-        mnemonic: generateMnemonic(),
-        createWalletSetupType: acceptedCheckbox,
-      })
-    }
-  }
-  const onCreateWalletPress = () => setCheckboxesVisible(true)
-  const onImportWalletPress = () => navigation.navigate("Import Mnemonic")
-  const hideModal = () => setIsModalVisible(false)
-  const onCheckBoxPress = (tag: string | undefined) =>
-    tag && setAcceptedCheckbox(tag)
-  const onModalHide = () => {
-    setAcceptedCheckbox("")
-    setCheckboxesVisible(false)
-    setIsModalVisible(false)
-  }
-
-  const modalComponent = React.useMemo(() => {
-    return isModalVisible ? (
-      <BigSlideModal
-        hideModal={onModalHide}
-        isVisible={isModalVisible}
-        icon={<PaymentIcon width={windowWidth / 2} height={windowWidth / 2} />}
-        header={textContent.wallet.add_new_wallet.modal.header}
-        body={textContent.wallet.add_new_wallet.modal.body}
-        buttonTitle={
-          checkboxesVisible
-            ? "Next Step"
-            : textContent.wallet.add_new_wallet.modal.button_title
-        }
-        secondButtonTitle={
-          checkboxesVisible
-            ? "Back"
-            : textContent.wallet.add_new_wallet.modal.secondButton_title
-        }
-        buttonCb={
-          checkboxesVisible ? onWalletCreateNextPress : onImportWalletPress
-        }
-        secondButtonCb={checkboxesVisible ? onBackPress : onCreateWalletPress}
-        buttonDisabled={!acceptedCheckbox && checkboxesVisible}>
-        <Animated.View
-          style={[styles.animatedView, { opacity: animatedOpacity }]}>
-          <View style={styles.checkboxWrapper}>
-            <Checkbox
-              tag={"with-mnemonic"}
-              acceptedCheckbox={acceptedCheckbox === "with-mnemonic"}
-              onCheckBoxPress={onCheckBoxPress}>
-              I want to write down my recovery phrase
-            </Checkbox>
-          </View>
-          <View style={styles.checkboxWrapper}>
-            <Checkbox
-              tag={"without-mnemonic"}
-              acceptedCheckbox={acceptedCheckbox === "without-mnemonic"}
-              onCheckBoxPress={onCheckBoxPress}>
-              I want my recovery phrase to be stored on this device (accessible
-              later on)
-            </Checkbox>
-          </View>
-        </Animated.View>
-      </BigSlideModal>
-    ) : (
-      <></>
-    )
-  }, [isModalVisible, checkboxesVisible, acceptedCheckbox, animatedOpacity])
+  const adaDisplayValue = lovelaceToAda(lovelaceBalance).toFixed(2)
+  const lockedAdaDisplayValue = lovelaceToAda(lockedLovelaceBalance).toFixed(2)
 
   return (
     <SafeAreaView
-      style={[
-        colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark,
-      ]}>
-      <View style={styles.container}>
+      style={[colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark]}>
+      <View style={[styles.container]}>
         <LinearGradient
           colors={colorScheme === "light" ? darkGradient : lightGradient}
           start={{ x: 0, y: 1 }}
@@ -199,75 +209,93 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
           style={styles.walletContainer}>
           <ActivityIndicator
             animating={isLoading}
-            color={
-              colorScheme === "light"
-                ? Colors.primary.neutral
-                : Colors.primary.s800
-            }
+            color={colorScheme === "light" ? Colors.primary.neutral : Colors.primary.s800}
             style={styles.walletLoadingSpinner}
           />
-          {!!walletName && (
+          <View style={styles.balanceWrapper}>
             <Text
               style={[
                 colorScheme == "light"
-                  ? styles.walletHeader_ligth
-                  : styles.walletHeader_dark,
-                { marginRight: "auto" },
+                  ? styles.walletBalance_ligth
+                  : styles.walletBalance_dark,
               ]}>
-              {walletName}
+              {adaDisplayValue} ₳
             </Text>
-          )}
-          <Text
-            style={[
-              colorScheme == "light"
-                ? styles.walletBalance_ligth
-                : styles.walletBalance_dark,
-            ]}>
-            {!isLoading ? "--" : walletBalance} ₳
-          </Text>
-          <Pressable
-            onPress={onAddWalletPress}
-            pressRetentionOffset={15}
-            hitSlop={15}
-            style={Buttons.applyOpacity(
-              colorScheme == "light"
-                ? styles.walletButton_light
-                : styles.walletButton_dark
-            )}>
-            <Text
-              style={[
+            {Number(lockedAdaDisplayValue) > 0 ? (
+              <Text
+                style={[
+                  colorScheme == "light"
+                    ? styles.lockedBalance_ligth
+                    : styles.lockedBalance_dark,
+                ]}>
+                (+ {lockedAdaDisplayValue} ₳ in assets )
+              </Text>
+            ) : (
+              <></>
+            )}
+          </View>
+          <View style={styles.walletButtonsContainer}>
+            <Pressable
+              disabled={isLoading}
+              onPress={onSendPress}
+              pressRetentionOffset={15}
+              hitSlop={15}
+              style={Buttons.applyOpacity(
                 colorScheme == "light"
-                  ? styles.walletButtonText_light
-                  : styles.walletButtonText_dark,
-              ]}>
-              {!isLoading ? "Add Wallet" : "Add funds"}
-            </Text>
-          </Pressable>
+                  ? styles.walletButton_light
+                  : styles.walletButton_dark
+              )}>
+              <Text
+                style={[
+                  colorScheme == "light"
+                    ? styles.walletButtonText_light
+                    : styles.walletButtonText_dark,
+                ]}>
+                Send
+              </Text>
+              <UpIcon
+                width={22}
+                height={22}
+                stroke={
+                  colorScheme === "dark" ? Colors.primary.s800 : Colors.primary.neutral
+                }
+                strokeWidth={2}
+              />
+            </Pressable>
+            <Pressable
+              disabled={isLoading}
+              onPress={onReceivePress}
+              pressRetentionOffset={15}
+              hitSlop={15}
+              style={Buttons.applyOpacity(
+                colorScheme == "light"
+                  ? styles.walletButton_light
+                  : styles.walletButton_dark
+              )}>
+              <Text
+                style={[
+                  colorScheme == "light"
+                    ? styles.walletButtonText_light
+                    : styles.walletButtonText_dark,
+                ]}>
+                Receive
+              </Text>
+              <DownIcon
+                width={22}
+                height={22}
+                stroke={
+                  colorScheme === "dark" ? Colors.primary.s800 : Colors.primary.neutral
+                }
+                strokeWidth={2}
+              />
+            </Pressable>
+          </View>
         </LinearGradient>
-        <View onLayout={onLayout} style={styles.transactionsContainer}>
+        {/*
           <View style={styles.transactionsHeaderContainer}>
-            <View style={styles.transactionsHeader}>
-              <Text
-                style={
-                  colorScheme === "light"
-                    ? styles.transactionsHeaderText_light
-                    : styles.transactionsHeaderText_dark
-                }>
-                Transactions
-              </Text>
-              <Text
-                style={
-                  colorScheme === "light"
-                    ? styles.transactionsSubheaderText_light
-                    : styles.transactionsSubheaderText_dark
-                }>
-                Lorem Ipsum
-              </Text>
-            </View>
-            {/*
             <View style={styles.iconWrapper}>
               {isSmallScreen && (
-                <Pressable onPress={onRefreshPress} hitSlop={5}>
+                <Pressable onPress={()=>updateWalletBalance()} hitSlop={5}>
                   <RefreshIcon
                     width={22}
                     height={22}
@@ -286,24 +314,23 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                 width={24}
                 height={24}
                 stroke={
-                  colorScheme === "light"
-                    ? Colors.primary.s800
-                    : Colors.primary.neutral
+                  colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral
                 }
                 strokeWidth={1.8}
                 style={{ marginLeft: "auto" }}
               />
             </View>
-            */}
           </View>
-          {/*
-          <TransactionsList
-            isLoading={isTxListLoading}
-            isSmallScreen={isSmallScreen}
-          />
           */}
-          {modalComponent}
-        </View>
+        <WalletTabs
+          assets={walletAssets}
+          transactions={txHistory}
+          onAssetsListUpdate={updateWalletBalance}
+          onTxListUpdate={updateWalletTxHistory}
+          onTxListEndReached={getNextPageWalletTxHistory}
+          isLoading={isLoading}
+          isPaginationLoading={isPaginationLoading}
+        />
       </View>
     </SafeAreaView>
   )
@@ -323,6 +350,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "90%",
+    marginBottom: Sizing.x20,
   },
   animatedView: {
     marginTop: Sizing.x10,
@@ -355,30 +383,57 @@ const styles = StyleSheet.create({
   },
   walletBalance_ligth: {
     fontFamily: "Roboto-Medium",
-    fontSize: Sizing.x65,
+    fontSize: Sizing.x50,
     color: Colors.primary.neutral,
   },
   walletBalance_dark: {
     fontFamily: "Roboto-Medium",
-    fontSize: Sizing.x65,
+    fontSize: Sizing.x50,
     color: Colors.primary.s800,
   },
+  lockedBalance_ligth: {
+    fontFamily: "Roboto-Regular",
+    fontSize: Sizing.x15,
+    color: Colors.primary.neutral,
+  },
+  lockedBalance_dark: {
+    fontFamily: "Roboto-Regular",
+    fontSize: Sizing.x15,
+    color: Colors.primary.s800,
+  },
+  balanceWrapper: {
+    alignItems: "center",
+  },
+  walletButtonsContainer: {
+    flexDirection: "row",
+    width: "100%",
+  },
   walletButton_light: {
-    paddingVertical: Sizing.x1,
-    paddingHorizontal: Sizing.x8,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Sizing.x5,
+    paddingHorizontal: Sizing.x12,
     borderWidth: Sizing.x3,
     borderColor: Colors.primary.neutral,
     borderRadius: Outlines.borderRadius.base,
     marginBottom: Sizing.x20,
+    marginHorizontal: Sizing.x5,
     backgroundColor: "transparent",
   },
   walletButton_dark: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: Sizing.x2,
     paddingHorizontal: Sizing.x7,
-    borderWidth: 4,
+    borderWidth: Sizing.x3,
     borderColor: Colors.primary.s800,
     borderRadius: Outlines.borderRadius.base,
     marginBottom: Sizing.x20,
+    marginHorizontal: Sizing.x5,
     backgroundColor: "transparent",
   },
   walletButtonText_light: {
@@ -391,15 +446,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.primary.s800,
   },
-  transactionsContainer: {
+  tabsContainer: {
     flex: 1,
-    marginTop: Sizing.x40,
   },
   transactionsHeaderContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  transactionsHeader: {},
   transactionsHeaderText_light: {
     ...Typography.header.x35,
     marginBottom: Sizing.x5,

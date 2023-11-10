@@ -47,10 +47,10 @@ export const PasswordForm = ({ onSubmitCallback, styles }: Props) => {
           <Field
             key="password"
             name="password"
-            label="New Password"
+            label="Spending Password"
             component={CustomPasswordInput}
             keyboardType="default"
-            textContentType="newPassword"
+            textContentType="password"
             autoCompleteType="password"
             validateForm={validateForm}
             submitted={submitted}

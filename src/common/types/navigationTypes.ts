@@ -10,6 +10,8 @@ export type AppStackParamList = {
   Success: {
     isBookingWalletTopUp?: boolean | undefined
     baseAddress?: string
+    headerText?: string
+    bodyText?: string
     isNewWalletCreation?: boolean
     navigationScreen: any
   }

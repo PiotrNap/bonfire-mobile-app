@@ -117,7 +117,7 @@ export async function retrieveMnemonicPhraseFromStorage(
           "Missing mnemonic credential. Do you have a passcode or biometry set up?"
         )
 
-      return password // password is the actual mnemonic
+      return userCredentials.password // password is the actual mnemonic
     } else if (authType === "password" && password) {
       console.log("hello ")
       const cipher = await getFromEncryptedStorage("mnemonic")
@@ -149,7 +149,7 @@ export async function retrieveRootKeyFromStorage(
           "Missing root key credential. Do you have a passcode or biometry set up?"
         )
 
-      return password // password is the actual root key
+      return userCredentials.password // password is the actual root key
     } else if (authType === "password" && password) {
       const cipher = await getFromEncryptedStorage("root-key")
       if (!cipher)
@@ -180,7 +180,7 @@ export async function retrieveAccountKeyFromStorage(
           "Missing account key credential. Do you have a passcode or biometry set up?"
         )
 
-      return password // password is the actual account key
+      return userCredentials.password // password is the actual account key
     } else if (authType === "password" && password) {
       //@ts-ignore because of `key` string value being dynamic
       const cipher = await getFromEncryptedStorage(`account-#${accountIndex}-key`)

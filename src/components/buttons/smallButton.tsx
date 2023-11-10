@@ -3,17 +3,27 @@ import { Text, StyleSheet, Pressable } from "react-native"
 
 import { Outlines, Buttons, Typography, Colors, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
+import { ColorSchemeName } from "common/interfaces/appInterface"
 
 export interface Props {
   onPress: () => void
   icon?: React.ReactNode
   title?: string
   customStyle?: any
+  customColorScheme?: ColorSchemeName
+  children?: React.ReactNode
 }
 
-export const SmallButton = ({ onPress, icon, title, customStyle }: Props) => {
+export const SmallButton = ({
+  onPress,
+  icon,
+  title,
+  customStyle,
+  customColorScheme,
+  children,
+}: Props) => {
   const { colorScheme } = appContext()
-  const isLightMode = colorScheme === "light"
+  const isLightMode = (customColorScheme || colorScheme) === "light"
 
   return (
     <Pressable
@@ -29,8 +39,14 @@ export const SmallButton = ({ onPress, icon, title, customStyle }: Props) => {
           customStyle
         )
       )}>
-      {title && <Text style={styles.buttonText}>{title}</Text>}
-      {icon}
+      {children ? (
+        children
+      ) : (
+        <>
+          {title && <Text style={styles.buttonText}>{title}</Text>}
+          {icon}
+        </>
+      )}
     </Pressable>
   )
 }

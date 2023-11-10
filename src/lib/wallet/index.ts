@@ -1,22 +1,30 @@
 import { randomBytes } from "react-native-randombytes"
-import { Address, BlockfrostV0, Tx } from "@hyperionbt/helios"
+import {
+  Address,
+  BlockfrostV0,
+  NetworkParams,
+  Tx,
+  TxInput,
+  TxOutput,
+  Value,
+  Bip32PrivateKey,
+  hexToBytes,
+  bytesToHex,
+} from "@hyperionbt/helios"
 import { generateMnemonic, mnemonicToEntropy } from "bip39"
 import * as CrossCSL from "@emurgo/cross-csl-mobile"
 import { CARDANO_NETWORK, BLOCKFROST_API_KEY } from "@env"
 import axios from "axios"
 
 //@ts-ignore
-const { Bip32PrivateKey, Bip32PublicKey } = CrossCSL
+const { Bip32PublicKey } = CrossCSL
 
 import { CardanoMobile } from "../../../global"
-import {
-  ROLE_TYPE,
-  CONFIG_NUMBERS,
-  HASKELL_SHELLEY,
-  HASKELL_SHELLEY_TESTNET,
-  NetworkConfig,
-} from "./config"
-import { WalletKeys } from "./types"
+import { ROLE_TYPE, CONFIG_NUMBERS } from "./config"
+import { SendRegularTxInfo, TxHash, WalletKeys } from "./types"
+import { unitsMapToAssets } from "./utils"
+import { mainnet } from "../../on_chain/configs/mainnet"
+import { preprod } from "../../on_chain/configs/preprod"
 
 export const TX_GET_SIZE = 30
 export const PURPOSE = 2147485500
@@ -50,14 +58,12 @@ export function blockFrost() {
   return new BlockfrostV0(CARDANO_NETWORK, BLOCKFROST_API_KEY)
 }
 
-export class Wallet {
-  chainConfig: NetworkConfig
+export function getNetworkConfig() {
+  return CARDANO_NETWORK === "mainnet" ? mainnet : preprod
+}
 
-  // @TODO make sure all parameters are set correctly
-  constructor() {
-    this.chainConfig =
-      CARDANO_NETWORK === "mainnet" ? HASKELL_SHELLEY : HASKELL_SHELLEY_TESTNET
-  }
+export class Wallet {
+  networkId = CARDANO_NETWORK === "mainnet" ? "1" : "0"
 
   /**
    * Creates root key and account keys with base address
@@ -101,10 +107,8 @@ export class Wallet {
       .then((key) => key.derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX))
       .then((key) => key.toRawKey())
 
-    console.log(JSON.stringify(CardanoMobile, null, 4))
-
     const addr = await CardanoMobile.BaseAddress.new(
-      parseInt(this.chainConfig.CHAIN_NETWORK_ID, 10),
+      parseInt(this.networkId, 10),
       await CardanoMobile.Credential.fromKeyhash(await chainVKey.hash()),
       await CardanoMobile.Credential.fromKeyhash(await stakingVKey.hash())
     )
@@ -161,7 +165,52 @@ export class Wallet {
     })
   }
 
-  async signTransaction() {}
+  static async sendRegularTransaction(
+    { assets, receiverAddress, lovelace }: SendRegularTxInfo,
+    userAddress: string,
+    utxos: TxInput[],
+    signingKey: string
+  ): Promise<TxHash | void> {
+    console.log(
+      "args >",
+      assets,
+      receiverAddress,
+      lovelace,
+      userAddress,
+      utxos,
+      signingKey
+    )
+
+    try {
+      const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
+      // const pubKeyHash = privKey.derivePubKey().pubKeyHash
+      const params = new NetworkParams(getNetworkConfig())
+
+      const outputAddress = new Address(receiverAddress)
+      const outputAssets = unitsMapToAssets(assets)
+
+      const outputValue = new Value(lovelace, outputAssets)
+      const output = new TxOutput(outputAddress, outputValue)
+      const now = Date.now()
+      const fiveMinutes = 1000 * 60 * 5
+      const tx = new Tx()
+        .addInputs(utxos)
+        .addOutput(output)
+        .validFrom(new Date(now - fiveMinutes))
+        .validTo(new Date(now + fiveMinutes))
+
+      await tx.finalize(params, new Address(userAddress), utxos)
+      let signature = privKey.sign(tx.bodyHash)
+      tx.addSignature(signature)
+
+      const { data } = await Wallet.submitTransaction(tx)
+      return bytesToHex(data.bytes)
+    } catch (e) {
+      throw e
+    }
+  }
+  async sendLockingTransaction() {}
+  async sendUnlockingTransaction() {}
 
   /** Get wallet tx's **/
   static async getTransactionsAtAddress(address: string, page: number = 0) {
@@ -189,11 +238,11 @@ export class Wallet {
     return Wallet.promiseHandler(blockFrostFetch(`/txs/${txHash}/utxos`))
   }
 
-  static async getNetworkParams() {
-    return Wallet.promiseHandler(
-      fetch(`https://d1t0d7c2nekuk0.cloudfront.net/${process.env.CARDANO_NETWORK}.json`)
-    )
-  }
+  // static async getNetworkParams() {
+  //   return Wallet.promiseHandler(
+  //     fetch(`https://d1t0d7c2nekuk0.cloudfront.net/${process.env.CARDANO_NETWORK}.json`)
+  //   )
+  // }
 
   static async validatePlutusScriptOffchain(
     // txCbor: number[], // cbor

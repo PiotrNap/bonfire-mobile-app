@@ -116,11 +116,6 @@ function App() {
                       component={Confirmation}
                     />
                     <Stack.Screen
-                      name="Qr-Code Scanner"
-                      options={{ headerShown: false, gestureEnabled: false }}
-                      component={QrCodeScannerScreen}
-                    />
-                    <Stack.Screen
                       name="Legal Document"
                       options={{ headerShown: false, gestureEnabled: false }}
                       component={LegalDocumentScreen}

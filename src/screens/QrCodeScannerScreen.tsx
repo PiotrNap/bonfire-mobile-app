@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { Pressable, StyleSheet, View } from "react-native"
 
 import {
@@ -16,13 +16,10 @@ import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context"
 
 export function QrCodeScannerScreen({ navigation, route }: any) {
   const { setQrCodeValue } = appContext()
+  const [isCameraActive, setIsCameraActive] = React.useState<boolean>(false)
   const cameraPermission = useCameraPermission()
-  // const { width, height, x, y } = useSafeAreaFrame()
-  // const rectSize = 200
-  // const marginTop = (height - rectSize) / 2
-  // const marginLeft = (width - rectSize) / 2
 
-  const onBackNavigationPress = () => navigation.goBack()
+  const navigateBack = () => navigation.goBack()
   const device = useCameraDevice("back")
   const codeScanner = useCodeScanner({
     codeTypes: ["qr", "ean-13"], // specify the types of codes you want to scan
@@ -39,11 +36,13 @@ export function QrCodeScannerScreen({ navigation, route }: any) {
         })
 
       setQrCodeValue(code)
-      navigation.navigate("Send Transaction")
+      setIsCameraActive(false)
+      navigateBack()
     },
   })
 
   React.useEffect(() => {
+    if (!isCameraActive) setIsCameraActive(true)
     if (!device) navigation.goBack()
 
     if (device && !cameraPermission.hasPermission) {
@@ -55,28 +54,16 @@ export function QrCodeScannerScreen({ navigation, route }: any) {
     <SafeAreaView style={styles.container}>
       <Pressable
         style={Buttons.applyOpacity(styles.navigation)}
-        onPress={onBackNavigationPress}
+        onPress={navigateBack}
         hitSlop={10}>
         <LeftArrowIcon width={24} height={24} color={Colors.primary.s600} />
       </Pressable>
       <Camera
         style={StyleSheet.absoluteFillObject}
-        isActive={true}
+        isActive={isCameraActive}
         device={device}
         codeScanner={codeScanner}
       />
-      {/*
-      //@TODO add ROI if possible, when time allows for it
-      <View style={styles.overlay}>
-        <View style={[styles.overlaySection, { height: marginTop }]} />
-        <View style={styles.overlayRow}>
-          <View style={[styles.overlaySection, { width: marginLeft }]} />
-          <View style={[styles.overlayHole, { width: rectSize, height: rectSize }]} />
-          <View style={[styles.overlaySection, { width: marginLeft }]} />
-        </View>
-        <View style={[styles.overlaySection, { height: marginTop }]} />
-      </View>
-      */}
     </SafeAreaView>
   ) : (
     <></>

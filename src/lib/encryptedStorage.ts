@@ -68,7 +68,7 @@ export const STORAGE_PROPERTY_KEYS: StoragePropertyKeys[] = [
   "test",
   "root-key",
   "wallet-name",
-  "base-address",
+  "wallet-base-address",
   "account-#0-key",
   "account-#0-pub-key",
   "mnemonic",
@@ -84,7 +84,7 @@ export type StoragePropertyKeys =
   | "test"
   | "root-key"
   | "wallet-name"
-  | "base-address"
-  | "account-#0-key" // key from 1852/1815/0/0/0
+  | "wallet-base-address" // address from 0/0/0
+  | "account-#0-key" // key from 0/0/0
   | "account-#0-pub-key"
   | "mnemonic"

@@ -1,3 +1,5 @@
+import React from "react"
+
 import { AdaIcon, LeftArrowIcon } from "assets/icons"
 import { SectionDetail } from "common/interfaces/bookingInterface"
 import { ConfirmationDetail } from "components/booking"
@@ -8,10 +10,14 @@ import { Colors, Sizing } from "styles/index"
 import { fromAssetUnit, hexToText, lovelaceToAda } from "lib/wallet/utils"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import Crypto from "crypto"
+import { showErrorToast } from "lib/helpers"
+import { Wallet } from "lib/wallet"
+import { Authenticator } from "components/modals/Authenticator"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
   const { colorScheme } = appContext()
-  const { sendTxInfo } = walletContext()
+  const { sendTxInfo, baseAddress, walletUtxos, setSendTxInfo } = walletContext()
+  const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
   const isLightMode = colorScheme === "light"
   const onBackNavigationPress = () => navigation.goBack()
 
@@ -22,42 +28,67 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     height: Sizing.x25,
     marginRight: Sizing.x5,
   }
-  const cutStringInside = (str: string) => {
+  const cutStringInside = (str: string | undefined) => {
+    if (!str) return
     return `${str.substring(0, 15)}...${str.substring(str.length - 15, str.length)}`
   }
   const onSignAndSubmit = () => {
-    // request users password OR biometrics depending on which one was choosen
-    // then construct tx and send-it
+    if (!sendTxInfo) return showErrorToast("Missing send transaction info")
+    setAuthenticatorVisible(true)
   }
+  const onAuthenticated = async (accountKey?: string) => {
+    if (!sendTxInfo) {
+      showErrorToast("Missing send transaction info")
+      accountKey = ""
+      return
+    }
+    if (!accountKey) return showErrorToast("Something went wrong. Missing signing key.")
+    try {
+      await Wallet.sendRegularTransaction(
+        sendTxInfo,
+        baseAddress,
+        walletUtxos,
+        accountKey
+      )
+
+      setSendTxInfo({})
+      setAuthenticatorVisible(false)
+      navigation.navigate("Success", {
+        headerText: "Successful transaction",
+        bodyText: "Details should be visible in your wallet in just a moment.",
+        navigationScreen: "Wallet Main",
+      })
+    } catch (e) {
+      showErrorToast(e)
+    } finally {
+      accountKey = ""
+    }
+  }
+  const onHideAuthenticator = () => setAuthenticatorVisible(false)
 
   const txDetails: any[] = [
     {
       label: "To",
       lineContent: {
-        content: cutStringInside(sendTxInfo.receiverAddress),
+        content: cutStringInside(sendTxInfo?.receiverAddress),
       },
     },
     {
       label: "ADA",
       lineContent: {
-        content: lovelaceToAda(BigInt(sendTxInfo.lovelace)).toFixed(2),
+        content: lovelaceToAda(BigInt(sendTxInfo?.lovelace || 0)).toFixed(2),
         icon: <AdaIcon {...iconStyles} />,
       },
     },
-    {
+    sendTxInfo?.assets?.size && {
       label: "Assets",
-      lineContent: sendTxInfo.assets?.size
-        ? Array.from(sendTxInfo.assets).map((asset) => {
-            // `asset` here is [unit, count]
-            const { policyId, label, name } = fromAssetUnit(asset[0])
-
-            return {
-              content: `${hexToText(name)} - (${asset[1]})`,
-            }
-          })
-        : null,
+      lineContent: Array.from(sendTxInfo?.assets).map((asset: any) => {
+        return {
+          content: `${hexToText(asset[1].name)} - (${Number(asset[1].count).toFixed(2)})`,
+        }
+      }),
     },
-  ]
+  ].filter((txDetail) => txDetail)
 
   const renderItem = ({ item, index }: { item: SectionDetail; index: number }) => {
     if (!item.lineContent) <></>
@@ -105,6 +136,14 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
           />
         </View>
       </View>
+      {authenticatorVisible && (
+        <Authenticator
+          authRequestType="account-key"
+          showAuthenticator={authenticatorVisible}
+          onAuthenticatedCb={onAuthenticated}
+          onHideAuthenticatorCb={onHideAuthenticator}
+        />
+      )}
     </SafeAreaView>
   )
 }

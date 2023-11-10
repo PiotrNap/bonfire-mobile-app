@@ -40,11 +40,11 @@ export const ConfirmationDetail = ({
             <SubHeaderText
               children={label}
               colors={[Colors.primary.s800, Colors.primary.neutral]}
-              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}
+              customStyle={{ marginRight: "auto", ...fontWeight.bold }}
             />
             {callbackFn ? (
               <SubHeaderText
-                customStyle={{ ...fontWeight.semibold }}
+                customStyle={{ ...fontWeight.bold }}
                 children={callbackFn.label}
                 colors={[Colors.primary.s800, Colors.primary.s200]}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
@@ -73,13 +73,13 @@ export const ConfirmationDetail = ({
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
               colors={[Colors.primary.s800, Colors.primary.neutral]}
-              customStyle={{ marginRight: "auto", ...fontWeight.semibold }}>
+              customStyle={{ marginRight: "auto", ...fontWeight.bold }}>
               {label}
             </SubHeaderText>
             {callbackFn ? (
               <SubHeaderText
                 colors={[Colors.primary.s800, Colors.primary.s200]}
-                customStyle={{ ...fontWeight.semibold }}
+                customStyle={{ ...fontWeight.bold }}
                 callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}>
                 {callbackFn.label}
               </SubHeaderText>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x5,
   },
   text: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     marginLeft: Sizing.x2,
   },
 })

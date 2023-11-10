@@ -23,7 +23,7 @@ import {
 import { EventCreationTypes } from "common/types/contextTypes"
 import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
 import { WalletContext } from "./walletContext"
-import { SendTxInfo, WalletKeys } from "lib/wallet/types"
+import { SendTxInfo, WalletAssets, WalletKeys } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
 
 export const appContext = () => {
@@ -361,6 +361,7 @@ export const walletContext = () => {
     isOfflineMnemonic: state.isOfflineMnemonic,
     txHistory: state.txHistory,
     walletUtxos: state.walletUtxos,
+    walletAssets: state.walletAssets,
     sendTxInfo: state.sendTxInfo,
     setLovelaceBalance: (lovelace: bigint) => {
       dispatch({
@@ -402,6 +403,12 @@ export const walletContext = () => {
       dispatch({
         type: "SET_TXHISTORY",
         payload: { txHistory },
+      })
+    },
+    setWalletAssets: (walletAssets: WalletAssets) => {
+      dispatch({
+        type: "SET_WALLET_ASSETS",
+        payload: { walletAssets },
       })
     },
     setWalletUtxos: (txIns: TxInput[]) => {

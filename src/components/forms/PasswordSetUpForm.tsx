@@ -94,6 +94,7 @@ export const PasswordSetUpForm = ({
             {biometryType && (
               <View style={styles.checkboxWrapper}>
                 <Checkbox
+                  colorMode="dark"
                   acceptedCheckbox={checkboxAccepted}
                   onCheckBoxPress={onCheckBoxPress}>
                   Enable biometric authentication

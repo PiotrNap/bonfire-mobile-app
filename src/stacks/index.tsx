@@ -1,1 +1,5 @@
 export { BrowseScreensStack } from "./BrowseScreensStack"
+export { CalendarScreenStack } from "./CalendarScreenStack"
+export { MyEventsStack } from "./MyEventsStack"
+export { ProfileScreenStack } from "./ProfileScreenStack"
+export { WalletScreenStack } from "./WalletScreenStack"

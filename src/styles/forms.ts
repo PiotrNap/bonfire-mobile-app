@@ -101,11 +101,12 @@ export const inputStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    height: Sizing.x20,
+    height: Sizing.x22,
   },
   error: {
     color: Colors.danger.s400,
     ...Typography.header.x20,
+    textAlign: "center",
   },
 })
 
