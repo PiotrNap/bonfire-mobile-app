@@ -12,8 +12,8 @@
     "test": "jest --watchAll",
     "hack": "./node_modules/rn-nodeify/cmd.js --hack --install && yarn jetify",
     "prepare": "husky install",
-    "emulators:a": "./scripts/run-android-emulators.sh",
-    "emulators:i": "",
+    "a:emulators:dev": "./scripts/run-android-emulators.sh",
+    "i:emulators:dev": "",
     "prebuild": "sh ./scripts/git-hash.sh",
     "build": "react-native bundle"
   },

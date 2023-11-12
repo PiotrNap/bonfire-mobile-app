@@ -16,8 +16,13 @@ export const TransactionItem = React.memo(
     const isOutgoing = transaction.inputs.some(
       (input) => input.address === transaction.user_address
     )
-    const onTxItemPress = () => {}
     const navigation = useNavigation()
+    const onTxItemPress = () =>
+      navigation.navigate("Preview Transaction", {
+        txInfo: transaction,
+        isOutgoing,
+        isTxHistoryPreview: true,
+      })
 
     const assetCount = transaction.outputs[0].amount.length - 1 // Assuming lovelace is listed first
     const adaAmount = Number(transaction.outputs[0].amount[0].quantity) / 1000000 // Convert lovelace to ADA

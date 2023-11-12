@@ -102,6 +102,7 @@ export const BigSlideModal = ({
                 text={buttonTitle}
                 colorScheme={colorScheme}
                 disabled={buttonDisabled}
+            
               />
             )}
             {secondButtonCb && secondButtonTitle && (

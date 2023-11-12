@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, Pressable } from "react-native"
 
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { EventLine, SectionDetail } from "common/interfaces/bookingInterface"
@@ -7,6 +7,7 @@ import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { appContext } from "contexts/contextApi"
 import { useNavigation } from "@react-navigation/native"
 import { fontWeight } from "../../styles/typography"
+import { CopyMessage } from "components/popups/copyMessage"
 
 export const ConfirmationDetail = ({
   label,
@@ -14,15 +15,23 @@ export const ConfirmationDetail = ({
   isLastItem,
   callbackFn,
 }: SectionDetail) => {
+  const [isCopyPopupVisible, setIsCopyPopupVisible] = React.useState<boolean>(false)
   const { colorScheme } = appContext()
   const navigation = useNavigation()
   const isLightMode = colorScheme === "light"
+  console.log(callbackFn)
 
   if (lineContent == null) {
     return <></>
   }
   const onTextPress = (screen: string) => {
     if (callbackFn != null) navigation.navigate(screen)
+  }
+  const onCallbackIconPress = () => {
+    console.log("press")
+    setIsCopyPopupVisible(true)
+    callbackFn?.onPress()
+    setTimeout(() => setIsCopyPopupVisible(false), 1000)
   }
 
   return (
@@ -55,10 +64,10 @@ export const ConfirmationDetail = ({
           </View>
           {(lineContent as any).map((line: EventLine, index: number) =>
             line ? (
-              <View style={styles.subHeaderContent} key={`${line.content}_${index}`}>
+              <View style={styles.subHeaderContent} key={`${line}_${index}`}>
                 {line.icon}
                 <SubHeaderText
-                  children={line.content}
+                  children={line}
                   colors={[Colors.primary.s800, Colors.primary.neutral]}
                   customStyle={styles.text}
                 />
@@ -77,12 +86,18 @@ export const ConfirmationDetail = ({
               {label}
             </SubHeaderText>
             {callbackFn ? (
-              <SubHeaderText
-                colors={[Colors.primary.s800, Colors.primary.s200]}
-                customStyle={{ ...fontWeight.bold }}
-                callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}>
-                {callbackFn.label}
-              </SubHeaderText>
+              <>
+                <SubHeaderText
+                  colors={[Colors.primary.s800, Colors.primary.s200]}
+                  customStyle={{ ...fontWeight.bold }}
+                  callbackFn={() =>
+                    callbackFn?.onPress
+                      ? callbackFn?.onPress
+                      : onTextPress(callbackFn.callbackFnScreen)
+                  }>
+                  {callbackFn.label}
+                </SubHeaderText>
+              </>
             ) : (
               <></>
             )}
@@ -94,6 +109,19 @@ export const ConfirmationDetail = ({
               customStyle={styles.text}>
               {lineContent.content}
             </SubHeaderText>
+            {callbackFn?.icon ? (
+              <>
+                <Pressable
+                  style={styles.copyCallbackButton}
+                  hitSlop={10}
+                  onPress={onCallbackIconPress}>
+                  {callbackFn?.icon}
+                </Pressable>
+                <CopyMessage isActive={isCopyPopupVisible} />
+              </>
+            ) : (
+              <></>
+            )}
           </View>
         </>
       )}
@@ -116,6 +144,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     marginBottom: Sizing.x5,
+  },
+  copyCallbackButton: {
+    flexDirection: "row",
+    margin: Sizing.x2,
+    zIndex: 10,
   },
   text: {
     ...Typography.subHeader.x25,

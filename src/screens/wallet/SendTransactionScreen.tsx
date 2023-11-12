@@ -18,7 +18,7 @@ import { AssetUnit } from "lib/wallet/types"
 
 export const SendTransactionScreen = ({ navigation }: any) => {
   const { walletAssets } = walletContext()
-  const { colorScheme, qrCodeValue } = appContext()
+  const { colorScheme } = appContext()
   const { setSendTxInfo, lovelaceBalance } = walletContext()
   const [selectedAssets, setSelectedAssets] = React.useState<Map<string, AssetUnit>>(
     new Map()
@@ -90,6 +90,7 @@ export const SendTransactionScreen = ({ navigation }: any) => {
             //@TODO revert this
             receivingAddress:
               "addr_test1qzrdax5shce7x979dn5x93ehye7u6j3d4t0ztf9h5uep4n08a9ece0a90sdv7d66685jcrgxdn4ej8kvydjpfr2yrw4s3zjvha", //qrCodeValue || "",
+            //@TODO revert this
             ada: 2,
           }}
           innerRef={formikRef}
