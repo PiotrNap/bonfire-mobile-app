@@ -14,22 +14,17 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { enableScreens } from "react-native-screens"
 import SplashScreen from "react-native-splash-screen"
 
-import { QrCodeScannerScreen } from "screens/QrCodeScannerScreen"
 import { Confirmation, SuccessScreen } from "screens/payments"
 import { NavigationScreens } from "tabs/NavigationScreens"
 import { OnboardingScreens } from "tabs/OnboardingScreens"
 import { InitialUserScreens } from "tabs/InitialUserScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
 import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
-import Toast, { ErrorToast } from "react-native-toast-message"
+import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message"
 import { Typography } from "./styles"
 import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 
-// setJSExceptionHandler(jsErrorHandler, true); // true - enables the error in dev mode
-enableScreens() // enable native screens for navigation instead of using Views
-
-// TODO remove it
-// LogBox.ignoreAllLogs()
+enableScreens() // enables native screens for navigation instead of using Views
 
 // this will enable LayoutAnimation API
 if (Platform.OS === "android") {
@@ -55,6 +50,17 @@ function App() {
   */
     error: (props) => (
       <ErrorToast
+        {...props}
+        text1Style={{
+          ...Typography.header.x25,
+        }}
+        text2Style={{
+          ...Typography.body.x10,
+        }}
+      />
+    ),
+    success: (props) => (
+      <SuccessToast
         {...props}
         text1Style={{
           ...Typography.header.x25,

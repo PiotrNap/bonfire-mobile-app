@@ -2,6 +2,7 @@ import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
+import { Value } from "@hyperionbt/helios"
 import { appContext, bookingContext, eventCreationContext } from "contexts/contextApi"
 import { LeftArrowIcon, ShareIcon } from "assets/icons"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -14,6 +15,8 @@ import { Events } from "Api/Events"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { SmallButton } from "components/buttons/smallButton"
 import { shareEvent, showErrorToast, showSuccessToast } from "lib/helpers"
+import { unitsToAssets } from "lib/wallet/utils"
+import { utf8ToHex } from "lib/utils"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -22,16 +25,17 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const {
     textContent,
     selectedDays,
-    tags,
     fromDate,
     toDate,
     hourlyRate,
     imageURI,
-    privateEvent,
+    visibility,
+    cancellation,
     eventCardColor,
     eventTitleColor,
     availabilities,
     gCalEventsBooking,
+    resetEventCreationState,
   } = eventCreationContext()
   const { duration, pickedDate, previewingEvent, createGoogleCalEvent } = bookingContext()
   const { username, id } = React.useContext(ProfileContext)
@@ -49,18 +53,32 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     setIsLoading(true)
 
     if (params?.isNewEvent) {
+      let _hourlyRate = [...hourlyRate]
+      // convert AssetUnit[] to JSONSchema
+      const hourlyRateAda = _hourlyRate[0].count // this one is required in UI
+      _hourlyRate.shift()
+      // return console.log(_hourlyRate)
+      const hourlyRateValue = new Value(
+        BigInt(hourlyRateAda),
+        unitsToAssets(
+          _hourlyRate.map((unit) => ({ ...unit, label: "", name: utf8ToHex(unit.name) }))
+        )
+      )
+      const hourlyRateSchemaJSON = hourlyRateValue.toSchemaJson()
+
       const newEvent: CreateEventDto = {
         title: textContent.title,
-        description: textContent.description,
+        description: textContent.summary,
         availabilities,
         selectedDays,
-        tags,
+        cancellation,
         fromDate,
         toDate,
-        hourlyRate,
-        privateEvent,
+        hourlyRate: hourlyRateSchemaJSON,
+        visibility,
         eventCardColor,
         eventTitleColor,
+        timeZoneOffset: new Date().getTimezoneOffset(),
         organizer: {
           id,
           username,
@@ -75,15 +93,16 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           // update img as we cant send multiple content-type headers
           await Events.uploadEventImage(imageURI, eventId)
 
-        setIsLoading(false)
+        resetEventCreationState()
         navigation.navigate("Confirmation", {
           isBookingConfirmation: false,
           isNewEvent: true,
         })
       } catch (e) {
-        setIsLoading(false)
         if (e.response.status === 422) return showNSFWImageModal()
         showErrorToast(e)
+      } finally {
+        setIsLoading(false)
       }
     } else {
       try {

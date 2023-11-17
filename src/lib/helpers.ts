@@ -173,7 +173,7 @@ export function showErrorToast(e?: any, header?: string): void {
   const isDev = typeof __DEV__ === "boolean" && __DEV__
   if (isDev) console.error("From Toast: ", e)
 
-  const body = typeof e === "string" ? e : e.message || e.msg || DEFAULT_ERROR_MSG
+  const body = typeof e === "string" ? e : e?.message || e?.msg || DEFAULT_ERROR_MSG
 
   //@TODO send possible erorr to Sentry
   Toast.show({

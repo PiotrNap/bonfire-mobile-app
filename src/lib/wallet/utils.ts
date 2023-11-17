@@ -1,17 +1,19 @@
 import {
   Address,
   Assets,
+  bytesToText,
   hexToBytes,
   MintingPolicyHash,
   NetworkParams,
   TxInput,
   TxOutput,
+  Value,
 } from "@hyperionbt/helios"
 import { crc8 } from "crc"
 import { CARDANO_NETWORK } from "@env"
 import { mainnet } from "../../on_chain/configs/mainnet.js"
 import { preprod } from "../../on_chain/configs/preprod.js"
-import { WalletAssets } from "./types"
+import { AssetUnit, WalletAssets } from "./types"
 
 export const networkParams: NetworkParams = new NetworkParams(
   CARDANO_NETWORK === "mainnet" ? mainnet : preprod
@@ -112,20 +114,44 @@ export function assetsToUnitsMap(assetsArray: Assets[]) {
 }
 
 // converts Map of <Unit, UnitDetails> to Assets which can be used to construct Helios Value
-export function unitsMapToAssets(unitsMap: WalletAssets): Assets | undefined {
-  if (!unitsMap) return
-
+export function unitsToAssets(units: WalletAssets | AssetUnit[]): Assets | undefined {
+  if (!units) return
   let tokens: any[] = []
 
-  for (let unitDetails of unitsMap.values()) {
+  for (let unitDetails of units.values()) {
     let mph = new MintingPolicyHash(unitDetails.policyId)
     let token: [number[], bigint][] = [
-      [hexToBytes(unitDetails.label + unitDetails.name), BigInt(unitDetails.count)],
+      [hexToBytes(unitDetails.label || "" + unitDetails.name), BigInt(unitDetails.count)],
     ]
     tokens.push([mph, token])
   }
 
   return new Assets(tokens)
+}
+
+export function schemaToPaymentTokens(schema: string) {
+  schema = JSON.parse(schema)
+  const paymentTokenAssetsArray: any[] = []
+  let paymentLovelace = 0
+
+  schema.map.forEach((entry) => {
+    const assetId = entry.k.bytes
+    if (assetId === "") {
+      // Extract lovelace value
+      paymentLovelace = entry.v.map[0].v.int
+    } else {
+      // Extract token information
+      const tokensArray = entry.v.map.map((tokenEntry) => {
+        const tokenName = bytesToText(tokenEntry.k.bytes)
+        const tokenAmt = BigInt(tokenEntry.v.int)
+        return [Array.from(tokenName).map((char) => char.charCodeAt(0)), tokenAmt]
+      })
+      paymentTokenAssetsArray.push([assetId, tokensArray])
+    }
+  })
+
+  const paymentTokenAssets = new Assets(paymentTokenAssetsArray)
+  return new Value(paymentLovelace, paymentTokenAssets)
 }
 
 export function numberToHex(n: number) {

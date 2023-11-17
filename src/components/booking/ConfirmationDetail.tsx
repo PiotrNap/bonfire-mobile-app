@@ -8,6 +8,7 @@ import { appContext } from "contexts/contextApi"
 import { useNavigation } from "@react-navigation/native"
 import { fontWeight } from "../../styles/typography"
 import { CopyMessage } from "components/popups/copyMessage"
+import { getRandomKey } from "lib/utils"
 
 export const ConfirmationDetail = ({
   label,
@@ -19,7 +20,6 @@ export const ConfirmationDetail = ({
   const { colorScheme } = appContext()
   const navigation = useNavigation()
   const isLightMode = colorScheme === "light"
-  console.log(callbackFn)
 
   if (lineContent == null) {
     return <></>
@@ -28,12 +28,10 @@ export const ConfirmationDetail = ({
     if (callbackFn != null) navigation.navigate(screen)
   }
   const onCallbackIconPress = () => {
-    console.log("press")
     setIsCopyPopupVisible(true)
     callbackFn?.onPress()
     setTimeout(() => setIsCopyPopupVisible(false), 1000)
   }
-
   return (
     <View
       style={[
@@ -44,8 +42,8 @@ export const ConfirmationDetail = ({
         },
       ]}>
       {Array.isArray(lineContent) ? (
-        <>
-          <View style={styles.headerContent} key={label}>
+        <View key={getRandomKey(4)}>
+          <View style={styles.headerContent}>
             <SubHeaderText
               children={label}
               colors={[Colors.primary.s800, Colors.primary.neutral]}
@@ -62,12 +60,12 @@ export const ConfirmationDetail = ({
               <></>
             )}
           </View>
-          {(lineContent as any).map((line: EventLine, index: number) =>
+          {lineContent.map((line: EventLine, index: number) =>
             line ? (
-              <View style={styles.subHeaderContent} key={`${line}_${index}`}>
+              <View style={styles.subHeaderContent} key={getRandomKey(4)}>
                 {line.icon}
                 <SubHeaderText
-                  children={line}
+                  children={line.content}
                   colors={[Colors.primary.s800, Colors.primary.neutral]}
                   customStyle={styles.text}
                 />
@@ -76,7 +74,7 @@ export const ConfirmationDetail = ({
               <></>
             )
           )}
-        </>
+        </View>
       ) : (
         <>
           <View style={styles.headerContent} key={label}>

@@ -14,16 +14,24 @@ import {
 } from "interfaces/myCalendarInterface"
 import { OrganizerRate } from "common/interfaces/bookingInterface"
 import {
+  Cancellation,
   EventAvailability,
   EventType,
-  HourlyRate,
+  EventVisibility,
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
 import { EventCreationTypes } from "common/types/contextTypes"
 import { JWTPayload, UserSettings } from "common/interfaces/appInterface"
 import { WalletContext } from "./walletContext"
-import { SendTxInfo, WalletAssets, WalletKeys } from "lib/wallet/types"
+import {
+  AssetUnit,
+  SendLockingTxInfo,
+  SendRegularTxInfo,
+  SendUnlockingTxInfo,
+  WalletAssets,
+  WalletKeys,
+} from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
 
 export const appContext = () => {
@@ -89,10 +97,10 @@ export const eventCreationContext = () => {
     availabilities: state.availabilities,
     selectedDays: state.selectedDays,
     selectedWeekDays: state.selectedWeekDays,
-    tags: state.tags,
     hourlyRate: state.hourlyRate,
     imageURI: state.imageURI,
-    privateEvent: state.privateEvent,
+    visibility: state.visibility,
+    cancellation: state.cancellation,
     fromDate: state.fromDate,
     toDate: state.toDate,
     eventType: state.eventType,
@@ -139,7 +147,7 @@ export const eventCreationContext = () => {
         payload: {},
       })
     },
-    setHourlyRate: (hourlyRate: HourlyRate) => {
+    setHourlyRate: (hourlyRate: AssetUnit[]) => {
       dispatch({
         type: EventCreationTypes.SetHourlyRate,
         payload: { hourlyRate },
@@ -157,16 +165,16 @@ export const eventCreationContext = () => {
         payload: { imageURI },
       })
     },
-    setTags: (tags: string[]) => {
+    setCancellation: (cancellation: Cancellation) => {
       dispatch({
-        type: EventCreationTypes.SetTags,
-        payload: { tags },
+        type: EventCreationTypes.SetEventCancellation,
+        payload: { cancellation },
       })
     },
-    setPrivateEvent: (privateEvent: boolean) => {
+    setEventVisibility: (visibility: EventVisibility) => {
       dispatch({
-        type: EventCreationTypes.SetPrivateEvent,
-        payload: { privateEvent },
+        type: EventCreationTypes.SetEventVisibility,
+        payload: { visibility },
       })
     },
     setDateFrame: (fromDate: Date, toDate: Date) => {
@@ -375,7 +383,9 @@ export const walletContext = () => {
         payload: { baseAddress },
       })
     },
-    setSendTxInfo: (sendTxInfo: SendTxInfo) => {
+    setSendTxInfo: (
+      sendTxInfo: SendRegularTxInfo | SendLockingTxInfo | SendUnlockingTxInfo
+    ) => {
       dispatch({
         type: "SET_SEND_TX_INFO",
         payload: { sendTxInfo },

@@ -2,7 +2,7 @@ import * as React from "react"
 import { Linking } from "react-native"
 
 import { AxiosResponse } from "axios"
-import { InAppBrowser } from "react-native-inappbrowser-reborn"
+import { InAppBrowser } from "@stytch/react-native-inappbrowser-reborn"
 import * as qs from "qs"
 
 import { Auth } from "Api/Auth"
@@ -10,14 +10,10 @@ import { getDeepLinkUri } from "lib/utils"
 import { appContext } from "contexts/contextApi"
 import axios from "Api/base"
 
-export const useGoogleAuth = (
-  navigationCallback: () => void,
-  setError: any
-) => {
+export const useGoogleAuth = (navigationCallback: () => void, setError: any) => {
   const { setValidGoogleOAuth } = appContext()
   const [isRequesting, setIsRequesting] = React.useState<boolean>(false)
-  const [isInitialRequesting, setIsInitialRequesting] =
-    React.useState<boolean>(true)
+  const [isInitialRequesting, setIsInitialRequesting] = React.useState<boolean>(true)
 
   React.useEffect(() => {
     ;(async () => {

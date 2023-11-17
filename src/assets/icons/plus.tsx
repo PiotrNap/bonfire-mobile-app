@@ -7,7 +7,7 @@ export const PlusIcon = (props: SvgProps) => {
       <Path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={props.strokeWidth ? props.strokeWidth : 2.4}
+        strokeWidth={props.strokeWidth ? props.strokeWidth : 2}
         d="M12 4v16m8-8H4"
       />
     </Svg>

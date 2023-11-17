@@ -58,12 +58,40 @@ export function formValidationSchema() {
   })
 }
 
+const rowSchema = yup.object().shape({
+  name: yup.string().required(),
+  label: yup.string(),
+  policyId: yup.string().required(),
+  count: yup.number().required().positive(),
+})
+
+export function paymentTokensSchema() {
+  return yup.object().shape({
+    paymentTokens: yup
+      .array()
+      .of(rowSchema)
+      .test("skip-first-element", "", (array) => {
+        if (!array || array.length === 0) return true // Pass validation if array is empty or undefined
+        // Validate all elements except the first one
+        for (let i = 1; i < array.length; i++) {
+          try {
+            rowSchema.validateSync(array[i])
+          } catch (err) {
+            return false // Return false if any validation fails
+          }
+        }
+        return true // Return true if all validations pass
+      }),
+  })
+}
+
 export function newEventScheme() {
   return yup.object().shape({
     title: yup.string().required("Title is required"),
-    ada: yup
-      .string()
-      .matches(/^[+-]?\d+(\.\d+)?$/, "This input can only contain numbers"),
+    fee: yup
+      .number()
+      .required("Fee rate is required")
+      .lessThan(100, "Fee must be less than 100%"),
   })
 }
 

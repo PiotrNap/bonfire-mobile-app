@@ -15,13 +15,14 @@ export const RoundedButton = ({ onPress, icon }: Props) => {
   return (
     <Pressable
       onPress={onPress}
+      hitSlop={Sizing.x5}
       style={Buttons.applyOpacity(
         Object.assign(
           {},
           styles.button,
           isLightMode
             ? { backgroundColor: Colors.primary.s800 }
-            : { backgroundColor: Colors.primary.s600 }
+            : { backgroundColor: Colors.primary.neutral }
         )
       )}>
       {icon}

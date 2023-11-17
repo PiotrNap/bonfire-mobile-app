@@ -18,6 +18,7 @@ import { Colors, Sizing } from "styles/index"
 import { months, weekDays } from "common/types/calendarTypes"
 import { SectionDetail } from "common/interfaces/bookingInterface"
 import {
+  formatDateFromMilliseconds,
   getDate,
   getDay,
   getDigitalLocaleTime,
@@ -26,7 +27,8 @@ import {
   isSameDay,
 } from "lib/utils"
 import { AnyObject } from "yup/lib/types"
-import tz from "react-native-timezone"
+import { ProfileContext } from "contexts/profileContext"
+import { hexToText } from "lib/wallet/utils"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
@@ -42,6 +44,7 @@ export const ConfirmationDetails = ({
   bookedEvent,
 }: any) => {
   const { colorScheme } = appContext()
+  const { timeZone } = React.useContext(ProfileContext)
   var {
     duration = null,
     durationCost = null,
@@ -50,14 +53,14 @@ export const ConfirmationDetails = ({
   } = bookingContext()
   const {
     textContent,
-    hourlyRate: eventHourlyRate,
+    hourlyRate,
     selectedDays,
     imageURI,
     eventCardColor,
     eventTitleColor,
   } = eventCreationContext()
+  const isLightMode = colorScheme === "light"
   const previewingEvent = bookingPreviewingEvent || bookedEvent
-  const [timeZone, setTimeZone] = React.useState<any>("")
   var selectedDaysArr: number[] = []
   var fromDate, toDate
 
@@ -66,15 +69,6 @@ export const ConfirmationDetails = ({
     fromDate = Math.min(...selectedDaysArr)
     toDate = Math.max(...selectedDaysArr)
   }
-
-  React.useEffect(() => {
-    ;(async () => {
-      let _timeZone = await tz.getTimeZone()
-      setTimeZone(_timeZone)
-    })()
-  }, [])
-
-  const isLightMode = colorScheme === "light"
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s600 : Colors.primary.s200,
@@ -96,47 +90,44 @@ export const ConfirmationDetails = ({
     font: <FontIcon {...iconStyles} />,
   }
 
+  console.log("organizerEvent >", organizerEvent)
+
   const organizerEventSections: any[] = [
     organizerEvent?.title && {
       label: "Title",
       lineContent: {
         content: organizerEvent?.title,
-        icon: sectionsIcons.presentation,
       },
     },
     organizerEvent?.description && {
       label: "Description",
       lineContent: {
         content: organizerEvent?.description,
-        icon: sectionsIcons.description,
       },
     },
     organizerEvent?.fromDate && {
-      label: "Date & Time",
+      label: "Date",
       lineContent: !isSameDay(organizerEvent?.fromDate, organizerEvent?.toDate)
         ? [
             {
-              content: `Starts: ${weekDays[getDay(organizerEvent?.fromDate)]} - ${
+              content: `Start: ${weekDays[getDay(organizerEvent?.fromDate)]} - ${
                 months[getMonth(organizerEvent?.fromDate)]
               } ${getDate(organizerEvent?.fromDate)}`,
-              icon: sectionsIcons.calendar,
             },
             {
-              content: `Ends: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
+              content: `End: ${weekDays[getDay(organizerEvent?.toDate)]} - ${
                 months[getMonth(organizerEvent?.toDate)]
               } ${getDate(organizerEvent?.toDate)}`,
-              icon: sectionsIcons.calendar,
             },
           ]
         : [
             {
               content: `${new Date(organizerEvent?.fromDate).toLocaleString()}`,
-              icon: sectionsIcons.calendar,
             },
           ],
     },
     organizerEvent?.availableAt && {
-      label: "Date & Time",
+      label: "Date",
       lineContent: [
         {
           content: `${weekDays[getDay(organizerEvent?.availableAt)]} - ${
@@ -170,6 +161,7 @@ export const ConfirmationDetails = ({
     },
   ].filter((s) => !!s)
 
+  /** Displayed during event creation confirmation **/
   const newEventSections: any[] = [
     textContent?.title && {
       label: "Title",
@@ -179,24 +171,22 @@ export const ConfirmationDetails = ({
       },
       lineContent: {
         content: textContent.title,
-        icon: sectionsIcons.presentation,
       },
     },
-    textContent?.description && {
+    textContent?.summary && {
       label: "Description",
       callbackFn: {
         label: "Edit",
         callbackFnScreen: "New Event Description",
       },
       lineContent: {
-        content: textContent.description,
-        icon: sectionsIcons.description,
+        content: textContent.summary,
       },
     },
     selectedDays &&
       fromDate &&
       toDate && {
-        label: "Date & Time",
+        label: "Date",
         callbackFn: {
           label: "Edit",
           callbackFnScreen: "Available Days Selection",
@@ -204,33 +194,36 @@ export const ConfirmationDetails = ({
         lineContent: !isSameDay(fromDate, toDate)
           ? [
               {
-                content: `Starts: ${new Date(fromDate).toLocaleString()}`,
-                icon: sectionsIcons.calendar,
+                content: `Start: ${formatDateFromMilliseconds(fromDate)}`,
               },
               {
-                content: `Ends: ${new Date(toDate).toLocaleString()}`,
-                icon: sectionsIcons.calendar,
+                content: `End: ${formatDateFromMilliseconds(toDate)}`,
+              },
+              {
+                content: `Time Zone: ${timeZone}`,
               },
             ]
           : [
               {
-                content: `${new Date(fromDate).toLocaleString()}`,
-                icon: sectionsIcons.calendar,
+                content: `${formatDateFromMilliseconds(fromDate)}`,
+              },
+              {
+                content: `Time Zone: ${timeZone}`,
               },
             ],
       },
     {
       label: "Hourly Rate",
-      lineContent: [
-        eventHourlyRate.ada && {
-          content: `${eventHourlyRate.ada}`,
-          icon: sectionsIcons.ada,
-        },
-        eventHourlyRate.gimbals && {
-          content: `${eventHourlyRate.gimbals}`,
-          icon: sectionsIcons.ada,
-        },
-      ],
+      lineContent: hourlyRate.map((hr) =>
+        hr.name === "ada"
+          ? {
+              content: hr.count,
+              icon: hr.name === "ada" ? <AdaIcon {...iconStyles} /> : null,
+            }
+          : {
+              content: `${hr.name} - ${Number(hr.count)}`,
+            }
+      ),
     },
     eventCardColor !== "transparent" && {
       label: "Event Card",
@@ -278,7 +271,7 @@ export const ConfirmationDetails = ({
     },
     (previewingEvent?.pickedDate || pickedDate) &&
       (previewingEvent?.duration || duration) && {
-        label: "Date & Time",
+        label: "Date",
         ...(pickedDate &&
           duration && {
             callbackFn: {

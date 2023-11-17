@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { EventCreationActions } from "common/types/contextTypes"
+import { AssetUnit } from "lib/wallet/types"
 
 export interface ProviderProps {
   children: React.ReactNode
@@ -15,14 +16,14 @@ export interface InitialState {
   textContent: TextContent
   availabilities: EventAvailability[]
   selectedDays: SelectedDays
-  tags: string[]
   fromDate: Date | null
   toDate: Date | null
-  hourlyRate: HourlyRate
+  hourlyRate: AssetUnit[]
   eventType: EventType
   imageURI: string
   selectedWeekDays: SelectedWeekDays[]
-  privateEvent: boolean
+  cancellation: Cancellation
+  visibility: EventVisibility
   eventCardColor: string
   eventTitleColor: string
   gCalEventsBooking: boolean
@@ -30,16 +31,17 @@ export interface InitialState {
 
 export type SelectedDays = { [key: string]: number }
 export type SelectedWeekDays = { [key: string]: any }
-export type EventType = "One-Time" | "Recurring"
+export type EventType = "one-time" | "recurring"
+export type EventVisibility = "public" | "private"
 
 export interface TextContent {
   title: string
-  description: string
+  summary: string
 }
 
-export interface HourlyRate {
-  ada: number
-  gimbals: number
+export interface Cancellation {
+  fee: number // fee % based off of ADA cost
+  window: number // cancellation window before event start date in hours
 }
 
 export interface EventAvailability {

@@ -1,8 +1,10 @@
 import { TxInput } from "@hyperionbt/helios"
 import { EventCardInfo, OrganizerRate } from "common/interfaces/bookingInterface"
 import {
+  Cancellation,
   EventAvailability,
   EventType,
+  EventVisibility,
   HourlyRate,
   SelectedWeekDays,
   TextContent,
@@ -22,6 +24,7 @@ import {
   SendUnlockingTxInfo,
   WalletKeys,
   WalletAssets,
+  AssetUnit,
 } from "lib/wallet/types"
 
 export enum AppTypes {
@@ -49,10 +52,10 @@ export enum EventCreationTypes {
   SetSelectedWeek = "SET_SELECTED_WEEKS",
   RemoveSelectedWeeks = "REMOVE_SELECTED_WEEKS",
   SetDateFrame = "SET_DATE_FRAME",
-  SetTags = "SET_TAGS",
   SetImageURI = "SET_IMAGE_URI",
   SetHourlyRate = "SET_HOURLY_RATE",
-  SetPrivateEvent = "SET_PRIVATE_EVENT",
+  SetEventCancellation = "SET_EVENT_CANCELLATION",
+  SetEventVisibility = "SET_EVENT_VISIBILITY",
   SetEventType = "SET_EVENT_TYPE",
   SetEventCardColor = "SET_EVENT_CARD_COLOR",
   SetEventTitleColor = "SET_EVENT_TITLE_COLOR",
@@ -183,22 +186,22 @@ export type EventCreationPayload = {
   }
   [EventCreationTypes.RemoveSelectedWeeks]: any
   [EventCreationTypes.SetHourlyRate]: {
-    hourlyRate: HourlyRate
+    hourlyRate: AssetUnit[]
   }
   [EventCreationTypes.SetImageURI]: {
     imageURI: string
   }
-  [EventCreationTypes.SetTags]: {
-    tags: string[]
-  }
   [EventCreationTypes.SetTextContent]: {
     textContent: TextContent
   }
-  [EventCreationTypes.SetPrivateEvent]: {
-    privateEvent: boolean
+  [EventCreationTypes.SetEventVisibility]: {
+    visibility: EventVisibility
   }
   [EventCreationTypes.SetEventType]: {
     eventType: EventType
+  }
+  [EventCreationTypes.SetEventCancellation]: {
+    cancellation: Cancellation
   }
   [EventCreationTypes.SetEventCardColor]: {
     eventCardColor: string

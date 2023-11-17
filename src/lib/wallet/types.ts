@@ -28,7 +28,7 @@ export type WalletAssets = Map<string, AssetUnit>
 export type AssetUnit = {
   policyId: string
   name: string
-  count: string
+  count: string | number
   label: string
 }
 export type BlockfrostTx = {

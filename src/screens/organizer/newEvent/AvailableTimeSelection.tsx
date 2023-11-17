@@ -9,28 +9,16 @@ import { TimePickerInput } from "components/forms/TimePickerInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { SafeAreaView } from "react-native-safe-area-context"
-import {
-  Buttons,
-  Colors,
-  Forms,
-  Outlines,
-  Sizing,
-  Typography,
-} from "styles/index"
+import { Buttons, Colors, Forms, Outlines, Sizing, Typography } from "styles/index"
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { roundDateMinutes } from "lib/utils"
 import { fontWeight } from "../../../styles/typography"
 
-type Props = StackScreenProps<
-  EventCreationParamList,
-  "Available Time Selection"
->
+type Props = StackScreenProps<EventCreationParamList, "Available Time Selection">
 
 export const AvailableTimeSelection = ({ navigation }: Props) => {
-  const [fromTime, setFromTime] = React.useState<Date>(
-    roundDateMinutes(new Date())
-  )
+  const [fromTime, setFromTime] = React.useState<Date>(roundDateMinutes(new Date()))
   const [toTime, setToTime] = React.useState<Date>(roundDateMinutes(new Date()))
   const [minTime, setMinTime] = React.useState<number>(0)
   const [maxTime, setMaxTime] = React.useState<number>(0)
@@ -40,8 +28,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
   const [openPicker, setOpenPicker] = React.useState<string | null>(null)
   const [alreadyCreated, setAlreadyCreated] = React.useState<boolean>(false)
   const { colorScheme } = appContext()
-  const { addAvailability, availabilities, removeAvailabilities } =
-    eventCreationContext()
+  const { addAvailability, availabilities, removeAvailabilities } = eventCreationContext()
 
   React.useEffect(() => {
     setMinInputRange(calculateMinRange())
@@ -54,7 +41,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
 
     if (range > 0) {
       // in range of 5min
-      for (let i = 5; i < range / 1000 / 60 + 1; i += 5) {
+      for (let i = 30; i < range / 1000 / 60 + 1; i += 30) {
         arr.push(i)
       }
       if (!minTime) setMinTime(arr[0])
@@ -73,7 +60,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
     const range = toTime.getTime() - fromTime.getTime()
 
     if (range > 0) {
-      for (let i = 5; i < range / 1000 / 60 + 1; i += 5) {
+      for (let i = 30; i < range / 1000 / 60 + 1; i += 30) {
         arr.push(i)
       }
       if (!maxTime) setMaxTime(arr[0])
@@ -143,9 +130,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
       style={[
         styles.safeArea,
         {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
         },
       ]}>
       <View style={{ height: "100%", width: "90%", alignItems: "center" }}>
@@ -186,7 +171,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
         <View style={styles.timeSlotsPickersWrapper}>
           <View style={styles.slotsWrapperTop}>
             <PlainInputPicker
-              label="Min. duration"
+              label="Minimum duration"
               minTime={minTime}
               inputRange={minInputRange}
               onValueChange={onMinValueChange}
@@ -197,7 +182,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
           </View>
           <View style={styles.slotsWrapperBottom}>
             <PlainInputPicker
-              label="Max. duration"
+              label="Maximum duration"
               maxTime={maxTime}
               inputRange={maxInputRange}
               onValueChange={onMaxValueChange}
@@ -213,7 +198,6 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
               isLightMode
                 ? { color: Colors.primary.s800 }
                 : { color: Colors.primary.neutral },
-              styles.listHeaderText,
             ]}>
             Total ({availabilities.length})
           </Text>
@@ -223,33 +207,14 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
                 isLightMode
                   ? { color: Colors.primary.s800 }
                   : { color: Colors.primary.neutral },
-                styles.listHeaderText,
               ]}></Text>
-            <Pressable
-              onPress={addNewAvailability}
-              disabled={isDisabledAddBtn}
-              style={Buttons.applyOpacity(
-                Object.assign(
-                  {},
-                  styles.addBtn,
-                  isDisabledAddBtn
-                    ? { backgroundColor: Colors.neutral.s200 }
-                    : {}
-                )
-              )}>
-              <PlusIcon
-                style={[
-                  styles.plusIcon,
-                  {
-                    //@ts-ignore
-                    color: isDisabledAddBtn
-                      ? Colors.neutral.s500
-                      : Colors.primary.neutral,
-                  },
-                ]}
-                strokeWidth={3}
-              />
-            </Pressable>
+          <Pressable
+            disabled={isDisabledAddBtn}
+            hitSlop={Sizing.x10}
+            style={Buttons.applyOpacity([styles.addBtn, isDisabledButton? { backgroundColor: Colors.success.s400 } : {} ])}
+            onPress={addNewAvailability}>
+            <PlusIcon style={styles.plusIcon} stroke={Colors.neutral.s150} />
+          </Pressable>
           </View>
         </View>
         {hasAvailabilities ? (
@@ -259,7 +224,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
             style={{
               flexDirection: "row",
               marginLeft: "auto",
-              marginRight: Sizing.x20,
+              marginRight: Sizing.x10,
             }}>
             <Text
               style={{
@@ -335,25 +300,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: Sizing.x5,
-  },
-  listHeaderText: {
-    ...Typography.subHeader.x30,
-    alignSelf: "center",
     marginLeft: Sizing.x10,
   },
   addBtn: {
-    borderRadius: Outlines.borderRadius.max,
+    width: Sizing.x30,
+    height: Sizing.x30,
+    backgroundColor: "green",
+    marginRight: Sizing.x10,
+    alignItems: "center",
     justifyContent: "center",
-    width: Sizing.x40,
-    height: Sizing.x40,
-    marginHorizontal: Sizing.x10,
-    backgroundColor: Colors.primary.s600,
-    ...Outlines.shadow.lifted,
+    borderRadius: Outlines.borderRadius.max,
   },
   plusIcon: {
     width: Sizing.x25,
     height: Sizing.x25,
-    alignSelf: "center",
   },
   arrowIcon: {
     width: Sizing.x60,

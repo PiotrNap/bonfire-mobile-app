@@ -10,11 +10,12 @@ import {
   Animated,
 } from "react-native"
 
-import { Colors, Outlines, Sizing } from "styles/index"
+import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { Picker } from "@react-native-picker/picker"
 import { DownIcon } from "assets/icons"
 import { appContext } from "contexts/contextApi"
 import { formStyleDark, formStyleLight } from "../../styles/forms"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface PlainInputPickerProps {
   label: string
@@ -30,7 +31,6 @@ export interface PlainInputPickerProps {
 
 export const PlainInputPicker = (props: PlainInputPickerProps) => {
   const { colorScheme } = appContext()
-  const [, setIconAnimationValue] = React.useState<number>(0)
   const [dropDownAnimationValue, setDropDownAnimationValue] =
     React.useState<number>(0)
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
@@ -50,7 +50,6 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     onValueChange,
     onOpenChange,
   }: PlainInputPickerProps = props
-  const iconRotationRef = React.useRef(new Animated.Value(0)).current
   const dropDownHeightRef = React.useRef(new Animated.Value(0)).current
   const isDisabled = inputValue === "--"
   const os = Platform.OS
@@ -70,9 +69,6 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     if (!openPicker && showPicker) onInputPress()
 
     const listeners = () => {
-      iconRotationRef.addListener(({ value }) => {
-        setIconAnimationValue(value)
-      })
       dropDownHeightRef.addListener(({ value }) =>
         setDropDownAnimationValue(value)
       )
@@ -80,34 +76,17 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     listeners()
 
     const removeListeners = () => {
-      iconRotationRef.removeAllListeners
       dropDownHeightRef.removeAllListeners
     }
 
     return removeListeners
   }, [openPicker])
 
-  const AnimatedIcon = Animated.createAnimatedComponent(DownIcon)
-
-  const spin = iconRotationRef.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "180deg"],
-  })
-
   const onLayout = (e: LayoutChangeEvent) => setDimensions(e.nativeEvent.layout)
-
   const onChange = (val: string) => {
     onValueChange(Number(val))
   }
 
-  /**
-   * Animations
-   */
-  const iconAnimation = Animated.timing(iconRotationRef, {
-    toValue: (iconRotationRef as any)._value === 0 ? 1 : 0,
-    duration: 120,
-    useNativeDriver: true,
-  })
   const dropDownAnimation = Animated.timing(dropDownHeightRef, {
     toValue: dropDownAnimationValue === 0 ? 150 : 0,
     duration: 120,
@@ -117,7 +96,6 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
   const onInputPress = () => {
     if (openPicker && openPicker !== label) return onOpenChange(null)
     const animations: any[] = []
-    animations.push(iconAnimation)
     if (os === "ios") {
       animations.push(dropDownAnimation)
     }
@@ -129,12 +107,6 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
       }
       return !prev
     })
-    // update the reference of current open picker
-    // if (!openPicker && !showPicker) {
-    //   onOpenChange(label)
-    // } else {
-    //   onOpenChange(null)
-    // }
     Animated.parallel(animations).start()
   }
 
@@ -149,9 +121,11 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
 
   return (
     <View style={styles.inputContainer}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-      </View>
+      <SubHeaderText
+        customStyle={defaultStyles.label}
+        colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        {label}
+      </SubHeaderText>
       <Pressable
         onPress={onInputPress}
         disabled={isDisabled}
@@ -165,8 +139,8 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
             ]}>
             {inputValue + " min"}
           </Text>
-          <AnimatedIcon
-            style={[styles.icon, { transform: [{ rotate: spin }] }]}
+          <DownIcon
+            style={styles.icon}
             stroke={Colors.primary.s600}
           />
         </View>
@@ -192,16 +166,6 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
           <Picker
             testID={label}
             nativeID={label}
-            //@ts-ignore
-            onFocus={({ _targetInst }) =>
-              _targetInst.pendingProps?.testID === label &&
-              iconAnimation.start()
-            }
-            //@ts-ignore
-            onBlur={({ _targetInst }) =>
-              _targetInst.pendingProps?.testID === label &&
-              iconAnimation.start()
-            }
             enabled={enabledPicker}
             style={[
               styles.androidPicker,
@@ -258,5 +222,10 @@ const defaultStyles = StyleSheet.create({
     height: Sizing.x30,
     position: "absolute",
     right: 0,
+  },
+  label: {
+    ...Typography.subHeader.x10,
+    paddingLeft: Sizing.x5,
+    paddingBottom: Sizing.x5,
   },
 })

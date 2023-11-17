@@ -1,10 +1,6 @@
 import * as React from "react"
 import { CalendarEventsList, MonthlyWrapper } from "components/calendar"
-import {
-  appContext,
-  eventCreationContext,
-  myCalendarContext,
-} from "contexts/contextApi"
+import { appContext, eventCreationContext, myCalendarContext } from "contexts/contextApi"
 import { ActivityIndicator, StyleSheet, View } from "react-native"
 import { Colors, Sizing } from "styles/index"
 import { useNavigation } from "@react-navigation/native"
@@ -16,7 +12,6 @@ import { SmallButton } from "components/buttons/smallButton"
 import { PlusIcon } from "assets/icons"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
-import { RoundedButton } from "components/buttons/roundedButton"
 
 export interface CalendarProps {
   isBookingCalendar?: boolean
@@ -48,12 +43,8 @@ export const Calendar = ({
   const navigation = useNavigation()
 
   React.useEffect(() => {
-    // if (events === null) {
-    getEvents(
-      true,
-      new Date(calendarHeader.year, monthsByName[calendarHeader.month])
-    )
-    // }
+    if (!id) return
+    getEvents(true, new Date(calendarHeader.year, monthsByName[calendarHeader.month]))
 
     const subscribe = () => {
       navigation.addListener("blur", () => {})
@@ -73,7 +64,7 @@ export const Calendar = ({
     subscribe()
 
     return unsubscribe
-  }, [])
+  }, [id])
 
   const onAddEventPress = () => {
     resetEventCreationState()
@@ -126,6 +117,7 @@ export const Calendar = ({
             />
           </View>
         ))}
+      {/*
       {isMonthWithEvents && !loadingEvents && (
         <View style={styles.cornerButtonWrapper}>
           <RoundedButton
@@ -141,6 +133,7 @@ export const Calendar = ({
           />
         </View>
       )}
+      */}
     </View>
   )
 }

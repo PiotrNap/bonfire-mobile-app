@@ -254,7 +254,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
               ]}>
               <FullWidthButton
                 onPressCallback={() => animateNavigationButtons("unselected")}
-                text={"Change image"}
+                text={"Change"}
                 lightMode={true}
                 buttonType={"transparent"}
               />
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary.s400,
     borderWidth: Outlines.borderWidth.base,
     borderColor: Colors.primary.s800,
-    borderRadius: Outlines.borderRadius.small,
+    borderRadius: Outlines.borderRadius.base,
     ...Outlines.shadow.base,
   },
   button_text: {

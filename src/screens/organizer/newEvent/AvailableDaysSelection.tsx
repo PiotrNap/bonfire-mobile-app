@@ -7,30 +7,20 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Sizing } from "styles/index"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { StackScreenProps } from "@react-navigation/stack"
-import {
-  DEEP_LINKING_URLS,
-  EventCreationParamList,
-} from "common/types/navigationTypes"
+import { DEEP_LINKING_URLS, EventCreationParamList } from "common/types/navigationTypes"
 import { MonthlyWrapper } from "components/calendar"
-import { CalendarWrapperSimple } from "components/calendar/CalendarWrapperSimple"
+import { CalendarWrapper } from "components/calendar/"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
-import { SlideTopModal } from "components/modals/SlideTopModal"
 import { createNestedPath } from "lib/navigation"
 import { HintBox } from "components/modals/HintBox"
-import { ErrorIcon } from "assets/icons"
-import {
-  getFromEncryptedStorage,
-  setToEncryptedStorage,
-} from "lib/encryptedStorage"
+import { getFromEncryptedStorage, setToEncryptedStorage } from "lib/encryptedStorage"
 import { UserSettings } from "common/interfaces/appInterface"
 import { Checkbox } from "components/forms/Checkbox"
 import { BodyText } from "components/rnWrappers/bodyText"
+import { showErrorToast } from "lib/helpers"
 
-type Props = StackScreenProps<
-  EventCreationParamList,
-  "Available Days Selection"
->
+type Props = StackScreenProps<EventCreationParamList, "Available Days Selection">
 
 export const AvailableDaysSelection = (props: Props) => {
   const navigation = props.navigation
@@ -51,25 +41,28 @@ export const AvailableDaysSelection = (props: Props) => {
     setGCalEventsBooking(acceptedCheckbox)
     navigation.navigate("Available Time Selection")
   }
-  const { isRequesting, isInitialRequesting, startGoogleAuthentication } =
-    useGoogleAuth(googleOauthCallback, setError)
+  const { isRequesting, isInitialRequesting, startGoogleAuthentication } = useGoogleAuth(
+    googleOauthCallback,
+    setError
+  )
 
   React.useEffect(() => {
     ;(async () => {
-      const userSettings: UserSettings = await getFromEncryptedStorage(
-        "user-settings"
-      )
+      const userSettings: UserSettings = await getFromEncryptedStorage("user-settings")
       if (!userSettings?.eventCreationHintHidden) setHintBoxVisible(true)
     })()
   }, [])
 
+  React.useEffect(() => {
+    if (error.isVisible) showErrorToast(null, error.type)
+  }, [error])
+
   const isLightMode = colorScheme === "light"
-  const isDisabledBtn =
-    selectedDays === null || !Object.entries(selectedDays).length
-  const onCheckBoxPress = () => {
-    setError({ isVisible: false, type: "" })
-    setAcceptedChecbox((prev) => !prev)
-  }
+  const isDisabledBtn = selectedDays === null || !Object.entries(selectedDays).length
+  // const onCheckBoxPress = () => {
+  //   setError({ isVisible: false, type: "" })
+  //   setAcceptedChecbox((prev) => !prev)
+  // }
   const onBackNavigationPress = React.useCallback(() => {
     removeSelectedDays()
     removeSelectedWeeks()
@@ -106,20 +99,9 @@ export const AvailableDaysSelection = (props: Props) => {
     )
   }, [selectedDays])
 
-  const ErrorModalIcon = React.memo(() => (
-    <ErrorIcon
-      stroke={Colors.primary.neutral}
-      width={Sizing.x60}
-      height={Sizing.x60}
-      strokeWidth={1.5}
-    />
-  ))
-
   const onHintClose = async () => {
     try {
-      const userSettings: UserSettings = await getFromEncryptedStorage(
-        "user-settings"
-      )
+      const userSettings: UserSettings = await getFromEncryptedStorage("user-settings")
       await setToEncryptedStorage("user-settings", {
         ...userSettings,
         eventCreationHintHidden: true,
@@ -128,91 +110,78 @@ export const AvailableDaysSelection = (props: Props) => {
   }
 
   return (
-    <>
-      <SafeAreaView
-        style={[
-          styles.safeArea,
-          {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.neutral.s600,
-          },
-        ]}>
-        <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
-          <View style={styles.navigation}>
-            <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-              <LeftArrowIcon
-                width={24}
-                height={24}
-                color={
-                  isLightMode ? Colors.primary.s600 : Colors.primary.neutral
-                }
-              />
-            </Pressable>
-          </View>
-          <View style={{ width: "90%" }}>
-            <HeaderText
-              customStyles={{ marginBottom: Sizing.x10 }}
-              colorScheme={colorScheme}>
-              {`Select date${
-                eventType === "One-Time" ? "" : "s"
-              } you are available`}
-            </HeaderText>
-          </View>
-          {hintBoxVisible && eventType === "Recurring" && (
-            <HintBox
-              text="Press on a day to
-        select one, or tap on a day name to select 'em all."
-              closeable={true}
-              closeCallback={onHintClose}
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
+        },
+      ]}>
+      <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
+        <View style={styles.navigation}>
+          <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+            <LeftArrowIcon
+              width={24}
+              height={24}
+              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
             />
-          )}
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <CalendarWrapperSimple>
-              <MonthlyWrapper isNewEventCalendar={true} />
-            </CalendarWrapperSimple>
-            <View style={styles.messageWrapper}>
-              <Checkbox
-                onCheckBoxPress={onCheckBoxPress}
-                acceptedCheckbox={acceptedCheckbox}>
-                <BodyText
-                  customStyle={{
-                    fontFamily: "Roboto-Medium",
-                    fontSize: Sizing.x15,
-                    width: "90%",
-                  }}
-                  changingColorScheme
-                  colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                  Allow people to schedule my time on my Google calendar.
-                  {!validGoogleOAuth && !isInitialRequesting && (
-                    <>
-                      {" "}
-                      <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant
-                      access
-                    </>
-                  )}
-                </BodyText>
-              </Checkbox>
-            </View>
-          </ScrollView>
-          <FullWidthButton
-            text="Next"
-            colorScheme={colorScheme}
-            disabled={isDisabledBtn}
-            onPressCallback={onNextButtonPress}
-            loadingIndicator={isRequesting}
-            buttonType="filled"
-            style={styles.button}
-          />
+          </Pressable>
         </View>
-      </SafeAreaView>
-      <SlideTopModal
-        icon={ErrorModalIcon}
-        isModalVisible={error.isVisible}
-        modalContent={error.type}
-        backgroundColor={Colors.danger.s300}
-      />
-    </>
+        <View style={{ width: "90%" }}>
+          <HeaderText
+            customStyles={{ marginBottom: Sizing.x10 }}
+            colorScheme={colorScheme}>
+            {`Select date${eventType === "one-time" ? "" : "s"} you are available`}
+          </HeaderText>
+        </View>
+        {hintBoxVisible && eventType === "recurring" && (
+          <HintBox
+            text="Tap a weekday name to select all similar days in this month!"
+            closeable={true}
+            closeCallback={onHintClose}
+          />
+        )}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <CalendarWrapper>
+            <MonthlyWrapper isNewEventCalendar={true} />
+          </CalendarWrapper>
+          {/*
+          //TODO after beta release
+          <View style={styles.messageWrapper}>
+            <Checkbox
+              onCheckBoxPress={onCheckBoxPress}
+              acceptedCheckbox={acceptedCheckbox}>
+              <BodyText
+                customStyle={{
+                  fontFamily: "Roboto-Medium",
+                  fontSize: Sizing.x15,
+                  width: "90%",
+                }}
+                changingColorScheme
+                colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                Allow people to schedule my time on my Google calendar.
+                {!validGoogleOAuth && !isInitialRequesting && (
+                  <>
+                    {" "}
+                    <Text style={{ fontWeight: "bold" }}>Next:</Text> Grant access
+                  </>
+                )}
+              </BodyText>
+            </Checkbox>
+          </View>
+          */}
+        </ScrollView>
+        <FullWidthButton
+          text="Next"
+          colorScheme={colorScheme}
+          disabled={isDisabledBtn}
+          onPressCallback={onNextButtonPress}
+          loadingIndicator={isRequesting}
+          buttonType="filled"
+          style={styles.button}
+        />
+      </View>
+    </SafeAreaView>
   )
 }
 

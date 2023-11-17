@@ -27,6 +27,10 @@ export const bufferToBase64 = (val: Buffer) => {
   return !val ? val : Buffer.from(val).toString("base64")
 }
 
+export function utf8ToHex(string: string) {
+  return Buffer.from(string).toString("hex")
+}
+
 export function getDeepLinkUri(path: string = ""): string {
   const scheme = "bonfire://"
   const host = "bonfire.com"
@@ -58,6 +62,17 @@ export const requestAndroidPermission = async (
   } catch (err) {
     return false
   }
+}
+
+export function formatDateFromMilliseconds(milliseconds: number) {
+  const date = new Date(milliseconds)
+
+  // Adding 1 to get the correct month number (1-12) since getMonth() returns 0-11
+  const month = (date.getMonth() + 1).toString().padStart(2, "0") // Ensures two digits
+  const day = date.getDate().toString().padStart(2, "0") // Ensures two digits
+  const year = date.getFullYear()
+
+  return `${month}-${day}-${year}`
 }
 
 /**
@@ -597,11 +612,15 @@ export function getEventCardDate(
   toDate: number | string | Date
 ) {
   let dateString = ""
+  const fromMonthDay = getDate(fromDate)
+  const toMonthDay = getDate(toDate)
 
   // if the events happens in the same month
   if (getMonthName(fromDate) === getMonthName(toDate)) {
+    if (fromMonthDay === toMonthDay)
+      return `${fromMonthDay} ${getMonthName(fromDate).slice(0, 3)}`
     dateString +=
-      getDate(fromDate) + "-" + getDate(toDate) + " " + getMonthName(fromDate).slice(0, 3)
+      fromMonthDay + "-" + toMonthDay + " " + getMonthName(fromDate).slice(0, 3)
 
     return dateString
   }
@@ -630,6 +649,10 @@ export function getLocaleTimezone(): string {
   const offset = new Date().getTimezoneOffset()
 
   return `UTC ${offset < 0 && "+"}${-offset / 60}`
+}
+
+export function getDevicesTimeZone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
 /**

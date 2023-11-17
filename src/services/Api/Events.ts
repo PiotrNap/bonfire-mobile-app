@@ -69,7 +69,7 @@ export class Events {
           params: {
             limit: query.limit,
             page: query.page,
-            organizer_id: query.user_id,
+            user_id: query.user_id,
           },
         }
       )
@@ -82,7 +82,7 @@ export class Events {
   }
 
   /**
-   * Query values: search_query, organizer_id
+   * Query values: search_query, user_id
    */
   public static async getEventsBySearch(
     searchValue: string,

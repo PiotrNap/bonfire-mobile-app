@@ -1,27 +1,34 @@
 import * as React from "react"
 import { View, StyleSheet, Animated } from "react-native"
 
-import { Layout } from "components/layouts/basicLayout"
-import SearchBar from "@pnap/react-native-search-bar"
-import { PlusIcon, SearchIcon } from "assets/icons"
-import { appContext, eventCreationContext } from "contexts/contextApi"
-import { Colors, Outlines, Sizing, Typography, Buttons } from "styles/index"
-import { useEventsResults } from "lib/hooks/useEventsResults"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { StackScreenProps } from "@react-navigation/stack"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
+import { BookingStackParamList } from "common/types/navigationTypes"
+import { appContext } from "contexts/contextApi"
 import { EventsList } from "components/booking/EventsList"
+import { applyOpacity } from "../styles/colors"
+import { useEventsResults } from "lib/hooks/useEventsResults"
+import { SearchIcon } from "assets/icons"
+import SearchBar from "@pnap/react-native-search-bar"
 import { ProfileContext } from "contexts/profileContext"
-import { applyOpacity } from "../../styles/colors"
-import { RoundedButton } from "components/buttons/roundedButton"
+import { useEventShareLinking } from "lib/hooks/useEventShareLinking"
 import { useFocusEffect } from "@react-navigation/native"
 
-export const MyEvents = ({ navigation }: any) => {
+export const SearchListScreen = ({ navigation, route }: any) => {
   const { id } = React.useContext(ProfileContext)
-  const { resetEventCreationState } = eventCreationContext()
   const { colorScheme } = appContext()
-  const { events, isLoading, getEventsBySearchQuery, setEvents } = useEventsResults(id)
-  const eventsListRef = React.useRef<any>()
+  const {
+    events: searchEvents,
+    isLoading,
+    getEventsBySearchQuery,
+    setEvents,
+  } = useEventsResults(id) //  hook for fetching events based on Search bar input
+  const { navigateToEvent } = useEventShareLinking(navigation)
+  const [isFocused, setIsFocused] = React.useState<boolean>(false)
 
-  const isLightMode = colorScheme === "light"
   const animatedOpacity = React.useRef(new Animated.Value(0)).current
+  const isLightMode = colorScheme !== "dark"
 
   const onActiveSearch = (active: boolean) => {
     Animated.timing(animatedOpacity, {
@@ -38,17 +45,6 @@ export const MyEvents = ({ navigation }: any) => {
     // user hides search bar? show the normal events list.
     if (!val) setEvents(null)
   }
-  const onAddEventPress = () => {
-    resetEventCreationState()
-    navigation.navigate("New Event Description")
-  }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // we need to wait for id because this is users own events list
-      if (id) eventsListRef.current?.getEventsPaginated(1, 20, id)
-    }, [id])
-  )
 
   const CustomSearchIcon = React.useCallback(
     () => (
@@ -63,8 +59,25 @@ export const MyEvents = ({ navigation }: any) => {
     [colorScheme]
   )
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFocused(true)
+      return () => setIsFocused(false)
+    }, [])
+  )
+
+  React.useEffect(() => {
+    if (route.params?.["event-id"])
+      (async () => await navigateToEvent(route.params?.["event-id"]))()
+  }, [])
+
+  const renderEventsList = React.useCallback(
+    () => <EventsList customIsLoading={isLoading} customEvents={searchEvents} />,
+    [isFocused]
+  )
+
   return (
-    <Layout>
+    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <View style={styles.topContainer}>
         <SearchBar
           onSubmitSearch={onSubmitSearch}
@@ -94,17 +107,12 @@ export const MyEvents = ({ navigation }: any) => {
               : { color: Colors.primary.s800 },
             searchStyles.searchButtonText
           )}
-          underlineActiveColor={isLightMode ? Colors.primary.s600 : Colors.primary.s300}
+          underlineActiveColor={Colors.primary.s600}
           underlineInactiveColor={Colors.neutral.s300}
         />
       </View>
       <View style={styles.main}>
-        <EventsList
-          ref={eventsListRef}
-          isOrganizerOwnEvents
-          customIsLoading={isLoading}
-          customEvents={events}
-        />
+        {renderEventsList()}
         <Animated.View
           pointerEvents="none"
           style={[
@@ -116,31 +124,27 @@ export const MyEvents = ({ navigation }: any) => {
           ]}
         />
       </View>
-      <View style={styles.cornerButtonWrapper}>
-        <RoundedButton
-          onPress={onAddEventPress}
-          icon={
-            <PlusIcon
-              color={isLightMode ? Colors.primary.neutral : Colors.primary.s800}
-              width={Sizing.x40}
-              height={Sizing.x40}
-              strokeWidth={2}
-            />
-          }
-        />
-      </View>
-    </Layout>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  main: {
+  safeArea_light: {
     flex: 1,
-    width: "100%",
+    backgroundColor: Colors.primary.neutral,
+    alignItems: "center",
+  },
+  safeaArea_dark: {
+    flex: 1,
+    backgroundColor: Colors.neutral.s600,
+    alignItems: "center",
   },
   topContainer: {
     width: "90%",
+  },
+  main: {
+    flex: 1,
+    width: "100%",
   },
   overlay: {
     position: "absolute",
@@ -149,10 +153,10 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: applyOpacity(Colors.neutral.s500, 0.5),
   },
-  cornerButtonWrapper: {
-    position: "absolute",
-    bottom: Sizing.x15,
-    right: Sizing.x15,
+  noEventsMessage: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 })
 
@@ -167,7 +171,6 @@ const searchStyles = StyleSheet.create({
   searchBarInput: {
     ...Typography.subHeader.x30,
     fontFamily: "Roboto-Regular",
-    color: Colors.primary.s600,
     width: "0%",
     borderBottomWidth: Outlines.borderWidth.base,
     paddingVertical: Sizing.x2,

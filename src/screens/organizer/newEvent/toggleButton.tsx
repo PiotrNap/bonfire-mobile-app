@@ -10,38 +10,41 @@ import {
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 
-const ToggleButton = ({
-  options,
+// the order of items in options & values arrays should be the same
+const _ToggleButton = ({
+  options, // to display in UI
+  values, // to reference value selected
+  defaultValue,
   animationDuration,
   onSelect,
 }: {
   options: string[]
+  values: any[]
   animationDuration: number
+  defaultValue: any
   onSelect: (value: string) => any
 }) => {
-  const [active, setActive] = useState(options[0])
+  const [active, setActive] = useState(options[values.indexOf(defaultValue) || 0])
   const [viewWidth, setViewWidth] = useState(0)
   const animation = useRef(new Animated.Value(0)).current
   const { colorScheme } = appContext()
   const isLigthMode = colorScheme === "light"
 
-  const handlePress = (option: string) => {
+  const handlePress = (option: string, value: any) => {
     Animated.timing(animation, {
       toValue: options.indexOf(option),
       duration: animationDuration,
       useNativeDriver: true,
     }).start()
     setActive(option)
-    onSelect(option)
+    onSelect(value)
   }
 
   const buttonWidth = Dimensions.get("window").width / options.length
 
   const translateX = animation.interpolate({
     inputRange: options.map((_, i) => i),
-    outputRange: options.map(
-      (_, i) => i * (viewWidth / options.length || buttonWidth)
-    ),
+    outputRange: options.map((_, i) => i * (viewWidth / options.length || buttonWidth)),
   })
 
   if (isLigthMode) {
@@ -64,7 +67,7 @@ const ToggleButton = ({
         <TouchableOpacity
           key={index}
           style={styles.button}
-          onPress={() => handlePress(option)}>
+          onPress={() => handlePress(option, values[index])}>
           <Text style={[styles.text, active === option && styles.activeText]}>
             {option}
           </Text>
@@ -89,7 +92,7 @@ const stylesDark = StyleSheet.create({
     borderWidth: Outlines.borderWidth.base,
     borderRadius: Outlines.borderRadius.base,
     overflow: "hidden",
-    marginVertical: Sizing.x10,
+    marginBottom: Sizing.x20,
   },
   text: {
     color: Colors.primary.neutral,
@@ -108,7 +111,7 @@ const stylesLight = StyleSheet.create({
   container: {
     flexDirection: "row",
     borderColor: Colors.primary.s800,
-    borderWidth: Outlines.borderWidth.thin,
+    borderWidth: Outlines.borderWidth.base,
     borderRadius: Outlines.borderRadius.base,
     overflow: "hidden",
     marginBottom: Sizing.x20,
@@ -127,4 +130,4 @@ const stylesLight = StyleSheet.create({
   },
 })
 
-export default ToggleButton
+export const ToggleButton = React.memo(_ToggleButton)

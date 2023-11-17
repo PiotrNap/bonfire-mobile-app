@@ -28,9 +28,11 @@ export const CustomInput = (props: any) => {
 
   return (
     <>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{props.label}</Text>
-      </View>
+      {props.label && (
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>{props.label}</Text>
+        </View>
+      )}
       <View style={styles.textInputWrapper}>
         <TextInput
           name={props.name}

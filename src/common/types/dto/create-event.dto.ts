@@ -1,6 +1,7 @@
 import {
+  Cancellation,
   EventAvailability,
-  HourlyRate,
+  EventVisibility,
   SelectedDays,
 } from "common/interfaces/newEventInterface"
 
@@ -14,13 +15,14 @@ export interface CreateEventDto {
   description: string
   selectedDays: SelectedDays
   availabilities: EventAvailability[]
-  tags: string[]
   fromDate: Date | null
   toDate: Date | null
-  hourlyRate: HourlyRate
-  privateEvent: boolean
+  hourlyRate: string // AssetUnit[] converted to JSONSchema
+  cancellation: Cancellation
+  visibility: EventVisibility
   eventCardColor: string
   eventTitleColor: string
   organizer: EventUser
   gCalEventsBooking: boolean
+  timeZoneOffset: number
 }

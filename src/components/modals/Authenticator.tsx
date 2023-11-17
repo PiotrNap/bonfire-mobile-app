@@ -60,7 +60,7 @@ export const Authenticator = ({
         }
       }
 
-      onAuthenticatedCb(res)
+      await onAuthenticatedCb(res)
     } catch (e) {
       showErrorToast(e)
     } finally {

@@ -5,7 +5,6 @@ import { Day } from "interfaces/myCalendarInterface"
 import { getTime, isPastDate } from "lib/utils"
 import { monthsByName } from "common/types/calendarTypes"
 import { appContext } from "contexts/contextApi"
-import { roboto } from "../../../styles/typography"
 
 export interface AvailabilityDayProps extends Day {
   number: number
@@ -71,20 +70,14 @@ export const _AvailabilityDay = ({
     <Pressable
       style={[styles.dayContainer]}
       hitSlop={5}
-      onPress={() =>
-        onPressCallback(getTime(year, monthsByName[month], number))
-      }>
+      onPress={() => onPressCallback(getTime(year, monthsByName[month], number))}>
       <View style={dayButtonStyle}>
         <Text
           style={[
             styles.dayNumber,
             {
-              color: isSelectedDay
-                ? Colors.primary.neutral
-                : Colors.primary.s600,
-              ...(isSelectedDay
-                ? Typography.roboto.bold
-                : Typography.roboto.regular),
+              color: isSelectedDay ? Colors.primary.neutral : Colors.primary.s600,
+              ...(isSelectedDay ? Typography.roboto.bold : Typography.roboto.regular),
             },
           ]}>
           {number}
@@ -112,7 +105,7 @@ const styles = StyleSheet.create({
     height: 33,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: Outlines.borderWidth.base,
+    borderWidth: Outlines.borderWidth.thin,
     ...Outlines.shadow.base,
   },
   selectedDayButton: {

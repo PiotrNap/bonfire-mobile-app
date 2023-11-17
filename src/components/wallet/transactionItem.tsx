@@ -40,7 +40,11 @@ export const TransactionItem = React.memo(
           />
         )}
         <View style={styles.txInfo}>
-          <Text>
+          <Text
+            style={{
+              color:
+                colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral,
+            }}>
             {new Date(Number(transaction.block_time) * 1000).toLocaleDateString() +
               " " +
               new Date(Number(transaction.block_time) * 1000).toLocaleTimeString()}
@@ -55,7 +59,7 @@ export const TransactionItem = React.memo(
             }`}
           </SubHeaderText>
         </View>
-        <Pressable hitSlop={Sizing.x10} onPress={onTxItemPress}>
+        <Pressable hitSlop={Sizing.x15} onPress={onTxItemPress}>
           <RightArrowIcon
             width="20"
             height="20"

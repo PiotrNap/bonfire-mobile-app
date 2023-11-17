@@ -71,9 +71,8 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   const [titleColor, setTitleColor] = React.useState<any>(INITIAL_TITLE_COLOR)
   const [currColor, setCurrColor] =
     React.useState<SliderColor>(INITIAL_CURR_COLOR)
-  const [opacity, setOpacity] = React.useState<number>(!imageURI ? 1 : 0)
   const [titleOpacity, setTitleOpacity] = React.useState<number>(1)
-  const [bgOpacity, setBgOpacity] = React.useState<number>(1)
+  const [bgOpacity, setBgOpacity] = React.useState<number>(0)
   const [transparent, setTransparent] = React.useState<boolean>(false)
   const [colorChanged, setColorChanged] = React.useState<boolean>(false)
   const [activeSelection, setActiveSelection] = React.useState<
@@ -249,7 +248,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             <EventsListCard
               isEventCardPreview={true}
               title={textContent.title}
-              description={textContent.description}
+              description={textContent.summary}
               fromDate={fromDate}
               toDate={toDate}
               image={imageURI}

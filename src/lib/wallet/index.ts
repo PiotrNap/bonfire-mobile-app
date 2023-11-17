@@ -22,7 +22,7 @@ const { Bip32PublicKey } = CrossCSL
 import { CardanoMobile } from "../../../global"
 import { ROLE_TYPE, CONFIG_NUMBERS } from "./config"
 import { SendRegularTxInfo, TxHash, WalletKeys } from "./types"
-import { unitsMapToAssets } from "./utils"
+import { unitsToAssets } from "./utils"
 import { mainnet } from "../../on_chain/configs/mainnet"
 import { preprod } from "../../on_chain/configs/preprod"
 
@@ -187,7 +187,7 @@ export class Wallet {
       const params = new NetworkParams(getNetworkConfig())
 
       const outputAddress = new Address(receiverAddress)
-      const outputAssets = unitsMapToAssets(assets)
+      const outputAssets = unitsToAssets(assets)
 
       const outputValue = new Value(lovelace, outputAssets)
       const output = new TxOutput(outputAddress, outputValue)

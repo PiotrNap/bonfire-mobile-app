@@ -1,10 +1,5 @@
 import * as React from "react"
-import {
-  StyleSheet,
-  ActivityIndicator,
-  View,
-  VirtualizedList,
-} from "react-native"
+import { StyleSheet, ActivityIndicator, View, VirtualizedList } from "react-native"
 import LottieView from "lottie-react-native"
 
 import { EventsListCard } from "./EventsListCard"
@@ -14,38 +9,34 @@ import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Colors, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
+import { CurvedArrow } from "assets/icons"
 
-export interface EventsListProps {
-  customEvents?: any[] | null
-  customIsLoading?: boolean
-  isOrganizerOwnEvents?: boolean
-}
-
-export const EventsList = ({
-  customEvents,
-  customIsLoading,
-  isOrganizerOwnEvents,
-}: EventsListProps) => {
+export const EventsList = React.forwardRef((props, ref): any => {
+  const { customEvents, customIsLoading, isOrganizerOwnEvents } = props
   const { id } = React.useContext(ProfileContext)
   const { colorScheme, accountType } = appContext()
   const {
     events,
     isLoading: isPaginationLoading,
+    isLastPage,
     getEventsPaginated,
     eventsPage,
   } = useEventsPagination(isOrganizerOwnEvents ? id : "")
 
+  React.useImperativeHandle(ref, () => ({
+    getEventsPaginated,
+  }))
+
   // we aren't showing organizers own events on browse-screen
-  const filterOrganizerEvents = React.useCallback(
+  const filterUserEvents = React.useCallback(
     (_events: any[]) => {
       return _events.filter((event) => event.organizerId !== id)
     },
     [customEvents, events, id]
   )
   const eventsList = () => {
-    if (accountType === "attendee" || isOrganizerOwnEvents)
-      return customEvents ?? events
-    return filterOrganizerEvents(customEvents ?? events)
+    if (accountType === "attendee" || isOrganizerOwnEvents) return customEvents ?? events
+    return filterUserEvents(customEvents ?? events)
   }
   const isLightMode = colorScheme !== "dark"
   const isEmptyEventsList = !eventsList().length
@@ -84,12 +75,9 @@ export const EventsList = ({
     )
   }, [])
 
-  const keyExtractor = (item: any, index: number) => getRandomKey(index)
+  const keyExtractor = () => getRandomKey(5)
   const getItem = (data: any, index: number) => data[index]
   const getItemCount = (data: any) => data.length
-  const loadEvents = async (page: number, isRefreshing: boolean) => {
-    await getEventsPaginated(page, isRefreshing)
-  }
 
   const _ActivityIndicator = () => (
     <ActivityIndicator
@@ -99,8 +87,11 @@ export const EventsList = ({
       style={{ paddingTop: Sizing.x35 }}
     />
   )
-  const onEndReach = () => loadEvents(eventsPage + 1, false)
-  const onRefresh = React.useCallback(() => loadEvents(1, true), [])
+  const onEndReach = React.useCallback(() => {
+    if (isLastPage) return
+    getEventsPaginated(eventsPage + 1, 20, id)
+  }, [isLastPage])
+  const onRefresh = () => getEventsPaginated(1, 20, id, true)
   const onLayout = React.useCallback(
     ({ data, index }) => ({
       length: Sizing.x130,
@@ -119,8 +110,8 @@ export const EventsList = ({
           data={eventsList()}
           getItem={getItem}
           refreshing={isLoading}
-          initialNumToRender={4}
-          onEndReachedThreshold={0.5}
+          initialNumToRender={5}
+          onEndReachedThreshold={0.7}
           onEndReached={onEndReach}
           getItemCount={getItemCount}
           renderItem={renderEventCard}
@@ -133,34 +124,61 @@ export const EventsList = ({
           updateCellsBatchingPeriod={30}
           removeClippedSubviews
         />
-      ) : isEmptyEventsList && isLoading ? (
+      ) : isLoading ? (
         <_ActivityIndicator />
       ) : (
         <View style={styles.noEventsMessage}>
-          <LottieView
-            style={styles.lottieAnimation}
-            source={require("../../../assets/animations/not-found.json")}
-            autoPlay
-            loop={false}
+          {isOrganizerOwnEvents ? (
+            <SubHeaderText
+              customStyle={styles.noEventsText}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              Your event list is empty right now. Start adding events by tapping the '+'
+              button and watch this space fill up with your plans!
+            </SubHeaderText>
+          ) : (
+            <SubHeaderText
+              customStyle={styles.noEventsText}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              Looks like there are no events to show right now. Be the first to create an
+              event and inspire the community!
+            </SubHeaderText>
+          )}
+          <CurvedArrow
+            style={[
+              styles.arrowIcon,
+              //@ts-ignore
+              {
+                fill: isLightMode ? Colors.primary.s350 : Colors.primary.s350,
+                transform: [{ rotate: "90deg" }],
+              },
+            ]}
           />
-          <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Nothing to see here...
-          </SubHeaderText>
         </View>
       )}
     </>
   )
-}
+})
 
 const styles = StyleSheet.create({
   noEventsMessage: {
     flex: 1,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    paddingBottom: Sizing.x60,
   },
   lottieAnimation: {
     width: Sizing.x120,
     height: Sizing.x120,
+  },
+  arrowIcon: {
+    width: Sizing.x60,
+    height: Sizing.x60,
+    alignSelf: "flex-end",
+    marginRight: Sizing.x80,
+    marginTop: Sizing.x20,
+  },
+  noEventsText: {
+    textAlign: "center",
   },
 })

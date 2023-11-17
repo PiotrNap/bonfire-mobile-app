@@ -5,98 +5,115 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { StackScreenProps } from "@react-navigation/stack"
 import Filter from "bad-words"
 
-import { LeftArrowIcon } from "assets/icons"
+import { LeftArrowIcon  } from "assets/icons"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
-import { Colors, Outlines, Sizing, Typography } from "styles/index"
+import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { Layout } from "components/layouts/basicLayout"
-import { BodyText } from "components/rnWrappers/bodyText"
-import { ProfileContext } from "contexts/profileContext"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
-import { EventType, HourlyRate } from "common/interfaces/newEventInterface"
-import { Checkbox } from "components/forms/Checkbox"
-import ToggleButton from "./toggleButton"
+import { EventType, EventVisibility } from "common/interfaces/newEventInterface"
 import { CustomInput } from "components/forms/CustomInput"
 import { Field, Formik } from "formik"
 import { newEventScheme } from "lib/validators"
-import {
-  formStyleDark,
-  formStyleLight,
-  inputStyles,
-} from "../../../styles/forms"
+import { formStyleDark, formStyleLight, inputStyles } from "../../../styles/forms"
+import { PaymentTokensForm } from "components/forms/PaymentTokensForm"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { showErrorToast } from "lib/helpers"
+import { AssetUnit } from "lib/wallet/types"
+import { noop } from "lib/utils"
+import { ToggleButton } from "./toggleButton"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
 export const NewEventDescription = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
-  const { hourlyRate } = React.useContext(ProfileContext)
-  const { setTextContent, setHourlyRate, setEventType, setPrivateEvent } =
-    eventCreationContext()
+  const {
+    setTextContent,
+    setHourlyRate,
+    setEventVisibility,
+    setEventType,
+    setCancellation,
+    eventType,
+    visibility: eventVisibility,
+    textContent,
+    cancellation,
+    hourlyRate,
+  } = eventCreationContext()
   const [submitted, setSubmitted] = React.useState<boolean>(false)
-  const [eventTitle, setEventTitle] = React.useState<string>("")
-  const [_eventType, _setEventType] = React.useState<EventType>("One-Time")
-  const [_privateEvent, _setPrivateEvent] = React.useState<boolean>(false)
-  const [_hourlyRate, _setHourlyRate] = React.useState<HourlyRate>({
-    ada: 0,
-    gimbals: 0,
-  })
-  const [markedCheckbox, setMarkedCheckbox] = React.useState<boolean>(false)
+  const [title, setTitle] = React.useState<string>("")
+  const [summary, setSummary] = React.useState<string>("")
+  const [fee, setFee] = React.useState<number>(0)
+  const [type, setType] = React.useState<EventType>("one-time")
+  const [visibility, setVisibility] = React.useState<EventVisibility>("public")
+  const [cancelWindow, setCancelWindow] = React.useState<number>(0)
+  const [paymentTokensErrorStatus, setPaymentTokensErrorStatus] =
+    React.useState<boolean>(false)
+  const paymentTokensRef = React.useRef()
+  const descriptionRef = React.useRef<any>()
 
   const isLightMode = colorScheme === "light"
-  const isDisabledButton = !eventTitle
+  const isDisabledButton =
+    paymentTokensErrorStatus ||
+    !!Object.entries(descriptionRef?.current?.errors || {}).length
 
-  // set the input values
-  const onEventTitleChange = (val: string) => setEventTitle(val)
-  const onAdaHourlyRateChange = (val: string) => onHourlyRateChange(val, "ada")
-  const onGimbalsHourlyRateChange = (val: string) =>
-    onHourlyRateChange(val, "gimbals")
-  const onHourlyRateChange = (val: any, type: "ada" | "gimbals") => {
-    if (typeof +val === "number" && +val > 0) {
-      if (type === "ada") {
-        _setHourlyRate({ ..._hourlyRate, ada: Number(val) })
-      } else _setHourlyRate({ ..._hourlyRate, gimbals: Number(val) })
-    } else {
-      if (type === "ada") {
-        _setHourlyRate({ ..._hourlyRate, ada: 0 })
-      } else _setHourlyRate({ ..._hourlyRate, gimbals: 0 })
-    }
-  }
-  // navigation handlers
-  const onBackNavigationPress = () => navigation.goBack()
-  const onSubmit = (formValues: any) => {
-    const { title, description, ada, gimbals } = formValues
-    setSubmitted(true)
-    const bw = new Filter()
-    if (bw.isProfane([title, description].join(" "))) {
-      showInappropriateContentModal()
-      setSubmitted(false)
-      return
-    }
-
-    setTextContent({ title, description })
-    if (!markedCheckbox)
-      setHourlyRate({
-        ada: Number(ada),
-        gimbals: Number(gimbals),
-      })
-    setEventType(_eventType)
-    setPrivateEvent(_privateEvent)
-    navigation.navigate("Available Days Selection")
-  }
-  const onCheckBoxPress = () => {
-    setMarkedCheckbox((prev) => !prev)
-    setHourlyRate(hourlyRate)
-  }
-  const onEventTypeChange = (type: any) => _setEventType(type)
-  const onEventVisibilityChange = (type: any) =>
-    _setPrivateEvent((prev) => !prev)
   const formStyles = Object.assign(
     {},
     inputStyles,
     isLightMode ? formStyleLight : formStyleDark
   )
+
+  const onBackNavigationPress = () => navigation.goBack()
+  const checkIfPaymentTokensAreValid = async (paymentTokens: AssetUnit[]) => {
+    // TODO possible check on back-end if given token exists on the blockchain
+    return (
+      paymentTokens &&
+      paymentTokens.every((pt, idx) =>
+        idx === 0 ? !!pt.count : Object.values(pt).every((v) => !!v)
+      )
+    )
+  }
+
+  const ontitleChange = (val: string) => setTitle(val)
+  const onSummaryChange = (summary) => setSummary(summary)
+  const onCancelWindowChange = (hours) => setCancelWindow(hours)
+  const onFeeChange = (fee) => setFee(fee)
+  const onTypeChange = (type: any) => setType(type)
+  const onVisibilityTypeChange = (type: any) => setVisibility(type)
+  const changePaymentTokensErrorStatus = (status) => setPaymentTokensErrorStatus(status)
+
+  /** Check inputs and navigate to next screen **/
+  const onNextPress = async () => {
+    const paymentTokens = paymentTokensRef.current?.values
+    if (!paymentTokens) return showErrorToast("Missing payment tokens info")
+
+    const paymentTokensValid = await checkIfPaymentTokensAreValid(paymentTokens)
+    if (!paymentTokensValid)
+      return showErrorToast("Please double-check tokens input fields")
+
+    const allTokensDivisibleByTwo = paymentTokens.every(
+      (pt) => Number(pt.count) % 2 === 0
+    )
+    if (!allTokensDivisibleByTwo)
+      return showErrorToast("Tokens quantity must be divisible by 2")
+
+    // update event-creation-context
+    setSubmitted(true)
+    const bw = new Filter()
+    if (bw.isProfane([title, summary].join(" "))) {
+      showInappropriateContentModal()
+      setSubmitted(false)
+      return
+    }
+
+    setTextContent({ title, summary })
+    setHourlyRate(paymentTokens)
+    setEventType(type)
+    setCancellation({ fee, window: cancelWindow })
+    setEventVisibility(visibility)
+    navigation.navigate("Available Days Selection")
+  }
 
   return (
     <Layout scrollable>
@@ -113,125 +130,111 @@ export const NewEventDescription = ({ navigation }: Props) => {
           </Pressable>
         </View>
         <Formik
+          innerRef={descriptionRef}
           validationSchema={newEventScheme()}
           initialValues={{
-            name: "",
-            username: "",
+            title: textContent?.title || "",
+            summary: textContent?.summary || "",
+            fee: cancellation?.fee || 0,
           }}
-          onSubmit={onSubmit}>
-          {({ handleSubmit, isValid, validateForm }) => (
+          onSubmit={noop}>
+          {({ handleSubmit, isValid, validateForm, values }) => (
             <>
-              <HeaderText
-                customStyles={{ marginBottom: Sizing.x10 }}
-                colorScheme={colorScheme}>
-                What's the Event?
+              <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+                What's the title?
               </HeaderText>
               <Field
                 key="title"
                 name="title"
-                label="Title"
                 maxChar={40}
-                customOnChange={onEventTitleChange}
+                customOnChange={ontitleChange}
                 component={CustomInput}
                 submitted={submitted}
                 validateForm={validateForm}
                 styles={formStyles}
               />
-              <HeaderText
-                customStyles={{ marginBottom: Sizing.x10 }}
-                colorScheme={colorScheme}>
-                Short Summary? (optional)
+              <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+                Short Summary
               </HeaderText>
               <Field
-                key="description"
-                name="description"
-                label="Description"
+                key="summary"
+                name="summary"
                 component={CustomInput}
                 maxChar={250}
+                customOnChange={onSummaryChange}
                 multiline
                 numberOfLines={8}
                 submitted={submitted}
                 validateForm={validateForm}
                 styles={formStyles}
               />
-              <HeaderText
-                customStyles={{ marginBottom: Sizing.x10 }}
-                colorScheme={colorScheme}>
-                Select Type
+              <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+                Select Event Type
               </HeaderText>
               <ToggleButton
+                defaultValue={eventType}
                 options={["One-Time", "Recurring"]}
-                animationDuration={250}
-                onSelect={onEventTypeChange}
+                values={["one-time", "recurring"]}
+                animationDuration={30}
+                onSelect={onTypeChange}
               />
               <ToggleButton
+                defaultValue={eventVisibility}
                 options={["Public", "Private"]}
-                animationDuration={250}
-                onSelect={onEventVisibilityChange}
+                values={["public", "private"]}
+                animationDuration={30}
+                onSelect={onVisibilityTypeChange}
               />
-              <HeaderText
-                customStyles={{ marginBottom: Sizing.x10 }}
-                colorScheme={colorScheme}>
-                Your Rate/hr
+              <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+                Cancellation
               </HeaderText>
+              <SubHeaderText
+                customStyle={styles.inputSubLabel}
+                colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                Hours before start
+              </SubHeaderText>
+              <ToggleButton
+                defaultValue={cancellation?.window}
+                options={["0", "24", "48", "72"]}
+                values={[0, 24, 48, 72]}
+                animationDuration={30}
+                onSelect={onCancelWindowChange}
+              />
+              <SubHeaderText
+                customStyle={styles.inputSubLabel}
+                colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                Fee (% of ADA)
+              </SubHeaderText>
               <Field
+                key="fee"
+                name="fee"
+                maxChar={40}
+                defaultValue={cancellation?.fee}
+                customOnChange={onFeeChange}
                 component={CustomInput}
-                key="ada"
-                name="ada"
-                label="Ada"
-                keyboardType="numeric"
-                defaultValue={String(_hourlyRate.ada)}
-                customOnChange={onAdaHourlyRateChange}
-                isDisabled={markedCheckbox}
                 submitted={submitted}
                 validateForm={validateForm}
                 styles={formStyles}
-              />
-              <Field
-                component={CustomInput}
-                key="gimbals"
-                name="gimbals"
-                label="Gimbals"
-                keyboardType="numeric"
-                customOnChange={onGimbalsHourlyRateChange}
-                defaultValue={String(_hourlyRate.gimbals)}
-                onEndEditingCallback={onGimbalsHourlyRateChange}
-                isDisabled={markedCheckbox}
-                submitted={submitted}
-                validateForm={validateForm}
-                styles={formStyles}
-              />
-              {hourlyRate?.ada ? (
-                <View style={styles.checkboxWrapper}>
-                  <Checkbox
-                    onCheckBoxPress={onCheckBoxPress}
-                    acceptedCheckbox={markedCheckbox}>
-                    <BodyText
-                      customStyle={{
-                        fontFamily: "Roboto-Medium",
-                        fontSize: Sizing.x15,
-                        width: "90%",
-                      }}
-                      changingColorScheme
-                      colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                      Use my profile's default rate
-                    </BodyText>
-                  </Checkbox>
-                </View>
-              ) : (
-                <></>
-              )}
-
-              <FullWidthButton
-                text="Next"
-                colorScheme={colorScheme}
-                disabled={isDisabledButton}
-                onPressCallback={handleSubmit}
-                style={{ marginVertical: Sizing.x15 }}
               />
             </>
           )}
         </Formik>
+        <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+          Your Rate/hr
+        </HeaderText>
+        <PaymentTokensForm
+          ref={paymentTokensRef}
+          errorStatus={paymentTokensErrorStatus}
+          changeErrorStatus={changePaymentTokensErrorStatus}
+          defaultValues={hourlyRate}
+        />
+        <FullWidthButton
+          text="Next"
+          colorScheme={colorScheme}
+          disabled={isDisabledButton}
+          onPressCallback={onNextPress}
+          style={{ marginVertical: Sizing.x15 }}
+        />
       </KeyboardAwareScrollView>
     </Layout>
   )
@@ -266,5 +269,14 @@ const styles = StyleSheet.create({
     marginRight: Sizing.x10,
     marginLeft: Sizing.x2,
     borderRadius: Sizing.x3,
+  },
+  inputLabel: {
+    marginBottom: Sizing.x5,
+  },
+  inputSubLabel: {
+    flex: 1,
+    ...Typography.subHeader.x10,
+    paddingLeft: Sizing.x5,
+    paddingBottom: Sizing.x5,
   },
 })

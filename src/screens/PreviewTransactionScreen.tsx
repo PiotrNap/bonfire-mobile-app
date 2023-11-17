@@ -32,6 +32,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     width: Sizing.x25,
     height: Sizing.x25,
     marginRight: Sizing.x5,
+    zIndex: -10,
   }
   const cutStringInside = (str: string | undefined) => {
     if (!str) return
@@ -86,7 +87,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
       lineContent: !isOutgoing
         ? { content: cutStringInside(txInfo?.user_address) }
         : txInfo?.outputs.map((out) =>
-            out.address === txInfo.user_address ? null : cutStringInside(out.address)
+            out.address === txInfo.user_address
+              ? null
+              : { content: cutStringInside(out.address) }
           ),
     },
     {
@@ -127,7 +130,8 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
           )
         )
         .flat()
-        .filter((asset) => asset), // filter out empty string
+        .filter((asset) => asset) // filter out empty string
+        .map((asset) => ({ content: asset })), // this is required to display in UI,
     },
   ].filter((txDetail) => txDetail)
 
@@ -164,6 +168,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
       <ConfirmationDetail
         key={index}
         label={item?.label}
+        //@ts-ignore because of the `lineContent` that can be an array
         lineContent={item?.lineContent}
         callbackFn={item?.callbackFn}
         isLastItem={detailsList.length - 1 === index}

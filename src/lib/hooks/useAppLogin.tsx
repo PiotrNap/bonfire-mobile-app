@@ -1,9 +1,11 @@
 import * as React from "react"
+// import {Intl} from 'react-native'
 
 import { setAuthorizationToken } from "Api/base"
 import { getFromEncryptedStorage, setToEncryptedStorage } from "lib/encryptedStorage"
 import { showErrorToast, startChallengeSequence } from "lib/helpers"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getDevicesTimeZone } from "lib/utils"
 
 export const useAppLogin = () => {
   const [isAuthorized, setIsAuthorized] = React.useState<boolean>(false)
@@ -20,6 +22,13 @@ export const useAppLogin = () => {
         let userSettings = await getFromEncryptedStorage("user-settings")
         let walletBaseAddress = await AsyncStorage.getItem("account-#0-baseAddress")
         const isExpired = new Date() >= new Date(authCred?.expiresAt)
+        const deviceTimeZone = getDevicesTimeZone()
+
+        // const
+        // const tz1 = 'Europe/Paris'
+        // const tz2 = 'America/New_York'
+
+        // take regular date string and convert to UTC-4 & UTC+4
 
         console.log(`
         retrieving from encrypted storage:
@@ -28,6 +37,7 @@ export const useAppLogin = () => {
             devicePubKey: ${pubKey}
             deviceSecKey: ${privKey}
             baseAddress: ${walletBaseAddress}
+            timeZone: ${deviceTimeZone}
             `)
 
         if (typeof authCred == "string") authCred = JSON.parse(authCred)
@@ -38,6 +48,8 @@ export const useAppLogin = () => {
             username: authCred.username,
             id: authCred.id,
             deviceID,
+            hourlyRateAda: authCred.hourlyRateAda,
+            timeZone: deviceTimeZone,
           })
         }
 
@@ -52,7 +64,8 @@ export const useAppLogin = () => {
             setUser({
               username: accessTokenDto.username,
               id: accessTokenDto.id,
-              timeZone: accessTokenDto?.timeZone,
+              timeZone: deviceTimeZone,
+              hourlyRateAda: accessTokenDto?.hourlyRateAda,
               userSettings,
               deviceID,
             })

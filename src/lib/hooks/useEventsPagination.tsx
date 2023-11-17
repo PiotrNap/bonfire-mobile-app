@@ -3,42 +3,45 @@ import * as React from "react"
 
 export const useEventsPagination = (id: string) => {
   const [events, setEvents] = React.useState<any[]>([])
-  const [eventsPage, setEventsPage] = React.useState<number>(1)
-  const [eventsLimit, setEventsLimit] = React.useState<number>(10)
+  const [eventsPage, setEventsPage] = React.useState<number>(0) // the current page
   const [isLoading, setIsLoading] = React.useState<boolean>(true)
+  const [isLastPage, setIsLastPage] = React.useState<boolean>(false)
 
-  React.useEffect(() => {
-    ;(async () => {
-      await getEventsPaginated()
-      setIsLoading(false)
-    })()
-  }, [])
-
-  const getEventsPaginated = async (page?: number, isRefreshing = false) => {
+  const getEventsPaginated = async (
+    page?: number,
+    limit = 10,
+    userId: string = id,
+    isRefreshing = false
+  ) => {
+    if ((isLastPage && page !== 1) || (page === eventsPage && !isRefreshing)) return
+    setIsLoading(true)
     try {
       const res = await Events.getAllEvents({
-        limit: eventsLimit,
-        user_id: id,
+        limit,
+        user_id: id || userId,
         page: page ?? eventsPage,
       })
+
+      // no more events left in DB
+      if (res.count < limit) setIsLastPage(true)
 
       if (res) {
         setEvents((prev) => [...(!isRefreshing ? prev : []), ...res.result])
         setEventsPage(page ?? 1)
-        setIsLoading(false)
       }
     } catch (e) {
       console.error(e)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return {
     isLoading,
+    isLastPage,
     events,
     eventsPage,
     setEventsPage,
-    eventsLimit,
-    setEventsLimit,
     getEventsPaginated,
   }
 }

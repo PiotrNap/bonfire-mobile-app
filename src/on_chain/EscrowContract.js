@@ -1,3 +1,4 @@
+// @TODO replace pubkey-hashes before launching on mainnet
 export default `
     spending escrow_contract
 
@@ -5,7 +6,7 @@ struct Datum {
     beneficiaryPkh : PubKeyHash
     benefactorPkh : PubKeyHash
     releaseDate : Time
-    cancelFee: Int // % of paymentTokens
+    cancelFee: Int // % of ADA paymentTokens
     cancelWindowStart: Time 
     cancelWindowEnd: Time
     createdAt : Time

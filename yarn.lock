@@ -801,6 +801,11 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@hookform/resolvers@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-3.3.2.tgz#5c40f06fe8137390b071d961c66d27ee8f76f3bc"
+  integrity sha512-Tw+GGPnBp+5DOsSg4ek3LCPgkBOuOgS5DsDV7qsWNH9LZc433kgsWICjlsh2J9p04H2K66hsXPPb9qn9ILdUtA==
+
 "@hyperionbt/helios@^0.16.3":
   version "0.16.3"
   resolved "https://registry.yarnpkg.com/@hyperionbt/helios/-/helios-0.16.3.tgz#6b8bd74e84e128eb457dc242987b8770132c32d0"
@@ -5672,6 +5677,11 @@ react-fast-compare@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
+react-hook-form@^7.48.2:
+  version "7.48.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.48.2.tgz#01150354d2be61412ff56a030b62a119283b9935"
+  integrity sha512-H0T2InFQb1hX7qKtDIZmvpU1Xfn/bdahWBN1fH19gSe4bBEqTfmlr7H3XWTaVtiK4/tpPaI1F3355GPMZYge+A==
+
 "react-is@^16.12.0 || ^17.0.0 || ^18.0.0", react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
@@ -5944,11 +5954,6 @@ react-native-svg@^12.1.1, react-native-svg@^12.3.0:
     ip-regex "^4.1.0"
     process "^0.11.9"
     util "^0.12.1"
-
-react-native-timezone@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-timezone/-/react-native-timezone-2.3.0.tgz#acb4666e9d35c5b5a38fc710d50de2e2859dd8d2"
-  integrity sha512-C3IGVR7bjZVG6oU8/hTghQfRvjTmKzh9ZiAO5w6yOnZrn+LXEDOYecUtQWJboNTd/Vdh6FlllMnW3rWEiC3MdQ==
 
 react-native-toast-message@^2.1.7:
   version "2.1.7"

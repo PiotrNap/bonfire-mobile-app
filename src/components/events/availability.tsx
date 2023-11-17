@@ -4,9 +4,8 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 import { ClockIcon, RemoveIcon } from "assets/icons"
 import { EventAvailability } from "common/interfaces/newEventInterface"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
-import { getDigitalLocaleTime } from "lib/utils"
-import { fontWeight } from "../../styles/typography"
-import { applyOpacity } from "../../styles/colors"
+import { getDigitalLocaleTime, getLocaleTimezone } from "lib/utils"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface AvailabilityProps {
   availability: EventAvailability
@@ -26,18 +25,23 @@ export const Availability = ({
       <View style={styles.cardItem}>
         <ClockIcon style={styles.clockIcon} strokeWidth={2} />
         <View style={styles.body}>
-          <Text style={[styles.innerText, { ...fontWeight.semibold }]}>
-            Start {getDigitalLocaleTime(from)} / End {getDigitalLocaleTime(to)}
-          </Text>
-          <Text style={[styles.innerText, { ...fontWeight.semibold }]}>
+          <SubHeaderText
+            colors={[Colors.primary.neutral, Colors.primary.s800]}
+            customStyle={styles.innerText}>
+            {getDigitalLocaleTime(from)} - {getDigitalLocaleTime(to)}{" "}
+            {getLocaleTimezone()}
+          </SubHeaderText>
+          <SubHeaderText
+            colors={[Colors.primary.neutral, Colors.primary.s800]}
+            customStyle={styles.innerText}>
             Min. {minDuration} min / Max. {maxDuration} min
-          </Text>
+          </SubHeaderText>
         </View>
         <Pressable
-          hitSlop={5}
-          onPress={() => onRemovePress(index)}
-          style={Buttons.applyOpacity(styles.removeButton)}>
-          <RemoveIcon style={styles.removeIcon} strokeWidth={2} />
+          hitSlop={Sizing.x10}
+          style={Buttons.applyOpacity(styles.removeButton)}
+          onPress={() => onRemovePress(index)}>
+          <RemoveIcon style={styles.icon} stroke={Colors.neutral.s150} />
         </Pressable>
       </View>
     </View>
@@ -66,24 +70,22 @@ const styles = StyleSheet.create({
     marginHorizontal: Sizing.x8,
   },
   innerText: {
-    ...Typography.subHeader.x25,
-    color: Colors.primary.s800,
+    flex: 1,
+    ...Typography.subHeader.x10,
+    fontFamily: "Roboto-Medium",
+    paddingLeft: Sizing.x5,
   },
   removeButton: {
-    width: Sizing.x40,
-    height: Sizing.x40,
-    borderRadius: Outlines.borderRadius.max,
-    borderWidth: Outlines.borderWidth.base,
-    borderColor: Colors.danger.s300,
-    backgroundColor: applyOpacity(Colors.danger.s300, 0.1),
+    width: Sizing.x30,
+    height: Sizing.x30,
+    backgroundColor: Colors.danger.s400,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: Outlines.borderRadius.max,
   },
-  removeIcon: {
+  icon: {
     width: Sizing.x25,
     height: Sizing.x25,
-    color: Colors.danger.s300,
-    // color: Colors.neutral.s100,
   },
   clockIcon: {
     width: Sizing.x25,

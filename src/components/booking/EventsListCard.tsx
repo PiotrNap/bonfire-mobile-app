@@ -9,6 +9,7 @@ import { applyOpacity } from "../../styles/colors"
 import { getEventCardDate } from "lib/utils"
 import FastImage from "react-native-fast-image"
 import { appContext } from "contexts/contextApi"
+import LinearGradient from "react-native-linear-gradient"
 
 export interface EventsListCardProps {
   title: string
@@ -41,10 +42,8 @@ export const EventsListCard = ({
   image,
   color,
   titleColor,
-  defaultCardColor,
   hourlyRate,
 }: EventsListCardProps) => {
-  const { colorScheme } = appContext()
   const navigation = useNavigation()
   const _color = tinyColor(color)
 
@@ -62,60 +61,60 @@ export const EventsListCard = ({
       titleColor,
       hourlyRate,
     })
-  const placeholderColor =
-    colorScheme === "light" ? Colors.primary.s600 : Colors.neutral.s300
+  const gradient: string[] = [Colors.primary.s800, Colors.primary.s600]
+
+  const Background = React.useCallback(
+    ({ children }) =>
+      image ? (
+        <FastImage
+          source={{
+            uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
+          }}
+          style={styles.background}>
+          {children}
+        </FastImage>
+      ) : (
+        <LinearGradient
+          colors={gradient}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.background}>
+          {children}
+        </LinearGradient>
+      ),
+    [image]
+  )
 
   return (
     <Pressable
       disabled={isEventCardPreview ? true : false}
       onPress={onCardPress}
       style={styles.main}>
-      <FastImage
-        source={{
-          uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
-        }}
-        style={styles.backgroundImage}>
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor:
-                (!image && isEventCardPreview) ||
-                (defaultCardColor && isEventCardPreview) ||
-                (!isEventCardPreview && isTransparent && !image)
-                  ? placeholderColor
-                  : isTransparent && image
-                  ? "transparent"
-                  : color,
-            },
-          ]}>
-          {fromDate != null && toDate != null && (
-            <View
-              style={[
-                styles.dateCard,
-                isTransparent
-                  ? {
-                      backgroundColor: applyOpacity("000000", 0.3),
-                    }
-                  : {
-                      backgroundColor: applyOpacity(_color.toHexString(), 0.5),
-                    },
-              ]}>
-              <Text style={styles.dateCardText}>
-                {getEventCardDate(fromDate, toDate)}
-              </Text>
-            </View>
-          )}
-
-          <Text
+      <Background>
+        {fromDate != null && toDate != null && (
+          <View
             style={[
-              styles.eventTitle,
-              titleColor && !isTransparent ? { color: titleColor } : {},
+              styles.dateCard,
+              isTransparent
+                ? {
+                    backgroundColor: applyOpacity("000000", 0.3),
+                  }
+                : {
+                    backgroundColor: applyOpacity(_color.toHexString(), 0.5),
+                  },
             ]}>
-            {title}
-          </Text>
-        </View>
-      </FastImage>
+            <Text style={styles.dateCardText}>{getEventCardDate(fromDate, toDate)}</Text>
+          </View>
+        )}
+
+        <Text
+          style={[
+            styles.eventTitle,
+            titleColor && !isTransparent ? { color: titleColor } : {},
+          ]}>
+          {title}
+        </Text>
+      </Background>
     </Pressable>
   )
 }
@@ -127,17 +126,13 @@ const styles = StyleSheet.create({
     ...Outlines.shadow.base,
     borderRadius: Outlines.borderRadius.base,
   },
-  backgroundImage: {
+  background: {
     flex: 1,
     width: "100%",
     height: Sizing.x120,
-    borderRadius: Outlines.borderRadius.base,
-  },
-  container: {
-    width: "100%",
-    height: "100%",
     padding: Sizing.x15,
     borderRadius: Outlines.borderRadius.base,
+    backgroundColor: Colors.primary.s600,
   },
   dateCard: {
     maxWidth: Sizing.x80,
@@ -148,7 +143,7 @@ const styles = StyleSheet.create({
   dateCardText: {
     textAlign: "center",
     padding: Sizing.x5,
-    ...Typography.header.x40,
+    ...Typography.header.x30,
     color: Colors.primary.neutral,
   },
   eventTitle: {

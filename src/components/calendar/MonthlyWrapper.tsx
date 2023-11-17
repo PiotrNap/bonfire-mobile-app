@@ -50,7 +50,6 @@ export const MonthlyWrapper = ({
     setEvents,
   } = myCalendarContext()
   const { colorScheme } = appContext()
-  const { selectedWeekDays } = eventCreationContext()
   const { fetchEvents } = useCalendarEvents()
   const { previewingEvent } = bookingContext()
 
@@ -64,8 +63,6 @@ export const MonthlyWrapper = ({
   )
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [initialHasLoaded, setInitialHasLoaded] = React.useState<boolean>(false)
-  const [initialAnimationLoaded, setInitialAnimationLoaded] =
-    React.useState<boolean>(false)
   const [_initialEventsLoaded, _setInitialEventsLoaded] =
     React.useState<boolean>(false)
   const [eventsLoading, setEventsLoading] = React.useState<boolean>(false)
@@ -75,9 +72,6 @@ export const MonthlyWrapper = ({
     direction: "left" | "right"
   } | null>(null)
   const [tempEvents, setTempEvents] = React.useState<any>(null)
-
-  var animatedOpacity = React.useRef(new Animated.Value(1)).current
-  var animatedInitialOpacity = React.useRef(new Animated.Value(0)).current
   var animatedTranslateX = React.useRef(new Animated.Value(0)).current
 
   const isDarkMode = colorScheme === "dark"
@@ -90,25 +84,6 @@ export const MonthlyWrapper = ({
   const nextMonth = calendar[currIndex + 1]?.name
   const nextYear = calendar[currIndex + 1]?.year
 
-  const startCalendarAnimation = (fadeOutPrevious: boolean) => {
-    Animated.parallel([
-      Animated.timing(animatedOpacity, {
-        toValue: 0,
-        duration: 80,
-        useNativeDriver: true,
-        easing: Easing.sin,
-      }),
-      Animated.timing(animatedTranslateX, {
-        toValue: fadeOutPrevious ? 20 : -20,
-        duration: 80,
-        useNativeDriver: true,
-        easing: Easing.sin,
-      }),
-    ]).start(() => {
-      animatedTranslateX.setValue(0)
-      animatedOpacity.setValue(1)
-    })
-  }
   const hasAvailabilitiesInCurrMonthOnly = React.useCallback(
     () =>
       previewingEvent &&
@@ -127,24 +102,14 @@ export const MonthlyWrapper = ({
 
   const WeekComponent = React.useCallback(() => {
     return <WeekDayNames isNewEventCalendar={isNewEventCalendar} />
-  }, [monthsArray, selectedWeekDays])
+  }, [isNewEventCalendar])
 
   const CurrMonth = React.useCallback(
     ({ item }: { item: Month }) => (
-      <Animated.View
-        style={[
-          styles.monthContainer,
-          {
-            opacity: !initialAnimationLoaded
-              ? animatedInitialOpacity
-              : animatedOpacity,
-            transform: [
-              {
-                translateX: animatedTranslateX,
-              },
-            ],
-          },
-        ]}>
+      <View
+        style={
+          styles.monthContainer
+        }>
         <MonthItem
           days={item.days}
           year={item.year}
@@ -158,9 +123,9 @@ export const MonthlyWrapper = ({
           isNewEventCalendar={isNewEventCalendar}
           secondCustomCallback={secondCustomCallback}
         />
-      </Animated.View>
+      </View>
     ),
-    [!!dimensions, initialAnimationLoaded, calendar]
+    [!!dimensions]
   )
 
   const loadNewMonths = (nextMonths: boolean, month: number, year?: number) => {
@@ -185,7 +150,6 @@ export const MonthlyWrapper = ({
       numOfEvents: calendar[currIndex - 1]?.numOfEvents,
     }
     changeMonthHeader(calendarHeader)
-    startCalendarAnimation(true)
     setCurrIndex(0)
     onPreviousLoadCalendar()
   }
@@ -202,25 +166,12 @@ export const MonthlyWrapper = ({
     }
 
     changeMonthHeader(calendarHeader)
-    startCalendarAnimation(false)
     setCurrIndex(2)
     onNextLoadCalendar()
   }
 
-  const startInitialCalendarAnimation = () => {
-    Animated.timing(animatedInitialOpacity, {
-      toValue: 1,
-      duration: 200,
-      easing: Easing.sin,
-      useNativeDriver: true,
-    }).start(({ finished }) => finished && setInitialAnimationLoaded(true))
-  }
-
   const onLayout = (event: LayoutChangeEvent) => {
     setDimensions(event.nativeEvent.layout)
-    if (!direction && !initialAnimationLoaded) {
-      startInitialCalendarAnimation()
-    }
   }
 
   const onPreviousLoadCalendar = () => {

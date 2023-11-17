@@ -5,35 +5,29 @@ import {
   InitialState,
   ProviderProps,
 } from "common/interfaces/newEventInterface"
-import {
-  EventCreationActions,
-  EventCreationTypes,
-} from "common/types/contextTypes"
+import { EventCreationActions, EventCreationTypes } from "common/types/contextTypes"
 
 const initialState: InitialState = {
   textContent: {
     title: "",
-    description: "",
+    summary: "",
   },
   availabilities: [],
   selectedDays: {},
   fromDate: null,
   toDate: null,
-  tags: [],
-  hourlyRate: { ada: 0, gimbals: 0 },
-  eventType: "One-Time",
+  hourlyRate: [],
+  cancellation: { fee: 0, window: 0 },
+  eventType: "one-time",
   imageURI: "",
   eventCardColor: "",
   eventTitleColor: "",
   selectedWeekDays: [],
-  privateEvent: false,
+  visibility: "public",
   gCalEventsBooking: false,
 }
 
-const reducer = (
-  state: InitialState,
-  action: EventCreationActions
-): InitialState => {
+const reducer = (state: InitialState, action: EventCreationActions): InitialState => {
   switch (action.type) {
     case EventCreationTypes.SetTextContent: {
       return {
@@ -86,7 +80,7 @@ const reducer = (
     case EventCreationTypes.SetSelectedDays: {
       let newSelectedDays: any = state.selectedDays || {}
 
-      if (action.payload.eventType === "One-Time") {
+      if (action.payload.eventType === "one-time") {
         return {
           ...state,
           selectedDays: {
@@ -146,16 +140,16 @@ const reducer = (
         eventType: action.payload.eventType,
       }
     }
-    case EventCreationTypes.SetTags: {
+    case EventCreationTypes.SetEventCancellation: {
       return {
         ...state,
-        tags: action.payload.tags,
+        cancellation: action.payload.cancellation,
       }
     }
-    case EventCreationTypes.SetPrivateEvent: {
+    case EventCreationTypes.SetEventVisibility: {
       return {
         ...state,
-        privateEvent: action.payload.privateEvent,
+        visibility: action.payload.visibility,
       }
     }
     case EventCreationTypes.SetEventCardColor: {
@@ -196,25 +190,7 @@ const reducer = (
       }
     }
     case EventCreationTypes.ResetState: {
-      return {
-        textContent: {
-          title: "",
-          description: "",
-        },
-        availabilities: [],
-        selectedDays: {},
-        fromDate: null,
-        toDate: null,
-        tags: [],
-        hourlyRate: { ada: 0, gimbals: 0 },
-        eventType: "One-Time",
-        imageURI: "",
-        eventCardColor: "",
-        eventTitleColor: "",
-        selectedWeekDays: [],
-        gCalEventsBooking: false,
-        privateEvent: false,
-      }
+      return initialState
     }
     default: {
       throw new Error(`Unknown type of action ${action.type}`)

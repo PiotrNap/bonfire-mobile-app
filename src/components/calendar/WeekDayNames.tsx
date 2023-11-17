@@ -25,7 +25,7 @@ const _selectedWeekDays: SelectedWeekDays = {
   6: false,
 }
 
-export const WeekDayNames = ({
+export const _WeekDayNames = ({
   isNewEventCalendar = false,
 }: {
   isNewEventCalendar?: boolean
@@ -101,7 +101,7 @@ export const WeekDayNames = ({
       {weekDays.map((day, i) =>
         !isNewEventCalendar ||
         isUnavailableWeek(i) ||
-        eventType === "One-Time" ? (
+        eventType === "one-time" ? (
           <View key={`day-${i}`} style={[styles.dayContainer]}>
             <View style={styles.dayPlaceholder}>
               <Text
@@ -189,3 +189,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary.s600,
   },
 })
+
+export const WeekDayNames = React.memo(_WeekDayNames)

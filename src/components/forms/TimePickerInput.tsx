@@ -16,6 +16,7 @@ import { DownIcon } from "assets/icons"
 import { getDigitalTime } from "lib/utils"
 import { appContext } from "contexts/contextApi"
 import { formStyleDark, formStyleLight } from "../../styles/forms"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface TimePickerInputProps {
   label: string
@@ -29,7 +30,6 @@ export interface TimePickerInputProps {
 
 export const TimePickerInput = (props: TimePickerInputProps) => {
   const [showTimePicker, setShowTimePicker] = React.useState<boolean>(false)
-  const [iconAnimationValue, setIconAnimationValue] = React.useState<number>(0)
   const [dropDownAnimationValue, setDropDownAnimationValue] =
     React.useState<number>(0)
   const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
@@ -60,9 +60,6 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
     if (!openPicker && showTimePicker) onInputPress()
 
     const listeners = () => {
-      iconRotationRef.addListener(({ value }) => {
-        setIconAnimationValue(value)
-      })
       dropDownHeightRef.addListener(({ value }) =>
         setDropDownAnimationValue(value)
       )
@@ -77,8 +74,6 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
     return removeListeners
   }, [openPicker])
 
-  const AnimatedIcon = Animated.createAnimatedComponent(DownIcon)
-
   const spin = iconRotationRef.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "180deg"],
@@ -90,7 +85,7 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
     // Whenever there is a selected value event from android component
     // just turn the icon
     const iconAnimation = Animated.timing(iconRotationRef, {
-      toValue: (iconRotationRef as any)._value === 0 ? 1 : 0,
+      toValue: (iconRotationRef as any)._value < 1 ? 1 : 0,
       duration: 120,
       useNativeDriver: true,
     })
@@ -114,12 +109,6 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
       }
       return !prev
     })
-    // update the reference of current open picker
-    if (!openPicker && !showTimePicker) {
-      onOpenChange(label)
-    } else {
-      onOpenChange(null)
-    }
 
     Animated.parallel(animations).start(({ finished }) => {
       if (finished) {
@@ -142,9 +131,11 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
 
   return (
     <View style={styles.inputContainer}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-      </View>
+      <SubHeaderText
+          customStyle={defaultStyles.label}
+          colors={[Colors.primary.s800, Colors.primary.neutral]}>
+          {label}
+       </SubHeaderText>
       <Pressable
         onLayout={onLayout}
         onPress={onInputPress}
@@ -157,8 +148,8 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
             ]}>
             {getDigitalTime(timeValue, "12")}
           </Text>
-          <AnimatedIcon
-            style={[styles.icon, { transform: [{ rotate: spin }] }]}
+          <DownIcon
+            style={styles.icon}
             stroke={Colors.primary.s600}
           />
         </View>
@@ -178,7 +169,7 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
               mode="time"
               display="spinner"
               onChange={onChange}
-              minuteInterval={5}
+              minuteInterval={30}
             />
           </Animated.View>
         )}
@@ -190,7 +181,7 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
           mode="time"
           display="spinner"
           onChange={onChange}
-          minuteInterval={5}
+          minuteInterval={30}
         />
       )}
     </View>
@@ -226,4 +217,9 @@ const defaultStyles = StyleSheet.create({
     backgroundColor: Colors.neutral.s150,
     borderRadius: Outlines.borderRadius.base,
   },
+  label: {
+    ...Typography.subHeader.x10,
+    paddingLeft: Sizing.x5,
+    paddingBottom: Sizing.x5,
+  }
 })
