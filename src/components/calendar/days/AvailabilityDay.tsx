@@ -43,7 +43,7 @@ export const _AvailabilityDay = ({
     },
     isSelectedDay && styles.selectedDayButton,
   ]
-
+  console.log("re-render availability day", `${number}-${month}-${year}`)
   // disable past days and the current one
   return isPastDate(year, month, number) ? (
     <View style={styles.dayContainer}>
@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   dayContainer: {
-    width: `${100 / 7}%`,
-    height: `${100 / 6}%`,
+    // width: `${100 / 7}%`,
+    // height: `${100 / 6}%`,
     justifyContent: "flex-start",
     alignItems: "center",
   },

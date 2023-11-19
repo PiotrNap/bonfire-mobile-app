@@ -13,7 +13,7 @@ export interface EventUser {
 export interface CreateEventDto {
   title: string
   description: string
-  selectedDays: SelectedDays
+  selectedDates: string[]
   availabilities: EventAvailability[]
   fromDate: Date | null
   toDate: Date | null

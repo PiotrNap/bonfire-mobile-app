@@ -24,7 +24,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const { colorScheme } = appContext()
   const {
     textContent,
-    selectedDays,
+    selectedDates,
     fromDate,
     toDate,
     hourlyRate,
@@ -70,7 +70,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         title: textContent.title,
         description: textContent.summary,
         availabilities,
-        selectedDays,
+        selectedDates: Object.keys(selectedDates),
         cancellation,
         fromDate,
         toDate,
@@ -184,6 +184,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         )}
         <View style={styles.buttonContainer}>
           {params?.organizerEvent && !params?.organizerEvent.numOfBookedSlots ? (
+            //@TODO check if it works when there are booked slots
             !successMsg ? (
               <FullWidthButton
                 onPressCallback={onDeleteEvent}

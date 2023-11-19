@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { StackScreenProps } from "@react-navigation/stack"
 import Filter from "bad-words"
 
-import { LeftArrowIcon  } from "assets/icons"
+import { LeftArrowIcon } from "assets/icons"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -33,9 +33,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
     setTextContent,
     setHourlyRate,
     setEventVisibility,
-    setEventType,
     setCancellation,
-    eventType,
     visibility: eventVisibility,
     textContent,
     cancellation,
@@ -45,7 +43,6 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const [title, setTitle] = React.useState<string>("")
   const [summary, setSummary] = React.useState<string>("")
   const [fee, setFee] = React.useState<number>(0)
-  const [type, setType] = React.useState<EventType>("one-time")
   const [visibility, setVisibility] = React.useState<EventVisibility>("public")
   const [cancelWindow, setCancelWindow] = React.useState<number>(0)
   const [paymentTokensErrorStatus, setPaymentTokensErrorStatus] =
@@ -79,7 +76,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const onSummaryChange = (summary) => setSummary(summary)
   const onCancelWindowChange = (hours) => setCancelWindow(hours)
   const onFeeChange = (fee) => setFee(fee)
-  const onTypeChange = (type: any) => setType(type)
+  // const onTypeChange = (type: any) => setType(type)
   const onVisibilityTypeChange = (type: any) => setVisibility(type)
   const changePaymentTokensErrorStatus = (status) => setPaymentTokensErrorStatus(status)
 
@@ -109,7 +106,6 @@ export const NewEventDescription = ({ navigation }: Props) => {
 
     setTextContent({ title, summary })
     setHourlyRate(paymentTokens)
-    setEventType(type)
     setCancellation({ fee, window: cancelWindow })
     setEventVisibility(visibility)
     navigation.navigate("Available Days Selection")
@@ -169,15 +165,8 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 styles={formStyles}
               />
               <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
-                Select Event Type
+                Event Visibility
               </HeaderText>
-              <ToggleButton
-                defaultValue={eventType}
-                options={["One-Time", "Recurring"]}
-                values={["one-time", "recurring"]}
-                animationDuration={30}
-                onSelect={onTypeChange}
-              />
               <ToggleButton
                 defaultValue={eventVisibility}
                 options={["Public", "Private"]}

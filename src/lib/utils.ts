@@ -666,7 +666,7 @@ export function getRandomKey(bytes: number): string {
 }
 
 export const roundDateMinutes = (date: Date): Date => {
-  return new Date(date.setMinutes(Math.round(date.getMinutes() / 10) * 10))
+  return new Date(date.setMinutes(Math.round(date.getMinutes() / 30) * 30))
 }
 
 export const sortEventAvailabilities = (

@@ -12,14 +12,15 @@ export const useEventDeletion = (id: string) => {
     setErrorMsg(null)
     setSuccessMsg(null)
 
+    console.log("and here ??")
     try {
       const success: AnyObject | void = await Events.deleteEvent(id)
       if (success) setSuccessMsg(success.message)
     } catch (e) {
-      if (e.message) setErrorMsg(e.message)
+      throw e
+    } finally {
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
   return { errorMsg, successMsg, isLoading, deleteEvent }

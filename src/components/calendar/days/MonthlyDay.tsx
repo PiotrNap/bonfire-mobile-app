@@ -36,8 +36,9 @@ export const MonthlyDay = ({
   const hasActiveEvents = !!events?.find((e) => e.type === "active slot")
   const hasScheduledSlots = !!events?.find((e) => e.type !== "active slot")
 
-  const dayInTime =
-    year && month && number && getTime(year, monthsByName[month], number)
+  console.log("re-render monthly day")
+
+  const dayInTime = year && month && number && getTime(year, monthsByName[month], number)
   const isActiveDay = activeDay === dayInTime
 
   const onPress = () => {
@@ -45,11 +46,7 @@ export const MonthlyDay = ({
   }
 
   const TextComponent = () => (
-    <Text
-      style={[
-        styles.dayButtonText,
-        isActiveDay && { fontFamily: "Roboto-Bold" },
-      ]}>
+    <Text style={[styles.dayButtonText, isActiveDay && { fontFamily: "Roboto-Bold" }]}>
       {number}
     </Text>
   )

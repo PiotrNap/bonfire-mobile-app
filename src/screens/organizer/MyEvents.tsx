@@ -38,15 +38,11 @@ export const MyEvents = ({ navigation }: any) => {
     // user hides search bar? show the normal events list.
     if (!val) setEvents(null)
   }
-  const onAddEventPress = () => {
-    resetEventCreationState()
-    navigation.navigate("New Event Description")
-  }
 
   useFocusEffect(
     React.useCallback(() => {
       // we need to wait for id because this is users own events list
-      if (id) eventsListRef.current?.getEventsPaginated(1, 20, id)
+      if (id) eventsListRef.current?.getEventsPaginated(1, 20, id, true)
     }, [id])
   )
 
@@ -116,19 +112,6 @@ export const MyEvents = ({ navigation }: any) => {
           ]}
         />
       </View>
-      <View style={styles.cornerButtonWrapper}>
-        <RoundedButton
-          onPress={onAddEventPress}
-          icon={
-            <PlusIcon
-              color={isLightMode ? Colors.primary.neutral : Colors.primary.s800}
-              width={Sizing.x40}
-              height={Sizing.x40}
-              strokeWidth={2}
-            />
-          }
-        />
-      </View>
     </Layout>
   )
 }
@@ -148,11 +131,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: applyOpacity(Colors.neutral.s500, 0.5),
-  },
-  cornerButtonWrapper: {
-    position: "absolute",
-    bottom: Sizing.x15,
-    right: Sizing.x15,
   },
 })
 

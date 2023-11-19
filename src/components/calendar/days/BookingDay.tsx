@@ -35,9 +35,9 @@ export const _BookingDay = ({
 }: BookingDayProps) => {
   const { pickedDate, setPickedDate } = bookingContext()
 
+  console.log("re-render bookingday", `${number}-${month}-${year}`)
   const dayInTime = getTime(year, monthsByName[month], number)
-  const isActiveDay =
-    (activeDay && activeDay === number) || pickedDate === dayInTime
+  const isActiveDay = (activeDay && activeDay === number) || pickedDate === dayInTime
 
   // Whenever the first scheduled event starts at first available time,
   // and the last scheduled event ends at the last available time
@@ -62,8 +62,7 @@ export const _BookingDay = ({
         (scheduledEvents != null && scheduledEvents.length === 0)),
     [availabilities, scheduledEvents, isPastDate]
   )
-  const isNonAvailableDay =
-    !isFullyBooked && !isFullyAvailable && !isPartiallyBooked
+  const isNonAvailableDay = !isFullyBooked && !isFullyAvailable && !isPartiallyBooked
 
   const onPress = () => {
     // Do not select it
@@ -105,11 +104,7 @@ export const _BookingDay = ({
           {number}
         </Text>
         {isPartiallyBooked && !isActiveDay && (
-          <PartiallyBookedDay
-            width={34}
-            height={34}
-            style={styles.partiallyBookedDay}
-          />
+          <PartiallyBookedDay width={34} height={34} style={styles.partiallyBookedDay} />
         )}
       </View>
     </Pressable>
@@ -139,11 +134,7 @@ export const _BookingDay = ({
           {number}
         </Text>
         {isPartiallyBooked && !isActiveDay && (
-          <PartiallyBookedDay
-            width={34}
-            height={34}
-            style={styles.partiallyBookedDay}
-          />
+          <PartiallyBookedDay width={34} height={34} style={styles.partiallyBookedDay} />
         )}
       </View>
     </View>

@@ -80,18 +80,16 @@ export function txInputsToAssets(txInputs: TxInput[]): Assets[] {
   return txInputs.map((txIn) => txIn.value.assets)
 }
 
-// converts Map of <Unit, count> (native assets) to Helios
-
-// converts Helios Assets to Map of <Unit, UnitDetails> , which is used in wallet UI components
-export function assetsToUnitsMap(assetsArray: Assets[]) {
-  let units = new Map()
+// converts Helios Assets to Array of [Unit, UnitDetails]
+export function assetsToUnitsArray(assetsArray: Assets[]): [string, AssetUnit][] {
+  let units: [string, AssetUnit][] = []
   for (let assets of assetsArray) {
     let tokens = assets.dump()
 
     for (let parentKey in tokens) {
       for (let childKey in tokens[parentKey]) {
         const unit = parentKey + childKey
-        const existingUnit = units.get(unit)
+        const existingUnit = units.find((u) => u[0] === unit)
         const { policyId, name, label } = fromAssetUnit(unit)
         const newObj = {
           policyId,
@@ -101,12 +99,12 @@ export function assetsToUnitsMap(assetsArray: Assets[]) {
         }
 
         if (existingUnit) {
-          newObj.count = Number(newObj.count) + Number(existingUnit.count)
-          units.set(unit, newObj)
+          newObj.count = Number(newObj.count) + Number(existingUnit[1].count)
+          units.push([unit, newObj])
           continue
         }
 
-        units.set(unit, newObj)
+        units.push([unit, newObj])
       }
     }
   }
@@ -129,7 +127,10 @@ export function unitsToAssets(units: WalletAssets | AssetUnit[]): Assets | undef
   return new Assets(tokens)
 }
 
-export function schemaToPaymentTokens(schema: string) {
+export function schemaToPaymentTokens(schema: string): {
+  lovelace: number
+  assets: Assets
+} {
   schema = JSON.parse(schema)
   const paymentTokenAssetsArray: any[] = []
   let paymentLovelace = 0
@@ -151,7 +152,8 @@ export function schemaToPaymentTokens(schema: string) {
   })
 
   const paymentTokenAssets = new Assets(paymentTokenAssetsArray)
-  return new Value(paymentLovelace, paymentTokenAssets)
+  return { lovelace: paymentLovelace, assets: paymentTokenAssets }
+  // return new Value(paymentLovelace, paymentTokenAssets)
 }
 
 export function numberToHex(n: number) {

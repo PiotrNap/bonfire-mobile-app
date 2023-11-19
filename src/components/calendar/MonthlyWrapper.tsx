@@ -53,18 +53,13 @@ export const MonthlyWrapper = ({
   const { fetchEvents } = useCalendarEvents()
   const { previewingEvent } = bookingContext()
 
-  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
-    null
-  )
+  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(null)
   const [currIndex, setCurrIndex] = React.useState<number>(1)
   const [monthsArray, setMonthsArray] = React.useState(calendar)
-  const [direction, setDirection] = React.useState<"left" | "right" | null>(
-    null
-  )
+  const [direction, setDirection] = React.useState<"left" | "right" | null>(null)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [initialHasLoaded, setInitialHasLoaded] = React.useState<boolean>(false)
-  const [_initialEventsLoaded, _setInitialEventsLoaded] =
-    React.useState<boolean>(false)
+  const [_initialEventsLoaded, _setInitialEventsLoaded] = React.useState<boolean>(false)
   const [eventsLoading, setEventsLoading] = React.useState<boolean>(false)
   const [fetchedEventsFrom, setFetchedEventsFrom] = React.useState<{
     month: number
@@ -75,10 +70,8 @@ export const MonthlyWrapper = ({
   var animatedTranslateX = React.useRef(new Animated.Value(0)).current
 
   const isDarkMode = colorScheme === "dark"
-  const isNotNextYear =
-    calendar[currIndex + 1]?.year !== new Date().getFullYear()
-  const isNotPreviousYear =
-    calendar[currIndex - 1]?.year !== new Date().getFullYear()
+  const isNotNextYear = calendar[currIndex + 1]?.year !== new Date().getFullYear()
+  const isNotPreviousYear = calendar[currIndex - 1]?.year !== new Date().getFullYear()
   const prevMonth = calendar[currIndex - 1]?.name
   const prevYear = calendar[currIndex - 1]?.year
   const nextMonth = calendar[currIndex + 1]?.name
@@ -88,8 +81,7 @@ export const MonthlyWrapper = ({
     () =>
       previewingEvent &&
       !Object.values(previewingEvent.selectedDays)?.find(
-        (date: any) =>
-          dayjs(date).month() !== monthsByName[calendarHeader.month]
+        (date: any) => dayjs(date).month() !== monthsByName[calendarHeader.month]
       ),
     [previewingEvent]
   )
@@ -106,10 +98,7 @@ export const MonthlyWrapper = ({
 
   const CurrMonth = React.useCallback(
     ({ item }: { item: Month }) => (
-      <View
-        style={
-          styles.monthContainer
-        }>
+      <View style={styles.monthContainer}>
         <MonthItem
           days={item.days}
           year={item.year}
@@ -309,9 +298,7 @@ export const MonthlyWrapper = ({
             </Text>
             <Text
               style={
-                colorScheme === "light"
-                  ? styles.headerYear_light
-                  : styles.headerYear_dark
+                colorScheme === "light" ? styles.headerYear_light : styles.headerYear_dark
               }>
               {calendarHeader.year}
             </Text>
@@ -336,9 +323,7 @@ export const MonthlyWrapper = ({
           ]}>
           <WeekComponent />
           <View style={styles.calendarContainer} onLayout={onLayout}>
-            {dimensions && calendar && (
-              <CurrMonth item={monthsArray[currIndex]} />
-            )}
+            {dimensions && calendar && <CurrMonth item={monthsArray[currIndex]} />}
           </View>
         </View>
       </View>

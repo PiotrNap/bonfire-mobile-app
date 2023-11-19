@@ -96,6 +96,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
     String(fromTime) === String(toTime) || String(fromTime) > String(toTime)
 
   const onTimeChangeValue = (label: string, val: Date) => {
+    console.log("val is >>", val)
     if (label === "From") setFromTime(val)
     if (label === "To") setToTime(val)
   }
@@ -108,8 +109,11 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
   const onOpenChange = (label: string | null) => setOpenPicker(label)
   const addNewAvailability = () => {
     addAvailability({
-      from: fromTime,
-      to: toTime,
+      from: {
+        hour: new Date(fromTime).getHours(),
+        minutes: new Date(fromTime).getMinutes(),
+      },
+      to: { hour: new Date(toTime).getHours(), minutes: new Date(toTime).getMinutes() },
       maxDuration: maxTime ?? maxInputRange[0],
       minDuration: minTime ?? minInputRange[0],
     })
@@ -208,13 +212,16 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
                   ? { color: Colors.primary.s800 }
                   : { color: Colors.primary.neutral },
               ]}></Text>
-          <Pressable
-            disabled={isDisabledAddBtn}
-            hitSlop={Sizing.x10}
-            style={Buttons.applyOpacity([styles.addBtn, isDisabledButton? { backgroundColor: Colors.success.s400 } : {} ])}
-            onPress={addNewAvailability}>
-            <PlusIcon style={styles.plusIcon} stroke={Colors.neutral.s150} />
-          </Pressable>
+            <Pressable
+              disabled={isDisabledAddBtn}
+              hitSlop={Sizing.x10}
+              style={Buttons.applyOpacity([
+                styles.addBtn,
+                isDisabledButton ? { backgroundColor: Colors.success.s400 } : {},
+              ])}
+              onPress={addNewAvailability}>
+              <PlusIcon style={styles.plusIcon} stroke={Colors.neutral.s150} />
+            </Pressable>
           </View>
         </View>
         {hasAvailabilities ? (

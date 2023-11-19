@@ -59,9 +59,7 @@ export const CalendarEventsDetail = ({
   const animatedValue = parseInt(JSON.stringify(animatedMargin))
 
   const bookedTime =
-    bookedDate && bookedDuration
-      ? new Date(bookedDate).getTime() + bookedDuration
-      : null
+    bookedDate && bookedDuration ? new Date(bookedDate).getTime() + bookedDuration : null
   const fromTimeDigit = getDigitalTime(bookedDate || fromTimeSlot)
   const toTimeDigit = getDigitalTime(bookedTime || toTimeSlot)
   const eventDay =
@@ -142,10 +140,7 @@ export const CalendarEventsDetail = ({
   }
 
   React.useEffect(() => {
-    if (
-      listSection === highlightedDay.listSection &&
-      index === highlightedDay.index
-    ) {
+    if (listSection === highlightedDay.listSection && index === highlightedDay.index) {
       animateToBottom()
     } else if (Number(animatedMargin) !== 0) {
       animateToTop()
@@ -153,9 +148,7 @@ export const CalendarEventsDetail = ({
   }, [highlightedDay])
 
   const cardBgColor =
-    type === "active slot"
-      ? Colors.blueCalendarCard.s300
-      : Colors.yellowCalendarCard.s300
+    type === "active slot" ? Colors.blueCalendarCard.s300 : Colors.yellowCalendarCard.s300
   const cardStyle = [
     styles.container,
     {
@@ -201,16 +194,12 @@ export const CalendarEventsDetail = ({
                     ? "0" + fromDayActiveEvent
                     : fromDayActiveEvent) +
                   "-" +
-                  (toDayActiveEvent < 10
-                    ? " " + toDayActiveEvent
-                    : toDayActiveEvent)
+                  (toDayActiveEvent < 10 ? " " + toDayActiveEvent : toDayActiveEvent)
                 : eventDay < 10
                 ? "0" + eventDay
                 : eventDay}
             </Text>
-            <Text style={[styles.dateMonth, darkerTextColor]}>
-              {eventMonth}
-            </Text>
+            <Text style={[styles.dateMonth, darkerTextColor]}>{eventMonth}</Text>
           </View>
           <View style={styles.hourHolder}>
             <Text style={[styles.hours, textColor]}>
@@ -220,9 +209,7 @@ export const CalendarEventsDetail = ({
         </View>
         <View style={styles.bottomContainer}>
           <View style={styles.eventDetail}>
-            <Text style={[styles.eventDetailText, textColor]}>
-              {eventTitle}
-            </Text>
+            <Text style={[styles.eventDetailText, textColor]}>{eventTitle}</Text>
             {type === "scheduled slot" ? (
               <Text style={[styles.eventDetailText, textColor]}>
                 Attendee: {attendeeAlias}
@@ -236,7 +223,7 @@ export const CalendarEventsDetail = ({
                 ellipsizeMode="tail"
                 numberOfLines={1}
                 style={[styles.eventDetailText, textColor]}>
-                {eventDescription}
+                {eventDescription ? eventDescription : "No description"}
               </Text>
             )}
           </View>

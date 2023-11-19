@@ -2,6 +2,8 @@ import * as React from "react"
 
 import { EventCreationActions } from "common/types/contextTypes"
 import { AssetUnit } from "lib/wallet/types"
+import { MarkedDates } from "react-native-calendars/src/types"
+import { Time } from "./myCalendarInterface"
 
 export interface ProviderProps {
   children: React.ReactNode
@@ -15,7 +17,7 @@ export interface ContextObjectProps {
 export interface InitialState {
   textContent: TextContent
   availabilities: EventAvailability[]
-  selectedDays: SelectedDays
+  selectedDates: MarkedDates
   fromDate: Date | null
   toDate: Date | null
   hourlyRate: AssetUnit[]
@@ -45,8 +47,8 @@ export interface Cancellation {
 }
 
 export interface EventAvailability {
-  from: Date | number
-  to: Date | number
+  from: Time
+  to: Time
   maxDuration: number
   minDuration: number
   localeTimeOffset?: number

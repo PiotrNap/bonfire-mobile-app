@@ -2,30 +2,26 @@ import * as React from "react"
 import { View, StyleSheet, Animated } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import { StackScreenProps } from "@react-navigation/stack"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
-import { BookingStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
 import { EventsList } from "components/booking/EventsList"
 import { applyOpacity } from "../styles/colors"
 import { useEventsResults } from "lib/hooks/useEventsResults"
 import { SearchIcon } from "assets/icons"
 import SearchBar from "@pnap/react-native-search-bar"
-import { ProfileContext } from "contexts/profileContext"
 import { useEventShareLinking } from "lib/hooks/useEventShareLinking"
 import { useFocusEffect } from "@react-navigation/native"
 
 export const SearchListScreen = ({ navigation, route }: any) => {
-  const { id } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
   const {
     events: searchEvents,
     isLoading,
     getEventsBySearchQuery,
     setEvents,
-  } = useEventsResults(id) //  hook for fetching events based on Search bar input
+  } = useEventsResults() //  hook for fetching events based on Search bar input
   const { navigateToEvent } = useEventShareLinking(navigation)
-  const [isFocused, setIsFocused] = React.useState<boolean>(false)
+  const eventsListRef = React.useRef<any>()
 
   const animatedOpacity = React.useRef(new Animated.Value(0)).current
   const isLightMode = colorScheme !== "dark"
@@ -61,8 +57,7 @@ export const SearchListScreen = ({ navigation, route }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setIsFocused(true)
-      return () => setIsFocused(false)
+      eventsListRef?.current?.getEventsPaginated(1, 20, undefined, true)
     }, [])
   )
 
@@ -70,11 +65,6 @@ export const SearchListScreen = ({ navigation, route }: any) => {
     if (route.params?.["event-id"])
       (async () => await navigateToEvent(route.params?.["event-id"]))()
   }, [])
-
-  const renderEventsList = React.useCallback(
-    () => <EventsList customIsLoading={isLoading} customEvents={searchEvents} />,
-    [isFocused]
-  )
 
   return (
     <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
@@ -112,7 +102,11 @@ export const SearchListScreen = ({ navigation, route }: any) => {
         />
       </View>
       <View style={styles.main}>
-        {renderEventsList()}
+        <EventsList
+          ref={eventsListRef}
+          customIsLoading={isLoading}
+          customEvents={searchEvents}
+        />
         <Animated.View
           pointerEvents="none"
           style={[

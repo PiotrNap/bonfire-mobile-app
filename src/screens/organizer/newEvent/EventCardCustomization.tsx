@@ -1,12 +1,5 @@
 import * as React from "react"
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Switch,
-  ScrollView,
-  Text,
-} from "react-native"
+import { View, StyleSheet, Pressable, Switch, ScrollView, Text } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
@@ -29,11 +22,9 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { applyOpacity } from "../../../styles/colors"
 import { fontWeight } from "../../../styles/typography"
+import { CustomSwitch } from "components/rnWrappers/customSwitch"
 
-type Props = StackScreenProps<
-  EventCreationParamList,
-  "Event Card Customization"
->
+type Props = StackScreenProps<EventCreationParamList, "Event Card Customization">
 type SliderColor = { a: number; h: number; s: number; v: number }
 type SliderType = "saturation" | "hue" | "value" | "opacity"
 
@@ -69,15 +60,14 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   const { colorScheme } = appContext()
   const [bgColor, setBgColor] = React.useState<any>(INITIAL_BG_COLOR)
   const [titleColor, setTitleColor] = React.useState<any>(INITIAL_TITLE_COLOR)
-  const [currColor, setCurrColor] =
-    React.useState<SliderColor>(INITIAL_CURR_COLOR)
+  const [currColor, setCurrColor] = React.useState<SliderColor>(INITIAL_CURR_COLOR)
   const [titleOpacity, setTitleOpacity] = React.useState<number>(1)
   const [bgOpacity, setBgOpacity] = React.useState<number>(0)
-  const [transparent, setTransparent] = React.useState<boolean>(false)
+  const [transparent, setTransparent] = React.useState<boolean>(true)
   const [colorChanged, setColorChanged] = React.useState<boolean>(false)
-  const [activeSelection, setActiveSelection] = React.useState<
-    "background" | "title"
-  >("background")
+  const [activeSelection, setActiveSelection] = React.useState<"background" | "title">(
+    "background"
+  )
   const _color = tinyColor(bgColor).setAlpha(bgOpacity).toRgbString()
   const _titleColor = tinyColor(titleColor).setAlpha(titleOpacity).toRgbString()
 
@@ -174,14 +164,34 @@ export const EventCardCustomization = ({ navigation }: Props) => {
 
     setActiveSelection("title")
   }
+  const renderEventListCard = React.useCallback(
+    () =>
+      fromDate &&
+      toDate && (
+        <View style={styles.main}>
+          <EventsListCard
+            isEventCardPreview={true}
+            title={textContent.title}
+            description={textContent.summary}
+            fromDate={fromDate}
+            toDate={toDate}
+            image={imageURI}
+            defaultCardColor={!imageURI && transparent}
+            color={applyOpacity(toHexString(bgColor), bgOpacity)}
+            titleColor={applyOpacity(toHexString(titleColor), titleOpacity)}
+            isTransparent={transparent}
+          />
+        </View>
+      ),
+    [bgColor, titleColor, transparent]
+  )
+
   return (
     <SafeAreaView
       style={[
         styles.safeArea,
         {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
         },
       ]}>
       <ScrollView
@@ -203,19 +213,15 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             Customize your event card
           </HeaderText>
           <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Give your card some colors to organize your events ex. by time,
-            theme or to simply bring aesthetics to your events.
+            Give your card some colors to organize your events ex. by time, theme or to
+            simply bring aesthetics to your events.
           </SubHeaderText>
         </View>
         <View style={styles.selectionButtonsWrapper}>
           <Pressable
             onPress={onBackgroundSelected}
             style={Buttons.applyOpacity(
-              Object.assign(
-                {},
-                styles.colorSelectionButton,
-                buttonStyle("background")
-              )
+              Object.assign({}, styles.colorSelectionButton, buttonStyle("background"))
             )}>
             <Text
               style={[
@@ -228,11 +234,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
           <Pressable
             onPress={onTitleSelected}
             style={Buttons.applyOpacity(
-              Object.assign(
-                {},
-                styles.colorSelectionButton,
-                buttonStyle("title")
-              )
+              Object.assign({}, styles.colorSelectionButton, buttonStyle("title"))
             )}>
             <Text
               style={[
@@ -243,22 +245,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             </Text>
           </Pressable>
         </View>
-        <View style={styles.main}>
-          {fromDate && toDate && (
-            <EventsListCard
-              isEventCardPreview={true}
-              title={textContent.title}
-              description={textContent.summary}
-              fromDate={fromDate}
-              toDate={toDate}
-              image={imageURI}
-              defaultCardColor={!imageURI && transparent}
-              color={applyOpacity(toHexString(bgColor), bgOpacity)}
-              titleColor={applyOpacity(toHexString(titleColor), titleOpacity)}
-              isTransparent={transparent}
-            />
-          )}
-        </View>
+        {renderEventListCard()}
         <View style={styles.colorPickerWrapper}>
           <SliderHuePicker
             oldColor={toHexString({
@@ -335,9 +322,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
               justifyContent: "center",
             }}>
             <Slider
-              value={
-                activeSelection === "background" ? bgOpacity : titleOpacity
-              }
+              value={activeSelection === "background" ? bgOpacity : titleOpacity}
               minumumValue={0.1}
               maximumValue={1}
               minimumTrackTintColor={"#3f3f3f"}
@@ -362,17 +347,10 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
             Colors {!transparent ? "enabled" : "disabled"}
           </BodyText>
-          <Switch
-            trackColor={{
-              false: Colors.neutral.s200,
-              true: Colors.neutral.s800,
-            }}
-            thumbColor={
-              !isLightMode ? Colors.primary.s600 : Colors.primary.neutral
-            }
-            ios_backgroundColor={Colors.primary.brand}
+          <CustomSwitch
             onValueChange={() => setTransparent((prev) => !prev)}
             value={!transparent}
+            style={{ marginLeft: "auto" }}
           />
         </View>
         <FullWidthButton
@@ -442,10 +420,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
   },
   enableColorsWrapper: {
-    width: "90%",
-    marginVertical: Sizing.x5,
     flexDirection: "row",
-    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "85%",
+    marginVertical: Sizing.x10,
   },
   customizingButtonsWrapper: {
     flexDirection: "row",

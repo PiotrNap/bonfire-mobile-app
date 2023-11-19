@@ -67,9 +67,14 @@ export interface Event {
   availabilityDate?: number | string
 }
 
+export type Time = {
+  hour: number
+  minutes: number
+}
+
 export interface Availability {
-  from: string | number
-  to: string | number
+  from: Time
+  to: Time
   maxDuration: number
   minDuration: number
 }

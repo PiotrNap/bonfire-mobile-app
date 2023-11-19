@@ -28,7 +28,6 @@ import {
 } from "lib/utils"
 import { AnyObject } from "yup/lib/types"
 import { ProfileContext } from "contexts/profileContext"
-import { hexToText } from "lib/wallet/utils"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
@@ -54,21 +53,15 @@ export const ConfirmationDetails = ({
   const {
     textContent,
     hourlyRate,
-    selectedDays,
     imageURI,
     eventCardColor,
     eventTitleColor,
+    selectedDates,
+    fromDate,
+    toDate,
   } = eventCreationContext()
   const isLightMode = colorScheme === "light"
   const previewingEvent = bookingPreviewingEvent || bookedEvent
-  var selectedDaysArr: number[] = []
-  var fromDate, toDate
-
-  if (isNewEvent) {
-    selectedDaysArr = Object.values(selectedDays as any)
-    fromDate = Math.min(...selectedDaysArr)
-    toDate = Math.max(...selectedDaysArr)
-  }
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s600 : Colors.primary.s200,
@@ -89,8 +82,6 @@ export const ConfirmationDetails = ({
     colorsPallete: <ColorsPalleteIcon {...iconStyles} />,
     font: <FontIcon {...iconStyles} />,
   }
-
-  console.log("organizerEvent >", organizerEvent)
 
   const organizerEventSections: any[] = [
     organizerEvent?.title && {
@@ -183,7 +174,7 @@ export const ConfirmationDetails = ({
         content: textContent.summary,
       },
     },
-    selectedDays &&
+    selectedDates &&
       fromDate &&
       toDate && {
         label: "Date",

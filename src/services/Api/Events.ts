@@ -50,6 +50,16 @@ export class Events {
     }
   }
 
+  public static async getBookingByQuery(query: AnyObject): Promise<any[] | void> {
+    const queryString = new URLSearchParams(query)
+    try {
+      const res = await axios.get(`events/bookings?${queryString}`)
+      if (res.data) return res.data
+    } catch (e) {
+      throw e?.response?.data || e
+    }
+  }
+
   public static async getEventById(id: string): Promise<any | void> {
     try {
       const res = await axios.get(`events/${id}`)

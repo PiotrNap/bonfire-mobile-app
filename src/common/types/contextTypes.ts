@@ -5,7 +5,6 @@ import {
   EventAvailability,
   EventType,
   EventVisibility,
-  HourlyRate,
   SelectedWeekDays,
   TextContent,
 } from "common/interfaces/newEventInterface"
@@ -26,6 +25,7 @@ import {
   WalletAssets,
   AssetUnit,
 } from "lib/wallet/types"
+import { MarkedDates } from "react-native-calendars/src/types"
 
 export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
@@ -47,7 +47,7 @@ export enum EventCreationTypes {
   AddAvailability = "SET_AVAILABILITIES",
   RemoveAvailability = "REMOVE_AVAILABILITY",
   RemoveAvailabilities = "REMOVE_AVAILABILITIES",
-  SetSelectedDays = "SET_SELECTED_DAYS",
+  SetSelectedDates = "SET_SELECTED_DATES",
   RemoveSelectedDays = "REMOVE_SELECTED_DAYS",
   SetSelectedWeek = "SET_SELECTED_WEEKS",
   RemoveSelectedWeeks = "REMOVE_SELECTED_WEEKS",
@@ -171,10 +171,8 @@ export type EventCreationPayload = {
     availability: EventAvailability
   }
   [EventCreationTypes.RemoveAvailabilities]: {}
-  [EventCreationTypes.SetSelectedDays]: {
-    selectedDays: number[]
-    isRecurringSelection?: boolean
-    eventType: EventType
+  [EventCreationTypes.SetSelectedDates]: {
+    selectedDates: MarkedDates
   }
   [EventCreationTypes.RemoveSelectedDays]: any
   [EventCreationTypes.SetSelectedWeek]: {

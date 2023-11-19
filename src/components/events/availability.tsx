@@ -28,8 +28,9 @@ export const Availability = ({
           <SubHeaderText
             colors={[Colors.primary.neutral, Colors.primary.s800]}
             customStyle={styles.innerText}>
-            {getDigitalLocaleTime(from)} - {getDigitalLocaleTime(to)}{" "}
-            {getLocaleTimezone()}
+            {`${from.hour}:${from.minutes === 0 ? "00" : from.minutes} - ${to.hour}:${
+              to.minutes === 0 ? "00" : to.minutes
+            } ${getLocaleTimezone()}`}
           </SubHeaderText>
           <SubHeaderText
             colors={[Colors.primary.neutral, Colors.primary.s800]}

@@ -74,6 +74,7 @@
     "react-native-animated-number": "^1.2.0",
     "react-native-animated-pagination-dots": "^0.1.72",
     "react-native-boring-avatars": "^1.0.1",
+    "react-native-calendars": "^1.1302.0",
     "react-native-dotenv": "^3.0.0",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-fast-image": "^8.5.11",

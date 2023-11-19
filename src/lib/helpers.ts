@@ -12,11 +12,31 @@ import { getDeepLinkUri } from "./utils"
 import { createNestedPath } from "./navigation"
 import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
 import Toast from "react-native-toast-message"
+import { CalendarUtils } from "react-native-calendars"
 
 const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
 
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"
+
+export function chunkArray(array: any[], chunkSize: number) {
+  return array.reduce((acc, item, index) => {
+    const chunkIndex = Math.floor(index / chunkSize)
+
+    if (!acc[chunkIndex]) {
+      acc[chunkIndex] = [] // start a new chunk
+    }
+
+    acc[chunkIndex].push(item)
+
+    return acc
+  }, [])
+}
+
+// returns a date string in a format required by the calendar library
+const today = new Date()
+export const getCalendarDate = (offset = 0) =>
+  CalendarUtils.getCalendarDateString(new Date().setDate(today.getDate() + offset))
 
 /**
  *  Takes index of the selected day in the weeek

@@ -33,6 +33,7 @@ import {
   WalletKeys,
 } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
+import { MarkedDates } from "react-native-calendars/src/types"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -95,7 +96,7 @@ export const eventCreationContext = () => {
   return {
     textContent: state.textContent,
     availabilities: state.availabilities,
-    selectedDays: state.selectedDays,
+    selectedDates: state.selectedDates,
     selectedWeekDays: state.selectedWeekDays,
     hourlyRate: state.hourlyRate,
     imageURI: state.imageURI,
@@ -113,14 +114,11 @@ export const eventCreationContext = () => {
         payload: { textContent },
       })
     },
-    setSelectedDays: (
-      selectedDays: any[],
-      isRecurringSelection: boolean = false,
-      eventType: EventType
-    ) => {
+    setSelectedDates: (selectedDates: MarkedDates) => {
+      console.log("hello ???", selectedDates)
       dispatch({
-        type: EventCreationTypes.SetSelectedDays,
-        payload: { selectedDays, isRecurringSelection, eventType },
+        type: EventCreationTypes.SetSelectedDates,
+        payload: { selectedDates },
       })
     },
     setSelectedWeek: (selectedWeek: SelectedWeekDays) => {
@@ -151,12 +149,6 @@ export const eventCreationContext = () => {
       dispatch({
         type: EventCreationTypes.SetHourlyRate,
         payload: { hourlyRate },
-      })
-    },
-    setEventType: (eventType: EventType) => {
-      dispatch({
-        type: EventCreationTypes.SetEventType,
-        payload: { eventType },
       })
     },
     setImageUri: (imageURI: string) => {
@@ -201,7 +193,6 @@ export const eventCreationContext = () => {
         payload: { gCalEventsBooking },
       })
     },
-    removeSelectedDays: () => dispatch({ type: EventCreationTypes.RemoveSelectedDays }),
     removeSelectedWeeks: () => dispatch({ type: EventCreationTypes.RemoveSelectedWeeks }),
     resetEventCreationState: () => {
       dispatch({ type: EventCreationTypes.ResetState })

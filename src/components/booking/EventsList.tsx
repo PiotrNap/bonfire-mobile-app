@@ -1,15 +1,16 @@
 import * as React from "react"
 import { StyleSheet, ActivityIndicator, View, VirtualizedList } from "react-native"
-import LottieView from "lottie-react-native"
 
 import { EventsListCard } from "./EventsListCard"
 import { bufferToBase64, getRandomKey } from "lib/utils"
 import { useEventsPagination } from "lib/hooks/useEventsPagination"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
-import { Colors, Sizing } from "styles/index"
+import { Colors, Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
-import { CurvedArrow } from "assets/icons"
+import { CurvedArrow, PlusIcon } from "assets/icons"
+import { RoundedButton } from "components/buttons/roundedButton"
+import { useNavigation } from "@react-navigation/native"
 
 export const EventsList = React.forwardRef((props, ref): any => {
   const { customEvents, customIsLoading, isOrganizerOwnEvents } = props
@@ -22,6 +23,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
     getEventsPaginated,
     eventsPage,
   } = useEventsPagination(isOrganizerOwnEvents ? id : "")
+  const navigation = useNavigation()
 
   React.useImperativeHandle(ref, () => ({
     getEventsPaginated,
@@ -43,6 +45,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
   const isLoading = customIsLoading || isPaginationLoading
 
   const renderEventCard = React.useCallback(({ item }: any) => {
+    console.log(item)
     const {
       title,
       eventTitleColor,
@@ -55,7 +58,10 @@ export const EventsList = React.forwardRef((props, ref): any => {
       organizerId,
       organizerAlias,
       hourlyRate,
+      bookedSlots,
     } = item
+    const isStandardColor =
+      eventTitleColor === "rgb(255, 252, 252)" && eventCardColor === "rgba(3, 3, 3, 0)"
 
     return (
       <EventsListCard
@@ -70,6 +76,8 @@ export const EventsList = React.forwardRef((props, ref): any => {
         image={bufferToBase64(eventCardImage?.data)}
         color={eventCardColor}
         isTransparent={eventCardColor === "transparent"}
+        isStandardColor={isStandardColor}
+        bookedSlots={bookedSlots}
         hourlyRate={hourlyRate}
       />
     )
@@ -87,6 +95,9 @@ export const EventsList = React.forwardRef((props, ref): any => {
       style={{ paddingTop: Sizing.x35 }}
     />
   )
+  const onAddEventPress = () => {
+    navigation.navigate("New Event Description")
+  }
   const onEndReach = React.useCallback(() => {
     if (isLastPage) return
     getEventsPaginated(eventsPage + 1, 20, id)
@@ -100,30 +111,46 @@ export const EventsList = React.forwardRef((props, ref): any => {
     }),
     []
   )
+
   //@TODO fix loading indicator at the bottom
   return (
     <>
       {!isEmptyEventsList && !isLoading ? (
-        <VirtualizedList
-          style={{ flex: 1, width: "100%" }}
-          contentContainerStyle={{ width: "95%", alignSelf: "center" }}
-          data={eventsList()}
-          getItem={getItem}
-          refreshing={isLoading}
-          initialNumToRender={5}
-          onEndReachedThreshold={0.7}
-          onEndReached={onEndReach}
-          getItemCount={getItemCount}
-          renderItem={renderEventCard}
-          keyExtractor={keyExtractor}
-          onRefresh={onRefresh}
-          onLayout={onLayout}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={isLoading ? _ActivityIndicator : null}
-          maxToRenderPerBatch={10}
-          updateCellsBatchingPeriod={30}
-          removeClippedSubviews
-        />
+        <>
+          <VirtualizedList
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={{ width: "95%", alignSelf: "center" }}
+            data={eventsList()}
+            getItem={getItem}
+            refreshing={isLoading}
+            initialNumToRender={5}
+            onEndReachedThreshold={0.7}
+            onEndReached={onEndReach}
+            getItemCount={getItemCount}
+            renderItem={renderEventCard}
+            keyExtractor={keyExtractor}
+            onRefresh={onRefresh}
+            onLayout={onLayout}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={isLoading ? _ActivityIndicator : null}
+            maxToRenderPerBatch={10}
+            updateCellsBatchingPeriod={30}
+            removeClippedSubviews
+          />
+          <View style={styles.cornerButtonWrapper}>
+            <RoundedButton
+              onPress={onAddEventPress}
+              icon={
+                <PlusIcon
+                  color={isLightMode ? Colors.primary.neutral : Colors.primary.s800}
+                  width={Sizing.x40}
+                  height={Sizing.x40}
+                  strokeWidth={2}
+                />
+              }
+            />
+          </View>
+        </>
       ) : isLoading ? (
         <_ActivityIndicator />
       ) : (
@@ -153,6 +180,19 @@ export const EventsList = React.forwardRef((props, ref): any => {
               },
             ]}
           />
+          <View style={styles.cornerButtonWrapper}>
+            <RoundedButton
+              onPress={onAddEventPress}
+              icon={
+                <PlusIcon
+                  color={isLightMode ? Colors.primary.neutral : Colors.primary.s800}
+                  width={Sizing.x40}
+                  height={Sizing.x40}
+                  strokeWidth={2}
+                />
+              }
+            />
+          </View>
         </View>
       )}
     </>
@@ -180,5 +220,11 @@ const styles = StyleSheet.create({
   },
   noEventsText: {
     textAlign: "center",
+    ...Typography.subHeader.x25,
+  },
+  cornerButtonWrapper: {
+    position: "absolute",
+    bottom: Sizing.x15,
+    right: Sizing.x15,
   },
 })

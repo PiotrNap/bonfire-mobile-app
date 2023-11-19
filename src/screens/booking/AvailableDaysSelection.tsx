@@ -2,10 +2,7 @@ import * as React from "react"
 import { View, StyleSheet } from "react-native"
 
 import { StackScreenProps } from "@react-navigation/stack"
-import {
-  BookingStackParamList,
-  DEEP_LINKING_URLS,
-} from "common/types/navigationTypes"
+import { BookingStackParamList, DEEP_LINKING_URLS } from "common/types/navigationTypes"
 import { Sizing } from "styles/index"
 import { appContext, bookingContext } from "contexts/contextApi"
 import { MonthlyWrapper } from "components/calendar"
@@ -15,15 +12,11 @@ import { Checkbox } from "components/forms/Checkbox"
 import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
 import { createNestedPath } from "lib/navigation"
 
-type Props = StackScreenProps<
-  BookingStackParamList,
-  "Available Event Days Selection"
->
+type Props = StackScreenProps<BookingStackParamList, "Available Event Days Selection">
 
 export const AvailableDaysSelection = ({ navigation, route }: Props) => {
   const { title, image, color, titleColor } = route.params
-  const { pickedDate, resetBookingState, setCreateGoogleCalEvent } =
-    bookingContext()
+  const { pickedDate, resetBookingState, setCreateGoogleCalEvent } = bookingContext()
   const { colorScheme, validGoogleOAuth } = appContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
@@ -33,8 +26,10 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
     setCreateGoogleCalEvent(acceptedCheckbox)
     navigation.navigate("Available Times", route.params)
   }
-  const { isRequesting, isInitialRequesting, startGoogleAuthentication } =
-    useGoogleAuth(googleCallback, setError)
+  const { isRequesting, isInitialRequesting, startGoogleAuthentication } = useGoogleAuth(
+    googleCallback,
+    setError
+  )
 
   const onNextPress = async () => {
     if (error.isVisible) setError({ isVisible: false, type: "" })
@@ -78,9 +73,7 @@ export const AvailableDaysSelection = ({ navigation, route }: Props) => {
         <MonthlyWrapper isBookingCalendar={true} />
       </View>
       <View style={styles.messageWrapper}>
-        <Checkbox
-          onCheckBoxPress={onCheckBoxPress}
-          acceptedCheckbox={acceptedCheckbox}>
+        <Checkbox onCheckBoxPress={onCheckBoxPress} acceptedCheckbox={acceptedCheckbox}>
           Schedule this event on my Google calendar.
         </Checkbox>
       </View>

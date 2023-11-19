@@ -41,8 +41,7 @@ export const MonthItem = ({
     [selectedDays && Object.values(selectedDays)]
   )
 
-  const onPressCallback = (val: number) =>
-    setSelectedDays([val], false, eventType)
+  const onPressCallback = (val: number) => setSelectedDays([val], false, eventType)
 
   const updateActiveDay = (num: number | null) => {
     if (!num) {

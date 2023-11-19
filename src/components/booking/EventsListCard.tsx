@@ -27,11 +27,14 @@ export interface EventsListCardProps {
   isEventCardPreview?: boolean
   isBrowseScreenPreview?: boolean
   isTransparent?: boolean
+  isStandardColor?: boolean
+  bookedSlots?: any[]
 }
 
 export const EventsListCard = ({
   isEventCardPreview,
   isTransparent,
+  isStandardColor,
   eventId,
   organizerId,
   organizerAlias,
@@ -43,9 +46,11 @@ export const EventsListCard = ({
   color,
   titleColor,
   hourlyRate,
+  bookedSlots,
 }: EventsListCardProps) => {
   const navigation = useNavigation()
   const _color = tinyColor(color)
+  console.log(isTransparent)
 
   const onCardPress = () =>
     navigation.navigate("Event Description", {
@@ -60,12 +65,17 @@ export const EventsListCard = ({
       color,
       titleColor,
       hourlyRate,
+      isStandardColor,
+      bookedSlots,
     })
-  const gradient: string[] = [Colors.primary.s800, Colors.primary.s600]
+  const gradient: string[] =
+    (isEventCardPreview && !isTransparent) || !isStandardColor
+      ? [_color.toHexString(), _color.toHexString()]
+      : [Colors.primary.s800, Colors.primary.s600]
 
   const Background = React.useCallback(
     ({ children }) =>
-      image ? (
+      !isEventCardPreview && image ? (
         <FastImage
           source={{
             uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
@@ -82,7 +92,7 @@ export const EventsListCard = ({
           {children}
         </LinearGradient>
       ),
-    [image]
+    [image, gradient]
   )
 
   return (
@@ -92,17 +102,7 @@ export const EventsListCard = ({
       style={styles.main}>
       <Background>
         {fromDate != null && toDate != null && (
-          <View
-            style={[
-              styles.dateCard,
-              isTransparent
-                ? {
-                    backgroundColor: applyOpacity("000000", 0.3),
-                  }
-                : {
-                    backgroundColor: applyOpacity(_color.toHexString(), 0.5),
-                  },
-            ]}>
+          <View style={styles.dateCard}>
             <Text style={styles.dateCardText}>{getEventCardDate(fromDate, toDate)}</Text>
           </View>
         )}
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     height: "auto",
     marginLeft: "auto",
     borderRadius: Outlines.borderRadius.small,
+    backgroundColor: applyOpacity("000000", 0.3),
   },
   dateCardText: {
     textAlign: "center",

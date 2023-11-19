@@ -13,7 +13,7 @@ const initialState: InitialState = {
     summary: "",
   },
   availabilities: [],
-  selectedDays: {},
+  selectedDates: {},
   fromDate: null,
   toDate: null,
   hourlyRate: [],
@@ -77,34 +77,11 @@ const reducer = (state: InitialState, action: EventCreationActions): InitialStat
         availabilities: [],
       }
     }
-    case EventCreationTypes.SetSelectedDays: {
-      let newSelectedDays: any = state.selectedDays || {}
-
-      if (action.payload.eventType === "one-time") {
-        return {
-          ...state,
-          selectedDays: {
-            [action.payload.selectedDays[0]]: action.payload.selectedDays[0],
-          },
-        }
-      }
-
-      action.payload.selectedDays.map((day) => {
-        if (
-          !state.selectedDays ||
-          !state.selectedDays[day] ||
-          (action.payload.isRecurringSelection && true)
-        ) {
-          newSelectedDays[day] = day
-        } else {
-          delete newSelectedDays[day]
-          if (Object.keys(newSelectedDays).length === 0) newSelectedDays = null
-        }
-      })
-
+    case EventCreationTypes.SetSelectedDates: {
+      console.log("Here ???")
       return {
         ...state,
-        selectedDays: newSelectedDays,
+        selectedDates: action.payload.selectedDates,
       }
     }
     case EventCreationTypes.SetSelectedWeek: {
@@ -162,12 +139,6 @@ const reducer = (state: InitialState, action: EventCreationActions): InitialStat
       return {
         ...state,
         eventTitleColor: action.payload.eventTitleColor,
-      }
-    }
-    case EventCreationTypes.RemoveSelectedDays: {
-      return {
-        ...state,
-        selectedDays: {},
       }
     }
     case EventCreationTypes.RemoveSelectedWeeks: {

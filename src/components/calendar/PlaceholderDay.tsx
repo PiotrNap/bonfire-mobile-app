@@ -18,6 +18,7 @@ const _PlaceholderDay = ({
     onPlaceholderPress(direction)
   }
 
+  console.log("re-render placeholder", `${number}`)
   return (
     <View style={styles.container}>
       <Pressable onPress={onPress} hitSlop={Sizing.x5} style={styles.dayButton}>
@@ -29,8 +30,8 @@ const _PlaceholderDay = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: `${100 / 7}%`,
-    height: `${100 / 6}%`,
+    // width: `${100 / 7}%`,
+    // height: `${100 / 6}%`,
     justifyContent: "center",
     alignItems: "center",
   },

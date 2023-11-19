@@ -26,7 +26,7 @@ const _ToggleButton = ({
 }) => {
   const [active, setActive] = useState(options[values.indexOf(defaultValue) || 0])
   const [viewWidth, setViewWidth] = useState(0)
-  const animation = useRef(new Animated.Value(0)).current
+  const animation = useRef(new Animated.Value(values.indexOf(defaultValue) || 0)).current
   const { colorScheme } = appContext()
   const isLigthMode = colorScheme === "light"
 
