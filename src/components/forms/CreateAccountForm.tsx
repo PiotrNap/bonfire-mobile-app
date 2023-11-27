@@ -15,7 +15,6 @@ import { appContext } from "contexts/contextApi"
 import { startChallengeSequence } from "lib/helpers"
 import { generateKeyPair } from "lib/tweetnacl"
 import base64 from "base64-js"
-import TZone from "react-native-timezone"
 import { inputStyles, formStyleDark } from "../../styles/forms"
 import { Checkbox } from "./Checkbox"
 
@@ -28,8 +27,7 @@ export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,
 }: CreateAccountFormProps) => {
-  const { setUsername, setID, setName, setTimeZone } =
-    React.useContext(ProfileContext)
+  const { setUsername, setID, setName, setTimeZone } = React.useContext(ProfileContext)
   const { toggleAuth } = appContext()
   const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
   const [submitted, setSubmitted] = React.useState<boolean>(false)
@@ -183,9 +181,7 @@ export const CreateAccountForm = ({
                 colorMode={"dark"}
                 onCheckBoxPress={onCheckBoxPress}>
                 <Text style={styles.checkboxText}>I accept</Text>{" "}
-                <Text style={styles.checkboxTextLink}>
-                  Privacy Policy + Terms of Use
-                </Text>
+                <Text style={styles.checkboxTextLink}>Privacy Policy + Terms of Use</Text>
               </Checkbox>
             </View>
             {/*

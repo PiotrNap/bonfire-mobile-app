@@ -22,12 +22,14 @@ import {
   getDate,
   getDay,
   getDigitalLocaleTime,
+  getDigitalTime,
   getMonth,
   getTimeSpanLength,
   isSameDay,
 } from "lib/utils"
 import { AnyObject } from "yup/lib/types"
 import { ProfileContext } from "contexts/profileContext"
+import { hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
@@ -45,9 +47,9 @@ export const ConfirmationDetails = ({
   const { colorScheme } = appContext()
   const { timeZone } = React.useContext(ProfileContext)
   var {
-    duration = null,
-    durationCost = null,
-    pickedDate = null,
+    duration,
+    durationCost,
+    pickedStartTime,
     previewingEvent: bookingPreviewingEvent,
   } = bookingContext()
   const {
@@ -83,6 +85,9 @@ export const ConfirmationDetails = ({
     font: <FontIcon {...iconStyles} />,
   }
 
+  /**
+   * Displayed from users' main calendar
+   */
   const organizerEventSections: any[] = [
     organizerEvent?.title && {
       label: "Title",
@@ -152,7 +157,9 @@ export const ConfirmationDetails = ({
     },
   ].filter((s) => !!s)
 
-  /** Displayed during event creation confirmation **/
+  /**
+   * Displayed during event creation confirmation
+   */
   const newEventSections: any[] = [
     textContent?.title && {
       label: "Title",
@@ -238,72 +245,64 @@ export const ConfirmationDetails = ({
       ],
     },
   ].filter((s) => !!s)
+
+  /**
+   * Displayed during event booking confirmation
+   */
   const bookingEventSections: SectionDetail[] = [
     previewingEvent?.title && {
-      label: "Event",
+      label: "Event Title",
       lineContent: {
         content: previewingEvent.title,
-        icon: sectionsIcons.presentation,
       },
     },
     previewingEvent?.organizerAlias && {
       label: "Organizer",
       lineContent: {
         content: previewingEvent.organizerAlias,
-        icon: sectionsIcons.user,
       },
     },
     previewingEvent?.attendeeAlias && {
       label: "Attendee",
       lineContent: {
         content: previewingEvent.attendeeAlias,
-        icon: sectionsIcons.user,
       },
     },
-    (previewingEvent?.pickedDate || pickedDate) &&
-      (previewingEvent?.duration || duration) && {
+    pickedStartTime &&
+      duration && {
         label: "Date",
-        ...(pickedDate &&
-          duration && {
-            callbackFn: {
-              label: "Edit",
-              callbackFnScreen: "Available Event Days Selection",
-            },
-          }),
-        lineContent: [
-          {
-            content: `${weekDays[getDay(pickedDate)]} - ${
-              months[getMonth(pickedDate)]
-            } ${getDate(pickedDate)}`,
-            icon: sectionsIcons.calendar,
-          },
-          {
-            content: `${getDigitalLocaleTime(
-              previewingEvent?.pickedDate || pickedDate
-            )} - ${getDigitalLocaleTime(
-              new Date(previewingEvent?.pickedDate || pickedDate).getTime() +
-                (previewingEvent?.duration || duration)
-            )} ${timeZone}`,
-            icon: sectionsIcons.time,
-          },
-        ],
+        callbackFn: {
+          label: "Edit",
+          callbackFnScreen: "Available Event Dates Selection",
+          param: { event: bookedEvent },
+        },
+        lineContent: {
+          content: new Date(pickedStartTime).toLocaleString(),
+        },
       },
     duration && {
-      label: "Reservation time",
+      label: "Duration",
       callbackFn: {
         label: "Edit",
         callbackFnScreen: "Duration Choice",
+        param: { event: bookedEvent },
       },
       lineContent: {
-        content: getTimeSpanLength(duration),
+        content: `${duration / (1000 * 60 * 60)}hr`,
       },
     },
     durationCost && {
-      label: "Total amount",
-      lineContent: {
-        content: `${durationCost}`,
-        icon: sectionsIcons.ada,
-      },
+      label: "Total cost",
+      lineContent: Array.from(durationCost).map((costEntries) =>
+        costEntries[0] === "lovelace"
+          ? {
+              content: `${lovelaceToAda(BigInt(costEntries[1]))}`,
+              icon: sectionsIcons.ada,
+            }
+          : {
+              content: `(${hexToUtf8(costEntries[1].name)}) ${costEntries[1].count}`,
+            }
+      ),
     },
   ].filter((s) => !!s)
 

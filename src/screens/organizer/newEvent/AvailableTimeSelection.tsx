@@ -14,8 +14,11 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { roundDateMinutes } from "lib/utils"
 import { fontWeight } from "../../../styles/typography"
+import { showInfoToast } from "lib/helpers"
+import dayjs from "dayjs"
 
 type Props = StackScreenProps<EventCreationParamList, "Available Time Selection">
+const TEST_DATE = "2023-01-01"
 
 export const AvailableTimeSelection = ({ navigation }: Props) => {
   const [fromTime, setFromTime] = React.useState<Date>(roundDateMinutes(new Date()))
@@ -96,7 +99,6 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
     String(fromTime) === String(toTime) || String(fromTime) > String(toTime)
 
   const onTimeChangeValue = (label: string, val: Date) => {
-    console.log("val is >>", val)
     if (label === "From") setFromTime(val)
     if (label === "To") setToTime(val)
   }
@@ -108,7 +110,8 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
   const onMaxValueChange = (val: number) => setMaxTime(val)
   const onOpenChange = (label: string | null) => setOpenPicker(label)
   const addNewAvailability = () => {
-    addAvailability({
+    let overlappingAvailability = false
+    let newAvailability = {
       from: {
         hour: new Date(fromTime).getHours(),
         minutes: new Date(fromTime).getMinutes(),
@@ -116,7 +119,41 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
       to: { hour: new Date(toTime).getHours(), minutes: new Date(toTime).getMinutes() },
       maxDuration: maxTime ?? maxInputRange[0],
       minDuration: minTime ?? minInputRange[0],
+    }
+
+    // check whether the current selected window overlaps with an already created one
+    availabilities.forEach((availability) => {
+      let previousFrom = dayjs(TEST_DATE)
+        .add(availability.from.hour, "hour")
+        .add(availability.from.minutes, "minutes")
+      let previousTo = dayjs(TEST_DATE)
+        .add(availability.to.hour, "hour")
+        .add(availability.to.minutes, "minutes")
+      let newFrom = dayjs(TEST_DATE)
+        .add(dayjs(fromTime).hour(), "hour")
+        .add(dayjs(fromTime).minute(), "minutes")
+      let newTo = dayjs(TEST_DATE)
+        .add(dayjs(toTime).hour(), "hour")
+        .add(dayjs(toTime).minute(), "minutes")
+      if (newTo <= previousFrom || newFrom >= previousTo) return
+
+      if (
+        (newFrom >= previousFrom && newTo <= previousTo) ||
+        (newFrom <= previousFrom && newTo <= previousTo) ||
+        (newFrom >= previousFrom && newTo >= previousTo) ||
+        (newFrom <= previousFrom && newTo >= previousTo)
+      ) {
+        overlappingAvailability = true
+      }
     })
+
+    if (overlappingAvailability)
+      return showInfoToast(
+        "Wrong values...",
+        "Adding overlapping time windows isn't supported"
+      )
+
+    addAvailability(newAvailability)
     // react-navigation doesn't update screen immediately after context dispatch
     navigation.setParams({ availabilities: availabilities.length++ })
 

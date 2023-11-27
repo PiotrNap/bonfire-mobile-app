@@ -1,5 +1,4 @@
 export { DurationChoice } from "./DurationChoice"
-export { AvailableDaysSelection } from "./AvailableDaysSelection"
+export { AvailableDatesSelection } from "./AvailableDatesSelection"
 export { EventDescription } from "./EventDescription"
-export { AvailableDates } from "./AvailableDates"
 export { AvailableTimes } from "./AvailableTimes"

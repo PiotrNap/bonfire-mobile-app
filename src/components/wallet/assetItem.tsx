@@ -15,6 +15,7 @@ export interface assetItemInterface {
   item: AssetUnit
   isSendTransactionScreen: boolean
   isSelected: boolean
+  isLastItem: boolean
   onCheckboxPress?: (unit: string, count: number) => void
 }
 
@@ -23,6 +24,7 @@ export const AssetItem = React.memo(
     item,
     isSendTransactionScreen,
     isSelected,
+    isLastItem,
     onCheckboxPress,
   }: assetItemInterface) => {
     const [imageUrl, setImageUrl] = React.useState<any>("")
@@ -73,39 +75,53 @@ export const AssetItem = React.memo(
             <Text style={styles.fallbackImageText}>{assetName.charAt(0)}</Text>
           </View>
         )}
-        <View style={styles.assetDetails}>
-          <Text
-            style={
-              colorScheme === "light" ? styles.userName_light : styles.userName_dark
-            }>
-            {assetName}
-          </Text>
-          <Text
-            style={
-              colorScheme === "light" ? styles.assetInfo_light : styles.assetInfo_dark
-            }>
-            #{policyId.substring(0, 8)}...
-            {policyId.substring(policyId.length - 8, policyId.length)}
-          </Text>
+        <View style={styles.assetInfoWrapper}>
+          <View style={[styles.assetDetails]}>
+            <Text
+              style={
+                colorScheme === "light" ? styles.userName_light : styles.userName_dark
+              }>
+              {assetName}
+            </Text>
+            <Text
+              style={
+                colorScheme === "light" ? styles.assetInfo_light : styles.assetInfo_dark
+              }>
+              #{policyId.substring(0, 8)}...
+              {policyId.substring(policyId.length - 8, policyId.length)}
+            </Text>
+          </View>
+          {isSendTransactionScreen ? (
+            <Checkbox
+              customContainerStyle={{ marginLeft: "auto" }}
+              acceptedCheckbox={selectedCheckbox}
+              onCheckBoxPress={handlePress}
+            />
+          ) : (
+            <Text
+              style={[
+                styles.amount,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100,
+                },
+              ]}>
+              {count}
+            </Text>
+          )}
         </View>
-        {isSendTransactionScreen ? (
-          <Checkbox
-            customContainerStyle={{ marginLeft: "auto" }}
-            acceptedCheckbox={selectedCheckbox}
-            onCheckBoxPress={handlePress}
-          />
-        ) : (
-          <Text
-            style={[
-              styles.amount,
-              {
-                color:
-                  colorScheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100,
-              },
-            ]}>
-            {count}
-          </Text>
-        )}
+        {/*
+        <View
+          style={[
+            !isLastItem && {
+              height: Outlines.borderWidth.base,
+              backgroundColor:
+                colorScheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100,
+              width: "90%",
+            },
+          ]}
+        />
+        */}
       </View>
     )
   }
@@ -134,6 +150,11 @@ const styles = StyleSheet.create({
   userName_dark: {
     ...Typography.header.x30,
     color: Colors.primary.neutral,
+  },
+  assetInfoWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flex: 1,
   },
   assetInfo_light: {
     ...Typography.subHeader.x20,

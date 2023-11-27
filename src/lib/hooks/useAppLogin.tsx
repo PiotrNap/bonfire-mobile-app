@@ -50,6 +50,7 @@ export const useAppLogin = () => {
             deviceID,
             hourlyRateAda: authCred.hourlyRateAda,
             timeZone: deviceTimeZone,
+            baseAddress: walletBaseAddress,
           })
         }
 
@@ -68,6 +69,7 @@ export const useAppLogin = () => {
               hourlyRateAda: accessTokenDto?.hourlyRateAda,
               userSettings,
               deviceID,
+              baseAddress: walletBaseAddress,
             })
             setToEncryptedStorage("auth-credentials", accessTokenDto)
             setAuthorizationToken(accessTokenDto.accessToken)

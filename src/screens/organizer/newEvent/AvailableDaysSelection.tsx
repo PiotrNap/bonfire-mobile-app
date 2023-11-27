@@ -12,6 +12,7 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { showErrorToast } from "lib/helpers"
 import { Calendar, DateData } from "react-native-calendars"
 import { MarkedDates } from "react-native-calendars/src/types"
+import { isPastDate } from "lib/utils"
 
 type Props = StackScreenProps<EventCreationParamList, "Available Days Selection">
 
@@ -38,13 +39,15 @@ export const AvailableDaysSelection = (props: Props) => {
   const isLightMode = colorScheme === "light"
   const lightOrDarkColor = isLightMode ? Colors.primary.s800 : Colors.primary.neutral
   const isDisabledBtn = !Object.keys(_selectedDates)
-  const onDayPress = (day: DateData) => {
+  const onDayPress = (date: DateData) => {
+    if (isPastDate(date.year, date.month - 1, date.day)) return
+
     const newSelectedDates = { ..._selectedDates }
 
-    if (newSelectedDates[day.dateString]) {
-      delete newSelectedDates[day.dateString]
+    if (newSelectedDates[date.dateString]) {
+      delete newSelectedDates[date.dateString]
     } else {
-      newSelectedDates[day.dateString] = { selected: true }
+      newSelectedDates[date.dateString] = { selected: true }
     }
 
     _setSelectedDates(newSelectedDates)

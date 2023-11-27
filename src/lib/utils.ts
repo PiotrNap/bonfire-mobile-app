@@ -6,7 +6,7 @@ import {
   Month,
   Events,
   EventsDay,
-  Availability,
+  EventTimeWindow,
   Availabilities,
 } from "interfaces/myCalendarInterface"
 import { months, monthsByName, weekDays } from "common/types/calendarTypes"
@@ -25,10 +25,6 @@ export function scale(size: number, factor = 1) {
 
 export const bufferToBase64 = (val: Buffer) => {
   return !val ? val : Buffer.from(val).toString("base64")
-}
-
-export function utf8ToHex(string: string) {
-  return Buffer.from(string).toString("hex")
 }
 
 export function getDeepLinkUri(path: string = ""): string {
@@ -189,8 +185,10 @@ export function areEqualDates(val1: number, val2: number): boolean {
  * @param month
  * @param day
  */
-export const isPastDate = (year: number, month: string, day: number) => {
-  return dayjs(new Date(year, monthsByName[month], day)).isBefore(dayjs(), "day")
+export const isPastDate = (year: number, month: string | number, day: number) => {
+  return dayjs(
+    new Date(year, typeof month === "number" ? month : monthsByName[month], day)
+  ).isBefore(dayjs(), "day")
 }
 
 /**
@@ -555,17 +553,14 @@ export function getDigitalTime(time: number | string | Date, offset = "24"): str
     }
   }
 
-  return `${hours}:${minutes <= 9 ? "0" + minutes : minutes} ${abbreviation ?? ""}`
+  return `${hours}:${minutes <= 9 ? "0" + minutes : minutes}${abbreviation ?? ""}`
 }
 
 /**
  *  @description returns a string of local time based on 'time' and 'locale'
  */
-export function getDigitalLocaleTime(
-  time: number | Date,
-  locale: string = "en"
-): string | void {
-  var timeString: any = new Date(time).toLocaleTimeString(locale)
+export function getDigitalLocaleTime(time: number | Date | string): string | void {
+  var timeString: any = new Date(time).toLocaleTimeString()
   var abbreviation: string = ""
 
   timeString = timeString.split(" ")
@@ -583,7 +578,7 @@ export function getDigitalLocaleTime(
 /**
  *  @description returns a string based on length of time passed as arg
  */
-export function getTimeSpanLength(time: number): string {
+export function getTimeSpanLength(time: number | string): string {
   // 'getHours' returns 1 even if we pass 1 min as a time to 'Date' object
   let hours = new Date(time).getHours() - 1
   let minutes = new Date(time).getMinutes()
@@ -597,6 +592,36 @@ export function getTimeSpanLength(time: number): string {
   } else {
     return `${hours}${minutes && "." + minutes} hrs`
   }
+}
+
+// takes in an array of ISO strings and returns time formats eg. '0.5hr','1hr'
+export function formatTimeIncrements(timeArray: string[], minDuration: number) {
+  console.log(timeArray)
+  if (timeArray.length === 0) {
+    return []
+  }
+
+  const startTime = new Date(timeArray[0])
+  const timeDifference = new Date(timeArray[1]).getTime() - startTime.getTime()
+  const timeDifferenceMillSec = timeDifference / (1000 * 60 * 60)
+
+  if (timeArray.length === 1) {
+    return [
+      {
+        hours: `${minDuration / 60}hr`,
+        millSeconds: minDuration * 1000 * 60,
+      },
+    ]
+  }
+
+  return timeArray.map((isoString, idx) => {
+    const formattedIncrement =
+      idx === 0 ? `${timeDifferenceMillSec}hr` : `${timeDifferenceMillSec * (idx + 1)}hr`
+    return {
+      hours: formattedIncrement,
+      millSeconds: idx === 0 ? timeDifference : timeDifference * (idx + 1),
+    }
+  })
 }
 
 /**
@@ -647,8 +672,7 @@ export function getEventCardDate(
  */
 export function getLocaleTimezone(): string {
   const offset = new Date().getTimezoneOffset()
-
-  return `UTC ${offset < 0 && "+"}${-offset / 60}`
+  return `UTC ${offset < 0 ? "+" : ""}${-offset / 60}`
 }
 
 export function getDevicesTimeZone(): string {
@@ -670,7 +694,7 @@ export const roundDateMinutes = (date: Date): Date => {
 }
 
 export const sortEventAvailabilities = (
-  availabilities: Availability[],
+  availabilities: EventTimeWindow[],
   sortType: "asc" | "desc"
 ) =>
   availabilities.sort((a, b) => {
@@ -811,7 +835,7 @@ export const convertToCalendarEvents = (organizerEvents: { [index: string]: any[
     }
 
     var currEventId: string = ""
-    var sortedAvailabilites: Availability[] = []
+    var sortedAvailabilites: EventTimeWindow[] = []
 
     for (const val of arr) {
       const fromDate = type === "active slot" ? val.availableAt : val.bookedDate

@@ -24,8 +24,8 @@ export const ConfirmationDetail = ({
   if (lineContent == null) {
     return <></>
   }
-  const onTextPress = (screen: string) => {
-    if (callbackFn != null) navigation.navigate(screen)
+  const onTextPress = (screen: string, param?: any) => {
+    if (callbackFn != null) navigation.navigate(screen, param)
   }
   const onCallbackIconPress = () => {
     setIsCopyPopupVisible(true)
@@ -34,6 +34,7 @@ export const ConfirmationDetail = ({
   }
   return (
     <View
+      key={getRandomKey(4)}
       style={[
         styles.container,
         !isLastItem && {
@@ -54,7 +55,9 @@ export const ConfirmationDetail = ({
                 customStyle={{ ...fontWeight.bold }}
                 children={callbackFn.label}
                 colors={[Colors.primary.s800, Colors.primary.s200]}
-                callbackFn={() => onTextPress(callbackFn.callbackFnScreen)}
+                callbackFn={() =>
+                  onTextPress(callbackFn.callbackFnScreen, callbackFn?.param)
+                }
               />
             ) : (
               <></>
@@ -91,7 +94,7 @@ export const ConfirmationDetail = ({
                   callbackFn={() =>
                     callbackFn?.onPress
                       ? callbackFn?.onPress
-                      : onTextPress(callbackFn.callbackFnScreen)
+                      : onTextPress(callbackFn.callbackFnScreen, callbackFn?.param)
                   }>
                   {callbackFn.label}
                 </SubHeaderText>

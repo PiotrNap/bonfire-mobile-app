@@ -119,11 +119,9 @@ export async function retrieveMnemonicPhraseFromStorage(
 
       return userCredentials.password // password is the actual mnemonic
     } else if (authType === "password" && password) {
-      console.log("hello ")
       const cipher = await getFromEncryptedStorage("mnemonic")
       if (!cipher)
         throw new Error("Missing mnemonic credential. Have you set up a password?")
-      console.log("hello again")
       const decryptedMnemonic = await decryptWithPassword(cipher, password)
       return decryptedMnemonic
     }

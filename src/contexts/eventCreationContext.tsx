@@ -78,7 +78,6 @@ const reducer = (state: InitialState, action: EventCreationActions): InitialStat
       }
     }
     case EventCreationTypes.SetSelectedDates: {
-      console.log("Here ???")
       return {
         ...state,
         selectedDates: action.payload.selectedDates,

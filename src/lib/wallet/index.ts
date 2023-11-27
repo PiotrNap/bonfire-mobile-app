@@ -10,6 +10,7 @@ import {
   Bip32PrivateKey,
   hexToBytes,
   bytesToHex,
+  Datum,
 } from "@hyperionbt/helios"
 import { generateMnemonic, mnemonicToEntropy } from "bip39"
 import * as CrossCSL from "@emurgo/cross-csl-mobile"
@@ -21,10 +22,11 @@ const { Bip32PublicKey } = CrossCSL
 
 import { CardanoMobile } from "../../../global"
 import { ROLE_TYPE, CONFIG_NUMBERS } from "./config"
-import { SendRegularTxInfo, TxHash, WalletKeys } from "./types"
+import { EscrowContractDatum, SendRegularTxInfo, TxHash, WalletKeys } from "./types"
 import { unitsToAssets } from "./utils"
 import { mainnet } from "../../on_chain/configs/mainnet"
 import { preprod } from "../../on_chain/configs/preprod"
+import { escrowProgram, escrowValidatorHash } from "../../on_chain/EscrowContract"
 
 export const TX_GET_SIZE = 30
 export const PURPOSE = 2147485500
@@ -168,38 +170,38 @@ export class Wallet {
   static async sendRegularTransaction(
     { assets, receiverAddress, lovelace }: SendRegularTxInfo,
     userAddress: string,
-    utxos: TxInput[],
+    userUtxos: TxInput[],
     signingKey: string
   ): Promise<TxHash | void> {
     console.log(
-      "args >",
+      "regular tx args >",
       assets,
       receiverAddress,
       lovelace,
       userAddress,
-      utxos,
+      userUtxos,
       signingKey
     )
 
+    // const pubKeyHash = privKey.derivePubKey().pubKeyHash
+    const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
+    const params = new NetworkParams(getNetworkConfig())
+
+    const outputAddress = new Address(receiverAddress)
+    const outputAssets = unitsToAssets(assets)
+
+    const outputValue = new Value(lovelace, outputAssets)
+    const output = new TxOutput(outputAddress, outputValue)
+    const now = Date.now()
+    const fiveMinutes = 1000 * 60 * 5
+    const tx = new Tx()
+      .addInputs(userUtxos)
+      .addOutput(output)
+      .validFrom(new Date(now - fiveMinutes))
+      .validTo(new Date(now + fiveMinutes))
+
     try {
-      const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
-      // const pubKeyHash = privKey.derivePubKey().pubKeyHash
-      const params = new NetworkParams(getNetworkConfig())
-
-      const outputAddress = new Address(receiverAddress)
-      const outputAssets = unitsToAssets(assets)
-
-      const outputValue = new Value(lovelace, outputAssets)
-      const output = new TxOutput(outputAddress, outputValue)
-      const now = Date.now()
-      const fiveMinutes = 1000 * 60 * 5
-      const tx = new Tx()
-        .addInputs(utxos)
-        .addOutput(output)
-        .validFrom(new Date(now - fiveMinutes))
-        .validTo(new Date(now + fiveMinutes))
-
-      await tx.finalize(params, new Address(userAddress), utxos)
+      await tx.finalize(params, new Address(userAddress), userUtxos)
       let signature = privKey.sign(tx.bodyHash)
       tx.addSignature(signature)
 
@@ -209,8 +211,45 @@ export class Wallet {
       throw e
     }
   }
-  async sendLockingTransaction() {}
-  async sendUnlockingTransaction() {}
+  static async sendLockingTransaction(
+    paymentTokens: Value,
+    lockingDatumInfo: EscrowContractDatum,
+    userAddress: string,
+    userUtxos: TxInput[],
+    signingKey: string
+  ) {
+    const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
+    const params = new NetworkParams(getNetworkConfig())
+    const now = Date.now()
+    const fiveMinutes = 1000 * 60 * 5
+
+    const escrowDatum = new escrowProgram.types.Datum(...Object.values(lockingDatumInfo))
+    const inlineDatum = Datum.inline(escrowDatum)
+
+    const lockingTxOutput = new TxOutput(
+      Address.fromHash(escrowValidatorHash),
+      paymentTokens,
+      inlineDatum
+    )
+
+    // lock funds
+    const lockingTx = new Tx()
+      .addInputs(userUtxos)
+      .addOutput(lockingTxOutput)
+      .validFrom(new Date(now - fiveMinutes))
+      .validTo(new Date(now + fiveMinutes))
+    try {
+      await lockingTx.finalize(params, new Address(userAddress))
+      let signature = privKey.sign(lockingTx.bodyHash)
+      lockingTx.addSignature(signature)
+
+      const { data } = await Wallet.submitTransaction(lockingTx)
+      return bytesToHex(data.bytes)
+    } catch (e) {
+      throw e
+    }
+  }
+  static async sendUnlockingTransaction() {}
 
   /** Get wallet tx's **/
   static async getTransactionsAtAddress(address: string, page: number = 0) {

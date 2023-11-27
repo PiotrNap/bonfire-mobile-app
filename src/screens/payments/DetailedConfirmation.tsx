@@ -2,8 +2,12 @@ import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Value } from "@hyperionbt/helios"
-import { appContext, bookingContext, eventCreationContext } from "contexts/contextApi"
+import {
+  appContext,
+  bookingContext,
+  eventCreationContext,
+  walletContext,
+} from "contexts/contextApi"
 import { LeftArrowIcon, ShareIcon } from "assets/icons"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
@@ -14,9 +18,19 @@ import { useEventDeletion } from "lib/hooks/useEventDeletion"
 import { Events } from "Api/Events"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { SmallButton } from "components/buttons/smallButton"
-import { shareEvent, showErrorToast, showSuccessToast } from "lib/helpers"
-import { unitsToAssets } from "lib/wallet/utils"
-import { utf8ToHex } from "lib/utils"
+import {
+  convertToEventAvailabilityUTC,
+  findEarliestAndLatestDates,
+  shareEvent,
+  showErrorToast,
+  showSuccessToast,
+} from "lib/helpers"
+import { assetsUnitsToJSONSchema, assetsUnitsToValue } from "lib/wallet/utils"
+import { AssetUnit } from "lib/wallet/types"
+import { Authenticator } from "components/modals/Authenticator"
+import { Wallet } from "lib/wallet"
+import { Address } from "@hyperionbt/helios"
+import { EscrowContractDatum } from "lib/wallet/types"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -25,8 +39,6 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const {
     textContent,
     selectedDates,
-    fromDate,
-    toDate,
     hourlyRate,
     imageURI,
     visibility,
@@ -34,11 +46,12 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     eventCardColor,
     eventTitleColor,
     availabilities,
-    gCalEventsBooking,
     resetEventCreationState,
   } = eventCreationContext()
-  const { duration, pickedDate, previewingEvent, createGoogleCalEvent } = bookingContext()
-  const { username, id } = React.useContext(ProfileContext)
+  const { duration, durationCost, createGoogleCalEvent, pickedStartTime } =
+    bookingContext()
+  const { walletUtxos } = walletContext()
+  const { username, id, walletBaseAddress } = React.useContext(ProfileContext)
   const {
     errorMsg,
     successMsg,
@@ -46,87 +59,129 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     deleteEvent,
   } = useEventDeletion(params.organizerEvent?.eventId)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-
+  const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
   const isLightMode = colorScheme === "light"
+
+  const onHideAuthenticator = () => setAuthenticatorVisible(false)
   const onBackNavigationPress = () => navigation.goBack()
-  const onButtonPress = async () => {
-    setIsLoading(true)
 
-    if (params?.isNewEvent) {
-      let _hourlyRate = [...hourlyRate]
-      // convert AssetUnit[] to JSONSchema
-      const hourlyRateAda = _hourlyRate[0].count // this one is required in UI
-      _hourlyRate.shift()
-      // return console.log(_hourlyRate)
-      const hourlyRateValue = new Value(
-        BigInt(hourlyRateAda),
-        unitsToAssets(
-          _hourlyRate.map((unit) => ({ ...unit, label: "", name: utf8ToHex(unit.name) }))
+  /** Event booking **/
+  const onStartBooking = () => {
+    setAuthenticatorVisible(true)
+  }
+  const onAuthenticated = async (accountKey?: string | void) => {
+    if (!accountKey) return showErrorToast("Something went wrong. Missing signing key.")
+
+    // Temporary solution...
+    const lovelacePaymentToken: AssetUnit = {
+      count: Number(durationCost.get("lovelace")),
+      label: "",
+      name: "",
+      policyId: "",
+    }
+    const assetsPaymentTokens = Object.values(durationCost)
+    const paymentTokens = assetsUnitsToValue([
+      lovelacePaymentToken,
+      ...assetsPaymentTokens,
+    ])
+
+    // create a locking transaction
+    const lockingDatumInfo: EscrowContractDatum = {
+      beneficiaryPkh: new Address(params.event.organizerAddress).pubKeyHash?.hex,
+      benefactorPkh: new Address(walletBaseAddress).pubKeyHash?.hex,
+      releaseDate: BigInt(Math.floor(new Date(pickedStartTime).getTime() + duration)),
+      cancelFee: params.event.cancellation.fee || 0,
+      cancelWindowStart: BigInt(
+        Math.floor(
+          new Date(pickedStartTime).getTime() -
+            params.event.cancellation.window * 60 * 60 * 1000
         )
+      ),
+      cancelWindowEnd: BigInt(Math.floor(new Date(pickedStartTime).getTime())),
+      createdAt: BigInt(Math.floor(new Date().getTime())),
+      paymentTokens: paymentTokens.toSchemaJson(),
+    }
+
+    if (Object.values(lockingDatumInfo).some((v) => !v))
+      return showErrorToast("Unable to construct Datum object.", "Error")
+
+    try {
+      // submit transaction
+      const txHash = await Wallet.sendLockingTransaction(
+        paymentTokens,
+        lockingDatumInfo,
+        walletBaseAddress,
+        walletUtxos,
+        accountKey
       )
-      const hourlyRateSchemaJSON = hourlyRateValue.toSchemaJson()
 
-      const newEvent: CreateEventDto = {
-        title: textContent.title,
-        description: textContent.summary,
-        availabilities,
-        selectedDates: Object.keys(selectedDates),
-        cancellation,
-        fromDate,
-        toDate,
-        hourlyRate: hourlyRateSchemaJSON,
-        visibility,
-        eventCardColor,
-        eventTitleColor,
-        timeZoneOffset: new Date().getTimezoneOffset(),
-        organizer: {
-          id,
-          username,
-        },
-        gCalEventsBooking,
-      }
+      // create new booking-record
+      const res = await Events.bookEvent({
+        txHash: txHash,
+        eventId: params.event.id,
+        durationCost: paymentTokens.toSchemaJson(),
+        startDate: pickedStartTime,
+        duration,
+      })
 
-      try {
-        const eventId = await Events.createEvent(newEvent)
-
-        if (eventId && imageURI)
-          // update img as we cant send multiple content-type headers
-          await Events.uploadEventImage(imageURI, eventId)
-
-        resetEventCreationState()
+      if (res) {
         navigation.navigate("Confirmation", {
-          isBookingConfirmation: false,
-          isNewEvent: true,
+          isBookingConfirmation: true,
         })
-      } catch (e) {
-        if (e.response.status === 422) return showNSFWImageModal()
-        showErrorToast(e)
-      } finally {
-        setIsLoading(false)
       }
-    } else {
-      try {
-        const res = await Events.bookEvent({
-          eventId: previewingEvent.eventId,
-          durationCost: previewingEvent.durationCost,
-          bookedDate: new Date(pickedDate),
-          bookedDuration: duration,
-          createGoogleCalEvent,
-        })
-
-        if (res) {
-          navigation.navigate("Confirmation", {
-            isBookingConfirmation: true,
-          })
-        }
-      } catch (e) {
-        showErrorToast(e)
-        setIsLoading(false)
-      }
-
-      //@TODO submit transaction to blockchain
+    } catch (e) {
+      showErrorToast(e)
+    } finally {
+      setIsLoading(false)
+      accountKey = ""
     }
   }
+  /***/
+
+  /** Event creation **/
+  const onButtonPress = async () => {
+    // convert selectedDates and availabilities to the new format
+    let eventAvailableSlots = convertToEventAvailabilityUTC(selectedDates, availabilities)
+    const { earliestDate, latestDate } = findEarliestAndLatestDates(eventAvailableSlots)
+
+    const newEvent: CreateEventDto = {
+      title: textContent.title,
+      description: textContent.summary,
+      availabilities: eventAvailableSlots,
+      cancellation,
+      fromDate: earliestDate,
+      toDate: latestDate,
+      hourlyRate: assetsUnitsToJSONSchema(hourlyRate),
+      visibility,
+      eventCardColor,
+      eventTitleColor,
+      organizer: {
+        id,
+        username,
+        baseAddress: walletBaseAddress,
+      },
+    }
+
+    try {
+      setIsLoading(true)
+      const eventId = await Events.createEvent(newEvent)
+
+      // update img as we cant send multiple content-type headers
+      if (eventId && imageURI) await Events.uploadEventImage(imageURI, eventId)
+
+      resetEventCreationState()
+      navigation.navigate("Confirmation", {
+        isBookingConfirmation: false,
+        isNewEvent: true,
+      })
+    } catch (e) {
+      if (e.response?.status === 422) return showNSFWImageModal()
+      showErrorToast(e)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  /***/
   const onDeleteEvent = async () => {
     if (!params.organizerEvent.eventId) return
     await deleteEvent()
@@ -163,7 +218,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         <ConfirmationDetails
           isCalendarEventPreview={params?.isCalendarEventPreview}
           organizerEvent={params?.organizerEvent || params?.organizerCalendarEvent}
-          bookedEvent={params?.bookedEvent}
+          bookedEvent={params?.event}
           isNewEvent={params?.isNewEvent}
         />
         {params?.organizerCalendarEvent && (
@@ -204,8 +259,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             !params?.organizerCalendarEvent &&
             !params?.bookedEvent ? (
             <FullWidthButton
-              onPressCallback={onButtonPress}
-              text={"Confirm"}
+              onPressCallback={params.event ? onStartBooking : onButtonPress}
+              text={"Sign & Submit"}
               colorScheme={colorScheme}
               loadingIndicator={isLoading}
             />
@@ -214,6 +269,14 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           )}
         </View>
       </View>
+      {authenticatorVisible && (
+        <Authenticator
+          authRequestType="account-key"
+          showAuthenticator={authenticatorVisible}
+          onAuthenticatedCb={onAuthenticated}
+          onHideAuthenticatorCb={onHideAuthenticator}
+        />
+      )}
     </SafeAreaView>
   )
 }

@@ -53,7 +53,9 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const isLightMode = colorScheme === "light"
   const isDisabledButton =
     paymentTokensErrorStatus ||
-    !!Object.entries(descriptionRef?.current?.errors || {}).length
+    descriptionRef?.current == null ||
+    !descriptionRef.current.isValid ||
+    !descriptionRef.current.dirty
 
   const formStyles = Object.assign(
     {},

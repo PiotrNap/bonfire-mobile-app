@@ -1,8 +1,7 @@
 export interface EventBookingDto {
   eventId: string
-  bookedDate: Date
-  bookedDuration: number
-  durationCost: number
-  createGoogleCalEvent: boolean
-  txHash?: string
+  startDate: string
+  duration: number
+  durationCost: string
+  txHash: string
 }

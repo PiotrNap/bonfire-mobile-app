@@ -1,4 +1,5 @@
 import { Events } from "Api/Events"
+import { convertFromEventAvailability } from "lib/helpers"
 import * as React from "react"
 
 export const useEventsResults = (id?: string) => {
@@ -8,13 +9,16 @@ export const useEventsResults = (id?: string) => {
   const getEventsBySearchQuery = async (searchValue: string) => {
     try {
       const res: any = await Events.getEventsBySearch(searchValue, id)
-      const data = res.data
+      let data = res.data
+
       if (data) {
+        data = convertFromEventAvailability
         setEvents(data.result)
-        setIsLoading(false)
       }
     } catch (e) {
       console.error(e)
+    } finally {
+      setIsLoading(false)
     }
   }
 

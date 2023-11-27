@@ -1,3 +1,4 @@
+import { EventAvailability } from "common/interfaces/newEventInterface"
 import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { WalletNavigationParams, PasswordSetUpFormValues } from "lib/wallet/types"
 import { AnyObject } from "yup/lib/types"
@@ -50,14 +51,14 @@ export type BookingStackParamList = {
         selectedEvent: any | undefined
       }
     | undefined
-  "Available Event Days Selection": EventDescription
-  "Available Times": EventDescription
-  "Duration Choice": EventDescription
-  "Event Description": EventDescription
-  "Add Funds": EventDescription
-  "Booking Confirmation": EventDescription
-  Confirmation: any
-  "Event Details": EventDescription
+  "Available Event Dates Selection": { event: EventDescription }
+  "Available Times": { event: EventDescription }
+  "Duration Choice": { event: EventDescription }
+  "Event Description": { event: EventDescription }
+  "Add Funds": { event: EventDescription }
+  "Booking Confirmation": { event: EventDescription }
+  Confirmation: { event: EventDescription }
+  "Event Details": { event: EventDescription }
 }
 
 export type EventCreationParamList = {
@@ -106,15 +107,17 @@ export type WalletStackParamList = {
  * Navigation params interfaces
  */
 interface EventDescription {
+  availabilities: EventAvailability[]
   title: string
-  titleColor: string
+  hourlyRate: any
   description: string
   organizerId: string
   organizerAlias: string
   fromDate: number | string
   toDate: number | string
   image: any
-  color: string
+  eventTitleColor: string
+  eventCardColor: string
   eventId: string
   fromScreen?: string
   isBookingWalletTopUp?: boolean

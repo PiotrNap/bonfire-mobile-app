@@ -1,4 +1,5 @@
 import { Redeemer } from "@emurgo/csl-mobile-bridge"
+import { Assets } from "@hyperionbt/helios"
 import { AnyObject } from "yup/lib/types"
 
 export type TxHash = string
@@ -69,4 +70,18 @@ export type SendLockingTxInfo = SendRegularTxInfo & {
 export type SendUnlockingTxInfo = SendRegularTxInfo & {
   datum: AnyObject
   redeemer: Redeemer
+}
+export type PaymentTokens = {
+  lovelace: number
+  assets: Assets
+}
+export type EscrowContractDatum = {
+  beneficiaryPkh: string
+  benefactorPkh: string
+  releaseDate: number
+  cancelFee: number
+  cancelWindowStart: number
+  cancelWindowEnd: number
+  createdAt: number
+  paymentTokens: string // JSON representation of hourly rate payment tokens
 }

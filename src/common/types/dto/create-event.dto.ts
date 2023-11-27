@@ -2,27 +2,24 @@ import {
   Cancellation,
   EventAvailability,
   EventVisibility,
-  SelectedDays,
 } from "common/interfaces/newEventInterface"
 
 export interface EventUser {
   id: string
   username: string
+  baseAddress: string
 }
 
 export interface CreateEventDto {
   title: string
   description: string
-  selectedDates: string[]
   availabilities: EventAvailability[]
-  fromDate: Date | null
-  toDate: Date | null
-  hourlyRate: string // AssetUnit[] converted to JSONSchema
+  fromDate: string
+  toDate: string
+  hourlyRate: string // JSONSchema of payment tokens
   cancellation: Cancellation
   visibility: EventVisibility
   eventCardColor: string
   eventTitleColor: string
   organizer: EventUser
-  gCalEventsBooking: boolean
-  timeZoneOffset: number
 }

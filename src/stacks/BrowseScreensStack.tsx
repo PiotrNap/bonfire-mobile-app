@@ -3,8 +3,7 @@ import * as React from "react"
 import { createStackNavigator } from "@react-navigation/stack"
 import { BookingContextProvider } from "contexts/bookingContext"
 import {
-  // AvailableDates,
-  AvailableDaysSelection,
+  AvailableDatesSelection,
   AvailableTimes,
   DurationChoice,
   EventDescription,
@@ -25,8 +24,8 @@ export const BrowseScreensStack = () => (
         <Stack.Screen name="Search List" component={SearchListScreen} />
         <Stack.Screen name="Event Description" component={EventDescription} />
         <Stack.Screen
-          name="Available Event Days Selection"
-          component={AvailableDaysSelection}
+          name="Available Event Dates Selection"
+          component={AvailableDatesSelection}
         />
         <Stack.Screen name="Available Times" component={AvailableTimes} />
         <Stack.Screen name="Duration Choice" component={DurationChoice} />

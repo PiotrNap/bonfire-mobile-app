@@ -11,7 +11,7 @@ import { StyleSheet } from "react-native"
 type Props = {
   showAuthenticator: boolean
   authRequestType: "mnemonic" | "account-key"
-  onAuthenticatedCb: (secret: string | void) => void // secret is the value retrieved from encrypted storage
+  onAuthenticatedCb: (secret: string | void) => Promise<void> // secret is the value retrieved from encrypted storage
   onHideAuthenticatorCb: () => void
 }
 
@@ -22,6 +22,8 @@ export const Authenticator = ({
   authRequestType,
 }: Props) => {
   const [authModalVisible, setAuthModalVisible] = React.useState<boolean>(false)
+  // @TODO what was I ... ?
+  // const [isLoading
   const [passwordPromptModalVisible, setPasswordPromptModalVisible] =
     React.useState<boolean>(false)
 

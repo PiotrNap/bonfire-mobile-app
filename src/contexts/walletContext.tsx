@@ -4,7 +4,7 @@ import {
   SendLockingTxInfo,
   SendRegularTxInfo,
   SendUnlockingTxInfo,
-  WalletAssets,
+  Assets,
 } from "lib/wallet/types"
 import * as React from "react"
 
@@ -17,7 +17,7 @@ interface InitialState {
   signedTx: {}
   mnemonic: {}
   walletUtxos: TxInput[]
-  walletAssets: WalletAssets | null
+  walletAssets: Assets | null
   rootKeyHex: string
   baseAddress: string
   accountPubKeyHex: string

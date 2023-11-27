@@ -1,15 +1,15 @@
 import * as React from "react"
 
-import {
-  BookingContextProps,
-  InitialState,
-} from "common/interfaces/bookingInterface"
+import { BookingContextProps, InitialState } from "common/interfaces/bookingInterface"
 import { BookingActions, BookingTypes } from "common/types/contextTypes"
 
 const initialState: InitialState = {
-  pickedDate: 0,
+  pickedDate: "", // selected date in UTC ,eg '2023-11-23'
+  pickedDateSlots: [],
+  pickedDateSlotsMinDuration: [],
+  pickedStartTime: "",
   duration: 0,
-  durationCost: 0,
+  durationCost: new Map(),
   eventTitle: "",
   eventCardInfo: null,
   organizerRate: null,
@@ -26,6 +26,11 @@ const reducer = (state: InitialState, action: BookingActions) => {
       return {
         ...state,
         duration: action.payload.duration,
+      }
+    case BookingTypes.SetPickedStartTime:
+      return {
+        ...state,
+        pickedStartTime: action.payload.pickedStartTime,
       }
     case BookingTypes.SetDurationCost:
       return {
@@ -46,6 +51,16 @@ const reducer = (state: InitialState, action: BookingActions) => {
       return {
         ...state,
         pickedDate: action.payload.pickedDate,
+      }
+    case BookingTypes.SetPickedDateSlots:
+      return {
+        ...state,
+        pickedDateSlots: action.payload.pickedDateSlots,
+      }
+    case BookingTypes.SetPickedDateSlotsMinDuration:
+      return {
+        ...state,
+        pickedDateSlotsMinDuration: action.payload.pickedDateSlotsMinDuration,
       }
     case BookingTypes.SetMaxTimeSlotDuration:
       return {
@@ -92,11 +107,7 @@ export const BookingContext = React.createContext<BookingContextProps>({
   dispatch: () => null,
 })
 
-export const BookingContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+export const BookingContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   return (

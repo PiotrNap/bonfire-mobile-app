@@ -23,7 +23,12 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
         ? defaultValues
         : [
             // 5 ADA is a minimum to cover all possible minUtxos
-            { policyId: "", label: "", count: hourlyRateAda ?? 5, name: "ada" },
+            {
+              policyId: "",
+              label: "",
+              count: !!hourlyRateAda ? hourlyRateAda : 5,
+              name: "ada",
+            },
             {
               policyId: "2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c30",
               label: "",

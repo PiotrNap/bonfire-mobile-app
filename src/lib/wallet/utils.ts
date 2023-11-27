@@ -1,19 +1,18 @@
 import {
   Address,
   Assets,
-  bytesToText,
   hexToBytes,
   MintingPolicyHash,
   NetworkParams,
   TxInput,
-  TxOutput,
   Value,
 } from "@hyperionbt/helios"
 import { crc8 } from "crc"
 import { CARDANO_NETWORK } from "@env"
 import { mainnet } from "../../on_chain/configs/mainnet.js"
 import { preprod } from "../../on_chain/configs/preprod.js"
-import { AssetUnit, WalletAssets } from "./types"
+import { AssetUnit, PaymentTokens, WalletAssets } from "./types"
+import { HourlyRate } from "common/interfaces/bookingInterface.js"
 
 export const networkParams: NetworkParams = new NetworkParams(
   CARDANO_NETWORK === "mainnet" ? mainnet : preprod
@@ -111,8 +110,10 @@ export function assetsToUnitsArray(assetsArray: Assets[]): [string, AssetUnit][]
   return units
 }
 
-// converts Map of <Unit, UnitDetails> to Assets which can be used to construct Helios Value
-export function unitsToAssets(units: WalletAssets | AssetUnit[]): Assets | undefined {
+// converts an iterable `units<Unit, UnitDetails>` to Assets which can be used to construct Helios Value
+export function unitsToAssets(
+  units: HourlyRate | WalletAssets | AssetUnit[]
+): Assets | undefined {
   if (!units) return
   let tokens: any[] = []
 
@@ -127,10 +128,7 @@ export function unitsToAssets(units: WalletAssets | AssetUnit[]): Assets | undef
   return new Assets(tokens)
 }
 
-export function schemaToPaymentTokens(schema: string): {
-  lovelace: number
-  assets: Assets
-} {
+export function schemaToPaymentTokens(schema: string): PaymentTokens {
   schema = JSON.parse(schema)
   const paymentTokenAssetsArray: any[] = []
   let paymentLovelace = 0
@@ -143,9 +141,9 @@ export function schemaToPaymentTokens(schema: string): {
     } else {
       // Extract token information
       const tokensArray = entry.v.map.map((tokenEntry) => {
-        const tokenName = bytesToText(tokenEntry.k.bytes)
+        const tokenName = tokenEntry.k.bytes
         const tokenAmt = BigInt(tokenEntry.v.int)
-        return [Array.from(tokenName).map((char) => char.charCodeAt(0)), tokenAmt]
+        return [tokenName, tokenAmt]
       })
       paymentTokenAssetsArray.push([assetId, tokensArray])
     }
@@ -153,7 +151,23 @@ export function schemaToPaymentTokens(schema: string): {
 
   const paymentTokenAssets = new Assets(paymentTokenAssetsArray)
   return { lovelace: paymentLovelace, assets: paymentTokenAssets }
-  // return new Value(paymentLovelace, paymentTokenAssets)
+}
+
+export function assetsUnitsToValue(assetsUnits: AssetUnit[]): Value {
+  let _assetsUnits = [...assetsUnits]
+  const assetsUnitsLovelace = Number(_assetsUnits[0].count)
+  _assetsUnits.shift()
+  const assetsUnitsValue = new Value(
+    BigInt(assetsUnitsLovelace),
+    unitsToAssets(
+      _assetsUnits.map((unit) => ({ ...unit, label: "", name: utf8ToHex(unit.name) }))
+    )
+  )
+  return assetsUnitsValue
+}
+
+export function assetsUnitsToJSONSchema(assetsUnits: AssetUnit[]): string {
+  return assetsUnitsToValue(assetsUnits).toSchemaJson()
 }
 
 export function numberToHex(n: number) {
@@ -165,8 +179,12 @@ export function numberToHex(n: number) {
   return hex
 }
 
-export function hexToText(hexString: string) {
+export function hexToUtf8(hexString: string) {
   return Buffer.from(hexString, "hex").toString("utf8")
+}
+
+export function utf8ToHex(string: string) {
+  return Buffer.from(string).toString("hex")
 }
 
 export function ipfsToHttp(ipfsUrl: string | string[]) {

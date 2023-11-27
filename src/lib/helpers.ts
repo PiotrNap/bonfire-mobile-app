@@ -8,11 +8,17 @@ import base64 from "base64-js"
 
 import { monthsByName } from "common/types/calendarTypes"
 import { Auth } from "../services/Api/Auth"
-import { getDeepLinkUri } from "./utils"
+import { getDeepLinkUri, isPastDate } from "./utils"
 import { createNestedPath } from "./navigation"
 import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
 import Toast from "react-native-toast-message"
 import { CalendarUtils } from "react-native-calendars"
+import { MarkedDates } from "react-native-calendars/src/types"
+import { EventTimeWindow } from "common/interfaces/myCalendarInterface"
+import { EventAvailability } from "common/interfaces/newEventInterface"
+import { Colors } from "styles/index"
+
+const { applyOpacity } = Colors
 
 const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
 
@@ -33,10 +39,219 @@ export function chunkArray(array: any[], chunkSize: number) {
   }, [])
 }
 
+export function findEarliestAndLatestDates(eventAvailabilities: EventAvailability[]) {
+  if (eventAvailabilities.length === 0) {
+    return { earliestDate: "", latestDate: "" }
+  }
+
+  let earliestDate = new Date(eventAvailabilities[0].from)
+  let latestDate = new Date(eventAvailabilities[0].to)
+
+  eventAvailabilities.forEach((event) => {
+    const fromDate = new Date(event.from)
+    const toDate = new Date(event.to)
+
+    if (fromDate < earliestDate) {
+      earliestDate = fromDate
+    }
+    if (toDate > latestDate) {
+      latestDate = toDate
+    }
+  })
+
+  return {
+    earliestDate: earliestDate.toISOString(),
+    latestDate: latestDate.toISOString(),
+  }
+}
+
+// Constructs YYYY-MM-DD format from '/' separated date
+export const formatDateWithDashes = (date: Date) => {
+  return [
+    date.getFullYear(),
+    (date.getMonth() + 1).toString().padStart(2, "0"),
+    date.getDate().toString().padStart(2, "0"),
+  ].join("-")
+}
+
 // returns a date string in a format required by the calendar library
 const today = new Date()
 export const getCalendarDate = (offset = 0) =>
   CalendarUtils.getCalendarDateString(new Date().setDate(today.getDate() + offset))
+
+export function convertToEventAvailabilityUTC(
+  dates: MarkedDates,
+  timeSlots: EventTimeWindow[]
+): EventAvailability[] {
+  const eventAvailabilities: EventAvailability[] = []
+
+  Object.keys(dates).forEach((date) => {
+    timeSlots.forEach((slot) => {
+      // Parse local time
+      const fromTimeLocal = new Date(`${date} ${slot.from.hour}:${slot.from.minutes}`)
+      const toTimeLocal = new Date(`${date} ${slot.to.hour}:${slot.to.minutes}`)
+
+      // Convert to UTC
+      const fromTimeUTC = fromTimeLocal.toISOString()
+      const toTimeUTC = toTimeLocal.toISOString()
+
+      const eventSlot: EventAvailability = {
+        from: fromTimeUTC,
+        to: toTimeUTC,
+        isFullyBooked: false,
+        maxDuration: slot.maxDuration,
+        minDuration: slot.minDuration,
+        slots: [],
+      }
+
+      const numOfSlots =
+        (toTimeLocal.getTime() - fromTimeLocal.getTime()) / (slot.minDuration * 60 * 1000)
+
+      for (let i = 0; i < numOfSlots; i++) {
+        eventSlot.slots.push({
+          isAvailable: true,
+          bookingId: "",
+          from:
+            i === 0
+              ? fromTimeUTC
+              : new Date(
+                  fromTimeLocal.setMinutes(fromTimeLocal.getMinutes() + slot.minDuration)
+                ).toISOString(),
+        })
+      }
+      eventAvailabilities.push(eventSlot)
+    })
+  })
+
+  return eventAvailabilities
+}
+
+export function convertFromEventAvailability(
+  eventAvailabilities: EventAvailability[],
+  isBookingCalendar: boolean
+): { dates: MarkedDates; timeWindows: EventTimeWindow[] } {
+  const localDates = {}
+  const localTimeWindows: EventTimeWindow[] = []
+
+  eventAvailabilities.forEach((eventAvailability) => {
+    // Convert UTC to local time
+    const toTimeLocal = new Date(eventAvailability.to)
+    const fromTimeLocal = new Date(eventAvailability.from)
+
+    // Extract local dates using the system's locale
+    const fromDate = formatDateWithDashes(fromTimeLocal)
+    const toDate = formatDateWithDashes(toTimeLocal)
+
+    // Add dates to localDates with handling for date changes
+    ;[fromDate, toDate].forEach((date, idx) => {
+      const splitDate = date.split("-")
+      const year = Number(splitDate[0])
+      const month = Number(splitDate[1]) - 1
+      const day = Number(splitDate[2])
+
+      // @TODO test it with an old event
+      if (isPastDate(year, month, day)) return
+
+      if (!localDates[date]) {
+        if (isBookingCalendar) {
+          localDates[date] = {
+            customStyles: {
+              container: {
+                backgroundColor: applyOpacity(Colors.blueCalendarCard.s400, 0.5), // New background color for selected date
+              },
+              text: {
+                color: Colors.primary.neutral, // Color of the text for selected state
+              },
+            },
+            selected: false,
+            utcDate: new Date(idx === 0 ? eventAvailability.from : eventAvailability.to)
+              .toISOString()
+              .split("T")[0],
+          }
+        } else {
+          localDates[date] = {
+            selected: false,
+            utcDate: new Date(idx === 0 ? eventAvailability.from : eventAvailability.to)
+              .toISOString()
+              .split("T")[0],
+          }
+        }
+      }
+    })
+
+    // Format time slots
+    const timeSlot = {
+      fromDate,
+      toDate,
+      slots: eventAvailability.slots,
+      from: { hour: fromTimeLocal.getHours(), minutes: fromTimeLocal.getMinutes() },
+      to: { hour: toTimeLocal.getHours(), minutes: toTimeLocal.getMinutes() },
+      fromUTC: {
+        hour: fromTimeLocal.getUTCHours(),
+        minutes: fromTimeLocal.getUTCMinutes(),
+      },
+      toUTC: { hour: toTimeLocal.getUTCHours(), minutes: toTimeLocal.getUTCMinutes() },
+      maxDuration: eventAvailability.maxDuration,
+      minDuration: eventAvailability.minDuration,
+    }
+
+    // Add time slot to the array if it's not already included
+    // if (
+    //   !localTimeWindows.some(
+    //     (slot) =>
+    //       slot.from.hour === timeSlot.from.hour &&
+    //       slot.from.minutes === timeSlot.from.minutes &&
+    //       slot.to.hour === timeSlot.to.hour &&
+    //       slot.to.minutes === timeSlot.to.minutes
+    //   )
+    // ) {
+    localTimeWindows.push(timeSlot)
+    // }
+  })
+
+  return { dates: localDates, timeWindows: localTimeWindows }
+}
+
+export function generateTimeSlotsForDateInMilliseconds(
+  localDatesAndSlots: any,
+  selectedDate: string
+) {
+  const [localDates, localTimeSlots] = localDatesAndSlots
+  const timeSlots = []
+
+  if (!localDates[selectedDate]) {
+    // If the selected date is not available
+    return timeSlots
+  }
+
+  localTimeSlots.forEach((slot) => {
+    // Convert times to Date objects
+    const slotStartTime = new Date(
+      `${selectedDate}T${slot.from.hour.toString().padStart(2, "0")}:${slot.from.minutes
+        .toString()
+        .padStart(2, "0")}`
+    )
+    const slotEndTime = new Date(
+      `${selectedDate}T${slot.to.hour.toString().padStart(2, "0")}:${slot.to.minutes
+        .toString()
+        .padStart(2, "0")}`
+    )
+
+    for (
+      let time = new Date(slotStartTime);
+      time < slotEndTime;
+      time.setMinutes(time.getMinutes() + slot.minDuration)
+    ) {
+      // Ensure the slot doesn't exceed the end time
+      if (new Date(time.getTime() + slot.minDuration * 60000) > slotEndTime) {
+        break
+      }
+      timeSlots.push(time.getTime()) // Get UTC milliseconds
+    }
+  })
+
+  return timeSlots
+}
 
 /**
  *  Takes index of the selected day in the weeek
@@ -187,6 +402,9 @@ export const decryptWithPassword = async (
 
 export function showSuccessToast(header: string, body: string): void {
   Toast.show({ text1: header, text2: body })
+}
+export function showInfoToast(header: string, body: string): void {
+  Toast.show({ type: "info", text1: header, text2: body })
 }
 
 export function showErrorToast(e?: any, header?: string): void {

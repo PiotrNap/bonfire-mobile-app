@@ -10,23 +10,24 @@ import {
   getEventCardDate,
 } from "lib/utils"
 import { LeftArrowIcon, ShareIcon, UserIcon } from "assets/icons"
-import {
-  appContext,
-  bookingContext,
-  myCalendarContext,
-} from "contexts/contextApi"
+import { appContext, bookingContext, myCalendarContext } from "contexts/contextApi"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
 import { ProfileContext } from "contexts/profileContext"
-import { EventStatistics } from "components/events/eventDescription/EventStatistics"
-import dayjs from "dayjs"
 import FastImage from "react-native-fast-image"
-import { months } from "common/types/calendarTypes"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
-import { shareEvent } from "lib/helpers"
-import { Availabilities } from "common/interfaces/myCalendarInterface"
+import { shareEvent, showErrorToast, showSuccessToast } from "lib/helpers"
+import LinearGradient from "react-native-linear-gradient"
+import {
+  assetsToUnitsArray,
+  hexToUtf8,
+  lovelaceToAda,
+  schemaToPaymentTokens,
+} from "lib/wallet/utils"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useEventDeletion } from "lib/hooks/useEventDeletion"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {
@@ -35,180 +36,195 @@ export const EventDescription = ({ navigation, route }: any) => {
     eventId,
     organizerId,
     organizerAlias,
+    hourlyRate: hourlyRateJSONSchema,
     fromDate,
     toDate,
     image,
     color,
     titleColor,
-    numOfBookedSlots,
+    isStandardColor,
+    bookedSlots, // is this passed correctly?
   } = route.params
   const { colorScheme } = appContext()
-  const { setPreviewingEvent, resetBookingState } = bookingContext()
-  const { setAvailCalendar, loadMyCalendar, changeMonthHeader } =
-    myCalendarContext()
   const { id } = React.useContext(ProfileContext)
+  const { isLoading: isEventDeletionLoading, deleteEvent } = useEventDeletion(eventId)
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isEventOwner, setIsEventOwner] = React.useState<boolean>(false)
-
   const insets = useSafeAreaInsets()
   const isLightMode = colorScheme === "light"
   const _color = tinyColor(color).toHexString()
+  const eventHourlyRate = React.useCallback(() => {
+    const { lovelace, assets } = schemaToPaymentTokens(hourlyRateJSONSchema)
+
+    return { ada: lovelaceToAda(BigInt(lovelace)), assets: assetsToUnitsArray([assets]) }
+  }, [hourlyRateJSONSchema])
+
+  console.log(eventHourlyRate())
 
   const onBackNavigationPress = () => navigation.goBack()
   const onBookEventPress = async () => {
     setIsLoading(true)
 
     try {
-      let event
+      // @TODO (s)
+      // 1. check if user can pay for the event
+      // 2. check whether there are still open time slots
+      // 3. adjust the event time and availabilities to match users' own time-zone
+      // 4. check whether deep-linking navigation still working
 
       // We have all event info from previous fetch when navigating with deep link
-      if (route.params?.fromShareLink) {
-        const { fromShareLink, ...rest } = route.params
-        event = rest
-      } else {
-        event = await Events.getEventById(eventId)
-      }
+      // if (route.params?.fromShareLink) {
+      //   const { fromShareLink, ...rest } = route.params
+      //   event = rest
+      // } else {
+      //   event = await Events.getEventById(eventId)
+      // }
 
+      let event = await Events.getEventById(eventId)
+      // return console.log(JSON.stringify(event, null, 4))
       if (!event) return
 
-      //TODO let organizers decide what's the 'good until' booking window period
-      const availableDays: Availabilities[] = convertToCalendarAvailabilities(
-        event.selectedDays,
-        event.availabilities
-      )
-      resetBookingState()
+      // if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
+      //   const nextAvailableMonth: number | undefined = (
+      //     Object.values(event.selectedDays) as number[]
+      //   ).find(
+      //     (d: any) =>
+      //       dayjs(d).month() > dayjs().month() && dayjs(d).year() >= dayjs().year()
+      //   )
+      //   if (!nextAvailableMonth) return
 
-      if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
-        const nextAvailableMonth: number | undefined = (
-          Object.values(event.selectedDays) as number[]
-        ).find(
-          (d: any) =>
-            dayjs(d).month() > dayjs().month() &&
-            dayjs(d).year() >= dayjs().year()
-        )
-        if (!nextAvailableMonth) return
+      //   const availableStartDate = dayjs(nextAvailableMonth)
+      //   const calendarSetup = {
+      //     nextMonths: true,
+      //     month: availableStartDate.month(),
+      //     year: availableStartDate.year(),
+      //     isBookingCalendar: true,
+      //     isRegularCalendar: false,
+      //     availabilities: availableDays,
+      //     startFromCustomMonth: true,
+      //     isNewCalendar: true,
+      //   }
+      //   loadMyCalendar(calendarSetup)
+      //   changeMonthHeader({
+      //     month: months[availableStartDate.month()],
+      //     year: availableStartDate.year(),
+      //     numOfEvents: 0,
+      //     startingDate: new Date(availableStartDate.year(), availableStartDate.month()),
+      //   })
+      // } else {
+      //   setAvailCalendar(availableDays)
+      // }
+      // setPreviewingEvent(Object.assign({}, event, route.params))
 
-        const availableStartDate = dayjs(nextAvailableMonth)
-        const calendarSetup = {
-          nextMonths: true,
-          month: availableStartDate.month(),
-          year: availableStartDate.year(),
-          isBookingCalendar: true,
-          isRegularCalendar: false,
-          availabilities: availableDays,
-          startFromCustomMonth: true,
-          isNewCalendar: true,
-        }
-        loadMyCalendar(calendarSetup)
-        changeMonthHeader({
-          month: months[availableStartDate.month()],
-          year: availableStartDate.year(),
-          numOfEvents: 0,
-          startingDate: new Date(
-            availableStartDate.year(),
-            availableStartDate.month()
-          ),
-        })
-      } else {
-        setAvailCalendar(availableDays)
-      }
-      setPreviewingEvent(Object.assign({}, event, route.params))
-      setIsLoading(false)
-
-      navigation.navigate("Available Event Days Selection", {
-        ...route.params,
+      navigation.navigate("Available Event Dates Selection", {
+        event,
       })
     } catch (e) {
-      // TODO Implement better error handling *error modal?*
-      console.error(e.response)
+      showErrorToast(e)
+    } finally {
       setIsLoading(false)
     }
   }
 
-  const onEventDetailPreview = () =>
-    navigation.navigate("Event Details", {
-      header: "Details",
-      organizerEvent: { ...route.params },
-    })
+  // const onEventDetailPreview = () =>
+  //   navigation.navigate("Event Details", {
+  //     header: "Details",
+  //     organizerEvent: { ...route.params },
+  //   })
   const onSharePress = async () => await shareEvent(eventId)
+  const onDeleteEvent = async () => {
+    try {
+      if (!eventId) return
+      await deleteEvent()
+      showSuccessToast("Success!", "This event was removed.")
+    } catch (e) {
+      showErrorToast(e)
+    } finally {
+      navigation.navigate("User Events")
+    }
+  }
 
   React.useEffect(() => {
     if (id && organizerId && id === organizerId) setIsEventOwner(true)
   }, [])
 
+  const gradient: string[] = !isStandardColor
+    ? [_color, _color]
+    : [Colors.primary.s800, Colors.primary.s600]
+
+  const Background = React.useCallback(
+    ({ children }) =>
+      image ? (
+        <FastImage
+          source={{ uri: `data:image/png;base64,${image}` }}
+          style={styles.background}>
+          {children}
+        </FastImage>
+      ) : (
+        <LinearGradient
+          colors={gradient}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.background}>
+          {children}
+        </LinearGradient>
+      ),
+    [image]
+  )
+
   return (
     <View style={{ flex: 1, paddingBottom: insets.bottom }}>
       <View style={styles.topContainer}>
-        <FastImage
-          source={{ uri: `data:image/png;base64,${image}` }}
-          style={styles.backgroundImage}>
-          <View
-            style={[
-              styles.topInnerContainer,
-              { backgroundColor: !image ? Colors.primary.s600 : color },
-            ]}>
-            <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
-              <Pressable
-                style={Buttons.applyOpacity(styles.navigation)}
-                onPress={onBackNavigationPress}
-                hitSlop={10}>
-                <LeftArrowIcon
-                  width={24}
-                  height={24}
-                  color={Colors.primary.s600}
-                />
-              </Pressable>
-              <View
-                style={[
-                  styles.dateCard,
-                  { backgroundColor: applyOpacity(_color, 0.5) },
-                ]}>
-                <Text style={styles.dateCardText}>
-                  {getEventCardDate(fromDate, toDate)}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.eventCardBodyWrapper,
-                { paddingBottom: insets.bottom + Sizing.x15 },
-              ]}>
-              <Text style={[styles.eventTitle, { color: titleColor }]}>
-                {title}
+        <Background>
+          <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
+            <Pressable
+              style={Buttons.applyOpacity(styles.navigation)}
+              onPress={onBackNavigationPress}
+              hitSlop={10}>
+              <LeftArrowIcon width={24} height={24} color={Colors.primary.s600} />
+            </Pressable>
+            <View style={styles.dateCard}>
+              <Text style={styles.dateCardText}>
+                {getEventCardDate(fromDate, toDate)}
               </Text>
-              <View
-                style={[
-                  styles.shareButtonWrapper,
-                  { backgroundColor: applyOpacity(_color, 0.5) },
-                ]}>
-                <Pressable
-                  style={Buttons.applyOpacity(styles.shareButton)}
-                  onPress={onSharePress}>
-                  <ShareIcon
-                    style={styles.icon}
-                    strokeWidth={0.5}
-                    stroke={Colors.primary.s800}
-                    fill={Colors.primary.s800}
-                  />
-                </Pressable>
-              </View>
             </View>
           </View>
-        </FastImage>
+          <View
+            style={[
+              styles.eventCardBodyWrapper,
+              { paddingBottom: insets.bottom + Sizing.x15 },
+            ]}>
+            <Text style={[styles.eventTitle, { color: titleColor }]}>{title}</Text>
+            <View
+              style={[
+                styles.shareButtonWrapper,
+                { backgroundColor: applyOpacity(_color, 0.5) },
+              ]}>
+              <Pressable
+                style={Buttons.applyOpacity(styles.shareButton)}
+                onPress={onSharePress}>
+                <ShareIcon
+                  style={styles.icon}
+                  strokeWidth={0.5}
+                  stroke={Colors.primary.s800}
+                  fill={Colors.primary.s800}
+                />
+              </Pressable>
+            </View>
+          </View>
+        </Background>
       </View>
       <View
         style={[
           styles.bottomContainer,
           {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.neutral.s600,
+            backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
           },
         ]}>
-        <View style={styles.bottomWrapper}>
+        <KeyboardAwareScrollView style={styles.bottomWrapper}>
           {!isEventOwner ? (
-            <View style={styles.eventOrganizer}>
+            <View style={styles.sectionWrapper}>
               <UserIcon
                 style={styles.icon}
                 strokeWidth={1.8}
@@ -223,30 +239,55 @@ export const EventDescription = ({ navigation, route }: any) => {
           ) : (
             <></>
           )}
-          <BodyText
-            customStyle={{ fontFamily: "Roboto-Regular" }}
-            changingColorScheme
-            colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            {description}
-          </BodyText>
-          {isEventOwner ? (
-            <View style={{ marginTop: "auto" }}>
-              <EventStatistics
-                views={0}
-                bookings={numOfBookedSlots ?? 0}
-                likes={0}
-              />
-              <FullWidthButton
-                onPressCallback={onEventDetailPreview}
-                text="Preview"
-                colorScheme={colorScheme}
-                loadingIndicator={isLoading}
-              />
+          <View style={styles.sectionWrapper}>
+            <BodyText
+              customStyle={{ fontFamily: "Roboto-Regular" }}
+              changingColorScheme
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              {description ? description : "(no description)"}
+            </BodyText>
+          </View>
+          <View style={styles.hourlyRateWrapper}>
+            <SubHeaderText
+              customStyle={styles.hourlyRateHeader}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              Hourly Rate:
+            </SubHeaderText>
+            <View style={styles.hourlyRateInnerWrapper}>
+              <SubHeaderText
+                key={"ada"}
+                customStyle={styles.hourlyRateBody}
+                colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                ADA: {eventHourlyRate().ada}
+              </SubHeaderText>
+              {eventHourlyRate().assets.map((asset) => (
+                <SubHeaderText
+                  key={asset[0]}
+                  customStyle={styles.hourlyRateBody}
+                  colors={[Colors.primary.s800, Colors.primary.neutral]}>
+                  {hexToUtf8(asset[1].name)}: {asset[1].count}
+                </SubHeaderText>
+              ))}
             </View>
+          </View>
+        </KeyboardAwareScrollView>
+        <View style={styles.buttonWrapper}>
+          {isEventOwner && !bookedSlots?.length ? (
+            <FullWidthButton
+              onPressCallback={onDeleteEvent}
+              text="Delete"
+              colorScheme={colorScheme}
+              textStyle={{ color: Colors.primary.neutral }}
+              style={{
+                backgroundColor: Colors.danger.s300,
+                borderColor: Colors.danger.s300,
+              }}
+              loadingIndicator={isEventDeletionLoading}
+            />
           ) : (
             <FullWidthButton
               onPressCallback={onBookEventPress}
-              text="Book Event"
+              text="Pick a Date"
               colorScheme={colorScheme}
               loadingIndicator={isLoading}
               style={{ marginTop: "auto" }}
@@ -265,6 +306,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     alignItems: "center",
+    overflow: "scroll",
     borderTopLeftRadius: Outlines.borderRadius.large,
     borderTopRightRadius: Outlines.borderRadius.large,
   },
@@ -272,15 +314,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     paddingVertical: Sizing.x20,
-    // justifyContent: "space-between",
   },
-  backgroundImage: {
+  background: {
     width: "100%",
     height: "105%",
     position: "absolute",
     top: 0,
-  },
-  topInnerContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
@@ -306,11 +345,12 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginTop: Sizing.x15,
     borderRadius: Outlines.borderRadius.small,
+    backgroundColor: applyOpacity("000000", 0.3),
   },
   dateCardText: {
     textAlign: "center",
     padding: Sizing.x5,
-    ...Typography.header.x45,
+    ...Typography.header.x40,
     color: Colors.primary.neutral,
     marginHorizontal: Sizing.x2,
   },
@@ -342,7 +382,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  eventOrganizer: {
+  sectionWrapper: {
     marginBottom: Sizing.x5,
     flexDirection: "row",
     alignItems: "center",
@@ -352,4 +392,14 @@ const styles = StyleSheet.create({
     height: Sizing.x25,
     marginRight: Sizing.x3,
   },
+  buttonWrapper: {
+    width: "90%",
+    marginVertical: Sizing.x5,
+  },
+  hourlyRateWrapper: {},
+  hourlyRateInnerWrapper: {},
+  hourlyRateHeader: {
+    ...Typography.header.x25,
+  },
+  hourlyRateBody: {},
 })

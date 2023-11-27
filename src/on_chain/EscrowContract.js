@@ -1,16 +1,19 @@
+import { Program } from "@hyperionbt/helios"
+
 // @TODO replace pubkey-hashes before launching on mainnet
-export default `
+
+const EscrowContractScript = `
     spending escrow_contract
 
 struct Datum {
     beneficiaryPkh : PubKeyHash
     benefactorPkh : PubKeyHash
-    releaseDate : Time
+    releaseDate : Time 
     cancelFee: Int // % of ADA paymentTokens
     cancelWindowStart: Time 
     cancelWindowEnd: Time
-    createdAt : Time
-    paymentTokens : Value
+    createdAt : Time 
+    paymentTokens : String // JSON schema of event cost 
 }
 
 struct TxOutId {
@@ -81,7 +84,7 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
                 in.output_id.tx_id == cancelR.txId
             }).value;
 
-            (datum.cancelWindowEnd > now).trace("Cancel1: ") && 
+            (datum.cancelWindowEnd > now).trace("Cancel1:") && 
 
             if(cancelWindow.contains(now)) {
                 if(tx.is_signed_by(benefactorPkh)) {
@@ -133,3 +136,8 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
     }
 }
 `
+export const escrowProgram = Program.new(EscrowContractScript)
+const simplify = false
+const uplcProgram = escrowProgram.compile(simplify)
+
+export const escrowValidatorHash = uplcProgram.validatorHash

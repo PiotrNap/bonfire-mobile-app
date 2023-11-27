@@ -63,7 +63,7 @@ export interface Event {
   organizerAlias?: string
   organizerId?: string
   attendeeAlias?: string
-  availabilities?: Availability[]
+  availabilities?: EventTimeWindow[]
   availabilityDate?: number | string
 }
 
@@ -72,9 +72,11 @@ export type Time = {
   minutes: number
 }
 
-export interface Availability {
+export interface EventTimeWindow {
   from: Time
   to: Time
+  fromUTC: Time
+  toUTC: Time
   maxDuration: number
   minDuration: number
 }

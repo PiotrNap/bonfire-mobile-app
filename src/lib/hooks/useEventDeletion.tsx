@@ -12,7 +12,6 @@ export const useEventDeletion = (id: string) => {
     setErrorMsg(null)
     setSuccessMsg(null)
 
-    console.log("and here ??")
     try {
       const success: AnyObject | void = await Events.deleteEvent(id)
       if (success) setSuccessMsg(success.message)

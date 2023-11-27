@@ -2,135 +2,240 @@ import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { appContext, bookingContext } from "contexts/contextApi"
+import { appContext, bookingContext, walletContext } from "contexts/contextApi"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { getTimeSpanLength } from "lib/utils"
-import { ProfileContext } from "contexts/profileContext"
+import { formatTimeIncrements, getRandomKey, getTimeSpanLength } from "lib/utils"
 import { useDurationSlots } from "lib/hooks/useDurationSlots"
-import AnimatedNumber from "react-native-animated-number"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
+import {
+  assetsToUnitsArray,
+  hexToUtf8,
+  lovelaceToAda,
+  schemaToPaymentTokens,
+} from "lib/wallet/utils"
+import { EventSlot } from "common/interfaces/newEventInterface"
+import { HourlyRate, TimeIncrement } from "common/interfaces/bookingInterface"
 
 type Props = StackScreenProps<BookingStackParamList, "Duration Choice">
 
 export const DurationChoice = ({ navigation, route }: Props) => {
-  const { title, image, color, titleColor } = route.params
-  const { maxTimeSlotDuration, minTimeSlotDuration, pickedDate } =
+  const { title, image, eventCardColor, eventTitleColor, availabilities, hourlyRate } =
+    route.params?.event
+  const { pickedStartTime, pickedDateSlots, pickedDateSlotsMinDuration, pickedDate } =
     bookingContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [selectedDuration, setSelectedDuration] = React.useState<number>(0)
-  const [cost, setCost] = React.useState<number>(0)
-  const { walletBalance } = React.useContext(ProfileContext)
-  const { setDuration, setDurationCost, previewingEvent } = bookingContext()
+  const [cost, setCost] = React.useState<HourlyRate>(new Map())
+  const [eventHourlyRate, setEventHourlyRate] = React.useState<HourlyRate>(new Map())
+  const [timeIncrements, setTimeIncrements] = React.useState<TimeIncrement[]>([])
+  const { setDuration, setDurationCost } = bookingContext()
   const { colorScheme } = appContext()
 
   const isLightMode = colorScheme === "light"
-  const isDisabled = selectedDuration === 0
-  const buttonText =
-    walletBalance != null && walletBalance < cost
-      ? "Deposit Funds"
-      : "Preview Order"
+  const isDisabled = !selectedDuration
+  // const numOfSelectedDates = Object.entries(pickedDates)
+  //   .filter((sd) => sd[1].selected)
+  //   .map((sd) => sd[0]).length
 
-  const { timeSlots } = useDurationSlots(
-    minTimeSlotDuration,
-    maxTimeSlotDuration,
-    previewingEvent.availabilities,
-    pickedDate as number
-  )
-  const onBackNavigationPress = () => navigation.goBack()
+  const setEventCost = (time: number) => {
+    const multiplier = time / (1000 * 60 * 60)
+    const newMapEntries = eventHourlyRate.entries()
+    const newMap = new Map(newMapEntries)
+    for (let k of newMap.keys()) {
+      let v = newMap.get(k)
 
-  const onNextPress = async () => {
-    // if (buttonText === "Sign up") return; // @TODO must navigate to sign up screen
-    if (buttonText === "Deposit Funds")
-      navigation.navigate("Add Funds", {
-        ...route.params,
-        fromScreen: "Duration Choice",
+      if (k === "lovelace") {
+        if (time === selectedDuration) v = 0
+        newMap.set(k, Number(v) * multiplier)
+      } else {
+        if (typeof v !== "object") continue
+        if (time === selectedDuration) {
+          newMap.set(k, {
+            ...v,
+            count: 0,
+          })
+        } else {
+          newMap.set(k, {
+            ...v,
+            count: Number(v?.count) * multiplier,
+          })
+        }
+      }
+    }
+    setCost(newMap)
+  }
+
+  React.useEffect(() => {
+    // calculate what duration can user book
+    let _timeSlots: string[] = []
+    let indexOfEventSlotArray = 0
+    let indexOfEventSlot = 0
+    let limitReached = false
+
+    if (!pickedDateSlots || !pickedDateSlots.length) return
+
+    // find first array of which first item contains selected date
+    pickedDateSlots
+      .find((slots: EventSlot[], idx) => {
+        indexOfEventSlot = slots.findIndex((slot) => slot.from === pickedStartTime)
+        if (indexOfEventSlot > -1) {
+          indexOfEventSlotArray = idx
+          return true
+        }
+        return false
       })
-    if (buttonText === "Preview Order") {
-      setIsLoading(true)
-      setDuration(selectedDuration)
-      setDurationCost(cost)
-      setIsLoading(false)
-      navigation.navigate("Booking Confirmation", route.params)
-    }
+      ?.forEach((slot, idx) => {
+        if (limitReached) return
+
+        if (idx < indexOfEventSlot) {
+          return
+        } else if (!slot.isAvailable) {
+          limitReached = true
+        } else {
+          _timeSlots.push(slot.from)
+        }
+        return
+      })
+    const { lovelace, assets } = schemaToPaymentTokens(hourlyRate)
+    const units = assetsToUnitsArray([assets])
+
+    //@ts-ignore
+    const hourlyRateUnits = new Map([["lovelace", lovelace], ...units])
+    setEventHourlyRate(hourlyRateUnits)
+
+    let _timeIncrements = formatTimeIncrements(
+      _timeSlots,
+      pickedDateSlotsMinDuration[indexOfEventSlotArray]
+    )
+    setTimeIncrements(_timeIncrements)
+  }, [hourlyRate, pickedStartTime, pickedDateSlots])
+
+  React.useEffect(() => {
+    setEventCost(0)
+  }, [eventHourlyRate])
+
+  const onNextPress = () => {
+    //@TODO after beta release point user to deposit more funds if necessary
+    //... or hide the time items that are too expensive
+    // if (buttonText === "Deposit Funds")
+    //   navigation.navigate("Add Funds", {
+    //     ...route.params,
+    //     fromScreen: "Duration Choice",
+    //   })
+    // if (buttonText === "Preview Order") {
+    setDuration(selectedDuration)
+    setDurationCost(cost)
+    // transform PaymentTokens back into json schema but for a single date
+
+    navigation.navigate("Booking Confirmation", {
+      header: "Booking Details",
+      event: route.params.event,
+    })
+    // }
   }
 
-  const onPressCallback = (time: number) => {
-    if (selectedDuration === time) {
-      setSelectedDuration(0)
-      setCost(0)
-    } else {
-      setSelectedDuration(time)
-
-      // TODO What's the hourly rate for this event?
-      const hourlyRate = 50
-      const totalCost = (hourlyRate ?? 50) * (time / 60 / 60 / 1000)
-
-      setCost(Math.round(totalCost))
-    }
+  const onBackNavigationPress = () => navigation.goBack()
+  const onPressCallback = (timeIncrement: TimeIncrement, index: number) => {
+    setSelectedDuration((p) =>
+      p === timeIncrement.millSeconds ? 0 : timeIncrement.millSeconds
+    )
+    setEventCost(timeIncrements[index].millSeconds)
   }
 
-  const renderTimeSlots = React.useCallback(
-    (time: number, index: number) => (
-      <Pressable
-        onPress={() => onPressCallback(time)}
-        hitSlop={5}
-        key={`${time}_${index}`}
+  const renderTimeIncrements = (timeIncrement: TimeIncrement, index: number) => (
+    <Pressable
+      onPress={() => onPressCallback(timeIncrement, index)}
+      hitSlop={5}
+      key={getRandomKey(4)}
+      style={[
+        styles.timeSlotButton,
+        selectedDuration === timeIncrements[index].millSeconds && {
+          backgroundColor: Colors.primary.s600,
+        },
+      ]}>
+      <Text
         style={[
-          styles.timeSlotButton,
-          selectedDuration === time && {
-            backgroundColor: Colors.primary.s600,
+          styles.timeSlotButtonText,
+          selectedDuration === timeIncrements[index].millSeconds && {
+            color: Colors.primary.neutral,
           },
         ]}>
-        <Text
-          style={[
-            styles.timeSlotButtonText,
-            selectedDuration === time && {
-              color: Colors.available,
-            },
-          ]}>
-          {getTimeSpanLength(time)}
-        </Text>
-      </Pressable>
-    ),
-    [selectedDuration]
+        {timeIncrements[index].hours}
+      </Text>
+    </Pressable>
   )
 
   return (
     <EventBookingLayout
       onBackPress={onBackNavigationPress}
       screenHeader={"Select Duration"}
-      eventCardColor={color}
+      screenSubHeader={
+        ""
+        // numOfSelectedDates > 1
+        //   ? `You're creating a booking for ${numOfSelectedDates} dates.`
+        //   : `You're creating a booking for ${numOfSelectedDates} date.`
+      }
+      eventCardColor={eventCardColor}
       eventCardImage={image}
       eventCardTitle={title}
-      eventCardTitleColor={titleColor}>
+      eventCardTitleColor={eventTitleColor}>
       <View style={styles.estimatedCostContainer}>
-        <View style={styles.estimatedCostWrapper}>
-          <AnimatedNumber
-            value={cost}
-            time={300}
-            style={[isLightMode ? styles.totalAda_light : styles.totalAda_dark]}
-          />
-          <Text
-            style={isLightMode ? styles.totalAda_light : styles.totalAda_dark}>
-            ₳
+        <View style={styles.selectedCostWrapper}>
+          {[...cost].map(([k, v]) =>
+            k === "lovelace" ? (
+              <Text
+                key={getRandomKey(3)}
+                style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
+                {lovelaceToAda(BigInt(v) || 0)} ₳
+              </Text>
+            ) : (
+              <Text
+                key={getRandomKey(3)}
+                style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
+                {v.count} {hexToUtf8(v.name)}
+              </Text>
+            )
+          )}
+        </View>
+        {/*
+        <View style={styles.multiplier}>
+          <Text style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
+            x {numOfSelectedDates} =
           </Text>
         </View>
+        <View style={styles.selectedCostWrapper}>
+          <Text style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
+            {lovelaceToAda(BigInt(cost.lovelace || 0) * BigInt(numOfSelectedDates))} ₳
+          </Text>
+          {Object.keys(cost).map((k) =>
+            k === "lovelace" ? (
+              <></>
+            ) : (
+              <Text
+                key={getRandomKey(3)}
+                style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
+                {cost[k].count * numOfSelectedDates} {hexToUtf8(cost[k].name)}
+              </Text>
+            )
+          )}
+        </View>
+        */}
+        {/*
         <Text
-          style={
-            isLightMode ? styles.walletBalance_light : styles.walletBalance_dark
-          }>
-          Available balance: {walletBalance} ₳
+          style={isLightMode ? styles.walletBalance_light : styles.walletBalance_dark}>
+          Available balance: {lovelaceToAda(lovelaceBalance).toFixed(2)} ₳
         </Text>
+        */}
       </View>
       <View style={styles.timeSlotsContainer}>
-        {timeSlots && timeSlots.map(renderTimeSlots)}
+        {timeIncrements && timeIncrements.map(renderTimeIncrements)}
       </View>
       <View style={styles.buttonContainer}>
         <FullWidthButton
           onPressCallback={onNextPress}
-          text={buttonText}
+          text={"Preview Details"}
           colorScheme={colorScheme}
           disabled={isDisabled}
           loadingIndicator={isLoading}
@@ -192,24 +297,26 @@ const styles = StyleSheet.create({
     color: Colors.primary.s800,
   },
   estimatedCostContainer: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginVertical: Sizing.x10,
   },
-  estimatedCostWrapper: {
-    flexDirection: "row",
-    textAlign: "auto",
+  selectedCostWrapper: {
+    flexDirection: "column",
+    alignItems: "center",
   },
-  totalAda_light: {
+  multiplier: { marginHorizontal: Sizing.x10 },
+  eventCost_light: {
     textAlignVertical: "center",
-    fontSize: Sizing.x60,
-    fontFamily: "Roboto-Medium",
+    fontSize: Sizing.x35,
+    fontFamily: "Roboto-Bold",
     color: Colors.primary.s600,
   },
-  totalAda_dark: {
-    fontSize: Sizing.x60,
-    fontFamily: "Roboto-Medium",
+  eventCost_dark: {
     textAlignVertical: "center",
+    fontSize: Sizing.x35,
+    fontFamily: "Roboto-Bold",
     color: Colors.primary.neutral,
   },
   walletBalance_light: {
@@ -218,7 +325,7 @@ const styles = StyleSheet.create({
   },
   walletBalance_dark: {
     ...Typography.subHeader.x10,
-    color: Colors.primary.s200,
+    color: Colors.primary.neutral,
   },
   topContainer: {
     height: Sizing.x100,

@@ -6,11 +6,14 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { appContext } from "contexts/contextApi"
 import { LeftArrowIcon } from "assets/icons"
 import FastImage from "react-native-fast-image"
+import LinearGradient from "react-native-linear-gradient"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 interface EventBookingLayoutProps {
   children: React.ReactNode
   onBackPress: () => void
   screenHeader: string
+  screenSubHeader?: string
   eventCardImage: string
   eventCardTitle: string
   eventCardColor: string
@@ -21,44 +24,54 @@ export const EventBookingLayout = ({
   children,
   onBackPress,
   screenHeader,
+  screenSubHeader,
   eventCardTitleColor,
   eventCardTitle,
   eventCardImage,
   eventCardColor,
 }: EventBookingLayoutProps) => {
   const { colorScheme } = appContext()
+  const isStandardColor =
+    (eventCardTitleColor === "white" && eventCardColor === "transparent") ||
+    (eventCardTitleColor === "rgb(255, 252, 252)" &&
+      eventCardColor === "rgba(3, 3, 3, 0)")
+  const gradient: string[] = !isStandardColor
+    ? [eventCardColor, eventCardColor]
+    : [Colors.primary.s800, Colors.primary.s600]
 
-  const isLightMode = colorScheme !== "dark"
-  const insets = useSafeAreaInsets()
-  const placeholderColor = isLightMode
-    ? Colors.primary.s600
-    : Colors.primary.neutral
-  return (
-    <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
-      <View style={styles.topContainer}>
+  const Background = React.useCallback(
+    ({ children }) =>
+      eventCardImage ? (
         <FastImage
           source={{ uri: `data:image/png;base64,${eventCardImage}` }}
           style={styles.backgroundImage}>
-          <View
-            style={[
-              styles.topInnerContainer,
-              {
-                backgroundColor:
-                  eventCardColor === "transparent"
-                    ? placeholderColor
-                    : eventCardColor,
-              },
-            ]}>
+          {children}
+        </FastImage>
+      ) : (
+        <LinearGradient
+          colors={gradient}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.backgroundImage}>
+          {children}
+        </LinearGradient>
+      ),
+    [eventCardImage]
+  )
+
+  const isLightMode = colorScheme !== "dark"
+  const insets = useSafeAreaInsets()
+  return (
+    <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
+      <View style={styles.topContainer}>
+        <Background>
+          <View style={styles.topInnerContainer}>
             <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
               <Pressable
                 style={Buttons.applyOpacity(styles.navigation)}
                 onPress={onBackPress}
                 hitSlop={10}>
-                <LeftArrowIcon
-                  width={24}
-                  height={24}
-                  color={Colors.primary.s600}
-                />
+                <LeftArrowIcon width={24} height={24} color={Colors.primary.s600} />
               </Pressable>
             </View>
             <View
@@ -74,26 +87,26 @@ export const EventBookingLayout = ({
               </Text>
             </View>
           </View>
-        </FastImage>
+        </Background>
       </View>
       <ScrollView
         contentContainerStyle={[
           styles.bottomContainer,
           {
-            backgroundColor: isLightMode
-              ? Colors.primary.neutral
-              : Colors.neutral.s600,
+            backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
           },
         ]}>
         <View style={styles.timesHeader}>
-          <Text
-            style={
-              isLightMode
-                ? styles.timesHeaderText_light
-                : styles.timesHeaderText_dark
-            }>
+          <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
             {screenHeader}
           </Text>
+          {screenSubHeader && (
+            <SubHeaderText
+              customStyle={styles.subHeader}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              {screenSubHeader}
+            </SubHeaderText>
+          )}
         </View>
         {children}
       </ScrollView>
@@ -133,13 +146,18 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     marginLeft: Sizing.x25,
   },
-  timesHeaderText_light: {
+  headerText_light: {
     ...Typography.header.x50,
     color: Colors.primary.s800,
   },
-  timesHeaderText_dark: {
+  headerText_dark: {
     ...Typography.header.x50,
     color: Colors.primary.neutral,
+  },
+  subHeader: {
+    ...Typography.subHeader.x10,
+    paddingLeft: Sizing.x5,
+    paddingBottom: Sizing.x5,
   },
   backgroundImage: {
     width: "100%",

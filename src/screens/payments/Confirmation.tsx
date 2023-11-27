@@ -41,9 +41,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
       style={[
         styles.safeArea,
         {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
         },
       ]}>
       <View style={styles.navigation}>
@@ -58,10 +56,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
       <View style={styles.container}>
         <PaymentSuccessfulIcon width={200} height={200} style={styles.icon} />
         <View style={styles.textContainer}>
-          <Text
-            style={
-              isLightMode ? styles.headerText_light : styles.headerText_dark
-            }>
+          <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
             You're all set!
           </Text>
           <BodyText
@@ -108,7 +103,9 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x10,
   },
   textContainer: {
+    alignSelf: "center",
     marginBottom: "auto",
+    paddingHorizontal: Sizing.x10,
   },
   headerText_light: {
     ...Typography.header.x60,

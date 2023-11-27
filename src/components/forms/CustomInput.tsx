@@ -23,7 +23,7 @@ export const CustomInput = (props: any) => {
     isDisabled,
     ...inputProps
   } = props
-  const hasError = errors[name] && touched[name]
+  const hasError = errors[name]
   const isNumeric = props.field.name === "ada"
 
   return (

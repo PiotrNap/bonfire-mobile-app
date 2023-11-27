@@ -34,6 +34,7 @@ export const SearchListScreen = ({ navigation, route }: any) => {
     }).start()
   }
   const onSubmitSearch = (val: string) => {
+    if (!val) return
     onActiveSearch(false)
     getEventsBySearchQuery(val)
   }
@@ -57,7 +58,7 @@ export const SearchListScreen = ({ navigation, route }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      eventsListRef?.current?.getEventsPaginated(1, 20, undefined, true)
+      eventsListRef?.current?.getEventsPaginated(1, 20, true)
     }, [])
   )
 

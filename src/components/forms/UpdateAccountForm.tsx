@@ -13,6 +13,7 @@ import { CustomInput } from "./CustomInput"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
 import { inputStyles, formStyleDark, formStyleLight } from "../../styles/forms"
 import { ProfileContext } from "contexts/profileContext"
+import { showErrorToast, showSuccessToast } from "lib/helpers"
 
 interface Props {
   onInfoHasChanged: (val: boolean) => void
@@ -23,14 +24,8 @@ interface Props {
 export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
   const { isLoading, setIsLoading, updateAccountInfo } = useUpdateAccountInfo()
   const { colorScheme } = appContext()
-  const {
-    setUsername,
-    setBio,
-    setProfession,
-    setJobTitle,
-    setSkills,
-    setHourlyRateAda,
-  } = React.useContext(ProfileContext)
+  const { setUsername, setBio, setProfession, setJobTitle, setSkills, setHourlyRateAda } =
+    React.useContext(ProfileContext)
   const [submitted, setSubmitted] = React.useState<boolean>(false)
 
   const isLightMode = colorScheme === "light"
@@ -50,17 +45,18 @@ export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
       const res = await updateAccountInfo(newValues, userInfo.id)
       res && onUpdateResponse(newValues)
 
-      const { username, bio, profession, jobTitle, skills, hourlyRateAda } =
-        newValues
+      const { username, bio, profession, jobTitle, skills, hourlyRateAda } = newValues
       setUsername(username)
       setBio(bio)
       setProfession(profession)
       setJobTitle(jobTitle)
       setSkills(skills)
       setHourlyRateAda(hourlyRateAda)
+      showSuccessToast("Success", "Your profile got updated")
     } catch (e) {
-      console.error(e)
-      throw new Error(e)
+      showErrorToast(e)
+    } finally {
+      setIsLoading(false)
     }
   }
   let formStyles: StyleProp<any>

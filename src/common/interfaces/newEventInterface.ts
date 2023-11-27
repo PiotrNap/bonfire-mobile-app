@@ -3,7 +3,7 @@ import * as React from "react"
 import { EventCreationActions } from "common/types/contextTypes"
 import { AssetUnit } from "lib/wallet/types"
 import { MarkedDates } from "react-native-calendars/src/types"
-import { Time } from "./myCalendarInterface"
+import { EventTimeWindow, Time } from "./myCalendarInterface"
 
 export interface ProviderProps {
   children: React.ReactNode
@@ -16,7 +16,7 @@ export interface ContextObjectProps {
 
 export interface InitialState {
   textContent: TextContent
-  availabilities: EventAvailability[]
+  availabilities: EventTimeWindow[]
   selectedDates: MarkedDates
   fromDate: Date | null
   toDate: Date | null
@@ -47,9 +47,16 @@ export interface Cancellation {
 }
 
 export interface EventAvailability {
-  from: Time
-  to: Time
+  from: string
+  to: string
+  isFullyBooked: boolean
   maxDuration: number
   minDuration: number
-  localeTimeOffset?: number
+  slots: EventSlot[]
+}
+// this represents a single, minimum length, time value to be booked by others
+export interface EventSlot {
+  from: string
+  isAvailable: boolean
+  bookingId: string // id of booking record (if any)
 }

@@ -7,13 +7,14 @@ import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, walletContext } from "contexts/contextApi"
 import { FlatList, Pressable, SafeAreaView, StyleSheet, View } from "react-native"
 import { Colors, Sizing } from "styles/index"
-import { fromAssetUnit, hexToText, lovelaceToAda } from "lib/wallet/utils"
+import { fromAssetUnit, hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import Crypto from "crypto"
 import { showErrorToast } from "lib/helpers"
 import { Wallet } from "lib/wallet"
 import { Authenticator } from "components/modals/Authenticator"
 import Clipboard from "@react-native-clipboard/clipboard"
+import { getRandomKey } from "lib/utils"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
   const { colorScheme, setQrCodeValue } = appContext()
@@ -25,6 +26,8 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   const isOutgoing = params?.isOutgoing
   const txInfo = isTxHistoryPreview ? params?.txInfo : sendTxInfo
   const onBackNavigationPress = () => navigation.goBack()
+
+  console.log(JSON.stringify(txInfo, null, 4))
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s800 : Colors.primary.s200,
@@ -70,6 +73,26 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   const copyTxHash = () => {
     Clipboard.setString(txInfo.hash)
   }
+  const getOutputAssets = React.useMemo(() => {
+    return txInfo?.outputs
+      .filter((out) =>
+        isOutgoing
+          ? out.address !== txInfo.user_address
+          : out.address === txInfo.user_address
+      )
+      .map((out) =>
+        out.amount.map((amount) =>
+          amount.unit === "lovelace"
+            ? ""
+            : `${hexToUtf8(fromAssetUnit(amount.unit).name)} - (${Number(
+                amount.quantity
+              ).toFixed(2)})`
+        )
+      )
+      .flat()
+      .filter((asset) => asset) // filter out empty string
+      .map((asset) => ({ content: asset })) // this is required to display in UI
+  }, [txInfo])
 
   const txHistoryDetails: any[] = [
     {
@@ -112,26 +135,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
         icon: <AdaIcon {...iconStyles} />,
       },
     },
-    {
+    getOutputAssets.length && {
       label: "Assets",
-      lineContent: txInfo?.outputs
-        .filter((out) =>
-          isOutgoing
-            ? out.address !== txInfo.user_address
-            : out.address === txInfo.user_address
-        )
-        .map((out) =>
-          out.amount.map((amount) =>
-            amount.unit === "lovelace"
-              ? ""
-              : `${hexToText(fromAssetUnit(amount.unit).name)} - (${Number(
-                  amount.quantity
-                ).toFixed(2)})`
-          )
-        )
-        .flat()
-        .filter((asset) => asset) // filter out empty string
-        .map((asset) => ({ content: asset })), // this is required to display in UI,
+      lineContent: getOutputAssets,
     },
   ].filter((txDetail) => txDetail)
 
@@ -153,7 +159,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
       label: "Assets",
       lineContent: Array.from(txInfo?.assets).map((asset: any) => {
         return {
-          content: `${hexToText(asset[1].name)} - (${Number(asset[1].count).toFixed(2)})`,
+          content: `${hexToUtf8(asset[1].name)} - (${Number(asset[1].count).toFixed(2)})`,
         }
       }),
     },
@@ -166,7 +172,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
 
     return (
       <ConfirmationDetail
-        key={index}
+        key={getRandomKey(2)}
         label={item?.label}
         //@ts-ignore because of the `lineContent` that can be an array
         lineContent={item?.lineContent}

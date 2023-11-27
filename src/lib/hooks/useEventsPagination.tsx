@@ -7,18 +7,13 @@ export const useEventsPagination = (id: string) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true)
   const [isLastPage, setIsLastPage] = React.useState<boolean>(false)
 
-  const getEventsPaginated = async (
-    page?: number,
-    limit = 10,
-    userId: string = id,
-    isRefreshing = false
-  ) => {
+  const getEventsPaginated = async (page?: number, limit = 10, isRefreshing = false) => {
     if ((isLastPage && page !== 1) || (page === eventsPage && !isRefreshing)) return
     setIsLoading(true)
     try {
       const res = await Events.getAllEvents({
         limit,
-        user_id: id || userId,
+        user_id: id,
         page: page ?? eventsPage,
       })
 

@@ -45,7 +45,6 @@ export const EventsList = React.forwardRef((props, ref): any => {
   const isLoading = customIsLoading || isPaginationLoading
 
   const renderEventCard = React.useCallback(({ item }: any) => {
-    console.log(item)
     const {
       title,
       eventTitleColor,
@@ -61,7 +60,8 @@ export const EventsList = React.forwardRef((props, ref): any => {
       bookedSlots,
     } = item
     const isStandardColor =
-      eventTitleColor === "rgb(255, 252, 252)" && eventCardColor === "rgba(3, 3, 3, 0)"
+      (eventTitleColor === "white" && eventCardColor === "transparent") ||
+      (eventTitleColor === "rgb(255, 252, 252)" && eventCardColor === "rgba(3, 3, 3, 0)")
 
     return (
       <EventsListCard
@@ -100,9 +100,9 @@ export const EventsList = React.forwardRef((props, ref): any => {
   }
   const onEndReach = React.useCallback(() => {
     if (isLastPage) return
-    getEventsPaginated(eventsPage + 1, 20, id)
+    getEventsPaginated(eventsPage + 1, 20)
   }, [isLastPage])
-  const onRefresh = () => getEventsPaginated(1, 20, id, true)
+  const onRefresh = () => getEventsPaginated(1, 20, true)
   const onLayout = React.useCallback(
     ({ data, index }) => ({
       length: Sizing.x130,

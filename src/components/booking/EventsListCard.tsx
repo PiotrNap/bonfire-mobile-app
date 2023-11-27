@@ -8,7 +8,6 @@ import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { applyOpacity } from "../../styles/colors"
 import { getEventCardDate } from "lib/utils"
 import FastImage from "react-native-fast-image"
-import { appContext } from "contexts/contextApi"
 import LinearGradient from "react-native-linear-gradient"
 
 export interface EventsListCardProps {
@@ -50,7 +49,6 @@ export const EventsListCard = ({
 }: EventsListCardProps) => {
   const navigation = useNavigation()
   const _color = tinyColor(color)
-  console.log(isTransparent)
 
   const onCardPress = () =>
     navigation.navigate("Event Description", {
@@ -69,7 +67,9 @@ export const EventsListCard = ({
       bookedSlots,
     })
   const gradient: string[] =
-    (isEventCardPreview && !isTransparent) || !isStandardColor
+    isEventCardPreview && isTransparent
+      ? [Colors.primary.s800, Colors.primary.s600]
+      : (isEventCardPreview && !isTransparent) || !isStandardColor
       ? [_color.toHexString(), _color.toHexString()]
       : [Colors.primary.s800, Colors.primary.s600]
 

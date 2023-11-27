@@ -3,6 +3,7 @@ import { EventCardInfo, OrganizerRate } from "common/interfaces/bookingInterface
 import {
   Cancellation,
   EventAvailability,
+  EventSlot,
   EventType,
   EventVisibility,
   SelectedWeekDays,
@@ -16,13 +17,14 @@ import {
   NewCalendarMonths,
   PreviewingDayEvents,
   Events,
+  EventTimeWindow,
 } from "interfaces/myCalendarInterface"
 import {
   SendRegularTxInfo,
   SendLockingTxInfo,
   SendUnlockingTxInfo,
   WalletKeys,
-  WalletAssets,
+  Assets,
   AssetUnit,
 } from "lib/wallet/types"
 import { MarkedDates } from "react-native-calendars/src/types"
@@ -79,6 +81,9 @@ export enum WalletTypes {
 
 export enum BookingTypes {
   SetPickedDate = "SET_PICKED_DATE",
+  SetPickedDateSlots = "SET_PICKED_DATE_SLOTS",
+  SetPickedDateSlotsMinDuration = "SET_PICKED_DATE_SLOTS_MIN_DURATION",
+  SetPickedStartTime = "SET_PICKED_START_TIME",
   SetDuration = "SET_DURATION",
   SetEventTitle = "SET_EVENT_TITLE",
   SetDurationCost = "SET_DURATION_COST",
@@ -165,10 +170,10 @@ export type AppPayload = {
 
 export type EventCreationPayload = {
   [EventCreationTypes.AddAvailability]: {
-    availability: EventAvailability
+    availability: EventTimeWindow
   }
   [EventCreationTypes.RemoveAvailability]: {
-    availability: EventAvailability
+    availability: EventTimeWindow
   }
   [EventCreationTypes.RemoveAvailabilities]: {}
   [EventCreationTypes.SetSelectedDates]: {
@@ -219,7 +224,10 @@ export type BookingPayload = {
     duration: number
   }
   [BookingTypes.SetDurationCost]: {
-    durationCost: number
+    durationCost: HourlyRate
+  }
+  [BookingTypes.SetPickedStartTime]: {
+    pickedStartTime: string
   }
   [BookingTypes.SetEventTitle]: {
     title: string
@@ -228,7 +236,13 @@ export type BookingPayload = {
     organizerRate: OrganizerRate
   }
   [BookingTypes.SetPickedDate]: {
-    pickedDate: number
+    pickedDate: string
+  }
+  [BookingTypes.SetPickedDateSlots]: {
+    pickedDateSlots: EventSlot[]
+  }
+  [BookingTypes.SetPickedDateSlotsMinDuration]: {
+    pickedDateSlotsMinDuration: number[]
   }
   [BookingTypes.SetMaxTimeSlotDuration]: {
     maxTimeSlotDuration: number
@@ -317,7 +331,7 @@ export type WalletPayload = {
     walletKeys: WalletKeys
   }
   [WalletTypes.SetWalletAssets]: {
-    walletAssets: WalletAssets
+    walletAssets: Assets
   }
   [WalletTypes.SetIsOfflineMnemonic]: {
     isOfflineMnemonic: boolean

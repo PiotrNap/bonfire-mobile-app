@@ -29,7 +29,7 @@ import {
   SendLockingTxInfo,
   SendRegularTxInfo,
   SendUnlockingTxInfo,
-  WalletAssets,
+  Assets,
   WalletKeys,
 } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
@@ -115,7 +115,6 @@ export const eventCreationContext = () => {
       })
     },
     setSelectedDates: (selectedDates: MarkedDates) => {
-      console.log("hello ???", selectedDates)
       dispatch({
         type: EventCreationTypes.SetSelectedDates,
         payload: { selectedDates },
@@ -208,6 +207,9 @@ export const bookingContext = () => {
     durationCost: state.durationCost,
     eventTitle: state.eventTitle,
     pickedDate: state.pickedDate,
+    pickedDateSlots: state.pickedDateSlots,
+    pickedDateSlotsMinDuration: state.pickedDateSlotsMinDuration,
+    pickedStartTime: state.pickedStartTime,
     eventCardInfo: state.eventCardInfo,
     organizerRate: state.organizerRate,
     previewingOrganizer: state.previewingOrganizer,
@@ -217,6 +219,8 @@ export const bookingContext = () => {
     createGoogleCalEvent: state.createGoogleCalEvent,
     setDuration: (duration: number) =>
       dispatch({ type: "SET_DURATION", payload: { duration } }),
+    setPickedStartTime: (pickedStartTime: string) =>
+      dispatch({ type: "SET_PICKED_START_TIME", payload: { pickedStartTime } }),
     setDurationCost: (durationCost: number) =>
       dispatch({
         type: "SET_DURATION_COST",
@@ -229,8 +233,15 @@ export const bookingContext = () => {
         type: "SET_ORGANIZER_RATE",
         payload: { organizerRate },
       }),
-    setPickedDate: (pickedDate: number | null) =>
+    setPickedDate: (pickedDate: string) =>
       dispatch({ type: "SET_PICKED_DATE", payload: { pickedDate } }),
+    setPickedDateSlots: (pickedDateSlots: string) =>
+      dispatch({ type: "SET_PICKED_DATE_SLOTS", payload: { pickedDateSlots } }),
+    setPickedDateSlotsMinDuration: (pickedDateSlotsMinDuration: string) =>
+      dispatch({
+        type: "SET_PICKED_DATE_SLOTS_MIN_DURATION",
+        payload: { pickedDateSlotsMinDuration },
+      }),
     setMaxTimeSlotDuration: (maxTimeSlotDuration: number | undefined) =>
       dispatch({
         type: "SET_MAX_TIME_SLOT_DUR",
@@ -406,7 +417,7 @@ export const walletContext = () => {
         payload: { txHistory },
       })
     },
-    setWalletAssets: (walletAssets: WalletAssets) => {
+    setWalletAssets: (walletAssets: Assets) => {
       dispatch({
         type: "SET_WALLET_ASSETS",
         payload: { walletAssets },
