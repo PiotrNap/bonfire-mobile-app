@@ -8,13 +8,17 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
-import { Colors, Outlines, Sizing } from "styles/index"
+import { Buttons, Colors, Outlines, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { MnemonicPreview } from "screens/wallet/MnemonicPreviewScreen"
 import { MnemonicInsertScreen } from "screens/wallet/MnemonicInsertScreen"
 import { LeftArrowIcon } from "assets/icons"
 import { NewWalletSetUp } from "screens/wallet/NewWalletSetUpScreen"
 import { ImportMnemonicConfirmation } from "screens/wallet/ImportMnemonicConfirmationScreen"
+import { useNavigation } from "@react-navigation/native"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { fontWeight } from "../styles/typography"
+import { TouchableOpacity } from "react-native-gesture-handler"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
@@ -33,11 +37,13 @@ const SIGN_IN_SCREENS = [
 ]
 
 export const InitialUserScreens = ({ route }: any) => {
+  const navigation = useNavigation()
+  const [pagePosition, setPagePosition] = React.useState<number>(0)
   const { params } = route || {}
-  let SCREENS =
-    params === "create-account" ? CREATE_ACCOUNT_SCREENS : SIGN_IN_SCREENS
+  let SCREENS = params === "create-account" ? CREATE_ACCOUNT_SCREENS : SIGN_IN_SCREENS
   const { pageIndex, setRef, ref: _ref } = appContext()
   const ref = React.useRef<PagerView>(null)
+
   const screenWidth = Dimensions.get("window").width
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
@@ -49,6 +55,16 @@ export const InitialUserScreens = ({ route }: any) => {
     inputRange,
     outputRange: [0, SCREENS.length * screenWidth],
   })
+
+  const onPageSelected = ({ nativeEvent }) => {
+    const { position } = nativeEvent
+    setPagePosition(position)
+  }
+  const navigateBack = () => {
+    if (pagePosition === 0) navigation.navigate("Welcome Screen")
+
+    if (ref?.current) ref.current.setPage(pagePosition - 1)
+  }
 
   React.useEffect(() => {
     // set ref of View Pager so that we can manipulate page index
@@ -90,27 +106,29 @@ export const InitialUserScreens = ({ route }: any) => {
         keyboardDismissMode="on-drag"
         showPageIndicator={false}
         onPageScroll={onPageScroll}
+        onPageSelected={onPageSelected}
         scrollEnabled={false}
         initialPage={pageIndex}
         style={styles.animatedPager}>
         {SCREENS.map(renderScreens)}
       </AnimatedPagerView>
       <View style={styles.dotContainer}>
-        {/* @ts-ignore */}
-        {ref.current?.state?.page > 0 && (
-          <View style={styles.navigation}>
-            <Pressable
-              /* @ts-ignore */
-              onPress={() => ref.current?.setPage(ref.current.state.page - 1)}
-              hitSlop={10}>
-              <LeftArrowIcon
-                width={24}
-                height={24}
-                color={Colors.primary.neutral}
-              />
-            </Pressable>
-          </View>
-        )}
+        <TouchableOpacity
+          style={styles.backNavigation}
+          onPress={navigateBack}
+          hitSlop={10}>
+          <LeftArrowIcon
+            pointerEvents="box-none"
+            width={24}
+            height={24}
+            color={Colors.primary.neutral}
+          />
+          <SubHeaderText
+            colors={[Colors.primary.neutral]}
+            customStyle={{ ...fontWeight.semibold }}>
+            Back
+          </SubHeaderText>
+        </TouchableOpacity>
         <ScalingDot
           data={SCREENS}
           //@ts-ignore
@@ -149,8 +167,11 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary.brand,
     padding: 8,
   },
-  navigation: {
+  backNavigation: {
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: Sizing.x15,
-    width: "90%",
+    marginLeft: Sizing.x15,
+    width: Sizing.x80,
   },
 })

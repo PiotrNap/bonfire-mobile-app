@@ -22,6 +22,7 @@ import { useAppLogin } from "lib/hooks/useAppLogin"
 import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
 import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 import { ToastMessage } from "components/popups/toastMessage"
+import { InitialScreen, WelcomeScreen } from "screens/onboarding"
 
 enableScreens() // enables native screens for navigation instead of using Views
 
@@ -58,11 +59,11 @@ function App() {
                       headerShown: false,
                     }}
                     initialRouteName={
-                      !isAuthorized ? "Onboarding Screens" : "Navigation Screens"
+                      !isAuthorized ? "Welcome Screen" : "Navigation Screens"
                     }>
                     <Stack.Screen
-                      name="Onboarding Screens"
-                      component={OnboardingScreens}
+                      name="Welcome Screen"
+                      component={WelcomeScreen}
                       options={{
                         headerShown: false,
                       }}
