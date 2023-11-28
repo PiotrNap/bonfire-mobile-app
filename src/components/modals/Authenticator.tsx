@@ -68,6 +68,7 @@ export const Authenticator = ({
     } finally {
       res = ""
       password = ""
+      onHideAuthenticatorCb()
     }
   }
   return (

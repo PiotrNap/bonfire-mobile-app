@@ -20,9 +20,8 @@ import { OnboardingScreens } from "tabs/OnboardingScreens"
 import { InitialUserScreens } from "tabs/InitialUserScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
 import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
-import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message"
-import { Typography } from "./styles"
 import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
+import { ToastMessage } from "components/popups/toastMessage"
 
 enableScreens() // enables native screens for navigation instead of using Views
 
@@ -42,36 +41,6 @@ function App() {
   //   if (route.params?.["event-id"])
   //     (async () => await navigateToEvent(route.params?.["event-id"]))()
   // }, [])
-
-  const toastConfig = {
-    /*
-    Overwrite 'error' type,
-    by modifying the existing `ErrorToast` component
-  */
-    error: (props) => (
-      <ErrorToast
-        {...props}
-        text1Style={{
-          ...Typography.header.x25,
-        }}
-        text2Style={{
-          ...Typography.body.x10,
-        }}
-      />
-    ),
-    success: (props) => (
-      <SuccessToast
-        {...props}
-        text1Style={{
-          ...Typography.header.x25,
-        }}
-        text2Style={{
-          ...Typography.body.x10,
-        }}
-      />
-    ),
-  }
-
   return (
     <>
       {isAuthLoaded && (
@@ -140,7 +109,7 @@ function App() {
           </AppContextProvider>
         </SafeAreaProvider>
       )}
-      <Toast topOffset={20} config={toastConfig} />
+      <ToastMessage />
     </>
   )
 }
