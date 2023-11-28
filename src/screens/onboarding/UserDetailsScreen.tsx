@@ -16,6 +16,8 @@ import { SlideDownModal } from "components/modals/SlideDownModal"
 import { ProfileContext } from "contexts/profileContext"
 import { Users } from "Api/Users"
 import { showErrorToast } from "lib/helpers"
+import Crypto from "crypto"
+import { useFocusEffect } from "@react-navigation/native"
 
 export interface UserDetailScreenProps {}
 
@@ -55,6 +57,7 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
     setHourlyRateAda(formValues.hourlyRateAda)
 
     pagerRef.current.setPage(1)
+    setModalState({ visible: false, type: null })
   }
 
   return (

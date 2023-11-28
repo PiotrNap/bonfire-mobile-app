@@ -21,7 +21,6 @@ import { Checkbox } from "components/forms/Checkbox"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ModalState, SlideDownModal } from "components/modals/SlideDownModal"
 import { InAppBrowser } from "@stytch/react-native-inappbrowser-reborn"
-import TZone from "react-native-timezone"
 
 export interface RegistrationConfirmationScreen {}
 
@@ -70,9 +69,9 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
   const showTermsOfService = async () => {
     try {
       const url = WEBSITE_URL + "/terms-of-service"
-      console.log(linkingAvailable)
       if (await InAppBrowser.isAvailable()) {
         const result = await InAppBrowser.open(url, {
+          //@TODO do I need all of those props??
           // iOS Properties
           dismissButtonStyle: "cancel",
           preferredBarTintColor: Colors.primary.s600,
@@ -104,7 +103,6 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
             "my-custom-header": "my custom header value",
           },
         })
-        console.log(result)
       } else {
         navigation.navigate("Legal Document", { type: "terms-of-service" })
       }
@@ -138,7 +136,6 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
         profession,
         publicKey,
         baseAddress,
-        timeZone: await TZone.getTimeZone(),
         walletPublicKey: accountPubKeyHex,
       })
 
@@ -410,9 +407,5 @@ const styles = StyleSheet.create({
   userDetailsText: {
     ...Typography.body.x10,
     color: Colors.primary.s600,
-  },
-  skillTags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
   },
 })

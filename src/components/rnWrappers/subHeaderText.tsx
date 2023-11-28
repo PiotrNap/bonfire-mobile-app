@@ -7,13 +7,7 @@
  */
 
 import * as React from "react"
-import {
-  Text,
-  StyleSheet,
-  StyleProp,
-  TextStyle,
-  ColorSchemeName,
-} from "react-native"
+import { Text, StyleSheet, StyleProp, TextStyle, ColorSchemeName } from "react-native"
 
 import { appContext } from "contexts/contextApi"
 import { Colors, Typography } from "styles/index"
@@ -53,6 +47,7 @@ export const SubHeaderText = ({
     <Text
       onPress={onPress}
       style={[styles.text, textColor, customStyle]}
+      pointerEvents="box-none"
       {...extraProps}>
       {children}
     </Text>

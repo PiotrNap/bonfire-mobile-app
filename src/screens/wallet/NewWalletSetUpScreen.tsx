@@ -18,12 +18,17 @@ import { useNavigation } from "@react-navigation/native"
 import { addKeysToStorage } from "lib/wallet/storage"
 import { Bip32PrivateKey, bytesToHex } from "@hyperionbt/helios"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getDevicesTimeZone } from "lib/utils"
+import { ProfileContext } from "contexts/profileContext"
+import { setAuthorizationToken } from "Api/base"
 
 export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
   const [biometricsAccepted, setBiometricsAccepted] = React.useState<boolean>(false)
   const [biometryType, setBiometryType] = React.useState<Keychain.BIOMETRY_TYPE | null>(
     null
   )
+  const { setID, setHourlyRateAda, setTimeZone, setUsername } =
+    React.useContext(ProfileContext)
   const {
     mnemonic,
     rootKeyHex,
@@ -93,6 +98,8 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
             registerRes.deviceID,
             registerRes.id
           )
+          if (!authResponseDTO || !authResponseDTO.accessToken)
+            throw Error("Unable to authenticate with our server")
 
           console.log(`
         adding to encrypted storage:
@@ -105,12 +112,21 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
           await setToEncryptedStorage("auth-credentials", authResponseDTO)
           await setToEncryptedStorage("device-privKey", deviceSecKey)
           await setToEncryptedStorage("device-pubKey", devicePubKey)
+          setAuthorizationToken(authResponseDTO.accessToken)
 
           // clean up secret keys
           pagerRef.current.state = null
           resetSecrets()
           devicePubKey = ""
           deviceSecKey = ""
+
+          // the same thing that happens in navigations-screens stack
+          const { hourlyRateAda, username, id, profileImage } = authResponseDTO
+          id && setID(id)
+          username && setUsername(username)
+          hourlyRateAda && setHourlyRateAda(Number(hourlyRateAda))
+          setTimeZone(getDevicesTimeZone())
+
           //@ts-ignore
           navigation.navigate("Navigation Screens")
         }
