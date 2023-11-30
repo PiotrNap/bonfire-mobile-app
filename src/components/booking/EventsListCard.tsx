@@ -111,7 +111,9 @@ export const EventsListCard = ({
           style={[
             styles.eventTitle,
             titleColor && !isTransparent ? { color: titleColor } : {},
-          ]}>
+          ]}
+          ellipsizeMode="tail"
+          numberOfLines={2}>
           {title}
         </Text>
       </Background>
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     color: Colors.primary.neutral,
   },
   eventTitle: {
-    maxWidth: "85%",
+    // maxWidth: "85%",
     marginTop: "auto",
     ...Typography.header.x50,
     color: Colors.primary.neutral,

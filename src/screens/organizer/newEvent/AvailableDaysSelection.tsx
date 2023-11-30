@@ -131,37 +131,35 @@ export const AvailableDaysSelection = (props: Props) => {
           />
         )}
         */}
-        <View style={styles.calendarWrapper}>
+        <View
+          style={[
+            styles.calendarWrapper,
+            { borderColor: !isLightMode ? Colors.neutral.s200 : Colors.primary.s600 },
+          ]}>
           <Calendar
+            key={colorScheme}
             theme={{
               calendarBackground: !isLightMode
-                ? Colors.primary.neutral
-                : Colors.neutral.s600,
-              textSectionTitleColor: "#b6c1cd",
+                ? Colors.neutral.s600
+                : Colors.primary.neutral,
+              textSectionTitleColor: lightOrDarkColor,
               textSectionTitleDisabledColor: "#d9e1e8",
-              selectedDayBackgroundColor: Colors.primary.s800,
-              selectedDayTextColor: lightOrDarkColor,
+              selectedDayBackgroundColor: Colors.primary.s600,
+              selectedDayTextColor: Colors.primary.neutral,
               todayTextColor: "#00adf5",
-              dayTextColor: "#2d4150",
+              dayTextColor: lightOrDarkColor,
               textDisabledColor: "#d9e1e8",
-              dotColor: "#00adf5",
-              selectedDotColor: "#ffffff",
               arrowColor: lightOrDarkColor,
               disabledArrowColor: "#d9e1e8",
-              monthTextColor: "blue",
-              indicatorColor: "blue",
+              monthTextColor: lightOrDarkColor,
+              indicatorColor: lightOrDarkColor,
               textDayFontFamily: "Roboto-Regular",
               textMonthFontFamily: "Roboto-Bold",
               textDayHeaderFontFamily: "Roboto-Medium",
-              textDayFontSize: Sizing.x20,
-              textMonthFontSize: 16,
-              textDayHeaderFontSize: 16,
             }}
             onDayPress={onDayPress}
             markedDates={_selectedDates}
             style={styles.calendar}
-            // enableSwipeMonths
-            // Other props and customization...
           />
         </View>
         {/*
@@ -222,6 +220,8 @@ const styles = StyleSheet.create({
   },
   calendarWrapper: {
     width: "90%",
+    borderWidth: Outlines.borderWidth.base,
+    borderRadius: Outlines.borderRadius.base,
   },
   messageWrapper: {
     width: "90%",

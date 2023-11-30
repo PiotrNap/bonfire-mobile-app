@@ -31,6 +31,7 @@ import { Authenticator } from "components/modals/Authenticator"
 import { Wallet } from "lib/wallet"
 import { Address } from "@hyperionbt/helios"
 import { EscrowContractDatum } from "lib/wallet/types"
+import { useWallet } from "lib/hooks/useWallet"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -48,10 +49,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     availabilities,
     resetEventCreationState,
   } = eventCreationContext()
-  const { duration, durationCost, createGoogleCalEvent, pickedStartTime } =
-    bookingContext()
-  const { walletUtxos } = walletContext()
-  const { username, id, walletBaseAddress } = React.useContext(ProfileContext)
+  const { duration, durationCost, pickedStartTime } = bookingContext()
+  const { walletUtxos, baseAddress } = walletContext()
+  const { updateWalletBalance } = useWallet()
+  const { username, id } = React.useContext(ProfileContext)
   const {
     errorMsg,
     successMsg,
@@ -88,7 +89,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     // create a locking transaction
     const lockingDatumInfo: EscrowContractDatum = {
       beneficiaryPkh: new Address(params.event.organizerAddress).pubKeyHash?.hex,
-      benefactorPkh: new Address(walletBaseAddress).pubKeyHash?.hex,
+      benefactorPkh: new Address(baseAddress).pubKeyHash?.hex,
       releaseDate: BigInt(Math.floor(new Date(pickedStartTime).getTime() + duration)),
       cancelFee: params.event.cancellation.fee || 0,
       cancelWindowStart: BigInt(
@@ -102,15 +103,26 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       paymentTokens: paymentTokens.toSchemaJson(),
     }
 
-    if (Object.values(lockingDatumInfo).some((v) => !v))
+    if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
       return showErrorToast("Unable to construct Datum object.", "Error")
+
+    // console.log(JSON.stringify(paymentTokens.dump(), null, 4))
+    // console.log(
+    //   JSON.stringify(
+    //     walletUtxos.map((txIn) => txIn.dump()),
+    //     null,
+    //     4
+    //   )
+    // )
+    //    // console.log(JSON.stringify(lockingDatumInfo, null, 4))
+    // return
 
     try {
       // submit transaction
       const txHash = await Wallet.sendLockingTransaction(
         paymentTokens,
         lockingDatumInfo,
-        walletBaseAddress,
+        baseAddress,
         walletUtxos,
         accountKey
       )
@@ -134,6 +146,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     } finally {
       setIsLoading(false)
       accountKey = ""
+      updateWalletBalance() // update wallet because there may be stale utxos
     }
   }
   /***/
@@ -158,7 +171,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       organizer: {
         id,
         username,
-        baseAddress: walletBaseAddress,
+        baseAddress,
       },
     }
 
@@ -255,6 +268,13 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             ) : (
               <></>
             )
+          ) : params.isNewEvent ? (
+            <FullWidthButton
+              onPressCallback={onButtonPress}
+              text={"Confirm"}
+              colorScheme={colorScheme}
+              loadingIndicator={isLoading}
+            />
           ) : !params?.isCalendarEventPreview &&
             !params?.organizerCalendarEvent &&
             !params?.bookedEvent ? (

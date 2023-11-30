@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x10,
   },
   headerText_dark: {
-    ...Typography.header.x50,
+    ...Typography.header.x45,
     color: Colors.primary.neutral,
     marginVertical: Sizing.x10,
   },

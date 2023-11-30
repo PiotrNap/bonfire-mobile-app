@@ -5,12 +5,8 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { BookingStackParamList, DEEP_LINKING_URLS } from "common/types/navigationTypes"
 import { Colors, Outlines, Sizing } from "styles/index"
 import { appContext, bookingContext } from "contexts/contextApi"
-import { MonthlyWrapper } from "components/calendar"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
-import { Checkbox } from "components/forms/Checkbox"
-import { useGoogleAuth } from "lib/hooks/useGoogleAuth"
-import { createNestedPath } from "lib/navigation"
 import { Calendar } from "react-native-calendars"
 import { DateData, MarkedDates } from "react-native-calendars/src/types"
 import { isPastDate } from "lib/utils"
@@ -198,38 +194,36 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
       eventCardImage={image}
       eventCardTitle={title}
       eventCardTitleColor={eventTitleColor}>
-      <View style={styles.calendarWrapper}>
+      <View
+        style={[
+          styles.calendarWrapper,
+          { borderColor: !isLightMode ? Colors.neutral.s200 : Colors.primary.s600 },
+        ]}>
         <Calendar
+          key={colorScheme}
           theme={{
             calendarBackground: !isLightMode
-              ? Colors.primary.neutral
-              : Colors.neutral.s600,
-            textSectionTitleColor: "#b6c1cd",
+              ? Colors.neutral.s600
+              : Colors.primary.neutral,
+            textSectionTitleColor: lightOrDarkColor,
             textSectionTitleDisabledColor: "#d9e1e8",
-            selectedDayBackgroundColor: Colors.primary.s800,
-            selectedDayTextColor: lightOrDarkColor,
+            selectedDayBackgroundColor: Colors.primary.s600,
+            selectedDayTextColor: Colors.primary.neutral,
             todayTextColor: "#00adf5",
-            dayTextColor: "#2d4150",
+            dayTextColor: lightOrDarkColor,
             textDisabledColor: "#d9e1e8",
-            dotColor: "#00adf5",
-            selectedDotColor: "#ffffff",
             arrowColor: lightOrDarkColor,
             disabledArrowColor: "#d9e1e8",
-            monthTextColor: "blue",
-            indicatorColor: "blue",
+            monthTextColor: lightOrDarkColor,
+            indicatorColor: lightOrDarkColor,
             textDayFontFamily: "Roboto-Regular",
             textMonthFontFamily: "Roboto-Bold",
             textDayHeaderFontFamily: "Roboto-Medium",
-            textDayFontSize: Sizing.x20,
-            textMonthFontSize: 16,
-            textDayHeaderFontSize: 16,
           }}
           onDayPress={onDayPress}
           markedDates={markedDates}
           markingType={"custom"}
           style={styles.calendar}
-          // enableSwipeMonths
-          // Other props and customization...
         />
       </View>
       {/*
@@ -255,6 +249,8 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   calendarWrapper: {
     width: "90%",
+    borderWidth: Outlines.borderWidth.base,
+    borderRadius: Outlines.borderRadius.base,
   },
   calendar: {
     width: "100%",

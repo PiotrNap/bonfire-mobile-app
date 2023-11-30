@@ -31,6 +31,7 @@ export const MyEvents = ({ navigation }: any) => {
     }).start()
   }
   const onSubmitSearch = (val: string) => {
+    if (!val) return
     onActiveSearch(false)
     getEventsBySearchQuery(val)
   }
@@ -42,7 +43,7 @@ export const MyEvents = ({ navigation }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       // we need to wait for id because this is users own events list
-      if (id) eventsListRef.current?.getEventsPaginated(1, 20, id, true)
+      if (id) eventsListRef.current?.getEventsPaginated(1, 20, true)
     }, [id])
   )
 

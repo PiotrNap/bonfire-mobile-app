@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 import { ClockIcon, RemoveIcon } from "assets/icons"
 import { EventAvailability } from "common/interfaces/newEventInterface"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
-import { getDigitalLocaleTime, getLocaleTimezone } from "lib/utils"
+import { getLocaleTimezone } from "lib/utils"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface AvailabilityProps {
@@ -25,16 +25,12 @@ export const Availability = ({
       <View style={styles.cardItem}>
         <ClockIcon style={styles.clockIcon} strokeWidth={2} />
         <View style={styles.body}>
-          <SubHeaderText
-            colors={[Colors.primary.neutral, Colors.primary.s800]}
-            customStyle={styles.innerText}>
+          <SubHeaderText colors={[Colors.primary.s800]} customStyle={styles.innerText}>
             {`${from.hour}:${from.minutes === 0 ? "00" : from.minutes} - ${to.hour}:${
               to.minutes === 0 ? "00" : to.minutes
             } ${getLocaleTimezone()}`}
           </SubHeaderText>
-          <SubHeaderText
-            colors={[Colors.primary.neutral, Colors.primary.s800]}
-            customStyle={styles.innerText}>
+          <SubHeaderText colors={[Colors.primary.s800]} customStyle={styles.innerText}>
             Min. {minDuration} min / Max. {maxDuration} min
           </SubHeaderText>
         </View>
@@ -56,8 +52,8 @@ const styles = StyleSheet.create({
   },
   cardItem: {
     width: "95%",
-    paddingHorizontal: Sizing.x14,
-    paddingVertical: Sizing.x10,
+    paddingVertical: Sizing.x8,
+    paddingHorizontal: Sizing.x10,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: Outlines.borderRadius.max,

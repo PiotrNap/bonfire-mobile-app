@@ -153,6 +153,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
     setEventTitleColor(transparent ? "white" : _titleColor)
     navigation.navigate("Event Confirmation Details", {
       isNewEvent: true,
+      header: "Event Details",
     })
   }
   const onBackgroundSelected = () => {

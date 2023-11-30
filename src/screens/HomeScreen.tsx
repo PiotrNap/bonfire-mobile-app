@@ -3,7 +3,6 @@ import * as React from "react"
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { ErrorHandler } from "components/errors/errorHandler"
-import { Calendar } from "containers/MyCalendar"
 import { MyCalendarProvider } from "contexts/myCalendarContext"
 import { ValueOf } from "react-native-gesture-handler/lib/typescript/typeUtils"
 import { Wallet } from "lib/wallet"
@@ -235,13 +234,5 @@ export const HomeScreen = ({ navigation }: HomeProps) => {
     }, [])
   )
 
-  return (
-    <MyCalendarProvider>
-      {/*
-      <ErrorHandler>
-        <Calendar isRegularCalendar={true} isHomeScreen={true} navigateCb={navigateCb} />
-      </ErrorHandler>
-      */}
-    </MyCalendarProvider>
-  )
+  return <MyCalendarProvider></MyCalendarProvider>
 }

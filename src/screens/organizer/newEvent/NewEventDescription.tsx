@@ -69,7 +69,11 @@ export const NewEventDescription = ({ navigation }: Props) => {
     return (
       paymentTokens &&
       paymentTokens.every((pt, idx) =>
-        idx === 0 ? !!pt.count : Object.values(pt).every((v) => !!v)
+        idx === 0
+          ? !!pt.count
+          : paymentTokens[idx].policyId &&
+            Number(paymentTokens[idx].count) > 0 &&
+            paymentTokens[idx].name
       )
     )
   }

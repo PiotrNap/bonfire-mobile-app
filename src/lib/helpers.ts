@@ -12,7 +12,7 @@ import { getDeepLinkUri, isPastDate } from "./utils"
 import { createNestedPath } from "./navigation"
 import { DEEP_LINKING_URLS } from "common/types/navigationTypes"
 import Toast from "react-native-toast-message"
-import { CalendarUtils } from "react-native-calendars"
+import { CalendarUtils, TimelineEventProps } from "react-native-calendars"
 import { MarkedDates } from "react-native-calendars/src/types"
 import { EventTimeWindow } from "common/interfaces/myCalendarInterface"
 import { EventAvailability } from "common/interfaces/newEventInterface"
@@ -21,6 +21,10 @@ import { Colors } from "styles/index"
 const { applyOpacity } = Colors
 
 const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
+
+const SCHEDULED_COLOR = "#1E40AF"
+const BOOKED_COLOR = "#FECACA"
+const EVENT_COLOR = "#DBEAFE"
 
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"
@@ -196,20 +200,131 @@ export function convertFromEventAvailability(
     }
 
     // Add time slot to the array if it's not already included
-    // if (
-    //   !localTimeWindows.some(
-    //     (slot) =>
-    //       slot.from.hour === timeSlot.from.hour &&
-    //       slot.from.minutes === timeSlot.from.minutes &&
-    //       slot.to.hour === timeSlot.to.hour &&
-    //       slot.to.minutes === timeSlot.to.minutes
-    //   )
-    // ) {
     localTimeWindows.push(timeSlot)
-    // }
   })
 
   return { dates: localDates, timeWindows: localTimeWindows }
+}
+
+export function getMarkedDatesFromUserCalendarData(data) {
+  const markedDates = {}
+
+  const convertToLocalDate = (utcDate) => {
+    const date = new Date(utcDate)
+    return date.toISOString().split("T")[0] // Convert to local date and format
+  }
+
+  data.bookedSlots.forEach((slot) => {
+    const dateKey = convertToLocalDate(slot.fromDate)
+    if (markedDates[dateKey]?.dots.some((md) => md.key === "booking-slot")) return
+
+    if (!markedDates[dateKey]) {
+      markedDates[dateKey] = { dots: [] }
+    }
+
+    markedDates[dateKey].dots.push({
+      key: "booking-slot",
+      color: BOOKED_COLOR,
+      selectedDotColor: BOOKED_COLOR,
+    })
+  })
+
+  data.events.forEach((event) => {
+    const dateKey = convertToLocalDate(event.fromDate)
+    if (markedDates[dateKey]?.dots.some((md) => md.key === "event")) return
+
+    if (!markedDates[dateKey]) {
+      markedDates[dateKey] = { dots: [] }
+    }
+
+    markedDates[dateKey].dots.push({
+      key: "event",
+      color: EVENT_COLOR,
+      selectedDotColor: EVENT_COLOR,
+    })
+  })
+
+  data.scheduledSlots.forEach((slot) => {
+    const dateKey = convertToLocalDate(slot.fromDate)
+    if (markedDates[dateKey]?.dots.some((md) => md.key === "scheduled-slot")) return
+
+    if (!markedDates[dateKey]) {
+      markedDates[dateKey] = { dots: [] }
+    }
+
+    markedDates[dateKey].dots.push({
+      key: "scheduled-slot",
+      color: SCHEDULED_COLOR,
+      selectedDotColor: SCHEDULED_COLOR,
+    })
+  })
+
+  return markedDates
+}
+
+export function createTimelineEvents(data) {
+  const timelineArray: TimelineEventProps[] = []
+  const groupedTimeline = {}
+
+  const parseDateTime = (dateTime, duration) => {
+    const startDate = new Date(dateTime)
+    const endDate = new Date(startDate.getTime() + duration)
+    return {
+      start: startDate.toISOString().replace("Z", ""),
+      end: endDate.toISOString().replace("Z", ""),
+    }
+  }
+
+  data.bookedSlots.forEach((item) => {
+    const { start, end } = parseDateTime(item.fromDate, item.duration)
+    const dateKey = start.split("T")[0] // Extract the date part for grouping
+
+    if (!groupedTimeline[dateKey]) {
+      groupedTimeline[dateKey] = []
+    }
+
+    groupedTimeline[dateKey].push({
+      id: item.id,
+      start: start,
+      end: end,
+      title: item.eventTitle || "Event",
+      color: BOOKED_COLOR,
+    })
+  })
+
+  data.scheduledSlots.forEach((item) => {
+    const { start, end } = parseDateTime(item.fromDate, item.duration)
+    const dateKey = start.split("T")[0] // Extract the date part for grouping
+
+    if (!groupedTimeline[dateKey]) {
+      groupedTimeline[dateKey] = []
+    }
+
+    groupedTimeline[dateKey].push({
+      id: item.id,
+      start: start,
+      end: end,
+      title: item.eventTitle || "Event",
+      color: SCHEDULED_COLOR,
+    })
+  })
+
+  data.events.forEach((event) => {
+    const dateKey = event.fromDate.split("T")[0] // Extract the date part for grouping
+    if (!groupedTimeline[dateKey]) {
+      groupedTimeline[dateKey] = []
+    }
+
+    groupedTimeline[dateKey].push({
+      id: event.id,
+      start: new Date(event.fromDate).toISOString().replace("Z", ""),
+      end: new Date(event.toDate).toISOString().replace("Z", ""),
+      title: event.title || "Event",
+      color: EVENT_COLOR, // Assign color based on type
+    })
+  })
+
+  return { groupedTimeline, timelineArray }
 }
 
 export function generateTimeSlotsForDateInMilliseconds(

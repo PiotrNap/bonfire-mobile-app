@@ -60,8 +60,6 @@ export const EventDescription = ({ navigation, route }: any) => {
     return { ada: lovelaceToAda(BigInt(lovelace)), assets: assetsToUnitsArray([assets]) }
   }, [hourlyRateJSONSchema])
 
-  console.log(eventHourlyRate())
-
   const onBackNavigationPress = () => navigation.goBack()
   const onBookEventPress = async () => {
     setIsLoading(true)
@@ -82,7 +80,6 @@ export const EventDescription = ({ navigation, route }: any) => {
       // }
 
       let event = await Events.getEventById(eventId)
-      // return console.log(JSON.stringify(event, null, 4))
       if (!event) return
 
       // if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
@@ -284,6 +281,8 @@ export const EventDescription = ({ navigation, route }: any) => {
               }}
               loadingIndicator={isEventDeletionLoading}
             />
+          ) : isEventOwner && bookedSlots.length ? (
+            <></>
           ) : (
             <FullWidthButton
               onPressCallback={onBookEventPress}
