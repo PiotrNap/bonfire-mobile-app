@@ -22,9 +22,12 @@ const { applyOpacity } = Colors
 
 const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
 
-const SCHEDULED_COLOR = "#1E40AF"
-const BOOKED_COLOR = "#FECACA"
-const EVENT_COLOR = "#DBEAFE"
+const SCHEDULED_COLOR_LIGHT = "#FFCCE6" // pink-ish
+const SCHEDULED_COLOR_DARK = "#FF99C2"
+const BOOKED_COLOR_LIGHT = "#FFE6CC" // yellow-ish
+const BOOKED_COLOR_DARK = "#FFD9B3"
+const EVENT_COLOR_LIGHT = "#CCFFFF" // blue-ish
+const EVENT_COLOR_DARK = "#99CCCC"
 
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"
@@ -67,6 +70,21 @@ export function findEarliestAndLatestDates(eventAvailabilities: EventAvailabilit
     earliestDate: earliestDate.toISOString(),
     latestDate: latestDate.toISOString(),
   }
+}
+
+export function formatLocalDate(utcDate) {
+  const date = new Date(utcDate)
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZoneName: "short",
+  }
+
+  return date.toLocaleString("en-US", options)
 }
 
 // Constructs YYYY-MM-DD format from '/' separated date
@@ -211,52 +229,116 @@ export function getMarkedDatesFromUserCalendarData(data) {
 
   const convertToLocalDate = (utcDate) => {
     const date = new Date(utcDate)
+    date.toLocaleDateString
     return date.toISOString().split("T")[0] // Convert to local date and format
   }
 
   data.bookedSlots.forEach((slot) => {
-    const dateKey = convertToLocalDate(slot.fromDate)
-    if (markedDates[dateKey]?.dots.some((md) => md.key === "booking-slot")) return
+    const startDateKey = CalendarUtils.getCalendarDateString(new Date(slot.fromDate))
+    const endDateKey = CalendarUtils.getCalendarDateString(
+      new Date(new Date(slot.fromDate).getTime() + slot.duration)
+    )
+    if (markedDates[startDateKey]?.dots.some((md) => md.key === "booking-slot")) return
 
-    if (!markedDates[dateKey]) {
-      markedDates[dateKey] = { dots: [] }
+    if (!markedDates[startDateKey]) {
+      markedDates[startDateKey] = { dots: [] }
     }
 
-    markedDates[dateKey].dots.push({
-      key: "booking-slot",
-      color: BOOKED_COLOR,
-      selectedDotColor: BOOKED_COLOR,
-    })
+    if (startDateKey !== endDateKey) {
+      if (!markedDates[endDateKey]) {
+        markedDates[endDateKey] = { dots: [] }
+      }
+      if (markedDates[endDateKey]?.dots.some((md) => md.key === "booking-slot")) return
+
+      markedDates[startDateKey].dots.push({
+        key: "booking-slot",
+        color: BOOKED_COLOR_DARK,
+        selectedDotColor: BOOKED_COLOR_DARK,
+      })
+      markedDates[endDateKey].dots.push({
+        key: "booking-slot",
+        color: BOOKED_COLOR_DARK,
+        selectedDotColor: BOOKED_COLOR_DARK,
+      })
+    } else
+      markedDates[startDateKey].dots.push({
+        key: "booking-slot",
+        color: BOOKED_COLOR_DARK,
+        selectedDotColor: BOOKED_COLOR_DARK,
+      })
   })
 
   data.events.forEach((event) => {
-    const dateKey = convertToLocalDate(event.fromDate)
-    if (markedDates[dateKey]?.dots.some((md) => md.key === "event")) return
+    return event.availabilities.forEach((availability) => {
+      const startDateKey = CalendarUtils.getCalendarDateString(
+        new Date(availability.from)
+      )
+      const endDateKey = CalendarUtils.getCalendarDateString(new Date(availability.to))
 
-    if (!markedDates[dateKey]) {
-      markedDates[dateKey] = { dots: [] }
-    }
+      if (markedDates[startDateKey]?.dots.some((md) => md.key === "event")) return
 
-    markedDates[dateKey].dots.push({
-      key: "event",
-      color: EVENT_COLOR,
-      selectedDotColor: EVENT_COLOR,
+      if (!markedDates[startDateKey]) {
+        markedDates[startDateKey] = { dots: [] }
+      }
+
+      if (startDateKey !== endDateKey) {
+        if (!markedDates[endDateKey]) {
+          markedDates[endDateKey] = { dots: [] }
+        }
+        if (markedDates[endDateKey]?.dots.some((md) => md.key === "event")) return
+
+        markedDates[startDateKey].dots.push({
+          key: "event",
+          color: EVENT_COLOR_DARK,
+          selectedDotColor: EVENT_COLOR_DARK,
+        })
+        markedDates[endDateKey].dots.push({
+          key: "event",
+          color: EVENT_COLOR_DARK,
+          selectedDotColor: EVENT_COLOR_DARK,
+        })
+      } else
+        markedDates[startDateKey].dots.push({
+          key: "event",
+          color: EVENT_COLOR_DARK,
+          selectedDotColor: EVENT_COLOR_DARK,
+        })
     })
   })
 
   data.scheduledSlots.forEach((slot) => {
-    const dateKey = convertToLocalDate(slot.fromDate)
-    if (markedDates[dateKey]?.dots.some((md) => md.key === "scheduled-slot")) return
+    const startDateKey = CalendarUtils.getCalendarDateString(new Date(slot.fromDate))
+    const endDateKey = CalendarUtils.getCalendarDateString(
+      new Date(new Date(slot.fromDate).getTime() + slot.duration)
+    )
+    if (markedDates[startDateKey]?.dots.some((md) => md.key === "scheduled-slot")) return
 
-    if (!markedDates[dateKey]) {
-      markedDates[dateKey] = { dots: [] }
+    if (!markedDates[startDateKey]) {
+      markedDates[startDateKey] = { dots: [] }
     }
 
-    markedDates[dateKey].dots.push({
-      key: "scheduled-slot",
-      color: SCHEDULED_COLOR,
-      selectedDotColor: SCHEDULED_COLOR,
-    })
+    if (startDateKey !== endDateKey) {
+      if (!markedDates[endDateKey]) {
+        markedDates[endDateKey] = { dots: [] }
+      }
+      if (markedDates[endDateKey]?.dots.some((md) => md.key === "scheduled-slot")) return
+
+      markedDates[startDateKey].dots.push({
+        key: "scheduled-slot",
+        color: SCHEDULED_COLOR_DARK,
+        selectedDotColor: SCHEDULED_COLOR_DARK,
+      })
+      markedDates[endDateKey].dots.push({
+        key: "scheduled-slot",
+        color: SCHEDULED_COLOR_DARK,
+        selectedDotColor: SCHEDULED_COLOR_DARK,
+      })
+    } else
+      markedDates[startDateKey].dots.push({
+        key: "scheduled-slot",
+        color: SCHEDULED_COLOR_DARK,
+        selectedDotColor: SCHEDULED_COLOR_DARK,
+      })
   })
 
   return markedDates
@@ -264,67 +346,145 @@ export function getMarkedDatesFromUserCalendarData(data) {
 
 export function createTimelineEvents(data) {
   const timelineArray: TimelineEventProps[] = []
-  const groupedTimeline = {}
-
-  const parseDateTime = (dateTime, duration) => {
-    const startDate = new Date(dateTime)
-    const endDate = new Date(startDate.getTime() + duration)
-    return {
-      start: startDate.toISOString().replace("Z", ""),
-      end: endDate.toISOString().replace("Z", ""),
-    }
-  }
+  const timelineEvents = {}
 
   data.bookedSlots.forEach((item) => {
-    const { start, end } = parseDateTime(item.fromDate, item.duration)
-    const dateKey = start.split("T")[0] // Extract the date part for grouping
+    const start = new Date(item.fromDate).toTimeString().split(" ")[0]
+    const end = new Date(new Date(item.fromDate).getTime() + item.duration)
+      .toTimeString()
+      .split(" ")[0]
+    const startDateKey = CalendarUtils.getCalendarDateString(new Date(item.fromDate))
+    const endDateKey = CalendarUtils.getCalendarDateString(
+      new Date(new Date(item.fromDate).getTime() + item.duration)
+    )
 
-    if (!groupedTimeline[dateKey]) {
-      groupedTimeline[dateKey] = []
+    if (!timelineEvents[startDateKey]) {
+      timelineEvents[startDateKey] = []
     }
-
-    groupedTimeline[dateKey].push({
-      id: item.id,
-      start: start,
-      end: end,
-      title: item.eventTitle || "Event",
-      color: BOOKED_COLOR,
-    })
+    if (startDateKey !== endDateKey) {
+      if (!timelineEvents[endDateKey]) {
+        timelineEvents[endDateKey] = []
+      }
+      timelineEvents[startDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: BOOKED_COLOR_LIGHT,
+      })
+      timelineEvents[endDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: BOOKED_COLOR_LIGHT,
+      })
+    } else
+      timelineEvents[startDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: BOOKED_COLOR_LIGHT,
+      })
   })
 
   data.scheduledSlots.forEach((item) => {
-    const { start, end } = parseDateTime(item.fromDate, item.duration)
-    const dateKey = start.split("T")[0] // Extract the date part for grouping
+    const start = new Date(item.fromDate).toTimeString().split(" ")[0]
+    const end = new Date(new Date(item.fromDate).getTime() + item.duration)
+      .toTimeString()
+      .split(" ")[0]
+    const startDateKey = CalendarUtils.getCalendarDateString(new Date(item.fromDate))
+    const endDateKey = CalendarUtils.getCalendarDateString(
+      new Date(new Date(item.fromDate).getTime() + item.duration)
+    )
 
-    if (!groupedTimeline[dateKey]) {
-      groupedTimeline[dateKey] = []
+    if (!timelineEvents[startDateKey]) {
+      timelineEvents[startDateKey] = []
     }
-
-    groupedTimeline[dateKey].push({
-      id: item.id,
-      start: start,
-      end: end,
-      title: item.eventTitle || "Event",
-      color: SCHEDULED_COLOR,
-    })
+    // if event end-date stretches to one day after due to time-zone
+    // ... end-date can't end up 1 day before ...
+    if (startDateKey !== endDateKey) {
+      if (!timelineEvents[endDateKey]) {
+        timelineEvents[endDateKey] = []
+      }
+      timelineEvents[startDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: SCHEDULED_COLOR_LIGHT,
+      })
+      timelineEvents[endDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: SCHEDULED_COLOR_LIGHT,
+      })
+    } else
+      timelineEvents[startDateKey].push({
+        id: item.id,
+        start: `${startDateKey} ${start}`,
+        end: `${endDateKey} ${end}`,
+        title: item.eventTitle || "Event",
+        summary: `w/ ${item.organizerAlias}`,
+        color: SCHEDULED_COLOR_LIGHT,
+      })
   })
 
   data.events.forEach((event) => {
-    const dateKey = event.fromDate.split("T")[0] // Extract the date part for grouping
-    if (!groupedTimeline[dateKey]) {
-      groupedTimeline[dateKey] = []
-    }
+    return event.availabilities.forEach((availability) => {
+      const startDateKey = CalendarUtils.getCalendarDateString(
+        new Date(availability.from)
+      )
+      const endDateKey = CalendarUtils.getCalendarDateString(new Date(availability.to))
+      const end = new Date(availability.to).toTimeString().split(" ")[0]
+      const start = new Date(availability.from).toTimeString().split(" ")[0]
 
-    groupedTimeline[dateKey].push({
-      id: event.id,
-      start: new Date(event.fromDate).toISOString().replace("Z", ""),
-      end: new Date(event.toDate).toISOString().replace("Z", ""),
-      title: event.title || "Event",
-      color: EVENT_COLOR, // Assign color based on type
+      if (!timelineEvents[startDateKey]) {
+        timelineEvents[startDateKey] = []
+      }
+
+      // if event end-date stretches to one day after due to time-zone
+      // ... end-date can't end up 1 day before ...
+      if (startDateKey !== endDateKey) {
+        if (!timelineEvents[endDateKey]) {
+          timelineEvents[endDateKey] = []
+        }
+
+        timelineEvents[startDateKey].push({
+          id: event.id,
+          start: `${startDateKey} ${start}`,
+          end: `${endDateKey} ${end}`,
+          title: event.title || "Event",
+          color: EVENT_COLOR_LIGHT,
+        })
+
+        timelineEvents[endDateKey].push({
+          id: event.id,
+          start: `${startDateKey} ${start}`,
+          end: `${endDateKey} ${end}`,
+          title: event.title || "Event",
+          color: EVENT_COLOR_LIGHT,
+        })
+      } else
+        timelineEvents[startDateKey].push({
+          id: event.id,
+          start: `${startDateKey} ${start}`,
+          end: `${endDateKey} ${end}`,
+          title: event.title || "Event",
+          color: EVENT_COLOR_LIGHT,
+        })
     })
   })
 
-  return { groupedTimeline, timelineArray }
+  return { timelineEvents, timelineArray }
 }
 
 export function generateTimeSlotsForDateInMilliseconds(

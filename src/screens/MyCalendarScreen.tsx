@@ -35,13 +35,10 @@ export const MyCalendarScreen = ({ navigation }: any) => {
 
   const { id } = React.useContext(ProfileContext)
   const [marked, setMarked] = React.useState<MarkedDates>({})
-  const [calendarData, setCalendarEvents] = React.useState<any>(null)
   const [timeLineEvents, setTimeLineEvents] = React.useState<TimelineEventProps[]>([])
   const [currentMonth, setCurrentMonth] = React.useState<number>(new Date().getMonth())
   const [currentYear, setCurrentYear] = React.useState<number>(new Date().getFullYear())
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-
-  // const [timeLine,setEvents] = React.useState<TimelineEventProps[]>
 
   const fetchCalendarData = async (year, month) => {
     setIsLoading(true)
@@ -51,9 +48,6 @@ export const MyCalendarScreen = ({ navigation }: any) => {
         new Date(new Date().setFullYear(year, month, 15)) // to be safe we choose 15th
       )
       if (!calendarData) throw new Error("Unable to get your calander data")
-      setCalendarEvents(calendarData)
-      setCurrentMonth(month - 1)
-      setCurrentYear(year)
 
       if (
         !calendarData.events?.length &&
@@ -63,14 +57,12 @@ export const MyCalendarScreen = ({ navigation }: any) => {
         return
 
       const markedDates = getMarkedDatesFromUserCalendarData(calendarData)
-      const { groupedTimeline, timelineArray } = createTimelineEvents(calendarData)
-      console.log("grouped >", groupedTimeline)
-      setTimeLineEvents(groupedTimeline)
-      setMarked(markedDates)
+      const { timelineEvents } = createTimelineEvents(calendarData)
 
-      //@TODO when there are events booked make sure they show on the calendar & timeline
-      // let bookings = await Events.getBookingByQuery({ user_id: id })
-      // console.log(JSON.stringify(events, null, 4))
+      setTimeLineEvents(timelineEvents)
+      setMarked(markedDates)
+      setCurrentMonth(month - 1)
+      setCurrentYear(year)
     } catch (e) {
       showErrorToast(e)
     } finally {
@@ -139,6 +131,7 @@ export const MyCalendarScreen = ({ navigation }: any) => {
           </View>
         ) : (
           <TimelineList
+            key={currentMonth}
             events={timeLineEvents}
             showNowIndicator
             scrollToNow
