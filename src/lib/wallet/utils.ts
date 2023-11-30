@@ -155,7 +155,10 @@ export function schemaToPaymentTokens(schema: string): PaymentTokens {
 
 export function assetsUnitsToValue(assetsUnits: AssetUnit[]): Value {
   let _assetsUnits = [...assetsUnits]
-  const assetsUnitsLovelace = Number(_assetsUnits[0].count)
+  let assetsUnitsLovelace = Number(_assetsUnits[0].count)
+
+  // convert to lovelace (good for now solution)
+  if (assetsUnitsLovelace < 1_000_000) assetsUnitsLovelace *= 1_000_000
   _assetsUnits.shift()
   const assetsUnitsValue = new Value(
     BigInt(assetsUnitsLovelace),

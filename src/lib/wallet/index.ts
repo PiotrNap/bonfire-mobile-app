@@ -205,7 +205,9 @@ export class Wallet {
       let signature = privKey.sign(tx.bodyHash)
       tx.addSignature(signature)
 
-      const { data } = await Wallet.submitTransaction(tx)
+      const { data, error } = await Wallet.submitTransaction(tx)
+      if (error) throw error
+
       return bytesToHex(data.bytes)
     } catch (e) {
       throw e
@@ -238,12 +240,15 @@ export class Wallet {
       .addOutput(lockingTxOutput)
       .validFrom(new Date(now - fiveMinutes))
       .validTo(new Date(now + fiveMinutes))
+
     try {
       await lockingTx.finalize(params, new Address(userAddress))
       let signature = privKey.sign(lockingTx.bodyHash)
       lockingTx.addSignature(signature)
 
-      const { data } = await Wallet.submitTransaction(lockingTx)
+      const { data, error } = await Wallet.submitTransaction(lockingTx)
+      if (error) throw error
+
       return bytesToHex(data.bytes)
     } catch (e) {
       throw e

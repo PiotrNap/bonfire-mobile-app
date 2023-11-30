@@ -21,7 +21,7 @@
     "@emurgo/cross-csl-mobile": "^3.4.0",
     "@emurgo/csl-mobile-bridge": "^5.1.2",
     "@hookform/resolvers": "^3.3.2",
-    "@hyperionbt/helios": "^0.16.3",
+    "@hyperionbt/helios": "^0.16.5",
     "@pnap/react-native-search-bar": "^1.0.5",
     "@pnap/react-native-tweetnacl": "1.0.1",
     "@react-native-async-storage/async-storage": "^1.13.0",

@@ -5,7 +5,6 @@ import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { appContext, bookingContext, walletContext } from "contexts/contextApi"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { formatTimeIncrements, getRandomKey, getTimeSpanLength } from "lib/utils"
-import { useDurationSlots } from "lib/hooks/useDurationSlots"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
@@ -17,6 +16,8 @@ import {
 } from "lib/wallet/utils"
 import { EventSlot } from "common/interfaces/newEventInterface"
 import { HourlyRate, TimeIncrement } from "common/interfaces/bookingInterface"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { subHeader } from "../../styles/typography"
 
 type Props = StackScreenProps<BookingStackParamList, "Duration Choice">
 
@@ -25,6 +26,7 @@ export const DurationChoice = ({ navigation, route }: Props) => {
     route.params?.event
   const { pickedStartTime, pickedDateSlots, pickedDateSlotsMinDuration, pickedDate } =
     bookingContext()
+  const { lovelaceBalance, walletAssets } = walletContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [selectedDuration, setSelectedDuration] = React.useState<number>(0)
   const [cost, setCost] = React.useState<HourlyRate>(new Map())
@@ -33,11 +35,19 @@ export const DurationChoice = ({ navigation, route }: Props) => {
   const { setDuration, setDurationCost } = bookingContext()
   const { colorScheme } = appContext()
 
+  const hasEnoughFunds = React.useMemo(() => {
+    if (!lovelaceBalance) return false
+    if (cost.get("lovelace") === 0) return true
+
+    const enoughLovalece = lovelaceBalance > cost.get("lovelace")
+    for (let k of cost.keys()) {
+      if (!walletAssets.get(k)) return false
+      if (cost.get(k) > walletAssets.get(k)) return false
+    }
+    return enoughLovalece
+  }, [walletAssets, lovelaceBalance, cost])
   const isLightMode = colorScheme === "light"
-  const isDisabled = !selectedDuration
-  // const numOfSelectedDates = Object.entries(pickedDates)
-  //   .filter((sd) => sd[1].selected)
-  //   .map((sd) => sd[0]).length
+  const isDisabled = !selectedDuration || !hasEnoughFunds
 
   const setEventCost = (time: number) => {
     const multiplier = time / (1000 * 60 * 60)
@@ -232,6 +242,13 @@ export const DurationChoice = ({ navigation, route }: Props) => {
       <View style={styles.timeSlotsContainer}>
         {timeIncrements && timeIncrements.map(renderTimeIncrements)}
       </View>
+      <View style={styles.errorMessage}>
+        {!hasEnoughFunds && (
+          <SubHeaderText customStyle={{ ...subHeader.x20 }} colors={[Colors.danger.s400]}>
+            You don't have enough funds for this duration
+          </SubHeaderText>
+        )}
+      </View>
       <View style={styles.buttonContainer}>
         <FullWidthButton
           onPressCallback={onNextPress}
@@ -307,6 +324,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   multiplier: { marginHorizontal: Sizing.x10 },
+  errorMessage: {
+    height: Sizing.x20,
+    justifyContent: "center",
+  },
   eventCost_light: {
     textAlignVertical: "center",
     fontSize: Sizing.x35,
