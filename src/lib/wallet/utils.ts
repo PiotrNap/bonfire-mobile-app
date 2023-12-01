@@ -153,24 +153,27 @@ export function schemaToPaymentTokens(schema: string): PaymentTokens {
   return { lovelace: paymentLovelace, assets: paymentTokenAssets }
 }
 
-export function assetsUnitsToValue(assetsUnits: AssetUnit[]): Value {
-  let _assetsUnits = [...assetsUnits]
-  let assetsUnitsLovelace = Number(_assetsUnits[0].count)
+export function assetsUnitsToValue(
+  lovelaceAsset: AssetUnit,
+  nativeAssets: AssetUnit[]
+): Value {
+  let lovelaceCount = Number(lovelaceAsset.count)
 
   // convert to lovelace (good for now solution)
-  if (assetsUnitsLovelace < 1_000_000) assetsUnitsLovelace *= 1_000_000
-  _assetsUnits.shift()
+  // ...less than 1mil means its ADA
+  if (lovelaceCount < 1_000_000) lovelaceCount *= 1_000_000
   const assetsUnitsValue = new Value(
-    BigInt(assetsUnitsLovelace),
-    unitsToAssets(
-      _assetsUnits.map((unit) => ({ ...unit, label: "", name: utf8ToHex(unit.name) }))
-    )
+    BigInt(lovelaceCount),
+    unitsToAssets(nativeAssets.map((unit) => ({ ...unit, label: "", name: unit.name })))
   )
   return assetsUnitsValue
 }
 
-export function assetsUnitsToJSONSchema(assetsUnits: AssetUnit[]): string {
-  return assetsUnitsToValue(assetsUnits).toSchemaJson()
+export function assetsUnitsToJSONSchema(
+  lovelaceAsset: AssetUnit,
+  nativeAssets: AssetUnit[]
+): string {
+  return assetsUnitsToValue(lovelaceAsset, nativeAssets).toSchemaJson()
 }
 
 export function numberToHex(n: number) {

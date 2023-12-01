@@ -41,8 +41,9 @@ export const DurationChoice = ({ navigation, route }: Props) => {
 
     const enoughLovalece = lovelaceBalance > cost.get("lovelace")
     for (let k of cost.keys()) {
+      if (k === "lovelace") continue
       if (!walletAssets.get(k)) return false
-      if (cost.get(k) > walletAssets.get(k)) return false
+      if (cost.get(k).count > walletAssets.get(k).count) return false
     }
     return enoughLovalece
   }, [walletAssets, lovelaceBalance, cost])

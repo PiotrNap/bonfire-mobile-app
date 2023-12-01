@@ -64,15 +64,12 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [publicKey, setPublicKey] = useState<string>("")
   const [bio, setBio] = useState<string>("")
   const [imageBase64, setImageBase64] = useState<string>("")
-  const [timeBlockLengthMin, setTimeBlockLengthMin] = useState<number | null>(0)
-  const [timeBlockCostADA, setTimeBlockCostADA] = useState<number | undefined>(0)
   const [timeZone, setTimeZone] = useState<string | undefined>("")
   const [hourlyRateAda, setHourlyRateAda] = useState<number>(0)
   const [profession, setProfession] = useState<string | undefined>("")
   const [jobTitle, setJobTitle] = useState<string | undefined>("")
   const [description, setDescription] = useState<string | undefined>("")
   const [skills, setSkills] = useState<string | undefined>("")
-  const [hasSyncedWallet, setHasSyncedWallet] = useState<boolean>(false)
   const [walletBalance, setWalletBalance] = useState<any>(initialState.walletBalance)
   const [walletBaseAddress, setWalletBaseAddress] = useState<string>("")
   const [walletName, setWalletName] = useState<string>("")
@@ -89,11 +86,8 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     walletBaseAddress,
     bio,
     imageBase64,
-    hasSyncedWallet,
     hourlyRateAda,
     timeZone,
-    timeBlockLengthMin,
-    timeBlockCostADA,
     profession,
     jobTitle,
     description,
@@ -110,17 +104,14 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setPublicKey("")
     setBio("")
     setImageBase64("")
-    setTimeBlockLengthMin(0)
-    setTimeBlockCostADA(0)
     setTimeZone("")
     setHourlyRateAda(0)
     setProfession("")
     setJobTitle("")
     setDescription("")
     setSkills("")
-    setTimeZone("")
-    setHasSyncedWallet(false)
     setWalletBalance({ assets: [], lovelace: 0 })
+    setWalletBaseAddress("")
   }
 
   return (
@@ -138,9 +129,6 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setWalletBalance,
         setWalletBaseAddress,
         setWalletName,
-        setHasSyncedWallet,
-        setTimeBlockLengthMin,
-        setTimeBlockCostADA,
         setTimeZone,
         setHourlyRateAda,
         setProfession,

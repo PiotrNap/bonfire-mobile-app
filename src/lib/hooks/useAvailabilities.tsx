@@ -15,14 +15,11 @@ export const useAvailabilities = (
     let currentDateAvailabilities = availabilities.sort(
       (a: any, b: any) => a.from - b.from
     )
-    console.log("selected ?", selectedDate)
     currentDateAvailabilities.filter((availability) =>
       availability.from.includes(selectedDate)
     )
 
     const currTimeSlots: number[] = []
-
-    console.log("current ?", currentDateAvailabilities)
 
     currentDateAvailabilities.forEach((availability: any) => {
       const to = new Date(availability.to).getTime()

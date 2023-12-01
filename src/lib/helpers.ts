@@ -22,12 +22,12 @@ const { applyOpacity } = Colors
 
 const DEFAULT_ERROR_MSG = "Something went wrong. Please reload the app and try again."
 
-const SCHEDULED_COLOR_LIGHT = "#FFCCE6" // pink-ish
-const SCHEDULED_COLOR_DARK = "#FF99C2"
-const BOOKED_COLOR_LIGHT = "#FFE6CC" // yellow-ish
-const BOOKED_COLOR_DARK = "#FFD9B3"
-const EVENT_COLOR_LIGHT = "#CCFFFF" // blue-ish
-const EVENT_COLOR_DARK = "#99CCCC"
+export const SCHEDULED_COLOR_LIGHT = "#FFCCE6" // pink-ish
+export const SCHEDULED_COLOR_DARK = "#FF99C2"
+export const BOOKED_COLOR_LIGHT = "#FFE6CC" // yellow-ish
+export const BOOKED_COLOR_DARK = "#FFD9B3"
+export const EVENT_COLOR_LIGHT = "#CCFFFF" // blue-ish
+export const EVENT_COLOR_DARK = "#99CCCC"
 
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"

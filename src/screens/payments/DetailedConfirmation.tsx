@@ -80,11 +80,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       name: "",
       policyId: "",
     }
-    const assetsPaymentTokens = Object.values(durationCost)
-    const paymentTokens = assetsUnitsToValue([
-      lovelacePaymentToken,
-      ...assetsPaymentTokens,
-    ])
+    const assetsPaymentTokens = Array.from(durationCost.values())
+    assetsPaymentTokens.shift()
+    const paymentTokens = assetsUnitsToValue(lovelacePaymentToken, assetsPaymentTokens)
 
     // create a locking transaction
     const lockingDatumInfo: EscrowContractDatum = {
@@ -105,18 +103,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
     if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
       return showErrorToast("Unable to construct Datum object.", "Error")
-
-    // console.log(JSON.stringify(paymentTokens.dump(), null, 4))
-    // console.log(
-    //   JSON.stringify(
-    //     walletUtxos.map((txIn) => txIn.dump()),
-    //     null,
-    //     4
-    //   )
-    // )
-    //    // console.log(JSON.stringify(lockingDatumInfo, null, 4))
-    // return
-
+    console.log(
+      "walletUtxos.map... > ",
+      walletUtxos.map((txIn) => JSON.stringify(txIn.value.assets.dump(), null, 4))
+    )
     try {
       // submit transaction
       const txHash = await Wallet.sendLockingTransaction(
@@ -129,7 +119,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
       // create new booking-record
       const res = await Events.bookEvent({
-        txHash: txHash,
+        txHash,
         eventId: params.event.id,
         durationCost: paymentTokens.toSchemaJson(),
         startDate: pickedStartTime,
@@ -157,6 +147,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     let eventAvailableSlots = convertToEventAvailabilityUTC(selectedDates, availabilities)
     const { earliestDate, latestDate } = findEarliestAndLatestDates(eventAvailableSlots)
 
+    const hourlyRateAssets = Array.from(hourlyRate)
+    const lovelaceUnitAsset = hourlyRateAssets[0]
+    hourlyRateAssets.shift()
+
     const newEvent: CreateEventDto = {
       title: textContent.title,
       description: textContent.summary,
@@ -164,7 +158,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       cancellation,
       fromDate: earliestDate,
       toDate: latestDate,
-      hourlyRate: assetsUnitsToJSONSchema(hourlyRate),
+      hourlyRate: assetsUnitsToJSONSchema(lovelaceUnitAsset, hourlyRateAssets),
       visibility,
       eventCardColor,
       eventTitleColor,

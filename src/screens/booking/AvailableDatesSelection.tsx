@@ -7,28 +7,13 @@ import { Colors, Outlines, Sizing } from "styles/index"
 import { appContext, bookingContext } from "contexts/contextApi"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventBookingLayout } from "components/layouts/eventBookingLayout"
-import { Calendar } from "react-native-calendars"
+import { Calendar, CalendarUtils } from "react-native-calendars"
 import { DateData, MarkedDates } from "react-native-calendars/src/types"
 import { isPastDate } from "lib/utils"
 import { applyOpacity } from "../../styles/colors"
-import {
-  convertFromEventAvailability,
-  generateTimeSlotsForDateInMilliseconds,
-} from "lib/helpers"
+import { convertFromEventAvailability } from "lib/helpers"
 
 type Props = StackScreenProps<BookingStackParamList, "Available Event Dates Selection">
-
-const MARKED_DATE = {
-  customStyles: {
-    container: {
-      backgroundColor: applyOpacity(Colors.blueCalendarCard.s400, 0.5), // New background color for selected date
-    },
-    text: {
-      color: Colors.primary.neutral, // Color of the text for selected state
-    },
-  },
-  selected: false,
-}
 
 export const AvailableDatesSelection = ({ navigation, route }: Props) => {
   const { title, image, eventCardColor, eventTitleColor, availabilities } =
@@ -39,7 +24,6 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
     setPickedDate,
     pickedDate,
     resetBookingState,
-    setCreateGoogleCalEvent,
   } = bookingContext()
   const { colorScheme, validGoogleOAuth } = appContext()
   // const [acceptedCheckbox, setAcceptedChecbox] = React.useState<boolean>(false)
@@ -47,6 +31,9 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
   const [markedDates, setMarkedDates] = React.useState<MarkedDates>({})
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
   const [timeSlots, setTimeSlots] = React.useState<any>(null)
+  const [initialDate, setIntialDate] = React.useState<string>(
+    CalendarUtils.getCalendarDateString(new Date())
+  )
   const isLightMode = colorScheme === "light"
   const lightOrDarkColor = isLightMode ? Colors.primary.s800 : Colors.primary.neutral
 
@@ -69,6 +56,7 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
     }
     setMarkedDates(dates)
     setTimeSlots(timeWindows)
+    setIntialDate(timeWindows[0].fromDate)
   }, [availabilities])
 
   // @TODO after beta release
@@ -224,6 +212,7 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
           markedDates={markedDates}
           markingType={"custom"}
           style={styles.calendar}
+          initialDate={initialDate}
         />
       </View>
       {/*
