@@ -17,8 +17,14 @@ import { useWallet } from "lib/hooks/useWallet"
 const NavigationTabs = createBottomTabNavigator<NavigationTabParamList>()
 
 export const NavigationScreens = ({ route }: any) => {
-  const { setWalletBaseAddress, setID, setUsername, setHourlyRateAda, setTimeZone } =
-    React.useContext(ProfileContext)
+  const {
+    setWalletBaseAddress,
+    setID,
+    setUsername,
+    setHourlyRateAda,
+    setTimeZone,
+    setCollateralUtxoId,
+  } = React.useContext(ProfileContext)
   const { setUserSettings } = appContext()
   useWallet() // fetch user wallet assets
 
@@ -26,8 +32,15 @@ export const NavigationScreens = ({ route }: any) => {
     // if the params aren't empty, we are redirected from
     // main screens stack during login
     if (Object.entries(route.params).length != 0) {
-      const { username, id, hourlyRateAda, userSettings, timeZone, baseAddress } =
-        route.params
+      const {
+        username,
+        id,
+        hourlyRateAda,
+        userSettings,
+        timeZone,
+        baseAddress,
+        collateralUtxoId,
+      } = route.params
 
       id && setID(id)
       username && setUsername(username)
@@ -35,6 +48,7 @@ export const NavigationScreens = ({ route }: any) => {
       setUserSettings(userSettings)
       setTimeZone(timeZone)
       setWalletBaseAddress(baseAddress)
+      setCollateralUtxoId(collateralUtxoId)
     }
   }, [])
 

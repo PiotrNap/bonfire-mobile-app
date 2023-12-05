@@ -32,14 +32,15 @@ import { GIT_HASH } from "../../gitHash"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { SmallButton } from "components/buttons/smallButton"
 import { deleteKeysFromStorage } from "lib/wallet/storage"
-import { showErrorToast } from "lib/helpers"
+import { showErrorToast, showSuccessToast } from "lib/helpers"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Authenticator } from "components/modals/Authenticator"
+import { COLLATERAL_STORAGE_KEY } from "lib/wallet/utils"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
 export const UserProfileSettings = ({ navigation }: ScreenProps) => {
-  const { id } = React.useContext(ProfileContext)
+  const { id, collateralUtxoId, setCollateralUtxoId } = React.useContext(ProfileContext)
   const { colorScheme, resetAppState, userSettings, setUserSettings } = appContext()
   const { resetCalendarState } = myCalendarContext()
   const { resetBookingState } = bookingContext()
@@ -97,22 +98,34 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       showStandardModal(FAILED_ACCOUNT_DELETION_MSG)
     }
   }
-  const onShowPastCalendarEvents = async () => {
-    const newSettings: UserSettings = {
-      ...userSettings,
-      showPastCalendarEvents: !userSettings?.showPastCalendarEvents,
-    }
-    setUserSettings(newSettings)
-    try {
-      await removeFromEncryptedStorage("user-settings")
-      await Users._("put", `users/${id}/settings`, newSettings)
-    } catch (e) {
-      showStandardModal("We weren't able to update your preferences in our Database.")
-    }
-  }
+  // const onShowPastCalendarEvents = async () => {
+  //   const newSettings: UserSettings = {
+  //     ...userSettings,
+  //     showPastCalendarEvents: !userSettings?.showPastCalendarEvents,
+  //   }
+  //   setUserSettings(newSettings)
+  //   try {
+  //     await removeFromEncryptedStorage("user-settings")
+  //     await Users._("put", `users/${id}/settings`, newSettings)
+  //   } catch (e) {
+  //     showStandardModal("We weren't able to update your preferences in our Database.")
+  //   }
+  // }
   const onPreviewMnemonicPress = () => {
     setAuthenticatorVisible(true)
     // show modal with password/biometric authentication
+  }
+  const onUnlockCollataralPress = async () => {
+    try {
+      await AsyncStorage.removeItem(COLLATERAL_STORAGE_KEY)
+      showSuccessToast("Success", "Your collateral UTxO has been unlocked.")
+      setCollateralUtxoId("")
+    } catch (e) {
+      showErrorToast(
+        "We couldn't unlock your collateral for some reason.",
+        "Something went wrong..."
+      )
+    }
   }
   const onAuthenticated = (mnemonic: string | void) => {
     setAuthenticatorVisible(false)
@@ -120,7 +133,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       return showErrorToast(
         "Something went wrong. Have you enabled this option during registration?"
       )
-    showStandardModal(mnemonic, "Keep it secure and don't share with anyone.")
+    showStandardModal(mnemonic, "Remember to keep it secure and not share with anyone.")
     mnemonic = ""
   }
   const onHideAuthenticator = () => setAuthenticatorVisible(false)
@@ -136,6 +149,17 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           />
         </Pressable>
       </View>
+      {collateralUtxoId && (
+        <SettingsItem titleStyle={textStyle} title={"Unlock collateral UTxO"}>
+          <SmallButton
+            onPress={onUnlockCollataralPress}
+            title="Unlock"
+            customStyle={{ width: "100%", justifyContent: "center" }}
+          />
+        </SettingsItem>
+      )}
+      {/*
+      @TODO after beta release
       <SettingsItem titleStyle={textStyle} title={"Show past events on my calendar."}>
         <Text style={switchTextStyle}>
           {userSettings?.showPastCalendarEvents ? "Enabled" : "Disabled"}
@@ -145,6 +169,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           value={userSettings?.showPastCalendarEvents ? true : false}
         />
       </SettingsItem>
+      */}
       <View
         style={[
           styles.sensitiveInfoSection,
