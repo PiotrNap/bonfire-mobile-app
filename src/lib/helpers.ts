@@ -156,6 +156,9 @@ export function convertFromEventAvailability(
   const localTimeWindows: EventTimeWindow[] = []
 
   eventAvailabilities.forEach((eventAvailability) => {
+    const isFullyBooked = eventAvailability.slots.every((slot) => !slot.isAvailable)
+    if (isFullyBooked) return
+
     // Convert UTC to local time
     const toTimeLocal = new Date(eventAvailability.to)
     const fromTimeLocal = new Date(eventAvailability.from)
@@ -171,8 +174,7 @@ export function convertFromEventAvailability(
       const month = Number(splitDate[1]) - 1
       const day = Number(splitDate[2])
 
-      // @TODO test it with an old event
-      if (isPastDate(year, month, day)) return
+      if (new Date() > new Date(year, month, day)) return
 
       if (!localDates[date]) {
         if (isBookingCalendar) {
@@ -678,7 +680,7 @@ export const decryptWithPassword = async (
 export function showSuccessToast(header: string, body: string): void {
   Toast.show({ text1: header, text2: body })
 }
-export function showInfoToast(header: string, body: string): void {
+export function showInfoToast(body: string, header: string): void {
   Toast.show({ type: "info", text1: header, text2: body })
 }
 

@@ -1,11 +1,12 @@
 import * as React from "react"
 import { Toast } from "react-native-toast-message/lib/src/Toast"
-import { Crypto } from "@hyperionbt/helios"
+import { Crypto, TxInput } from "@hyperionbt/helios"
 import { BlockFrostDetailedTx } from "lib/wallet/types"
 import { showErrorToast } from "lib/helpers"
 import { TX_GET_SIZE, Wallet } from "lib/wallet"
 import {
   assetsToUnitsArray,
+  COLLATERAL_STORAGE_KEY,
   filterLovelaceOnlyInputs,
   lovelaceValueOfInputs,
   txInputsToAssets,
@@ -13,6 +14,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { walletContext } from "contexts/contextApi"
+import { ProfileContext } from "contexts/profileContext"
 
 export const useWallet = (makeInitialFetch = true) => {
   const {
@@ -24,6 +26,7 @@ export const useWallet = (makeInitialFetch = true) => {
     setWalletAssets,
     setBaseAddress,
   } = walletContext()
+  const { collateralUtxoId } = React.useContext(ProfileContext)
   const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false)
   const [lockedLovelaceBalance, setLockedLovelaceBalance] = React.useState<bigint>(0n)
 
@@ -69,7 +72,6 @@ export const useWallet = (makeInitialFetch = true) => {
         const { data, error } = await Wallet.getUtxosAtAddress(addr)
 
         // console.log("updateWalletBalance() >", JSON.stringify(data, null, 4))
-
         if (!data || error)
           Toast.show({
             type: "error",
@@ -77,6 +79,17 @@ export const useWallet = (makeInitialFetch = true) => {
             text2: "Maybe try again?",
           })
         if (!data.length) return setIsLoading(false)
+        const collateralUtxo =
+          collateralUtxoId &&
+          (data as TxInput[]).some(
+            (txInput) =>
+              `${txInput.outputId.txId}#${txInput.outputId.utxoIdx}` === collateralUtxoId
+          )
+
+        // user doesn't have the collateral any more
+        if (!collateralUtxo && collateralUtxoId) {
+          await AsyncStorage.removeItem(COLLATERAL_STORAGE_KEY)
+        }
 
         const availableLovelace = lovelaceValueOfInputs(filterLovelaceOnlyInputs(data))
         const lockedLovelace = lovelaceValueOfInputs(data) - availableLovelace

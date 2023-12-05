@@ -17,6 +17,7 @@ export const initialState: ProfileState = {
   jobTitle: "",
   description: "",
   skills: "",
+  collateralUtxoId: "",
   hasSyncedWallet: false,
   timeZone: "",
   timeBlockLengthMin: 0,
@@ -32,6 +33,7 @@ export const initialState: ProfileState = {
   setID: () => {},
   setDeviceID: () => {},
   setPublicKey: () => {},
+  setCollateralUtxoId: () => {},
   setBio: () => {},
   setImageBase64: () => {},
   setTimeZone: () => {},
@@ -74,6 +76,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
   const [walletBaseAddress, setWalletBaseAddress] = useState<string>("")
   const [walletName, setWalletName] = useState<string>("")
   const [profile, setProfile] = useState<UserBaseDTO | null>(null)
+  const [collateralUtxoId, setCollateralUtxoId] = useState<string>("")
 
   const userProfile = {
     username,
@@ -92,6 +95,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     jobTitle,
     description,
     skills,
+    collateralUtxoId,
   }
 
   const getUserProfile = () => userProfile
@@ -112,6 +116,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
     setSkills("")
     setWalletBalance({ assets: [], lovelace: 0 })
     setWalletBaseAddress("")
+    setCollateralUtxoId("")
   }
 
   return (
@@ -135,6 +140,7 @@ export const ProfileContextProvider = ({ children }: ContextProviderProps) => {
         setJobTitle,
         setDescription,
         setSkills,
+        setCollateralUtxoId,
         setProfile,
         profile,
         resetProfileState,

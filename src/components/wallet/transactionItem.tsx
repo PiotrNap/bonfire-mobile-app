@@ -9,10 +9,14 @@ import { RightArrowIcon, UpArrow } from "assets/icons"
 import { DownArrow } from "assets/icons/downArrow"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { useNavigation } from "@react-navigation/native"
+import { ESCROW_CONTRACT_ADDRESS } from "@env"
 
 export const TransactionItem = React.memo(
   ({ item: transaction }: { item: BlockFrostDetailedTx }) => {
     const { colorScheme } = appContext()
+    const isIncomingFromSmartContract = transaction.inputs.some(
+      (input) => input.address === ESCROW_CONTRACT_ADDRESS
+    )
     const isOutgoing = transaction.inputs.some(
       (input) => input.address === transaction.user_address
     )
@@ -21,6 +25,7 @@ export const TransactionItem = React.memo(
       navigation.navigate("Preview Transaction", {
         txInfo: transaction,
         isOutgoing,
+        isIncomingFromSmartContract,
         isTxHistoryPreview: true,
       })
 
@@ -29,7 +34,7 @@ export const TransactionItem = React.memo(
 
     return (
       <View style={styles.container}>
-        {isOutgoing ? (
+        {!isIncomingFromSmartContract && isOutgoing ? (
           <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
         ) : (
           <DownArrow

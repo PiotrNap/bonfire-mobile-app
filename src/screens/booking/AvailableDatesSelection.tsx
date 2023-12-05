@@ -56,7 +56,7 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
     }
     setMarkedDates(dates)
     setTimeSlots(timeWindows)
-    setIntialDate(timeWindows[0].fromDate)
+    setIntialDate(Object.keys(dates).sort()[0])
   }, [availabilities])
 
   // @TODO after beta release

@@ -50,10 +50,22 @@ export class Events {
     }
   }
 
-  public static async getBookingByQuery(query: AnyObject): Promise<any[] | void> {
+  public static async getBookingsByQuery(query: AnyObject): Promise<any[] | void> {
     const queryString = new URLSearchParams(query)
     try {
       const res = await axios.get(`events/bookings?${queryString}`)
+      if (res.data) return res.data
+    } catch (e) {
+      throw e?.response?.data || e
+    }
+  }
+
+  public static async updateBookingById(
+    bookingSlotId: string,
+    bookingUpdateDTO: AnyObject
+  ): Promise<any[] | void> {
+    try {
+      const res = await axios.put(`events/booking/${bookingSlotId}`, bookingUpdateDTO)
       if (res.data) return res.data
     } catch (e) {
       throw e?.response?.data || e
@@ -72,17 +84,10 @@ export class Events {
   public static async getAllEvents(
     query: User & PaginationRequestDto
   ): Promise<any | void> {
+    const queryString = new URLSearchParams(query)
+
     try {
-      const res = await axios.get(
-        "/events",
-        query && {
-          params: {
-            limit: query.limit,
-            page: query.page,
-            user_id: query.user_id,
-          },
-        }
-      )
+      const res = await axios.get(`/events?${queryString}`)
       if (res) {
         return res.data
       }

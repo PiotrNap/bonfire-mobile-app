@@ -1,11 +1,11 @@
 import * as React from "react"
-// import {Intl} from 'react-native'
 
 import { setAuthorizationToken } from "Api/base"
 import { getFromEncryptedStorage, setToEncryptedStorage } from "lib/encryptedStorage"
 import { showErrorToast, startChallengeSequence } from "lib/helpers"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getDevicesTimeZone } from "lib/utils"
+import { COLLATERAL_STORAGE_KEY } from "lib/wallet/utils"
 
 export const useAppLogin = () => {
   const [isAuthorized, setIsAuthorized] = React.useState<boolean>(false)
@@ -21,14 +21,9 @@ export const useAppLogin = () => {
         let deviceID = await getFromEncryptedStorage("device-id")
         let userSettings = await getFromEncryptedStorage("user-settings")
         let walletBaseAddress = await AsyncStorage.getItem("account-#0-baseAddress")
+        let collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
         const isExpired = new Date() >= new Date(authCred?.expiresAt)
         const deviceTimeZone = getDevicesTimeZone()
-
-        // const
-        // const tz1 = 'Europe/Paris'
-        // const tz2 = 'America/New_York'
-
-        // take regular date string and convert to UTC-4 & UTC+4
 
         console.log(`
         retrieving from encrypted storage:
@@ -37,6 +32,7 @@ export const useAppLogin = () => {
             devicePubKey: ${pubKey}
             deviceSecKey: ${privKey}
             baseAddress: ${walletBaseAddress}
+            collateralUtxoId: ${collateralUtxoId}
             timeZone: ${deviceTimeZone}
             `)
 
@@ -51,6 +47,7 @@ export const useAppLogin = () => {
             hourlyRateAda: authCred.hourlyRateAda,
             timeZone: deviceTimeZone,
             baseAddress: walletBaseAddress,
+            collateralUtxoId,
           })
         }
 
@@ -70,6 +67,7 @@ export const useAppLogin = () => {
               userSettings,
               deviceID,
               baseAddress: walletBaseAddress,
+              collateralUtxoId,
             })
             setToEncryptedStorage("auth-credentials", accessTokenDto)
             setAuthorizationToken(accessTokenDto.accessToken)

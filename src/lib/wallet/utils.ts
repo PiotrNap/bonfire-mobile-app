@@ -5,14 +5,24 @@ import {
   MintingPolicyHash,
   NetworkParams,
   TxInput,
+  TxOutput,
   Value,
 } from "@hyperionbt/helios"
 import { crc8 } from "crc"
-import { CARDANO_NETWORK } from "@env"
+import {
+  CARDANO_NETWORK,
+  MIN_LOVELACE_SERVICE_FEE,
+  MIN_PERCENT_SERVICE_FEE,
+  BETA_TESTER_MPH,
+} from "@env"
 import { mainnet } from "../../on_chain/configs/mainnet.js"
 import { preprod } from "../../on_chain/configs/preprod.js"
 import { AssetUnit, PaymentTokens, WalletAssets } from "./types"
 import { HourlyRate } from "common/interfaces/bookingInterface.js"
+import { getNetworkConfig } from "./"
+
+export const COLLATERAL_LOVELACE = 5_000_000n
+export const COLLATERAL_STORAGE_KEY = "collateral-utxoid"
 
 export const networkParams: NetworkParams = new NetworkParams(
   CARDANO_NETWORK === "mainnet" ? mainnet : preprod
@@ -112,7 +122,7 @@ export function assetsToUnitsArray(assetsArray: Assets[]): [string, AssetUnit][]
 
 // converts an iterable `units<Unit, UnitDetails>` to Assets which can be used to construct Helios Value
 export function unitsToAssets(
-  units: HourlyRate | WalletAssets | AssetUnit[]
+  units: HourlyRate | WalletAssets | AssetUnit[] | undefined
 ): Assets | undefined {
   if (!units) return
   let tokens: any[] = []
@@ -120,7 +130,10 @@ export function unitsToAssets(
   for (let unitDetails of units.values()) {
     let mph = new MintingPolicyHash(unitDetails.policyId)
     let token: [number[], bigint][] = [
-      [hexToBytes(unitDetails.label || "" + unitDetails.name), BigInt(unitDetails.count)],
+      [
+        hexToBytes((unitDetails.label || "") + unitDetails.name),
+        BigInt(unitDetails.count),
+      ],
     ]
     tokens.push([mph, token])
   }
@@ -174,6 +187,100 @@ export function assetsUnitsToJSONSchema(
   nativeAssets: AssetUnit[]
 ): string {
   return assetsUnitsToValue(lovelaceAsset, nativeAssets).toSchemaJson()
+}
+
+export function calculateFeeForTreasury(txInput: TxInput): bigint {
+  const totalLovelaceValue = lovelaceValueOfInputs([txInput])
+
+  if (totalLovelaceValue / 100n < MIN_LOVELACE_SERVICE_FEE) {
+    return BigInt(MIN_LOVELACE_SERVICE_FEE)
+  } else {
+    return BigInt(totalLovelaceValue) * BigInt(MIN_PERCENT_SERVICE_FEE / 100n)
+  }
+}
+
+export function checkForBetaTesterToken(utxos: TxInput[]) {
+  return !!utxos.find(
+    (txInput) =>
+      txInput.value.assets.getTokens(new MintingPolicyHash(BETA_TESTER_MPH)).length > 0
+  )
+}
+
+export function checkForCollateralAndFeeUtxos(
+  utxos: TxInput[],
+  serviceFee: bigint,
+  collateralUtxoId: string | null
+): {
+  collateralUtxo: TxInput | null
+  feeUtxo: TxInput | null
+  spareUtxos: TxInput[] | []
+  hasEnoughFunds: boolean // whether users' wallet have enough funds to cover collateral and all tx fee
+  missingLovelace: bigint
+} {
+  const networkParams = new NetworkParams(getNetworkConfig())
+  let collateralUtxo = null,
+    feeUtxo = null,
+    spareUtxos: TxInput[] = [],
+    totalMinUtxoLovelace: bigint = 0n,
+    totalLovelace: bigint = 0n,
+    totalNeccessaryLovelace = COLLATERAL_LOVELACE + serviceFee
+
+  for (let utxo of utxos) {
+    let v = utxo.value
+
+    if (collateralUtxoId === `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`) {
+      collateralUtxo = utxo
+    }
+
+    if (v.assets.isZero()) {
+      // assuming the total on-chain unlocking-tx fee will be 0.75 ADA
+      // @TODO make this a variable once we support withdrawing multiple payouts
+      if (v.lovelace > serviceFee + 750_000n && !feeUtxo) {
+        // pick the one with lowest lovelace
+        feeUtxo = utxo
+      } else if (
+        v.lovelace >= COLLATERAL_LOVELACE &&
+        (!collateralUtxo || collateralUtxo.value.lovelace > v.lovelace)
+      ) {
+        collateralUtxo = utxo
+      } else {
+        spareUtxos.push(utxo)
+      }
+    } else {
+      let availableLovelace = v.lovelace - calculateUTXOMinLovelace(utxo, networkParams)
+
+      if (availableLovelace > serviceFee + 500_000n && !feeUtxo) {
+        feeUtxo = utxo
+      } else {
+        spareUtxos.push(utxo)
+      }
+    }
+
+    totalLovelace += utxo.value.lovelace
+    totalMinUtxoLovelace += utxo.output.calcMinLovelace(networkParams)
+  }
+
+  const hasEnoughFunds = totalNeccessaryLovelace < totalLovelace - totalMinUtxoLovelace
+  const missingLovelace = totalNeccessaryLovelace - (totalLovelace - totalMinUtxoLovelace)
+  // console.log("totalLovelace >", totalLovelace)
+  // console.log("totalNeccessaryLovelace >", totalNeccessaryLovelace)
+  // console.log("totalMinUtxoLovelace >", totalMinUtxoLovelace)
+  // console.log("hasEnoughFunds >", hasEnoughFunds)
+  // console.log("collateralUtxo.value.dump() >", collateralUtxo?.value.dump())
+
+  return { collateralUtxo, feeUtxo, spareUtxos, hasEnoughFunds, missingLovelace }
+}
+
+export function calculateUTXOMinLovelace(
+  utxo: TxInput | TxOutput,
+  networkParams: NetworkParams
+) {
+  //@ts-ignore becuase of the getter being internal
+  const lovelacePerByte = networkParams.lovelacePerUTXOByte
+
+  let correctedSize = utxo.toCbor().length + 160 // 160 accounts for some database overhead?
+
+  return BigInt(correctedSize) * BigInt(lovelacePerByte)
 }
 
 export function numberToHex(n: number) {

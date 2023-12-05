@@ -14,7 +14,7 @@ import {
 } from "@hyperionbt/helios"
 import { generateMnemonic, mnemonicToEntropy } from "bip39"
 import * as CrossCSL from "@emurgo/cross-csl-mobile"
-import { CARDANO_NETWORK, BLOCKFROST_API_KEY } from "@env"
+import { CARDANO_NETWORK, BLOCKFROST_API_KEY, TREASURY_ADDRESS } from "@env"
 import axios from "axios"
 
 //@ts-ignore
@@ -23,12 +23,17 @@ const { Bip32PublicKey } = CrossCSL
 import { CardanoMobile } from "../../../global"
 import { ROLE_TYPE, CONFIG_NUMBERS } from "./config"
 import { EscrowContractDatum, SendRegularTxInfo, TxHash, WalletKeys } from "./types"
-import { unitsToAssets } from "./utils"
+import { COLLATERAL_LOVELACE, COLLATERAL_STORAGE_KEY, unitsToAssets } from "./utils"
 import { mainnet } from "../../on_chain/configs/mainnet"
 import { preprod } from "../../on_chain/configs/preprod"
-import { escrowProgram, escrowValidatorHash } from "../../on_chain/EscrowContract"
+import {
+  escrowProgram,
+  escrowProgramCompiled,
+  escrowValidatorHash,
+} from "../../on_chain/EscrowContract"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
-export const TX_GET_SIZE = 30
+export const TX_GET_SIZE = 20
 export const PURPOSE = 2147485500
 export const COIN_TYPE = 2147485463
 export const HARD_DERIVATION_START = 2147483648
@@ -171,19 +176,18 @@ export class Wallet {
     { assets, receiverAddress, lovelace }: SendRegularTxInfo,
     userAddress: string,
     userUtxos: TxInput[],
-    signingKey: string
+    signingKey: string,
+    isCollateralSplitTx: boolean = false
   ): Promise<TxHash | void> {
-    console.log(
-      "regular tx args >",
-      assets,
-      receiverAddress,
-      lovelace,
-      userAddress,
-      userUtxos,
-      signingKey
-    )
-
-    // const pubKeyHash = privKey.derivePubKey().pubKeyHash
+    // console.log(
+    //   "regular tx args >",
+    //   assets,
+    //   receiverAddress,
+    //   lovelace,
+    //   userAddress,
+    //   userUtxos,
+    //   signingKey
+    // )
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
     const params = new NetworkParams(getNetworkConfig())
 
@@ -194,6 +198,15 @@ export class Wallet {
     const output = new TxOutput(outputAddress, outputValue)
     const now = Date.now()
     const fiveMinutes = 1000 * 60 * 5
+
+    const collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
+    // prevent spending the collateral utxo
+    if (collateralUtxoId && !isCollateralSplitTx) {
+      userUtxos = userUtxos.filter(
+        (txIn) => `${txIn.outputId.txId}#${txIn.outputId.utxoIdx}` !== collateralUtxoId
+      )
+    }
+
     const tx = new Tx()
       .addInputs(userUtxos)
       .addOutput(output)
@@ -201,7 +214,7 @@ export class Wallet {
       .validTo(new Date(now + fiveMinutes))
 
     try {
-      await tx.finalize(params, new Address(userAddress), userUtxos)
+      await tx.finalize(params, new Address(userAddress))
       let signature = privKey.sign(tx.bodyHash)
       tx.addSignature(signature)
 
@@ -211,6 +224,8 @@ export class Wallet {
       return bytesToHex(data.bytes)
     } catch (e) {
       throw e
+    } finally {
+      signingKey = ""
     }
   }
   static async sendLockingTransaction(
@@ -233,6 +248,16 @@ export class Wallet {
       paymentTokens,
       inlineDatum
     )
+    // - collateral utxo needs to be updated since it will be spent
+    // - prevent spending the collateral in other type transactions
+
+    const collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
+    // prevent spending the collateral utxo
+    if (collateralUtxoId) {
+      userUtxos = userUtxos.filter(
+        (txIn) => `${txIn.outputId.txId}#${txIn.outputId.utxoIdx}` !== collateralUtxoId
+      )
+    }
 
     // lock funds
     const lockingTx = new Tx()
@@ -249,36 +274,111 @@ export class Wallet {
       const { data, error } = await Wallet.submitTransaction(lockingTx)
       if (error) throw error
 
-      return bytesToHex(data.bytes)
+      return { txHash: bytesToHex(data.bytes), datumHash: inlineDatum.hash.hex }
     } catch (e) {
       throw e
+    } finally {
+      signingKey = ""
     }
   }
-  static async sendUnlockingTransaction() {}
+  static async sendUnlockingTransaction(
+    unlockingTxInput: TxInput,
+    spareUtxos: TxInput[],
+    collateralUtxoIn: TxInput,
+    feeUtxo: TxInput,
+    userWalletAddress: string,
+    signingKey: string,
+    serviceFee: BigInt,
+    hasBetaTesterToken: boolean
+  ) {
+    const now = Date.now()
+    const fiveMinutes = 1000 * 60 * 5
+    const params = new NetworkParams(getNetworkConfig())
+    // const unlockingTxOut = new TxOutput(
+    //   Address.fromBech32(userWalletAddress),
+    //   unlockingTxInput.value
+    // )
+    const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
+    const treasuryAddress = new Address(TREASURY_ADDRESS)
+    const userAddress = Address.fromBech32(userWalletAddress)
+    const userPubKeyHash = userAddress.pubKeyHash
+    if (!userPubKeyHash)
+      throw Error("Unable to obtain the PubKey hash for user wallet address")
+    const frstTxOutId = new escrowProgram.types.TxOutId(
+      unlockingTxInput.outputId.txId.hex,
+      unlockingTxInput.outputId.utxoIdx
+    )
+    const redeemer = new escrowProgram.types.Redeemer.Complete([frstTxOutId])
+    const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
+
+    /** For wallets with Beta-Tester NFT we don't expect any fee to be sent to the treasury **/
+    const unlockingTx = new Tx()
+      .attachScript(escrowProgramCompiled)
+      .addInputs([...spareUtxos, feeUtxo])
+      .addCollateral(collateralUtxoIn)
+      .addInput(unlockingTxInput, redeemer)
+      .addOutput(collateralUtxoOut) // produce a fresh collateral utxo
+      .addSigner(userPubKeyHash)
+      .validFrom(new Date(now - fiveMinutes))
+      .validTo(new Date(now + fiveMinutes))
+
+    if (!hasBetaTesterToken) {
+      const serviceFeeTxOut = new TxOutput(treasuryAddress, new Value(Number(serviceFee)))
+      unlockingTx.addOutput(serviceFeeTxOut)
+    }
+
+    try {
+      await unlockingTx.finalize(params, new Address(userWalletAddress))
+      let signature = privKey.sign(unlockingTx.bodyHash)
+      unlockingTx.addSignature(signature)
+
+      // console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
+
+      const { data, error } = await Wallet.submitTransaction(unlockingTx)
+      if (error) throw error
+
+      const txHash = bytesToHex(data.bytes)
+      // update collateral utxoId
+      const newCollateralIdx = unlockingTx.body.outputs.find(
+        (output) =>
+          output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
+      )
+      await AsyncStorage.setItem(COLLATERAL_STORAGE_KEY, `${txHash}#${newCollateralIdx}`)
+
+      return { txHash }
+    } catch (e) {
+      throw e
+    } finally {
+      signingKey = ""
+    }
+  }
 
   /** Get wallet tx's **/
-  static async getTransactionsAtAddress(address: string, page: number = 0) {
+  static async getTransactionsAtAddress(
+    address: string,
+    page: number = 0
+  ): Promise<{ data: any; error: any }> {
     return Wallet.promiseHandler(
       blockFrostFetch(
-        `/addresses/${address}/transactions?page=${page}&count=${TX_GET_SIZE}`
+        `/addresses/${address}/transactions?page=${page}&count=${TX_GET_SIZE}&order=desc`
       )
     )
   }
-  static async submitTransaction(tx: Tx) {
+  static async submitTransaction(tx: Tx): Promise<{ data: any; error: any }> {
     return Wallet.promiseHandler(blockFrost().submitTx(tx))
   }
 
   /** Get wallet balance **/
-  static async getUtxosAtAddress(addr: string) {
+  static async getUtxosAtAddress(addr: string): Promise<{ data: any; error: any }> {
     return Wallet.promiseHandler(blockFrost().getUtxos(new Address(addr)))
   }
 
-  static async getAssetInfo(unit: string) {
+  static async getAssetInfo(unit: string): Promise<{ data: any; error: any }> {
     return Wallet.promiseHandler(blockFrostFetch(`/assets/${unit}`))
   }
 
   /** Get detailed Tx info **/
-  static async getTxUtxos(txHash: string) {
+  static async getTxUtxos(txHash: string): Promise<{ data: any; error: any }> {
     return Wallet.promiseHandler(blockFrostFetch(`/txs/${txHash}/utxos`))
   }
 

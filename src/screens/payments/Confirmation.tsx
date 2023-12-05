@@ -18,6 +18,9 @@ export const Confirmation = ({ navigation, route }: Props) => {
   const isLightMode = colorScheme === "light"
 
   const navigateBack = () => {
+    if (typeof route.params?.customRoute === "string") {
+      navigation.navigate(route.params?.customRoute)
+    }
     if (route.params?.isBookingWalletTopUp != null) {
       navigation.navigate("Duration Choice")
     }
@@ -65,7 +68,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
             Success!{" "}
             {route.params?.isNewEvent
               ? "Your new event should now appear on your dashboard."
-              : "A transaction confirmation will appear shortly in your wallet."}
+              : "A transaction confirmation will appear shortly in your wallet (usually around 1-2 min)."}
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>
@@ -108,12 +111,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Sizing.x10,
   },
   headerText_light: {
-    ...Typography.header.x60,
+    ...Typography.header.x50,
     color: Colors.primary.s800,
     marginVertical: Sizing.x20,
   },
   headerText_dark: {
-    ...Typography.header.x60,
+    ...Typography.header.x50,
     color: Colors.primary.neutral,
     marginVertical: Sizing.x20,
   },

@@ -22,12 +22,21 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
   const { params } = route
   const isLightMode = colorScheme === "light"
-  const isTxHistoryPreview = params.isTxHistoryPreview
+  const isTxHistoryPreview = params?.isTxHistoryPreview
+  const isIncomingFromSmartContract = params?.isIncomingFromSmartContract
   const isOutgoing = params?.isOutgoing
   const txInfo = isTxHistoryPreview ? params?.txInfo : sendTxInfo
+  const isSelfFundedTx = React.useMemo(
+    () =>
+      params?.txInfo.inputs.every(
+        (input) => input.address === params?.txInfo.user_address
+      ) &&
+      params?.txInfo.outputs.every(
+        (output) => output.address === params?.txInfo.user_address
+      ),
+    [params?.txInfo]
+  )
   const onBackNavigationPress = () => navigation.goBack()
-
-  console.log(JSON.stringify(txInfo, null, 4))
 
   const iconStyles = {
     stroke: isLightMode ? Colors.primary.s800 : Colors.primary.s200,
@@ -75,20 +84,22 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   }
   const getOutputAssets = React.useMemo(() => {
     return txInfo?.outputs
-      .filter((out) =>
-        isOutgoing
-          ? out.address !== txInfo.user_address
-          : out.address === txInfo.user_address
-      )
-      .map((out) =>
-        out.amount.map((amount) =>
+      ?.filter((out, idx) => {
+        if (isIncomingFromSmartContract) {
+          return out.output_index === 0
+        } else if (isOutgoing) {
+          return out.address !== txInfo.user_address
+        } else return out.address === txInfo.user_address
+      })
+      .map((out) => {
+        return out.amount.map((amount) =>
           amount.unit === "lovelace"
             ? ""
             : `${hexToUtf8(fromAssetUnit(amount.unit).name)} - (${Number(
                 amount.quantity
               ).toFixed(2)})`
         )
-      )
+      })
       .flat()
       .filter((asset) => asset) // filter out empty string
       .map((asset) => ({ content: asset })) // this is required to display in UI
@@ -107,35 +118,43 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     },
     {
       label: "To",
-      lineContent: !isOutgoing
-        ? { content: cutStringInside(txInfo?.user_address) }
-        : txInfo?.outputs.map((out) =>
-            out.address === txInfo.user_address
-              ? null
-              : { content: cutStringInside(out.address) }
-          ),
+      lineContent:
+        isIncomingFromSmartContract || !isOutgoing || isSelfFundedTx
+          ? { content: cutStringInside(txInfo?.user_address) }
+          : txInfo?.outputs.map((out) =>
+              out.address === txInfo.user_address
+                ? null
+                : { content: cutStringInside(out.address) }
+            ),
     },
     {
       label: "ADA",
       lineContent: {
-        content: lovelaceToAda(
-          BigInt(
-            txInfo?.outputs
-              .filter((out) =>
-                isOutgoing
-                  ? out.address !== txInfo.user_address
-                  : out.address === txInfo.user_address
+        content: isSelfFundedTx
+          ? lovelaceToAda(
+              txInfo.outputs[0].amount.find((amt) => amt.unit === "lovelace").quantity
+            )
+          : lovelaceToAda(
+              BigInt(
+                txInfo?.outputs
+                  ?.filter((out) => {
+                    if (isIncomingFromSmartContract) {
+                      return out.output_index === 0
+                    } else if (isOutgoing) {
+                      return out.address !== txInfo.user_address
+                    } else return out.address === txInfo.user_address
+                  })
+                  .map((out) => {
+                    return out.amount.find((amount) => amount.unit === "lovelace")
+                      .quantity
+                  })
+                  .reduce((prev, acc) => Number(acc) + prev, 0) || 0
               )
-              .map(
-                (out) => out.amount.find((amount) => amount.unit === "lovelace").quantity
-              )
-              .reduce((prev, acc) => Number(acc) + prev, 0) || 0
-          )
-        ),
+            ),
         icon: <AdaIcon {...iconStyles} />,
       },
     },
-    getOutputAssets.length && {
+    getOutputAssets?.length && {
       label: "Assets",
       lineContent: getOutputAssets,
     },

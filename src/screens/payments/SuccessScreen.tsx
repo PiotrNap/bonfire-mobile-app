@@ -43,8 +43,7 @@ export const SuccessScreen = ({ navigation, route }: Props) => {
             {headerText ?? "Success!"}
           </Text>
           <BodyText
-            customStyle={styles.bodyText}
-            changingColorScheme={true}
+            changingColorScheme
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
             {bodyText}
           </BodyText>
@@ -83,15 +82,17 @@ const styles = StyleSheet.create({
     marginBottom: Sizing.x10,
   },
   textContainer: {
+    alignSelf: "center",
     marginBottom: "auto",
+    paddingHorizontal: Sizing.x10,
   },
   headerText_light: {
-    ...Typography.header.x60,
+    ...Typography.header.x50,
     color: Colors.primary.s800,
     marginVertical: Sizing.x20,
   },
   headerText_dark: {
-    ...Typography.header.x60,
+    ...Typography.header.x50,
     color: Colors.primary.neutral,
     marginVertical: Sizing.x20,
   },

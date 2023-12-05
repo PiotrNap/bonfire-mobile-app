@@ -10,12 +10,10 @@ import { useEventsResults } from "lib/hooks/useEventsResults"
 import { EventsList } from "components/booking/EventsList"
 import { ProfileContext } from "contexts/profileContext"
 import { applyOpacity } from "../../styles/colors"
-import { RoundedButton } from "components/buttons/roundedButton"
 import { useFocusEffect } from "@react-navigation/native"
 
 export const MyEvents = ({ navigation }: any) => {
   const { id } = React.useContext(ProfileContext)
-  const { resetEventCreationState } = eventCreationContext()
   const { colorScheme } = appContext()
   const { events, isLoading, getEventsBySearchQuery, setEvents } = useEventsResults(id)
   const eventsListRef = React.useRef<any>()

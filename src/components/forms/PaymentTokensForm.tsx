@@ -29,11 +29,18 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
               count: !!hourlyRateAda ? hourlyRateAda : 5,
               name: "ada",
             },
+            //@TODO make gimbals here as default
+            // {
+            //   policyId: "2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c30",
+            //   label: "",
+            //   count: 100,
+            //   name: "gimbal",
+            // },
             {
-              policyId: "2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c30",
+              policyId: "2542e94ef77993cba4594135f2874c8fe19c63fe22760a079552658b",
               label: "",
               count: 100,
-              name: "gimbal",
+              name: "TestCommunityCoin",
             },
           ],
     },

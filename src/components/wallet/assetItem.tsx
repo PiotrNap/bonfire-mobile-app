@@ -15,7 +15,7 @@ export interface assetItemInterface {
   item: AssetUnit
   isSendTransactionScreen: boolean
   isSelected: boolean
-  isLastItem: boolean
+  isLastItem?: boolean
   onCheckboxPress?: (unit: string, count: number) => void
 }
 

@@ -89,9 +89,8 @@ export const SendTransactionScreen = ({ navigation }: any) => {
           initialValues={{
             //@TODO revert this
             receivingAddress:
-              "addr_test1qzrdax5shce7x979dn5x93ehye7u6j3d4t0ztf9h5uep4n08a9ece0a90sdv7d66685jcrgxdn4ej8kvydjpfr2yrw4s3zjvha", //qrCodeValue || "",
-            //@TODO revert this
-            ada: 2,
+              "addr_test1qrfryeesst563em92304sl0w7t3u4cgeqfrk5tdhm4p8h25klhcy3gf5y5mlxd9s9llctp7lzw5hct7yxg2gy8jfvs4qdxlqd5",
+            ada: 1,
           }}
           innerRef={formikRef}
           onSubmit={noop}>

@@ -14,7 +14,7 @@ import { Colors, Typography } from "styles/index"
 
 export interface SubHeaderTextProps {
   children?: any
-  colors?: string[]
+  colors?: string[] //
   customStyle?: StyleProp<TextStyle>
   callbackFn?: () => any
   extraProps?: any

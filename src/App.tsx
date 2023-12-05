@@ -16,13 +16,12 @@ import SplashScreen from "react-native-splash-screen"
 
 import { Confirmation, SuccessScreen } from "screens/payments"
 import { NavigationScreens } from "tabs/NavigationScreens"
-import { OnboardingScreens } from "tabs/OnboardingScreens"
 import { InitialUserScreens } from "tabs/InitialUserScreens"
 import { useAppLogin } from "lib/hooks/useAppLogin"
 import { authorizedLinkingConfig, unauthorizedLinkingConfig } from "lib/navigation"
 import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 import { ToastMessage } from "components/popups/toastMessage"
-import { InitialScreen, WelcomeScreen } from "screens/onboarding"
+import { WelcomeScreen } from "screens/onboarding"
 
 enableScreens() // enables native screens for navigation instead of using Views
 

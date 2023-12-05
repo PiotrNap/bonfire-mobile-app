@@ -98,7 +98,7 @@ export const WalletTabList = React.memo(
           isPaginationLoading ? (
             <ActivityIndicator
               size={isSmallScreen ? "small" : "large"}
-              color={Colors.primary.s800}
+              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
               style={styles.spinner}
             />
           ) : null

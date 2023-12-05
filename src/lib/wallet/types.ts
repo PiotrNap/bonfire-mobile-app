@@ -2,6 +2,7 @@ import { Redeemer } from "@emurgo/csl-mobile-bridge"
 import { Assets } from "@hyperionbt/helios"
 import { AnyObject } from "yup/lib/types"
 
+export type UTxOId = string // <transactionId>#<outputIdx>
 export type TxHash = string
 export type Unit = string
 export type RedeemerType = "Cancel" | "Complete" | "Recycle"
@@ -61,8 +62,8 @@ export type BlockFrostDetailedTx = {
 }
 export type SendRegularTxInfo = {
   receiverAddress: string
-  lovelace: number
-  assets: WalletAssets
+  lovelace: number | bigint
+  assets: WalletAssets | undefined
 }
 export type SendLockingTxInfo = SendRegularTxInfo & {
   datum: AnyObject
