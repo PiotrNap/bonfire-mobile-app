@@ -14,7 +14,7 @@ import { useFocusEffect } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { walletContext } from "contexts/contextApi"
 
-export const useWallet = () => {
+export const useWallet = (makeInitialFetch = true) => {
   const {
     txHistory,
     setTxHistory,
@@ -36,15 +36,16 @@ export const useWallet = () => {
   /** Update wallet Utxos and ADA balance **/
   useFocusEffect(
     React.useCallback(() => {
-      ;(async () => {
-        let addr: any = baseAddress
-        if (!addr) {
-          addr = await AsyncStorage.getItem("account-#0-baseAddress")
-          setBaseAddress(addr || "")
-        }
-        updateWalletBalance(addr)
-        updateWalletTxHistory(addr)
-      })()
+      if (makeInitialFetch)
+        (async () => {
+          let addr: any = baseAddress
+          if (!addr) {
+            addr = await AsyncStorage.getItem("account-#0-baseAddress")
+            setBaseAddress(addr || "")
+          }
+          updateWalletBalance(addr)
+          updateWalletTxHistory(addr)
+        })()
     }, [])
   )
 
@@ -67,6 +68,8 @@ export const useWallet = () => {
 
         const { data, error } = await Wallet.getUtxosAtAddress(addr)
 
+        // console.log("updateWalletBalance() >", JSON.stringify(data, null, 4))
+
         if (!data || error)
           Toast.show({
             type: "error",
@@ -74,8 +77,6 @@ export const useWallet = () => {
             text2: "Maybe try again?",
           })
         if (!data.length) return setIsLoading(false)
-
-        // console.log(data.map((txInput) => JSON.stringify(txInput.value.dump(), null, 4)))
 
         const availableLovelace = lovelaceValueOfInputs(filterLovelaceOnlyInputs(data))
         const lockedLovelace = lovelaceValueOfInputs(data) - availableLovelace
@@ -148,7 +149,7 @@ export const useWallet = () => {
           tx.user_address = addr
           fullInfoTxs.push(tx)
         }
-        fullInfoTxs = fullInfoTxs.reverse() // because Blockfrost can't sort them
+        // fullInfoTxs = fullInfoTxs.reverse() // because Blockfrost can't sort them
         if (refresh) {
           setTxHistory(fullInfoTxs)
           setTxListPage(1)

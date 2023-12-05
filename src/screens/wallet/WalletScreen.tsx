@@ -24,7 +24,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
     isLoading,
     isPaginationLoading,
     updateWalletBalance,
-  } = useWallet()
+  } = useWallet(false)
   const getNextPageWalletTxHistory = () => updateWalletTxHistory(baseAddress, false)
 
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
