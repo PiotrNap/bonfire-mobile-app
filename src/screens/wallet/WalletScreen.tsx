@@ -8,14 +8,16 @@ import { Buttons, Outlines, Typography, Sizing, Colors } from "styles/index"
 import { WalletStackParamList } from "common/types/navigationTypes"
 import { appContext, walletContext } from "contexts/contextApi"
 import { DownIcon, UpIcon } from "icons/index"
-import { lovelaceToAda } from "lib/wallet/utils"
+import { COLLATERAL_LOVELACE, lovelaceToAda } from "lib/wallet/utils"
 import { WalletTabs } from "components/tabs/walletTabs"
 import { useWallet } from "lib/hooks/useWallet"
+import { ProfileContext } from "contexts/profileContext"
 
 export interface WalletScreenProps
   extends StackScreenProps<WalletStackParamList, "Wallet Main"> {}
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
+  const { collateralUtxoId } = React.useContext(ProfileContext)
   const { colorScheme } = appContext()
   const { txHistory, baseAddress, walletAssets, lovelaceBalance } = walletContext()
   const {
@@ -74,6 +76,18 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
             ) : (
               <></>
             )}*/}
+            {/*
+            {collateralUtxoId && (
+              <Text
+                style={[
+                  colorScheme == "light"
+                    ? styles.lockedBalance_ligth
+                    : styles.lockedBalance_dark,
+                ]}>
+                (+ {lovelaceToAda(COLLATERAL_LOVELACE)} ₳ in collateral )
+              </Text>
+            )}
+            */}
           </View>
           <View style={styles.walletButtonsContainer}>
             <Pressable

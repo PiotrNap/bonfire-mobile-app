@@ -30,6 +30,7 @@ export type WalletAssets = Map<string, AssetUnit>
 export type AssetUnit = {
   policyId: string
   name: string
+  displayName?: string
   count: string | number
   label: string
 }

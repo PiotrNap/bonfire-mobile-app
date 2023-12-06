@@ -8,6 +8,7 @@ import { TokenInput } from "./TokenInput"
 import { appContext } from "contexts/contextApi"
 import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { utf8ToHex } from "lib/wallet/utils"
 
 export const PaymentTokensForm = React.forwardRef((props, ref) => {
   const { errorStatus, changeErrorStatus, defaultValues } = props
@@ -27,9 +28,10 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
               policyId: "",
               label: "",
               count: !!hourlyRateAda ? hourlyRateAda : 5,
-              name: "ada",
+              name: utf8ToHex("ada"),
+              displayName: "ada",
             },
-            //@TODO make gimbals here as default
+            //@TODO make gimbals here as a default
             // {
             //   policyId: "2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c30",
             //   label: "",
@@ -40,7 +42,8 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
               policyId: "2542e94ef77993cba4594135f2874c8fe19c63fe22760a079552658b",
               label: "",
               count: 100,
-              name: "TestCommunityCoin",
+              name: utf8ToHex("TestCommunityCoin"),
+              displayName: "TestCommunityCoin",
             },
           ],
     },
@@ -77,7 +80,7 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
 
   return fields.map((field, index) => (
     <View key={field.id}>
-      {field.name === "ada" && (
+      {field.name === utf8ToHex("ada") && (
         <View style={styles.paymentTokensDescriptionWrapper}>
           <SubHeaderText
             colors={[Colors.primary.s800, Colors.primary.neutral]}
@@ -100,7 +103,7 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
         <Controller
           rules={{ required: !!index }}
           control={control}
-          name={`paymentTokens[${index}].name`}
+          name={`paymentTokens[${index}].displayName`}
           render={({ field }) => (
             <TokenInput
               styles={formStyles}

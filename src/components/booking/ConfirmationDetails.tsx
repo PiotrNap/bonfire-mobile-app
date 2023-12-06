@@ -213,13 +213,13 @@ export const ConfirmationDetails = ({
     {
       label: "Hourly Rate",
       lineContent: hourlyRate.map((hr) =>
-        hr.name === "ada"
+        hr.displayName === "ada"
           ? {
               content: hr.count,
-              icon: hr.name === "ada" ? <AdaIcon {...iconStyles} /> : null,
+              icon: hr.displayName === "ada" ? <AdaIcon {...iconStyles} /> : null,
             }
           : {
-              content: `${hr.name} - ${Number(hr.count)}`,
+              content: `${hr.displayName} - ${Number(hr.count)}`,
             }
       ),
     },

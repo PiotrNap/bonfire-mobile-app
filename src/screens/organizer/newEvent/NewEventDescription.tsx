@@ -24,6 +24,7 @@ import { showErrorToast } from "lib/helpers"
 import { AssetUnit } from "lib/wallet/types"
 import { noop } from "lib/utils"
 import { ToggleButton } from "./toggleButton"
+import { utf8ToHex } from "lib/wallet/utils"
 
 type Props = StackScreenProps<EventCreationParamList, "New Event Description">
 
@@ -88,8 +89,14 @@ export const NewEventDescription = ({ navigation }: Props) => {
 
   /** Check inputs and navigate to next screen **/
   const onNextPress = async () => {
-    const paymentTokens = paymentTokensRef.current?.values
+    let paymentTokens: AssetUnit[] = paymentTokensRef.current?.values
     if (!paymentTokens) return showErrorToast("Missing payment tokens info")
+
+    //update the unit 'name' with the user typed 'displayName'
+    paymentTokens = paymentTokens.map((pt) => ({
+      ...pt,
+      name: utf8ToHex(pt.displayName || ""),
+    }))
 
     const paymentTokensValid = await checkIfPaymentTokensAreValid(paymentTokens)
     if (!paymentTokensValid)
