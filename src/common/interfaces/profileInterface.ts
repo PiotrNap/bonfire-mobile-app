@@ -9,6 +9,7 @@ export interface ProfileState {
   walletBalance: { inputs: TxInput[]; lovelace: number }
   walletName: string
   walletBaseAddress: string
+  collateralUtxoId: string
   bio: string
   imageBase64?: string | null
   hasSyncedWallet: boolean
@@ -42,6 +43,7 @@ export interface ProfileState {
   setDescription: (input: string) => void
   setSkills: (input: string) => void
   setProfile: (input: Partial<UserBaseDTO> | null) => void
+  setCollateralUtxoId: (id: string) => void
   resetProfileState: () => void
 }
 
@@ -58,6 +60,7 @@ export interface UserBaseDTO {
   skills?: string
   bio?: string
   hourlyRateAda?: number
+  collateralUtxoId: string
 }
 
 export interface AddDeviceDTO {

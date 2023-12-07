@@ -1,7 +1,6 @@
 import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { SafeAreaView } from "react-native-safe-area-context"
 import {
   appContext,
   bookingContext,
@@ -32,6 +31,11 @@ import { Wallet } from "lib/wallet"
 import { Address } from "@hyperionbt/helios"
 import { EscrowContractDatum } from "lib/wallet/types"
 import { useWallet } from "lib/hooks/useWallet"
+import { input, inputLabel, inputStyles } from "../../styles/forms"
+import { CustomPlainInput } from "components/forms/CustomPlainInput"
+import { Layout } from "components/layouts/basicLayout"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { fontWeight } from "../../styles/typography"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -61,8 +65,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   } = useEventDeletion(params.organizerEvent?.eventId)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
+  const [eventNote, setEventNote] = React.useState<string | null>(null)
   const isLightMode = colorScheme === "light"
-
   const onHideAuthenticator = () => setAuthenticatorVisible(false)
   const onBackNavigationPress = () => navigation.goBack()
 
@@ -103,13 +107,9 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
     if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
       return showErrorToast("Unable to construct Datum object.", "Error")
-    console.log(
-      "walletUtxos.map... > ",
-      walletUtxos.map((txIn) => JSON.stringify(txIn.value.assets.dump(), null, 4))
-    )
     try {
       // submit transaction
-      const txHash = await Wallet.sendLockingTransaction(
+      const { txHash, datumHash } = await Wallet.sendLockingTransaction(
         paymentTokens,
         lockingDatumInfo,
         baseAddress,
@@ -119,11 +119,12 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
       // create new booking-record
       const res = await Events.bookEvent({
-        txHash,
+        lockingTxHash: txHash,
         eventId: params.event.id,
         durationCost: paymentTokens.toSchemaJson(),
         startDate: pickedStartTime,
         duration,
+        datumHash,
       })
 
       if (res) {
@@ -162,6 +163,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       visibility,
       eventCardColor,
       eventTitleColor,
+      note: eventNote || "",
       organizer: {
         id,
         username,
@@ -198,15 +200,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     } else showSuccessToast("Success!", successMsg)
   }
   const onSharePress = async () => await shareEvent(params?.organizerCalendarEvent.id)
+  const onEvenNoteChange = (val) => setEventNote(val)
 
   return (
-    <SafeAreaView
-      style={[
-        styles.safeArea,
-        {
-          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
-        },
-      ]}>
+    <Layout scrollable>
       <View style={[styles.container, { flex: 1 }]}>
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>
@@ -219,14 +216,16 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         </View>
         <View style={styles.header}>
           <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
-            {params?.header || "Confirmation"}
+            {params?.bookingSlot ? "Details" : params?.header || "Confirmation"}
           </Text>
         </View>
         <ConfirmationDetails
           isCalendarEventPreview={params?.isCalendarEventPreview}
           organizerEvent={params?.organizerEvent || params?.organizerCalendarEvent}
           bookedEvent={params?.event}
+          bookingSlot={params?.bookingSlot}
           isNewEvent={params?.isNewEvent}
+          withFlatList={false}
         />
         {params?.organizerCalendarEvent && (
           <View style={styles.shareButtonWrapper}>
@@ -241,6 +240,29 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
                 />
               }
               onPress={onSharePress}
+            />
+          </View>
+        )}
+        {params?.isNewEvent && (
+          <View style={styles.noteContainer}>
+            <View style={styles.headerContent}>
+              <SubHeaderText
+                colors={[Colors.primary.s800, Colors.primary.neutral]}
+                customStyle={{ marginRight: "auto", ...fontWeight.bold }}>
+                Note to Your Customer
+              </SubHeaderText>
+            </View>
+            <CustomPlainInput
+              key="note"
+              multiline={true}
+              numberOfLines={8}
+              maxChar={300}
+              placeholder={
+                typeof eventNote !== "string"
+                  ? "Thanks for scheduling time w/ me! To get in touch ..."
+                  : ""
+              }
+              onChangeCallback={onEvenNoteChange}
             />
           </View>
         )}
@@ -291,7 +313,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
           onHideAuthenticatorCb={onHideAuthenticator}
         />
       )}
-    </SafeAreaView>
+    </Layout>
   )
 }
 
@@ -345,5 +367,44 @@ const styles = StyleSheet.create({
   shareEventButtonText: {
     ...Typography.header.x20,
     marginRight: Sizing.x5,
+  },
+  noteContainer: {
+    marginTop: "auto",
+    marginHorizontal: Sizing.x5,
+    paddingVertical: Sizing.x15,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 4,
+  },
+})
+
+export const formStyleLight = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_light,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_light,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
+  },
+})
+
+export const formStyleDark = StyleSheet.create({
+  label: {
+    ...inputLabel.primary_dark,
+  },
+  input: {
+    width: "100%",
+    ...input.primary_dark,
+    ...Outlines.shadow.lifted,
+  },
+  placeholderText: {
+    color: Colors.primary.s300,
   },
 })

@@ -22,4 +22,5 @@ export interface CreateEventDto {
   eventCardColor: string
   eventTitleColor: string
   organizer: EventUser
+  note: string
 }

@@ -35,10 +35,7 @@ export const MyEventsStack = () => {
           name="Event Card Customization"
           component={EventCardCustomization}
         />
-        <Stack.Screen
-          name="Event Confirmation Details"
-          component={DetailedConfirmation}
-        />
+        <Stack.Screen name="Confirmation Details" component={DetailedConfirmation} />
         <Stack.Screen name="Event Description" component={EventDescription} />
         <Stack.Screen name="Event Details" component={DetailedConfirmation} />
       </Stack.Navigator>

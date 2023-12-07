@@ -36,6 +36,7 @@ interface ConfirmationDetails {
   isCalendarEventPreview: boolean
   organizerEvent?: AnyObject
   bookedEvent?: AnyObject
+  withFlatList?: boolean
 }
 
 export const ConfirmationDetails = ({
@@ -43,6 +44,7 @@ export const ConfirmationDetails = ({
   isCalendarEventPreview,
   organizerEvent,
   bookedEvent,
+  withFlatList = true,
 }: any) => {
   const { colorScheme } = appContext()
   const { timeZone } = React.useContext(ProfileContext)
@@ -323,18 +325,15 @@ export const ConfirmationDetails = ({
     />
   )
   const keyExtractor = (item: any, index: number) => `${item?.label}_${index}`
+  const data = isNewEvent
+    ? newEventSections
+    : organizerEvent || isCalendarEventPreview
+    ? organizerEventSections
+    : bookingEventSections
 
-  return (
-    <FlatList
-      data={
-        isNewEvent
-          ? newEventSections
-          : organizerEvent || isCalendarEventPreview
-          ? organizerEventSections
-          : bookingEventSections
-      }
-      renderItem={renderSections}
-      keyExtractor={keyExtractor}
-    />
+  return withFlatList ? (
+    <FlatList data={data} renderItem={renderSections} keyExtractor={keyExtractor} />
+  ) : (
+    <>{data.map((item, index) => renderSections({ item, index }))}</>
   )
 }
