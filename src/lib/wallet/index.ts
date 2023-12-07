@@ -281,7 +281,7 @@ export class Wallet {
       signingKey = ""
     }
   }
-  static async sendUnlockingTransaction(
+  static async sendWithdrawalTransaction(
     unlockingTxInput: TxInput,
     spareUtxos: TxInput[],
     collateralUtxoIn: TxInput,
