@@ -4,11 +4,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { applyOpacity } from "../../styles/colors"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
-import {
-  availableDaysLeftInCurrMonth,
-  convertToCalendarAvailabilities,
-  getEventCardDate,
-} from "lib/utils"
+import { getEventCardDate } from "lib/utils"
 import { LeftArrowIcon, ShareIcon, UserIcon } from "assets/icons"
 import { appContext, bookingContext, myCalendarContext } from "contexts/contextApi"
 import { BodyText } from "components/rnWrappers/bodyText"
@@ -16,7 +12,6 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import tinyColor from "tinycolor2"
 import { Events } from "Api/Events"
 import { ProfileContext } from "contexts/profileContext"
-import FastImage from "react-native-fast-image"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { shareEvent, showErrorToast, showSuccessToast } from "lib/helpers"
 import LinearGradient from "react-native-linear-gradient"
@@ -28,6 +23,7 @@ import {
 } from "lib/wallet/utils"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useEventDeletion } from "lib/hooks/useEventDeletion"
+import FastImage from "react-native-fast-image"
 
 export const EventDescription = ({ navigation, route }: any) => {
   const {

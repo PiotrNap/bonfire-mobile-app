@@ -31,6 +31,7 @@ import { UpArrow } from "./upArrow"
 import { LightBulbIcon } from "./lightBulb"
 import { LiveCollaborationIcon } from "./liveCollaboration"
 import { ModernProfessionalIcon } from "./modernProfessional"
+import { MoneyIcon } from "./money"
 import { PartiallyBookedDay } from "./partiallyBookedDay"
 import { PaymentIcon } from "./payment"
 import { PaymentSuccessfulIcon } from "./paymentSuccessful"
@@ -39,6 +40,7 @@ import { PlaceholderIcon } from "./placeholder"
 import { PlusIcon } from "./plus"
 import { PresentationIcon } from "./presentation"
 import { QrCodeSampleIcon } from "./qrCodeSample"
+import { QrCodeIcon } from "./qrCode"
 import { RefreshIcon } from "./refresh"
 import { RegistrationIcon } from "./registration"
 import { RemoveIcon } from "./remove"
@@ -50,7 +52,6 @@ import { TimeIcon } from "./time"
 import { TrashIcon } from "./trash"
 import { UserIcon } from "./user"
 import { WalletIcon } from "./wallet"
-import { QrCodeIcon } from "./qrCode"
 
 export {
   AdaIcon,
@@ -87,6 +88,7 @@ export {
   HearthIcon,
   HomeIcon,
   ModernProfessionalIcon,
+  MoneyIcon,
   LiveCollaborationIcon,
   RemoveIcon,
   RefreshIcon,
@@ -98,6 +100,7 @@ export {
   PresentationIcon,
   PartiallyBookedDay,
   QrCodeSampleIcon,
+  QrCodeIcon,
   SearchIcon,
   ShareIcon,
   SingleColorDot,
@@ -105,5 +108,4 @@ export {
   WalletIcon,
   TimeIcon,
   TrashIcon,
-  QrCodeIcon,
 }

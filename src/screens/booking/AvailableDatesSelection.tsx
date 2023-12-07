@@ -30,7 +30,7 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
   const [selectedDate, setSelectedDate] = React.useState<string>(pickedDate)
   const [markedDates, setMarkedDates] = React.useState<MarkedDates>({})
   const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
-  const [timeSlots, setTimeSlots] = React.useState<any>(null)
+  const [dateAvailabilities, setDateAvailabilities] = React.useState<any>(null)
   const [initialDate, setIntialDate] = React.useState<string>(
     CalendarUtils.getCalendarDateString(new Date())
   )
@@ -55,7 +55,7 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
       }
     }
     setMarkedDates(dates)
-    setTimeSlots(timeWindows)
+    setDateAvailabilities(timeWindows)
     setIntialDate(Object.keys(dates).sort()[0])
   }, [availabilities])
 
@@ -75,15 +75,18 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
     //@ts-ignore
     setPickedDate(markedDates[selectedDate].utcDate)
     let timeSlotMinDurations = []
-    const slotsForGivenDate = timeSlots
-      .filter((timeSlot) => {
-        if (timeSlot.fromDate === selectedDate) {
-          timeSlotMinDurations.push(timeSlot.minDuration)
-          return true
+    const slotsForGivenDate = dateAvailabilities.map((availability) => {
+      // only take slots for currently selected date
+      if (availability.fromDate === selectedDate) {
+        let availableSlots = availability.slots.filter(
+          (slot) => new Date(slot.from) > new Date()
+        )
+        if (availableSlots.length >= 1) {
+          timeSlotMinDurations.push(availability.minDuration)
+          return availableSlots
         }
-        return false
-      })
-      .map((timeSlot) => timeSlot.slots)
+      }
+    })
     setPickedDateSlots(slotsForGivenDate)
     setPickedDateSlotsMinDuration(timeSlotMinDurations)
     // if (acceptedCheckbox && !validGoogleOAuth) {

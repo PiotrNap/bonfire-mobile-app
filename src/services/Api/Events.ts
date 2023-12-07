@@ -1,6 +1,6 @@
 import { User, PaginationRequestDto } from "common/types/dto"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
-import { EventBookingDto } from "common/types/dto/event-booking.dto"
+import { EventBookingSlot, NewEventBookingDto } from "common/types/dto/event-booking.dto"
 import { getFormDataFromFilePath } from "lib/helpers"
 import { AnyObject } from "yup/lib/types"
 import axios from "./base"

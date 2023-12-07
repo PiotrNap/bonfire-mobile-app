@@ -163,19 +163,11 @@ export function convertFromEventAvailability(
     const toTimeLocal = new Date(eventAvailability.to)
     const fromTimeLocal = new Date(eventAvailability.from)
 
-    // Extract local dates using the system's locale
     const fromDate = formatDateWithDashes(fromTimeLocal)
     const toDate = formatDateWithDashes(toTimeLocal)
 
-    // Add dates to localDates with handling for date changes
+    if (new Date() > toTimeLocal) return
     ;[fromDate, toDate].forEach((date, idx) => {
-      const splitDate = date.split("-")
-      const year = Number(splitDate[0])
-      const month = Number(splitDate[1]) - 1
-      const day = Number(splitDate[2])
-
-      if (new Date() > new Date(year, month, day)) return
-
       if (!localDates[date]) {
         if (isBookingCalendar) {
           localDates[date] = {

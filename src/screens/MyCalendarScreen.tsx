@@ -1,17 +1,13 @@
 import { useFocusEffect } from "@react-navigation/native"
-import { Events } from "Api/Events"
 import { Users } from "Api/Users"
 import { appContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
-import dayjs from "dayjs"
 import {
   createTimelineEvents,
   getCalendarDate,
   getMarkedDatesFromUserCalendarData,
   showErrorToast,
 } from "lib/helpers"
-import { useCalendarEvents } from "lib/hooks/useCalendarEvents"
-import { useEventsPagination } from "lib/hooks/useEventsPagination"
 import * as React from "react"
 import { ActivityIndicator, StyleSheet, View } from "react-native"
 import {
@@ -26,8 +22,6 @@ import { Colors, Sizing } from "styles/index"
 
 const INITIAL_TIME = { hour: new Date().getHours(), minutes: new Date().getMinutes() }
 
-// Questions :
-// - how am I going to convert the events current format to this calendar?
 export const MyCalendarScreen = ({ navigation }: any) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"

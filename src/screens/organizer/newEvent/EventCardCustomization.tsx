@@ -151,7 +151,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
   const onNextPress = () => {
     setEventCardColor(transparent ? "transparent" : _color)
     setEventTitleColor(transparent ? "white" : _titleColor)
-    navigation.navigate("Event Confirmation Details", {
+    navigation.navigate("Confirmation Details", {
       isNewEvent: true,
       header: "Event Details",
     })
