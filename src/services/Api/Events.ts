@@ -31,7 +31,7 @@ export class Events {
     }
   }
 
-  public static async bookEvent(event: EventBookingDto): Promise<any> {
+  public static async bookEvent(event: NewEventBookingDto): Promise<any> {
     try {
       const res = await axios.post("events/booking", event)
 
@@ -50,7 +50,9 @@ export class Events {
     }
   }
 
-  public static async getBookingsByQuery(query: AnyObject): Promise<any[] | void> {
+  public static async getBookingsByQuery(
+    query: AnyObject
+  ): Promise<[EventBookingSlot[], number] | void> {
     const queryString = new URLSearchParams(query)
     try {
       const res = await axios.get(`events/bookings?${queryString}`)

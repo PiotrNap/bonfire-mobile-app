@@ -32,6 +32,12 @@ function checksum(num) {
   return crc8(Buffer.from(num, "hex")).toString(16).padStart(2, "0")
 }
 
+// used to cut long strings into shorter format (address ,txHash, ...)
+export function cutStringInside(str: string | undefined) {
+  if (!str) return
+  return `${str.substring(0, 15)}...${str.substring(str.length - 15, str.length)}`
+}
+
 export function toLabel(num: number) {
   if (num < 0 || num > 65535) {
     throw new Error(`Label ${num} out of range: min label 1 - max label 65535.`)

@@ -1,18 +1,16 @@
 import { Events } from "Api/Events"
-import { convertFromEventAvailability } from "lib/helpers"
 import * as React from "react"
 
-export const useEventsResults = (id?: string) => {
+export const useEventsResults = () => {
   const [events, setEvents] = React.useState<any[] | null>(null)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   const getEventsBySearchQuery = async (searchValue: string) => {
     try {
-      const res: any = await Events.getEventsBySearch(searchValue, id)
+      const res: any = await Events.getEventsBySearch(searchValue)
       let data = res.data
 
       if (data) {
-        data = convertFromEventAvailability
         setEvents(data.result)
       }
     } catch (e) {

@@ -10,31 +10,25 @@ export const useUserInfo = () => {
     id, // we should have this from our auth-credentials in secure storage
     setName,
     setUsername,
-    setId,
+    setID,
     setBio,
     setSkills,
     setJobTitle,
     setImageBase64,
     setProfession,
-    setHourlyRate,
+    setHourlyRateAda,
   } = R.useContext(ProfileContext)
 
-  const updateOrganizer = (val: any) => {
+  const updateUser = (val: any) => {
     setName(val.name)
     setUsername(val.username)
     setImageBase64(bufferToBase64(val.profileImage?.data))
-    setId(val.id)
+    setID(val.id)
     setBio(val.bio)
     setSkills(val.skills)
     setJobTitle(val.jobTitle)
     setProfession(val.prefession)
-    setHourlyRate(val.hourlyRate)
-  }
-  const updateAttendee = (val: any) => {
-    setName(val.name)
-    setUsername(val.username)
-    setImageBase64(bufferToBase64(val.profileImage?.data))
-    setId(val.id)
+    setHourlyRateAda(val.hourlyRateAda)
   }
 
   R.useEffect(() => {
@@ -42,14 +36,14 @@ export const useUserInfo = () => {
       (async () => {
         try {
           const res = await Users.getUser(id)
-          if (res?.profileType === "organizer") updateOrganizer(res)
-          if (res?.profileType === "attendee") updateAttendee(res)
+          updateUser(res)
         } catch (e) {
           console.error(e)
+        } finally {
+          setIsLoading(false)
         }
-        setIsLoading(false)
       })()
   }, [id])
 
-  return { isLoading }
+  return { isLoading, setIsLoading }
 }

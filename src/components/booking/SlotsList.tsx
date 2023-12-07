@@ -1,9 +1,7 @@
 import * as React from "react"
-import { StyleSheet, ActivityIndicator, View, VirtualizedList } from "react-native"
+import { StyleSheet, ActivityIndicator, View, VirtualizedList, Text } from "react-native"
 
-import { EventsListCard } from "./EventsListCard"
-import { bufferToBase64, getRandomKey } from "lib/utils"
-import { useEventsPagination } from "lib/hooks/useEventsPagination"
+import { getRandomKey } from "lib/utils"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Colors, Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
@@ -11,77 +9,69 @@ import { ProfileContext } from "contexts/profileContext"
 import { CurvedArrow, PlusIcon } from "assets/icons"
 import { RoundedButton } from "components/buttons/roundedButton"
 import { useNavigation } from "@react-navigation/native"
-import { PAGINATED_RESULTS_COUNT } from "common/types/dto"
+import { showErrorToast } from "lib/helpers"
+import { Events } from "Api/Events"
+import { EventBookingSlot, PAGINATED_RESULTS_COUNT } from "common/types/dto"
+import { SlotsListItem } from "./SlotsListItem"
 
-export const EventsList = React.forwardRef((props, ref): any => {
-  const { customEvents, customIsLoading, isOrganizerOwnEvents } = props
+type SlotsListProps = {
+  listType: "bookedSlots" | "scheduledSlots"
+}
+
+export const SlotsList = ({ listType }: SlotsListProps) => {
   const { id } = React.useContext(ProfileContext)
   const { colorScheme, accountType } = appContext()
-  const {
-    events,
-    isLoading: isPaginationLoading,
-    isLastPage,
-    getEventsPaginated,
-    eventsPage,
-  } = useEventsPagination(isOrganizerOwnEvents ? id : "")
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [slots, setSlots] = React.useState<EventBookingSlot[]>([])
+  const [page, setPage] = React.useState<number>(1)
+  const [isLastPage, setIsLastPage] = React.useState<boolean>(false)
   const navigation = useNavigation()
 
-  React.useImperativeHandle(ref, () => ({
-    getEventsPaginated,
-  }))
+  const fetchSlots = async (refresh = false) => {
+    if (!id) return showErrorToast("", "Unable to fetch Events")
+    setIsLoading(true)
+    try {
+      let res
 
-  // we aren't showing organizers own events on browse-screen
-  const filterUserEvents = React.useCallback(
-    (_events: any[]) => {
-      return _events.filter((event) => event.organizerId !== id)
-    },
-    [customEvents, events, id]
-  )
-  const eventsList = () => {
-    if (accountType === "attendee" || isOrganizerOwnEvents) return customEvents ?? events
-    return filterUserEvents(customEvents ?? events)
+      if (listType === "bookedSlots") {
+        res = await Events.getBookingsByQuery({
+          limit: 20,
+          page: refresh ? 1 : page,
+          attendee_id: id,
+        })
+      } else if (listType === "scheduledSlots") {
+        res = await Events.getBookingsByQuery({
+          limit: 20,
+          page: refresh ? 1 : page,
+          organizer_id: id,
+        })
+      } else throw new Error("Unknown type of slots to fetch")
+
+      if (!res) throw new Error("Unable to fetch booked slots")
+
+      const [paginatedSlots, count] = res
+      console.log(paginatedSlots, count)
+      if (count < PAGINATED_RESULTS_COUNT || count === 0) {
+        setIsLastPage(true)
+      }
+      setSlots(paginatedSlots)
+    } catch (e) {
+      showErrorToast(e)
+    } finally {
+      setIsLoading(false)
+      setPage(refresh ? 1 : (prev) => prev + 1)
+    }
   }
+
+  React.useEffect(() => {
+    fetchSlots()
+  }, [])
+
   const isLightMode = colorScheme !== "dark"
-  const isEmptyEventsList = !eventsList().length
-  const isLoading = customIsLoading || isPaginationLoading
+  const isEmptyList = slots.length < 1
 
-  const renderEventCard = React.useCallback(({ item }: any) => {
-    const {
-      title,
-      eventTitleColor,
-      description,
-      fromDate,
-      toDate,
-      eventCardImage,
-      eventCardColor,
-      id: eventId,
-      organizerId,
-      organizerAlias,
-      hourlyRate,
-      bookedSlots,
-    } = item
-    const isStandardColor =
-      (eventTitleColor === "white" && eventCardColor === "transparent") ||
-      (eventTitleColor === "rgb(255, 252, 252)" && eventCardColor === "rgba(3, 3, 3, 0)")
-
-    return (
-      <EventsListCard
-        title={title}
-        titleColor={eventTitleColor}
-        description={description}
-        fromDate={fromDate}
-        toDate={toDate}
-        eventId={eventId}
-        organizerAlias={organizerAlias}
-        organizerId={organizerId}
-        image={bufferToBase64(eventCardImage?.data)}
-        color={eventCardColor}
-        isTransparent={eventCardColor === "transparent"}
-        isStandardColor={isStandardColor}
-        bookedSlots={bookedSlots}
-        hourlyRate={hourlyRate}
-      />
-    )
+  const renderEventCard = React.useCallback(({ item, index }: any) => {
+    return <SlotsListItem item={item} slotType={listType} />
   }, [])
 
   const keyExtractor = () => getRandomKey(5)
@@ -99,11 +89,11 @@ export const EventsList = React.forwardRef((props, ref): any => {
   const onAddEventPress = () => {
     navigation.navigate("New Event Description")
   }
-  const onEndReach = React.useCallback(() => {
+  const onEndReach = () => {
     if (isLastPage) return
-    getEventsPaginated(eventsPage + 1, 20)
-  }, [isLastPage])
-  const onRefresh = () => getEventsPaginated(1, 20, true)
+    fetchSlots(false)
+  }
+  const onRefresh = () => fetchSlots(true)
   const onLayout = React.useCallback(
     ({ data, index }) => ({
       length: Sizing.x130,
@@ -116,12 +106,12 @@ export const EventsList = React.forwardRef((props, ref): any => {
   //@TODO fix loading indicator at the bottom
   return (
     <>
-      {!isEmptyEventsList && !isLoading ? (
+      {!isEmptyList && !isLoading ? (
         <>
           <VirtualizedList
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ width: "95%", alignSelf: "center" }}
-            data={eventsList()}
+            data={slots}
             getItem={getItem}
             refreshing={isLoading}
             initialNumToRender={5}
@@ -156,7 +146,8 @@ export const EventsList = React.forwardRef((props, ref): any => {
         <_ActivityIndicator />
       ) : (
         <View style={styles.noEventsMessage}>
-          {isOrganizerOwnEvents ? (
+          {false ? (
+            //@TODO change this to something else
             <SubHeaderText
               customStyle={styles.noEventsText}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
@@ -198,7 +189,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
       )}
     </>
   )
-})
+}
 
 const styles = StyleSheet.create({
   noEventsMessage: {

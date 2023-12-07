@@ -8,6 +8,7 @@ import {
   CalendarIcon,
   ColorsPalleteIcon,
   DescriptionIcon,
+  DuplicateIcon,
   FontIcon,
   PlaceholderIcon,
   PresentationIcon,
@@ -22,20 +23,22 @@ import {
   getDate,
   getDay,
   getDigitalLocaleTime,
-  getDigitalTime,
   getMonth,
-  getTimeSpanLength,
   isSameDay,
 } from "lib/utils"
 import { AnyObject } from "yup/lib/types"
 import { ProfileContext } from "contexts/profileContext"
-import { hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
+import { cutStringInside, hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
+import { EventBookingSlot } from "common/types/dto"
+import Clipboard from "@react-native-clipboard/clipboard"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
   isCalendarEventPreview: boolean
   organizerEvent?: AnyObject
   bookedEvent?: AnyObject
+  bookingSlot?: EventBookingSlot
+  bookingSlotType?: "bookedSlots" | "scheduledSlots"
   withFlatList?: boolean
 }
 
@@ -44,6 +47,8 @@ export const ConfirmationDetails = ({
   isCalendarEventPreview,
   organizerEvent,
   bookedEvent,
+  bookingSlot,
+  bookingSlotType,
   withFlatList = true,
 }: any) => {
   const { colorScheme } = appContext()
@@ -85,6 +90,10 @@ export const ConfirmationDetails = ({
     placeholder: <PlaceholderIcon {...iconStyles} />,
     colorsPallete: <ColorsPalleteIcon {...iconStyles} />,
     font: <FontIcon {...iconStyles} />,
+  }
+
+  const copyTxHash = () => {
+    Clipboard.setString(bookingSlot?.lockingTxHash)
   }
 
   /**
@@ -252,60 +261,79 @@ export const ConfirmationDetails = ({
    * Displayed during event booking confirmation
    */
   const bookingEventSections: SectionDetail[] = [
-    previewingEvent?.title && {
+    (previewingEvent?.title || bookingSlot?.eventTitle) && {
       label: "Event Title",
       lineContent: {
-        content: previewingEvent.title,
+        content: previewingEvent?.title || bookingSlot?.eventTitle,
       },
     },
-    previewingEvent?.organizerAlias && {
+    (previewingEvent?.organizerAlias ||
+      (bookingSlotType === "bookedSlots" && bookingSlot?.organizerAlias)) && {
       label: "Organizer",
       lineContent: {
-        content: previewingEvent.organizerAlias,
+        content: previewingEvent?.organizerAlias || bookingSlot?.organizerAlias,
       },
     },
-    previewingEvent?.attendeeAlias && {
+    (previewingEvent?.attendeeAlias ||
+      (bookingSlotType === "scheduledSlots" && bookingSlot?.attendeeAlias)) && {
       label: "Attendee",
       lineContent: {
-        content: previewingEvent.attendeeAlias,
+        content: previewingEvent?.attendeeAlias || bookingSlot?.attendeeAlias,
       },
     },
-    pickedStartTime &&
-      duration && {
-        label: "Date",
-        callbackFn: {
-          label: "Edit",
-          callbackFnScreen: "Available Event Dates Selection",
-          param: { event: bookedEvent },
-        },
-        lineContent: {
-          content: new Date(pickedStartTime).toLocaleString(),
-        },
+    (pickedStartTime || bookingSlot?.fromDate) && {
+      label: "Date",
+      callbackFn: pickedStartTime && {
+        label: "Edit",
+        callbackFnScreen: "Available Event Dates Selection",
+        param: { event: bookedEvent },
       },
-    duration && {
+      lineContent: {
+        content: new Date(pickedStartTime || bookingSlot?.fromDate).toLocaleString(),
+      },
+    },
+    (duration || bookingSlot?.duration) && {
       label: "Duration",
-      callbackFn: {
+      callbackFn: duration && {
         label: "Edit",
         callbackFnScreen: "Duration Choice",
         param: { event: bookedEvent },
       },
       lineContent: {
-        content: `${duration / (1000 * 60 * 60)}hr`,
+        content: `${(duration || bookingSlot?.duration) / (1000 * 60 * 60)}hr`,
       },
     },
-    durationCost && {
-      label: "Total cost",
-      lineContent: Array.from(durationCost).map((costEntries) =>
-        costEntries[0] === "lovelace"
-          ? {
-              content: `${lovelaceToAda(BigInt(costEntries[1]))}`,
-              icon: sectionsIcons.ada,
-            }
-          : {
-              content: `(${hexToUtf8(costEntries[1].name)}) ${costEntries[1].count}`,
-            }
-      ),
+    bookingSlot?.cancellation &&
+      bookingSlot?.cancellation?.fee && {
+        label: "Cancellation Window",
+        lineContent: {
+          content: `${bookingSlot?.cancellation.window}hr before start (${bookingSlot?.cancellation.fee}% lovelace fee)`,
+        },
+      },
+    bookingSlot?.lockingTxHash && {
+      label: "TxHash",
+      lineContent: {
+        content: cutStringInside(bookingSlot?.lockingTxHash),
+      },
+      callbackFn: {
+        icon: <DuplicateIcon {...iconStyles} />,
+        onPress: copyTxHash,
+      },
     },
+    durationCost &&
+      durationCost.size > 0 && {
+        label: "Total cost",
+        lineContent: Array.from(durationCost).map((costEntries) =>
+          costEntries[0] === "lovelace"
+            ? {
+                content: `${lovelaceToAda(BigInt(costEntries[1]))}`,
+                icon: sectionsIcons.ada,
+              }
+            : {
+                content: `(${hexToUtf8(costEntries[1].name)}) ${costEntries[1].count}`,
+              }
+        ),
+      },
   ].filter((s) => !!s)
 
   const isLastItem = (index: number) =>

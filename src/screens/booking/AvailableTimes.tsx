@@ -82,6 +82,7 @@ export const AvailableTimes = ({ navigation, route }: Props) => {
       .sort((a, b) => (a.from > b.from ? 1 : -1))
 
     for (let slot of sortedPickedDateSlots) {
+      if (!slot) continue
       children.push(renderEventSlot(slot))
     }
     return children

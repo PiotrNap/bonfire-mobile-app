@@ -1,4 +1,6 @@
-export type User = {
+export const PAGINATED_RESULTS_COUNT = 20
+
+export interface User {
   user_id?: string
 }
 

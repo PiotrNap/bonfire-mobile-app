@@ -7,14 +7,19 @@ import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, walletContext } from "contexts/contextApi"
 import { FlatList, Pressable, SafeAreaView, StyleSheet, View } from "react-native"
 import { Colors, Sizing } from "styles/index"
-import { fromAssetUnit, hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
+import {
+  cutStringInside,
+  fromAssetUnit,
+  hexToUtf8,
+  lovelaceToAda,
+} from "lib/wallet/utils"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import Crypto from "crypto"
 import { showErrorToast } from "lib/helpers"
 import { Wallet } from "lib/wallet"
 import { Authenticator } from "components/modals/Authenticator"
-import Clipboard from "@react-native-clipboard/clipboard"
 import { getRandomKey } from "lib/utils"
+import Clipboard from "@react-native-clipboard/clipboard"
+import Crypto from "crypto"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
   const { colorScheme, setQrCodeValue } = appContext()
@@ -45,10 +50,6 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     height: Sizing.x25,
     marginRight: Sizing.x5,
     zIndex: -10,
-  }
-  const cutStringInside = (str: string | undefined) => {
-    if (!str) return
-    return `${str.substring(0, 15)}...${str.substring(str.length - 15, str.length)}`
   }
   const onSignAndSubmit = () => {
     if (!txInfo) return showErrorToast("Missing send transaction info")

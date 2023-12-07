@@ -22,6 +22,7 @@ export interface FullWidthButtonProps {
   style?: StyleProp<any>
   textStyle?: StyleProp<any>
   lightMode?: boolean
+  customBgColor?: string
 }
 
 export const FullWidthButton = ({
@@ -32,10 +33,10 @@ export const FullWidthButton = ({
   text,
   disabled,
   buttonType = "filled",
-  isOnboarding = false,
   style,
   textStyle,
   lightMode,
+  customBgColor,
 }: FullWidthButtonProps) => {
   const [textWidth, setTextWidth] = React.useState<number>(0)
   const [pressableWidth, setPressableWidth] = React.useState<number>(0)
@@ -59,9 +60,7 @@ export const FullWidthButton = ({
     isLightMode ? Buttons.barText.primary_light : Buttons.barText.primary_dark,
   ]
   const textStyleTransparent = [
-    isLightMode
-      ? Buttons.barText.transparent_light
-      : Buttons.barText.transparent_dark,
+    isLightMode ? Buttons.barText.transparent_light : Buttons.barText.transparent_dark,
   ]
   const textStyleNeutral = {
     ...Buttons.barText.primary_dark,
@@ -96,8 +95,23 @@ export const FullWidthButton = ({
       hitSlop={5}
       style={
         disabled
-          ? [customButtonStyle, style, disabledStyle]
-          : Buttons.applyOpacity([customButtonStyle, style])
+          ? [
+              customButtonStyle,
+              style,
+              disabledStyle,
+              customBgColor && {
+                backgroundColor: customBgColor,
+                borderColor: customBgColor,
+              },
+            ]
+          : Buttons.applyOpacity([
+              customButtonStyle,
+              style,
+              customBgColor && {
+                backgroundColor: customBgColor,
+                borderColor: customBgColor,
+              },
+            ])
       }>
       <Text onLayout={onLayoutText} style={[customTextStyle, textStyle]}>
         {text}

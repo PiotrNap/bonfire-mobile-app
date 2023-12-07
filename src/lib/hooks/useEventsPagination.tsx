@@ -1,4 +1,5 @@
 import { Events } from "Api/Events"
+import { PAGINATED_RESULTS_COUNT } from "common/types/dto"
 import * as React from "react"
 
 export const useEventsPagination = (id: string) => {
@@ -13,7 +14,7 @@ export const useEventsPagination = (id: string) => {
     try {
       const res = await Events.getAllEvents({
         limit,
-        user_id: id,
+        ...(id ? { user_id: id } : {}),
         page: page ?? eventsPage,
       })
 
@@ -30,6 +31,10 @@ export const useEventsPagination = (id: string) => {
       setIsLoading(false)
     }
   }
+
+  React.useEffect(() => {
+    if (id) getEventsPaginated(1, PAGINATED_RESULTS_COUNT, true)
+  }, [id])
 
   return {
     isLoading,
