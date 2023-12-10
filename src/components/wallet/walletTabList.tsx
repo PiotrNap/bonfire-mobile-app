@@ -14,6 +14,7 @@ import { TransactionItem } from "./transactionItem"
 import { AssetItem } from "./assetItem"
 import { AssetUnit } from "lib/wallet/types"
 import Crypto from "crypto"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface TransactionListProps {
   listData: Map<string, any>
@@ -80,13 +81,17 @@ export const WalletTabList = React.memo(
       [containerWidth]
     )
     const onLayout = (e) => setContainerWidth(e.nativeEvent.layout.width)
+    const memoizedListData = React.useMemo(
+      () => Array.from(listData.values()),
+      [listData]
+    )
 
-    return (
+    return memoizedListData.length > 0 ? (
       <FlatList
         onLayout={onLayout}
         contentContainerStyle={isLoading ? { opacity: 0.5 } : {}}
         refreshControl={!isSendTransactionScreen ? refreshControl : undefined}
-        data={Array.from(listData.values())}
+        data={memoizedListData}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         scrollEnabled={!isLoading}
@@ -105,6 +110,12 @@ export const WalletTabList = React.memo(
         }
         windowSize={8}
       />
+    ) : (
+      <View style={styles.noItems}>
+        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
+          Nothing to show here...
+        </SubHeaderText>
+      </View>
     )
   }
 )
@@ -117,5 +128,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: Sizing.x10,
     ...Typography.subHeader.x20,
+  },
+  noItems: {
+    alignSelf: "center",
+    marginTop: Sizing.x20,
   },
 })

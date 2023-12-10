@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { WalletTabList } from "components/wallet/walletTabList"
 import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from "react-native"
 import { Sizing, Typography } from "styles/index"
-import { appContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { schemeBasedFontColor } from "../../styles/typography"
 import { noop } from "lib/utils"
 
@@ -16,6 +16,7 @@ export const WalletTabs = ({
   isLoading,
 }: any) => {
   const { colorScheme, bottomNavigationHeight } = appContext()
+  const { baseAddress } = walletContext()
   const [activeTab, setActiveTab] = useState("assets")
   const [layoutHeight, setLayoutHeight] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
@@ -25,6 +26,14 @@ export const WalletTabs = ({
     if (layoutHeight && layoutHeight < 300) {
       setIsSmallScreen(true)
     }
+  }
+  const setActiveAssetsTab = () => {
+    setActiveTab("assets")
+    onAssetsListUpdate(baseAddress)
+  }
+  const setActiveTransactionsTab = () => {
+    setActiveTab("history")
+    onTxListUpdate(baseAddress, true)
   }
 
   return (
@@ -38,7 +47,7 @@ export const WalletTabs = ({
             activeTab === "assets" && styles.activeTab,
             { borderColor: schemeBasedFontColor(colorScheme) },
           ]}
-          onPress={() => setActiveTab("assets")}>
+          onPress={setActiveAssetsTab}>
           <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
             Assets
           </Text>
@@ -49,7 +58,7 @@ export const WalletTabs = ({
             activeTab === "history" && styles.activeTab,
             { borderColor: schemeBasedFontColor(colorScheme) },
           ]}
-          onPress={() => setActiveTab("history")}>
+          onPress={setActiveTransactionsTab}>
           <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
             Transactions
           </Text>
