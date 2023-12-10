@@ -17,7 +17,6 @@ import { ProfileContext } from "contexts/profileContext"
 import { Users } from "Api/Users"
 import { showErrorToast } from "lib/helpers"
 import Crypto from "crypto"
-import { useFocusEffect } from "@react-navigation/native"
 
 export interface UserDetailScreenProps {}
 

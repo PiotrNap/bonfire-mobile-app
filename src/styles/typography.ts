@@ -69,7 +69,7 @@ export const fontSize: Record<FontSize, TextStyle> = {
   },
 }
 
-type FontWeight = "thin" | "light" | "regular" | "semibold" | "bold"
+export type FontWeight = "thin" | "light" | "regular" | "semibold" | "bold"
 export const fontWeight: Record<FontWeight, TextStyle> = {
   thin: {
     ...systemWeights.thin,

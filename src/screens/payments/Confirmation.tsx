@@ -19,7 +19,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
 
   const navigateBack = () => {
     if (typeof route.params?.customRoute === "string") {
-      navigation.navigate(route.params?.customRoute)
+      navigation.navigate(route.params?.customRoute, { reload: route.params?.reload })
     }
     if (route.params?.isBookingWalletTopUp != null) {
       navigation.navigate("Duration Choice")

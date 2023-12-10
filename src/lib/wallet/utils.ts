@@ -20,7 +20,10 @@ import { preprod } from "../../on_chain/configs/preprod.js"
 import { AssetUnit, PaymentTokens, WalletAssets } from "./types"
 import { HourlyRate } from "common/interfaces/bookingInterface.js"
 import { getNetworkConfig } from "./"
+import dayjs from "dayjs"
 
+// assuming the total on-chain unlocking-tx fee will be 0.75 ADA
+export const MIN_VALIDATOR_FEE = 750_000n
 export const COLLATERAL_LOVELACE = 5_000_000n
 export const COLLATERAL_STORAGE_KEY = "collateral-utxoid"
 
@@ -205,6 +208,39 @@ export function calculateFeeForTreasury(txInput: TxInput): bigint {
   }
 }
 
+// calculates cancellation fee based on the start date / window / total cost / fee rate
+export function calculateCancellationFee(
+  eventStartDate: string | dayjs.Dayjs,
+  window: number,
+  rate: number,
+  eventCost: string,
+  fromDate?: dayjs.Dayjs
+): {
+  isWithinCancellationWindow: boolean
+  isBeforeCancellationWindow: boolean
+  cancellationFeeLovelace: bigint
+} {
+  let cancellationFee = 0n
+  eventStartDate = dayjs(eventStartDate)
+  const lovelaceCost = schemaToPaymentTokens(eventCost).lovelace
+  const windowStartDate = eventStartDate.subtract(window, "hours")
+  const now = fromDate || dayjs()
+  const isWithinCancellationWindow =
+    now.isAfter(windowStartDate) && now.isBefore(eventStartDate)
+
+  if (now < windowStartDate) cancellationFee = 0n
+
+  if (isWithinCancellationWindow) {
+    cancellationFee = BigInt(lovelaceCost * (rate / 100))
+  }
+
+  return {
+    isWithinCancellationWindow,
+    isBeforeCancellationWindow: now < windowStartDate,
+    cancellationFeeLovelace: cancellationFee,
+  }
+}
+
 export function checkForBetaTesterToken(utxos: TxInput[]) {
   return !!utxos.find(
     (txInput) =>
@@ -233,15 +269,35 @@ export function checkForCollateralAndFeeUtxos(
 
   for (let utxo of utxos) {
     let v = utxo.value
+    console.log("v >", v.dump())
+    const currUtxoMinLovelace = utxo.output.calcMinLovelace(networkParams)
+    const currUtxoTotalLovelace = utxo.value.lovelace
+    const isLovelaceOnly = v.assets.isZero()
 
-    if (collateralUtxoId === `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`) {
-      collateralUtxo = utxo
+    if (currUtxoMinLovelace === currUtxoTotalLovelace) {
+      totalLovelace += currUtxoTotalLovelace
+      totalMinUtxoLovelace += currUtxoMinLovelace
+      continue
     }
+    console.log(collateralUtxoId, `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`)
 
-    if (v.assets.isZero()) {
-      // assuming the total on-chain unlocking-tx fee will be 0.75 ADA
-      // @TODO make this a variable once we support withdrawing multiple payouts
-      if (v.lovelace > serviceFee + 750_000n && !feeUtxo) {
+    console.log(
+      isLovelaceOnly,
+      currUtxoTotalLovelace,
+      COLLATERAL_LOVELACE,
+      !collateralUtxo
+    )
+
+    if (
+      (isLovelaceOnly &&
+        currUtxoTotalLovelace === COLLATERAL_LOVELACE &&
+        !collateralUtxo) ||
+      collateralUtxoId === `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`
+    ) {
+      console.log("collateral ??", utxo)
+      collateralUtxo = utxo
+    } else if (isLovelaceOnly) {
+      if (v.lovelace > serviceFee + MIN_VALIDATOR_FEE && !feeUtxo) {
         // pick the one with lowest lovelace
         feeUtxo = utxo
       } else if (
@@ -262,8 +318,8 @@ export function checkForCollateralAndFeeUtxos(
       }
     }
 
-    totalLovelace += utxo.value.lovelace
-    totalMinUtxoLovelace += utxo.output.calcMinLovelace(networkParams)
+    totalLovelace += currUtxoTotalLovelace
+    totalMinUtxoLovelace += currUtxoMinLovelace
   }
 
   const hasEnoughFunds = totalNeccessaryLovelace < totalLovelace - totalMinUtxoLovelace

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { StyleSheet, ActivityIndicator, View, VirtualizedList, Text } from "react-native"
+import { StyleSheet, ActivityIndicator, View, VirtualizedList } from "react-native"
 
 import { getRandomKey } from "lib/utils"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
@@ -16,9 +16,10 @@ import { SlotsListItem } from "./SlotsListItem"
 
 type SlotsListProps = {
   listType: "bookedSlots" | "scheduledSlots"
+  reload: boolean
 }
 
-export const SlotsList = ({ listType }: SlotsListProps) => {
+export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   const { id } = React.useContext(ProfileContext)
   const { colorScheme, accountType } = appContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -65,7 +66,7 @@ export const SlotsList = ({ listType }: SlotsListProps) => {
 
   React.useEffect(() => {
     fetchSlots()
-  }, [])
+  }, [reload])
 
   const isLightMode = colorScheme !== "dark"
   const isEmptyList = slots.length < 1
@@ -144,27 +145,40 @@ export const SlotsList = ({ listType }: SlotsListProps) => {
         </>
       ) : isLoading ? (
         <_ActivityIndicator />
-      ) : (
-        <View style={styles.noEventsMessage}>
-          {false ? (
-            //@TODO change this to something else
+      ) : listType === "bookedSlots" ? (
+        <View style={styles.noBookingsMessage}>
+          {slots.length < 1 ? (
             <SubHeaderText
               customStyle={styles.noEventsText}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              Your event list is empty right now. Start adding events by tapping the '+'
-              button and watch this space fill up with your plans!
+              You don't have any booked events now.{"\n"} Explore what the community has
+              to offer!
             </SubHeaderText>
           ) : (
-            <SubHeaderText
-              customStyle={styles.noEventsText}
-              colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              Looks like there are no events to show right now. Be the first to create an
-              event and inspire the community!
-            </SubHeaderText>
+            <></>
           )}
           <CurvedArrow
             style={[
-              styles.arrowIcon,
+              styles.bookingsArrowIcon,
+              //@ts-ignore
+              {
+                fill: isLightMode ? Colors.primary.s350 : Colors.primary.s350,
+                transform: [{ rotate: "150deg" }],
+              },
+            ]}
+          />
+        </View>
+      ) : (
+        <View style={styles.noSchedulingsMessage}>
+          <SubHeaderText
+            customStyle={styles.noEventsText}
+            colors={[Colors.primary.s800, Colors.primary.neutral]}>
+            Your event list is empty right now. Start adding events by tapping the '+'
+            button and watch this space fill up with your plans!
+          </SubHeaderText>
+          <CurvedArrow
+            style={[
+              styles.schedulingsArrowIcon,
               //@ts-ignore
               {
                 fill: isLightMode ? Colors.primary.s350 : Colors.primary.s350,
@@ -192,7 +206,14 @@ export const SlotsList = ({ listType }: SlotsListProps) => {
 }
 
 const styles = StyleSheet.create({
-  noEventsMessage: {
+  noBookingsMessage: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingBottom: Sizing.x15,
+  },
+  noSchedulingsMessage: {
     flex: 1,
     width: "100%",
     alignItems: "center",
@@ -203,7 +224,14 @@ const styles = StyleSheet.create({
     width: Sizing.x120,
     height: Sizing.x120,
   },
-  arrowIcon: {
+  bookingsArrowIcon: {
+    width: Sizing.x60,
+    height: Sizing.x60,
+    alignSelf: "flex-start",
+    marginLeft: Sizing.x80,
+    marginTop: Sizing.x40,
+  },
+  schedulingsArrowIcon: {
     width: Sizing.x60,
     height: Sizing.x60,
     alignSelf: "flex-end",

@@ -11,8 +11,11 @@ enum EventsTabsType {
   booked_slots,
   scheduled_slots,
 }
+type EventsTabParams = {
+  reload: boolean
+}
 
-export const EventsTabs = () => {
+export const EventsTabs = ({ reload }: EventsTabParams) => {
   const { colorScheme } = appContext()
   const [activeTab, setActiveTab] = useState<EventsTabsType>(EventsTabsType.active_events)
   const eventsListRef = React.useRef<any>()
@@ -56,13 +59,13 @@ export const EventsTabs = () => {
       </View>
       <View style={styles.tabContent}>
         {activeTab === EventsTabsType.active_events && (
-          <EventsList ref={eventsListRef} isOrganizerOwnEvents />
+          <EventsList reload ref={eventsListRef} isOrganizerOwnEvents />
         )}
         {activeTab === EventsTabsType.booked_slots && (
-          <SlotsList listType={"bookedSlots"} />
+          <SlotsList reload listType={"bookedSlots"} />
         )}
         {activeTab === EventsTabsType.scheduled_slots && (
-          <SlotsList listType={"scheduledSlots"} />
+          <SlotsList reload listType={"scheduledSlots"} />
         )}
       </View>
     </>

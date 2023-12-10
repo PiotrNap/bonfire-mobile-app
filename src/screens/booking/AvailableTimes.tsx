@@ -2,10 +2,9 @@ import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { appContext, bookingContext, myCalendarContext } from "contexts/contextApi"
+import { appContext, bookingContext } from "contexts/contextApi"
 
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { useAvailabilities } from "lib/hooks/useAvailabilities"
 import { getDigitalLocaleTime, getRandomKey } from "lib/utils"
 import { BookingStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, Pressable } from "react-native"
+import { View, StyleSheet, Pressable, BackHandler } from "react-native"
 
 import { useNavigation } from "@react-navigation/native"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -16,6 +16,7 @@ export interface SlotsListItemProps {
 
 export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
   const { colorScheme } = appContext()
+  const isLightMode = colorScheme === "light"
   const navigation = useNavigation()
 
   const onCardPress = () => {
@@ -24,6 +25,7 @@ export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
       bookingSlotType: slotType,
     })
   }
+  const containerBackgrounColor = isLightMode ? Colors.primary.s600 : Colors.primary.s600
 
   return (
     <Pressable
@@ -31,21 +33,21 @@ export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
       onPress={onCardPress}
       style={Buttons.applyOpacity([
         styles.main,
-        //TODO based on the slotType change the backgroundColor to either  SCHEDULED_COLOR_LIGHT/BOOKED_COLOR_LIGHT
+        { backgroundColor: containerBackgrounColor },
       ])}>
       <View pointerEvents="none" style={styles.textContainer}>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        <SubHeaderText colors={[Colors.primary.neutral]}>
           Event: {item.eventTitle}
         </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        <SubHeaderText colors={[Colors.primary.neutral]}>
           {slotType === "bookedSlots"
             ? `By: ${item.organizerAlias}`
             : `With: ${item.attendeeAlias}`}
         </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        <SubHeaderText colors={[Colors.primary.neutral]}>
           From: {new Date(item.fromDate).toLocaleString()}
         </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        <SubHeaderText colors={[Colors.primary.neutral]}>
           To: {new Date(item.toDate).toLocaleString()}
         </SubHeaderText>
       </View>
@@ -54,7 +56,7 @@ export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
           width="20"
           height="20"
           strokeWidth={2}
-          stroke={colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral}
+          stroke={Colors.primary.neutral}
           style={{ marginRight: "auto" }}
         />
       </View>
@@ -70,7 +72,6 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x10,
     ...Outlines.shadow.base,
     borderRadius: Outlines.borderRadius.base,
-    backgroundColor: Colors.neutral.s500,
   },
   arrowContainer: {},
   textContainer: {

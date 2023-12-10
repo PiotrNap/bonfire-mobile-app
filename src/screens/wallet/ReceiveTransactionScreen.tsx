@@ -103,7 +103,7 @@ export const ReceiveTransactionScreen = ({ route, pagerRef }: WalletTopUpScreenP
               changingColorScheme
               colors={[Colors.primary.s600, Colors.primary.neutral]}>
               Fund your Bonfire wallet with ADA or other Cardano native assets using the
-              address below.
+              below address.
             </BodyText>
           </View>
           <View style={styles.main}>

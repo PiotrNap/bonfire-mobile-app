@@ -86,7 +86,6 @@ export const DurationChoice = ({ navigation, route }: Props) => {
     let limitReached = false
 
     if (!pickedDateSlots || !pickedDateSlots.length) return
-
     // find first array of which first item contains selected date
     pickedDateSlots
       .find((slots: EventSlot[], idx) => {

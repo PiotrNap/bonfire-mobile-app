@@ -75,18 +75,21 @@ export const AvailableDatesSelection = ({ navigation, route }: Props) => {
     //@ts-ignore
     setPickedDate(markedDates[selectedDate].utcDate)
     let timeSlotMinDurations = []
-    const slotsForGivenDate = dateAvailabilities.map((availability) => {
-      // only take slots for currently selected date
-      if (availability.fromDate === selectedDate) {
-        let availableSlots = availability.slots.filter(
-          (slot) => new Date(slot.from) > new Date()
-        )
-        if (availableSlots.length >= 1) {
-          timeSlotMinDurations.push(availability.minDuration)
-          return availableSlots
+    const slotsForGivenDate = dateAvailabilities
+      .map((availability) => {
+        // only take slots for currently selected date
+        if (availability.fromDate === selectedDate) {
+          let availableSlots = availability.slots.filter(
+            (slot) => new Date(slot.from) > new Date()
+          )
+          if (availableSlots.length >= 1) {
+            timeSlotMinDurations.push(availability.minDuration)
+            return availableSlots
+          }
         }
-      }
-    })
+      })
+      .filter((slot) => slot)
+
     setPickedDateSlots(slotsForGivenDate)
     setPickedDateSlotsMinDuration(timeSlotMinDurations)
     // if (acceptedCheckbox && !validGoogleOAuth) {

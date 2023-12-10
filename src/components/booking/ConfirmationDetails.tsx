@@ -28,9 +28,15 @@ import {
 } from "lib/utils"
 import { AnyObject } from "yup/lib/types"
 import { ProfileContext } from "contexts/profileContext"
-import { cutStringInside, hexToUtf8, lovelaceToAda } from "lib/wallet/utils"
+import {
+  calculateCancellationFee,
+  cutStringInside,
+  hexToUtf8,
+  lovelaceToAda,
+} from "lib/wallet/utils"
 import { EventBookingSlot } from "common/types/dto"
 import Clipboard from "@react-native-clipboard/clipboard"
+import dayjs from "dayjs"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
@@ -303,12 +309,32 @@ export const ConfirmationDetails = ({
         content: `${(duration || bookingSlot?.duration) / (1000 * 60 * 60)}hr`,
       },
     },
-    bookingSlot?.cancellation &&
+    !bookingSlot?.attendeeAlias &&
+      bookingSlot?.cancellation &&
       bookingSlot?.cancellation?.fee && {
-        label: "Cancellation Window",
-        lineContent: {
-          content: `${bookingSlot?.cancellation.window}hr before start (${bookingSlot?.cancellation.fee}% lovelace fee)`,
-        },
+        label: `Cancellation (${bookingSlot.cancellation.window}hr)`,
+        lineContent: [
+          {
+            content: `Free until ${new Date(
+              new Date(bookingSlot.fromDate).getTime() -
+                bookingSlot.cancellation.fee * 60 * 60 * 1000
+            ).toLocaleString()},`,
+          },
+          {
+            content: `after - ${lovelaceToAda(
+              calculateCancellationFee(
+                bookingSlot.fromDate,
+                bookingSlot.cancellation.window,
+                bookingSlot.cancellation.fee,
+                bookingSlot.cost,
+                dayjs(bookingSlot.fromDate).subtract(
+                  bookingSlot.cancellation.window / 2,
+                  "hours"
+                )
+              ).cancellationFeeLovelace
+            )}₳ (${bookingSlot?.cancellation.fee}%)`,
+          },
+        ],
       },
     bookingSlot?.lockingTxHash && {
       label: "TxHash",

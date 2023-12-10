@@ -4,12 +4,13 @@ import { View, StyleSheet, Animated } from "react-native"
 import { Layout } from "components/layouts/basicLayout"
 import { EventsTabs } from "components/tabs/eventsTabs"
 
-export const MyEvents = ({ navigation }: any) => {
+export const MyEvents = ({ navigation, route }: any) => {
+  const params = route.params
   /* @TODO Maybe once users have enough events going on we can add a search bar...*/
   return (
     <Layout>
       <View style={styles.main}>
-        <EventsTabs />
+        <EventsTabs reload={params?.reload} />
       </View>
     </Layout>
   )

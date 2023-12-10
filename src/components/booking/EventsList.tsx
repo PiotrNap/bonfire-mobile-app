@@ -11,10 +11,9 @@ import { ProfileContext } from "contexts/profileContext"
 import { CurvedArrow, PlusIcon } from "assets/icons"
 import { RoundedButton } from "components/buttons/roundedButton"
 import { useNavigation } from "@react-navigation/native"
-import { PAGINATED_RESULTS_COUNT } from "common/types/dto"
 
 export const EventsList = React.forwardRef((props, ref): any => {
-  const { customEvents, customIsLoading, isOrganizerOwnEvents } = props
+  const { customEvents, customIsLoading, isOrganizerOwnEvents, reload } = props
   const { id } = React.useContext(ProfileContext)
   const { colorScheme, accountType } = appContext()
   const {
@@ -23,7 +22,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
     isLastPage,
     getEventsPaginated,
     eventsPage,
-  } = useEventsPagination(isOrganizerOwnEvents ? id : "")
+  } = useEventsPagination(isOrganizerOwnEvents ? id : "", reload)
   const navigation = useNavigation()
 
   React.useImperativeHandle(ref, () => ({

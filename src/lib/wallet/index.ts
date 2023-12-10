@@ -221,13 +221,27 @@ export class Wallet {
       const { data, error } = await Wallet.submitTransaction(tx)
       if (error) throw error
 
-      return bytesToHex(data.bytes)
+      const txHash = bytesToHex(data.bytes)
+      // update collateral utxoId
+      if (isCollateralSplitTx) {
+        const newCollateralIdx = tx.body.outputs.findIndex(
+          (output) =>
+            output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
+        )
+        await AsyncStorage.setItem(
+          COLLATERAL_STORAGE_KEY,
+          `${txHash}#${newCollateralIdx}`
+        )
+      }
+
+      return txHash
     } catch (e) {
       throw e
     } finally {
       signingKey = ""
     }
   }
+
   static async sendLockingTransaction(
     paymentTokens: Value,
     lockingDatumInfo: EscrowContractDatum,
@@ -281,7 +295,8 @@ export class Wallet {
       signingKey = ""
     }
   }
-  static async sendWithdrawalTransaction(
+
+  static async sendPayoutTransaction(
     unlockingTxInput: TxInput,
     spareUtxos: TxInput[],
     collateralUtxoIn: TxInput,
@@ -294,16 +309,13 @@ export class Wallet {
     const now = Date.now()
     const fiveMinutes = 1000 * 60 * 5
     const params = new NetworkParams(getNetworkConfig())
-    // const unlockingTxOut = new TxOutput(
-    //   Address.fromBech32(userWalletAddress),
-    //   unlockingTxInput.value
-    // )
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
     const treasuryAddress = new Address(TREASURY_ADDRESS)
     const userAddress = Address.fromBech32(userWalletAddress)
     const userPubKeyHash = userAddress.pubKeyHash
     if (!userPubKeyHash)
       throw Error("Unable to obtain the PubKey hash for user wallet address")
+
     const frstTxOutId = new escrowProgram.types.TxOutId(
       unlockingTxInput.outputId.txId.hex,
       unlockingTxInput.outputId.utxoIdx
@@ -311,6 +323,7 @@ export class Wallet {
     const redeemer = new escrowProgram.types.Redeemer.Complete([frstTxOutId])
     const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
 
+    //@TODO after beta release add script reference
     /** For wallets with Beta-Tester NFT we don't expect any fee to be sent to the treasury **/
     const unlockingTx = new Tx()
       .attachScript(escrowProgramCompiled)
@@ -339,7 +352,96 @@ export class Wallet {
 
       const txHash = bytesToHex(data.bytes)
       // update collateral utxoId
-      const newCollateralIdx = unlockingTx.body.outputs.find(
+      const newCollateralIdx = unlockingTx.body.outputs.findIndex(
+        (output) =>
+          output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
+      )
+      await AsyncStorage.setItem(COLLATERAL_STORAGE_KEY, `${txHash}#${newCollateralIdx}`)
+
+      return { txHash }
+    } catch (e) {
+      throw e
+    } finally {
+      signingKey = ""
+    }
+  }
+  static async sendCancellationTransaction(
+    unlockingTxInput: TxInput,
+    spareUtxos: TxInput[],
+    collateralUtxoIn: TxInput,
+    feeUtxo: TxInput,
+    cancellationFeeValue: Value, // based on beneficiary's event cancellation rate
+    beneficiaryAddress: string,
+    benefactorAddress: string,
+    signingKey: string,
+    isBeneficiary: boolean, // whether the user initiating tx is the organizer
+    isBeforeCancellationWindow: boolean
+  ) {
+    const now = Date.now()
+    const fiveMinutes = 1000 * 60 * 5
+    const params = new NetworkParams(getNetworkConfig())
+    const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
+    const userAddress = Address.fromBech32(
+      isBeneficiary ? beneficiaryAddress : benefactorAddress
+    )
+    const userPubKeyHash = userAddress.pubKeyHash
+    if (!userPubKeyHash)
+      throw Error("Unable to obtain the PubKey hash for user wallet address")
+
+    const redeemer = new escrowProgram.types.Redeemer.Cancel(
+      unlockingTxInput.outputId.txId.hex,
+      unlockingTxInput.outputId.utxoIdx
+    )
+    const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
+
+    //@TODO after beta release add script reference
+    const unlockingTx = new Tx()
+      .attachScript(escrowProgramCompiled)
+      .addInputs([...spareUtxos, feeUtxo])
+      .addCollateral(collateralUtxoIn)
+      .addInput(unlockingTxInput, redeemer)
+      .addOutput(collateralUtxoOut) // produce a fresh collateral utxo
+      .addSigner(userPubKeyHash)
+      .validFrom(new Date(now - fiveMinutes))
+      .validTo(new Date(now + fiveMinutes))
+
+    /*
+     * if benefactor is cancelling before cancellation window there's nothing to be added to the output
+     */
+    if (isBeneficiary) {
+      // return everything to the benefactor
+      unlockingTx.addOutput(
+        new TxOutput(Address.fromBech32(benefactorAddress), unlockingTxInput.value)
+      )
+    } else {
+      // means it's during cancellation window
+      if (!isBeforeCancellationWindow) {
+        unlockingTx.addOutput(
+          new TxOutput(Address.fromBech32(beneficiaryAddress), cancellationFeeValue)
+        )
+        unlockingTx.addOutput(
+          new TxOutput(
+            Address.fromBech32(benefactorAddress),
+            unlockingTxInput.value.sub(cancellationFeeValue)
+          )
+        )
+      }
+    }
+    console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
+
+    try {
+      await unlockingTx.finalize(params, userAddress)
+      let signature = privKey.sign(unlockingTx.bodyHash)
+      unlockingTx.addSignature(signature)
+
+      // console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
+
+      const { data, error } = await Wallet.submitTransaction(unlockingTx)
+      if (error) throw error
+
+      const txHash = bytesToHex(data.bytes)
+      // update collateral utxoId
+      const newCollateralIdx = unlockingTx.body.outputs.findIndex(
         (output) =>
           output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
       )

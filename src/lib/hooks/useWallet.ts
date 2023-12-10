@@ -33,8 +33,8 @@ export const useWallet = (makeInitialFetch = true) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [txListPage, setTxListPage] = React.useState<number>(1)
   const [txHistoryEndReached, setTxHistoryEndReached] = React.useState<boolean>(false)
-  const [aU, setaU] = React.useState<any>(1)
-  const [tU, settU] = React.useState<any>(1)
+  // const [aU, setaU] = React.useState<any>(1)
+  // const [tU, settU] = React.useState<any>(1)
 
   /** Update wallet Utxos and ADA balance **/
   useFocusEffect(
@@ -55,8 +55,8 @@ export const useWallet = (makeInitialFetch = true) => {
   const updateWalletBalance = React.useCallback(
     async (addr?: string) => {
       try {
-        console.log("tokens update :", aU)
-        setaU((p) => p + 1)
+        // console.log("tokens update :", aU)
+        // setaU((p) => p + 1)
 
         setIsLoading(true)
         addr = addr ?? baseAddress
@@ -71,7 +71,6 @@ export const useWallet = (makeInitialFetch = true) => {
 
         const { data, error } = await Wallet.getUtxosAtAddress(addr)
 
-        // console.log("updateWalletBalance() >", JSON.stringify(data, null, 4))
         if (!data || error)
           Toast.show({
             type: "error",
@@ -107,7 +106,7 @@ export const useWallet = (makeInitialFetch = true) => {
         showErrorToast(e)
       }
     },
-    [baseAddress]
+    [baseAddress, collateralUtxoId]
   )
   const updateWalletTxHistory = React.useCallback(
     async (addr?: string, refresh = true) => {
@@ -117,8 +116,8 @@ export const useWallet = (makeInitialFetch = true) => {
           setIsPaginationLoading(true)
         }
 
-        console.log("txs update :", tU)
-        settU((p) => p + 1)
+        // console.log("txs update :", tU)
+        // settU((p) => p + 1)
 
         addr = addr ?? baseAddress
         const isGoodAddr = Crypto.verifyBech32(addr)
@@ -175,7 +174,7 @@ export const useWallet = (makeInitialFetch = true) => {
         showErrorToast(e)
       }
     },
-    [baseAddress, txHistory, txListPage]
+    [baseAddress, txHistory, txListPage, txHistoryEndReached]
   )
 
   return {
