@@ -127,10 +127,21 @@ export class Events {
       throw e?.response?.data || e
     }
   }
-
   public static async deleteEvent(id: string): Promise<AnyObject | void> {
     try {
       const res = await axios.delete(`events/${id}`)
+      if (res) return res.data
+    } catch (e) {
+      throw e?.response?.data || e
+    }
+  }
+  public static async deleteEventBooking(
+    id: string,
+    deleteQuery: { attendee_id?: string; organizer_id?: string; txHash: string }
+  ): Promise<AnyObject | void> {
+    const queryString = new URLSearchParams(deleteQuery)
+    try {
+      const res = await axios.delete(`events/booking/${id}?${queryString}`)
       if (res) return res.data
     } catch (e) {
       throw e?.response?.data || e

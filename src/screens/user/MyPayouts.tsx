@@ -34,6 +34,8 @@ import {
 import { useWallet } from "lib/hooks/useWallet"
 import { BigSlideModal } from "components/modals/BigSlideModal"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { EventBookingSlot } from "common/types/dto"
+import { PayoutsListItem } from "components/lists/myPayouts/payoutsListItem"
 
 type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 type PayoutTxInfo = {
@@ -53,7 +55,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
   useWallet() // this will re-fetch wallets utxo's
 
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
-  const [availablePayouts, setAvailablePayouts] = React.useState<any[]>([])
+  const [availablePayouts, setAvailablePayouts] = React.useState<EventBookingSlot[]>([])
   const [selectedPayout, setSelectedPayout] = React.useState<AnyObject | null>(null)
   const [payoutTxInfo, setPayoutTxInfo] = React.useState<PayoutTxInfo | null>(null)
   const [isListLoading, setIsListLoading] = React.useState<boolean>(false)
@@ -69,11 +71,15 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
   const fetchUserAvailablePayouts = async () => {
     setIsListLoading(true)
     try {
-      const res = await Events.getBookingsByQuery({
+      const queryResult = await Events.getBookingsByQuery({
         organizer_id: id,
         past_bookings: true,
       })
-      if (res && Array.isArray(res)) setAvailablePayouts(res)
+      if (!queryResult)
+        throw new Error("Something went wrong while fetching the available payouts")
+
+      const [results, count] = queryResult
+      if (count > 0) setAvailablePayouts(results)
     } catch (e) {
       showErrorToast(e)
     } finally {
@@ -100,7 +106,6 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
       console.log("selectedPayout.lockingTxHash >", selectedPayout.lockingTxHash)
       // fetch utxos from selected transactions and get the utxo that holds the payment tokens
       const { data, error } = await Wallet.getTxUtxos(selectedPayout.lockingTxHash)
-
       if (error) return showErrorToast(error)
 
       const payoutUtxo = data.outputs.find(
@@ -173,7 +178,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
           serviceFee,
           hasBetaTesterToken,
         } = payoutTxInfo
-        const { txHash } = await Wallet.sendUnlockingTransaction(
+        const { txHash } = await Wallet.sendPayoutTransaction(
           payoutUtxo,
           spareUtxos,
           collateralUtxo,
@@ -214,10 +219,6 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
         )
         if (!txHash) throw new Error("We were unable to submit the transaction")
 
-        // we need to assume that the collateral output idx is 0
-        const collateralUtxoId = `${txHash}#0`
-        await AsyncStorage.setItem(COLLATERAL_STORAGE_KEY, collateralUtxoId)
-
         if (txHash) {
           navigation.navigate("Confirmation", {
             customRoute: "Profile Main",
@@ -243,7 +244,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
     }),
     [containerWidth]
   )
-  const handlePress = (idx: number) => {
+  const onCheckBoxPress = (idx: number) => {
     if (idx === selectedCheckbox) {
       setSelectedPayout(null)
       setSelectedCheckbox(null)
@@ -253,7 +254,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
     }
   }
 
-  const keyExtractor = () => Crypto.randomBytes(16).toString("base64")
+  const keyExtractor = (item: EventBookingSlot) => item.id
 
   const refreshControl = (
     <RefreshControl
@@ -263,21 +264,15 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
     />
   )
 
-  const renderItem = React.useCallback(
-    ({ item, index }: any) => (
-      <View style={{ flexDirection: "row" }}>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-          {item.id}
-        </SubHeaderText>
-        <Checkbox
-          customContainerStyle={{ marginLeft: "auto" }}
-          acceptedCheckbox={selectedCheckbox === index}
-          onCheckBoxPress={() => handlePress(index)}
-        />
-      </View>
-    ),
-    [availablePayouts, selectedCheckbox]
+  const renderItem = ({ item, index }: any) => (
+    <PayoutsListItem
+      onCheckBoxPress={onCheckBoxPress}
+      isSelected={selectedCheckbox === index}
+      index={index}
+      item={item}
+    />
   )
+
   const initiateCollateralSplit = () => {
     setTxType("collateral")
     setIsCollateralPromptVisible(false)
@@ -299,6 +294,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
             onLayout={onLayout}
             contentContainerStyle={isListLoading ? { opacity: 0.5 } : {}}
             refreshControl={refreshControl}
+            extraData={selectedCheckbox}
             data={availablePayouts}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
@@ -354,8 +350,10 @@ const styles = StyleSheet.create({
   mainContainer: { flex: 1, width: "90%" },
   bottomContainer: { width: "90%", margin: Sizing.x10 },
   noPayoutsText: {
+    alignSelf: "center",
     textAlign: "center",
     ...Typography.subHeader.x25,
+    marginTop: Sizing.x15,
   },
   collateralModal: {
     height: "auto",
