@@ -32,21 +32,22 @@ enum Redeemer {
     Recycle
 }
 
-const TREASURY_PKH: ByteArray = #86de9a90be33e317c56ce862c737267dcd4a2daade25a4b7a7321acd
+const TREASURY_PKH: ByteArray = #${TREASURY_PKH}
 const treasuryPkh: PubKeyHash = PubKeyHash::new(TREASURY_PKH)
 
-const BETA_TESTER_MPH: ByteArray = #481146d15d0c9bacc880254f88f944f6a88dba2e917d35fcbf92aa24
+const BETA_TESTER_MPH: ByteArray = #${BETA_TESTER_MPH}
 const betaTesterMph: MintingPolicyHash = MintingPolicyHash::new(BETA_TESTER_MPH)
 
-const minServiceFee: Int = 1500000
+const minServiceFeePercent: Int = ${MIN_PERCENT_SERVICE_FEE}
+const minServiceFeeLovelace: Int = ${MIN_LOVELACE_SERVICE_FEE}
 
 func getServiceFeeAmnt(lovelacePayout: Int, withBetaTesterToken: Bool) -> Value {
     if (withBetaTesterToken) {
         Value::lovelace(0)
-    } else if ( lovelacePayout / 100 < minServiceFee ) {
-        Value::lovelace(minServiceFee)
+    } else if ( lovelacePayout / 100 < minServiceFeeLovelace ) {
+        Value::lovelace(minServiceFeeLovelace)
     } else {
-        Value::lovelace(lovelacePayout / 100)
+        Value::lovelace(lovelacePayout * ( minServiceFeePercent / 100))
     }
 }
 
@@ -84,27 +85,27 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
                 in.output_id.tx_id == cancelR.txId
             }).value;
 
-            (datum.cancelWindowEnd > now).trace("Cancel1:") && 
+            (datum.cancelWindowEnd > now).trace("1") && 
 
             if(cancelWindow.contains(now)) {
                 if(tx.is_signed_by(benefactorPkh)) {
-                    cFeeLove: Int = redeemerTxOutValue.get_lovelace() * (datum.cancelFee / 100);
+                    cFeeLove: Int = (redeemerTxOutValue.get_lovelace() * datum.cancelFee) / 100;
 
                     // must return all payment tokens
-                    (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("Cancel2") &&
-                
+                    (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("2") &&
+
                     if (cFeeLove < 2_000_000) {
-                        (tx.value_sent_to(beneficiaryPkh).get_lovelace() >= 2_000_000).trace("Cancel3")
+                        (tx.value_sent_to(beneficiaryPkh).get_lovelace() >= 2_000_000).trace("3")
                     } else {
-                        (tx.value_sent_to(beneficiaryPkh).get_lovelace() >= cFeeLove).trace("Cancel4")
+                        (tx.value_sent_to(beneficiaryPkh).get_lovelace() >= cFeeLove).trace("4")
                     }
                 } else if (tx.is_signed_by(beneficiaryPkh)){
-                    (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("Cancel5")
+                    (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("5")
                 } else {
                     false
                 }
             } else {
-                (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("Cancel6")
+                (tx.value_sent_to(benefactorPkh) >= redeemerTxOutValue).trace("6")
             }
         },
         completeR: Complete => {
@@ -118,26 +119,26 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
                                 },Value::ZERO);
             serviceFee: Value = getServiceFeeAmnt(redeemerTxOutsValue.get_lovelace(), betaTesterTokenPresent);
 
-           (tx.is_signed_by(beneficiaryPkh)).trace("Cmplt1") &&
+           (tx.is_signed_by(beneficiaryPkh)).trace("7") &&
 
-           (now > datum.releaseDate).trace("Cmplt2") &&
+           (now > datum.releaseDate).trace("8") &&
 
            (tx.value_sent_to(beneficiaryPkh) >= redeemerTxOutsValue)
-           .trace("Cmplt3") &&
+           .trace("9") &&
 
            (tx.value_sent_to(treasuryPkh) == serviceFee)
-           .trace("Cmplt4")
+           .trace("10")
         },
         Recycle => {
-           (tx.is_signed_by(treasuryPkh)).trace("Recycle1") &&
+           (tx.is_signed_by(treasuryPkh)).trace("11") &&
 
-           (now > datum.createdAt + oneYearTime).trace("Recycle2")
+           (now > datum.createdAt + oneYearTime).trace("12")
         }
     }
 }
 `
 export const escrowProgram = Program.new(EscrowContractScript)
-const simplify = false
-const uplcProgram = escrowProgram.compile(simplify)
+export const escrowProgramCompiled = escrowProgram.compile(false) // simplify = false
+export const escrowValidatorHash = escrowProgramCompiled.validatorHash
 
-export const escrowValidatorHash = uplcProgram.validatorHash
+// console.log("Smart contract address: ", Address.fromHash(escrowValidatorHash).toBech32())
