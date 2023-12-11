@@ -3,7 +3,6 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import "RNSplashScreen.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -64,11 +63,7 @@ static void ClearKeychainIfNecessary() {
                                                    moduleName:@"bonfire"
                                             initialProperties:nil];
 
-  if (@available(iOS 13.0, *)) {
-      rootView.backgroundColor = [UIColor systemBackgroundColor];
-  } else {
-      rootView.backgroundColor = [UIColor whiteColor];
-  }
+  rootView.backgroundColor = [UIColor colorWithRed:1.00000 green:1.00000 blue:1.00000 alpha:1.00000];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -76,10 +71,10 @@ static void ClearKeychainIfNecessary() {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  [RNSplashScreen.show];
-  // or
-  // [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
-  
+   // @TODO this is for a newer version of react-native-navigation in case the previous 
+   // way of setting this doesn't work
+  // self.window.rootViewController.view.backgroundColor = [UIColor colorWithRed:1.00000 green:1.00000 blue:1.00000 alpha:1.00000];
+
   return YES;
 }
 

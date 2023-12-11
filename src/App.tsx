@@ -12,7 +12,6 @@ import { ProfileContextProvider } from "contexts/profileContext"
 import { WalletContextProvider } from "contexts/walletContext"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { enableScreens } from "react-native-screens"
-import SplashScreen from "react-native-splash-screen"
 
 import { Confirmation, SuccessScreen } from "screens/payments"
 import { NavigationScreens } from "tabs/NavigationScreens"
@@ -35,7 +34,7 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
-  const onNavigationReady = () => SplashScreen.hide()
+  // const onNavigationReady = () => SplashScreen.hide()
 
   // React.useEffect(() => {
   //   if (route.params?.["event-id"])
@@ -51,8 +50,7 @@ function App() {
                 <NavigationContainer
                   linking={
                     isAuthorized ? authorizedLinkingConfig : unauthorizedLinkingConfig
-                  }
-                  onReady={onNavigationReady}>
+                  }>
                   <Stack.Navigator
                     screenOptions={{
                       headerShown: false,
