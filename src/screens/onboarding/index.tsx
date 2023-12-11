@@ -1,5 +1,3 @@
-export { CreateAccountScreen } from "./CreateAccountScreen"
 export { WelcomeScreen } from "./WelcomeScreen"
 export { UserDetailsScreen } from "./UserDetailsScreen"
-export { PricingScreen } from "./PricingScreen"
 export { RegistrationConfirmationScreen } from "./RegistrationConfirmationScreen"
