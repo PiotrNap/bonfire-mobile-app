@@ -9,7 +9,6 @@
     "a:build": "react-native run-android",
     "i:build": "react-native run-ios",
     "i:dev": "NODE_ENV=development react-native start",
-    "test": "jest --watchAll",
     "hack": "./node_modules/rn-nodeify/cmd.js --hack --install && yarn jetify",
     "prepare": "husky install",
     "a:emulators:dev": "./scripts/run-android-emulators.sh",

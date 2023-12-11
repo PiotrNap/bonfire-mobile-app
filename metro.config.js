@@ -11,7 +11,6 @@ const config = {
   resolver: {
     blacklistRE: blacklist([
       /node_modules\/bip39\/src\/wordlists\/(japanese|spanish|italian|french|korean|czech|portuguese|chinese_traditional|chinese_simplified)\.json$/,
-      /src\/api_data/,
     ]),
   },
 }
