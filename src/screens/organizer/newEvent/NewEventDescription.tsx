@@ -66,7 +66,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
 
   const onBackNavigationPress = () => navigation.goBack()
   const checkIfPaymentTokensAreValid = async (paymentTokens: AssetUnit[]) => {
-    // TODO possible check on back-end if given token exists on the blockchain
+    // TODO after release check on our back-end if a given token exists on the blockchain
     return (
       paymentTokens &&
       paymentTokens.every((pt, idx) =>
@@ -83,7 +83,6 @@ export const NewEventDescription = ({ navigation }: Props) => {
   const onSummaryChange = (summary) => setSummary(summary)
   const onCancelWindowChange = (hours) => setCancelWindow(hours)
   const onFeeChange = (fee) => setFee(fee)
-  // const onTypeChange = (type: any) => setType(type)
   const onVisibilityTypeChange = (type: any) => setVisibility(type)
   const changePaymentTokensErrorStatus = (status) => setPaymentTokensErrorStatus(status)
 

@@ -104,7 +104,6 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
     []
   )
 
-  //@TODO fix loading indicator at the bottom
   return (
     <>
       {!isEmptyList && !isLoading ? (
@@ -151,8 +150,8 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
             <SubHeaderText
               customStyle={styles.noEventsText}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              You don't have any booked events now.{"\n"} Explore what the community has
-              to offer!
+              You don't have any booked events.{"\n"}Explore what the community has to
+              offer!
             </SubHeaderText>
           ) : (
             <></>
@@ -173,8 +172,8 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
           <SubHeaderText
             customStyle={styles.noEventsText}
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Your event list is empty right now. Start adding events by tapping the '+'
-            button and watch this space fill up with your plans!
+            You don't have any scheduled meetings.{"\n"}Create new event and let people
+            discover you!
           </SubHeaderText>
           <CurvedArrow
             style={[

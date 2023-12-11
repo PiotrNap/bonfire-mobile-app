@@ -235,15 +235,15 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
   const onHideAuthenticator = () => setAuthenticatorVisible(false)
   const onLayout = (e) => setContainerWidth(e.nativeEvent.layout.width)
 
-  const getItemLayout = React.useCallback(
-    (_, index: number) => ({
-      length: containerWidth,
-      //@TODO change this to what is set eventually
-      offset: (Sizing.x55 + Sizing.x25) * index,
-      index,
-    }),
-    [containerWidth]
-  )
+  //const getItemLayout = React.useCallback(
+  //  (_, index: number) => ({
+  //    length: containerWidth,
+  //    //@TODO change this to what is set eventually
+  //    offset: (Sizing.x55 + Sizing.x25) * index,
+  //    index,
+  //  }),
+  //  [containerWidth]
+  //)
   const onCheckBoxPress = (idx: number) => {
     if (idx === selectedCheckbox) {
       setSelectedPayout(null)
@@ -301,7 +301,6 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
             scrollEnabled={!isLoading}
             disableScrollViewPanResponder={isLoading}
             onEndReachedThreshold={0.3}
-            getItemLayout={getItemLayout}
             windowSize={8}
           />
         ) : (

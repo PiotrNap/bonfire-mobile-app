@@ -5,15 +5,14 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
-import { appContext, walletContext } from "contexts/contextApi"
+import { walletContext } from "contexts/contextApi"
 import { Colors, Sizing } from "styles/index"
-import { validateMnemonic, wordlists } from "bip39"
 import { Wallet } from "lib/wallet"
 import { Users } from "Api/Users"
 import { ProfileContext } from "contexts/profileContext"
-import { UserBaseDTO } from "common/interfaces/profileInterface"
 import { Checkbox } from "components/forms/Checkbox"
 import { showErrorToast } from "lib/helpers"
+import wordlist from "bip39/src/wordlists/english.json"
 
 const MAX_MNEMONIC_LENGTH = 12
 const MNEMONIC_ERRORS = {
@@ -30,42 +29,11 @@ const MNEMONIC_ERRORS = {
   11: false,
 }
 
-//TODO  DO NOT use this mnemonic in production
-// const DEV_MNEMONIC = {
-// "0": "expand",
-// "1": "good",
-// "2": "gun",
-// "3": "morning",
-// "4": "wall",
-// "5": "assault",
-// "6": "heart",
-// "7": "punch",
-// "8": "access",
-// "9": "magic",
-// "10": "spoon",
-// "11": "tag",
-// }
-const DEV_MNEMONIC = {
-  "0": "top",
-  "1": "polar",
-  "2": "minute",
-  "3": "special",
-  "4": "rival",
-  "5": "adjust",
-  "6": "burger",
-  "7": "wasp",
-  "8": "session",
-  "9": "dinosaur",
-  "10": "conduct",
-  "11": "cabbage",
-}
-
-export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
-  const [words, _] = React.useState<Set<string>>(new Set(wordlists.english))
+export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
+  const [words, _] = React.useState<Set<string>>(new Set(wordlist))
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [content, setContent] = React.useState<any>(false)
-  //TODO change this to empty object '{}'
-  const [tempMnemonic, setTempMnemonic] = React.useState<{}>(DEV_MNEMONIC)
+  const [tempMnemonic, setTempMnemonic] = React.useState<{}>({})
   const [currMnemonicLength, setCurrentMnemonicLength] = React.useState<{}>({})
   const [inputErrors, setInputErrors] = React.useState<{
     [key: string]: boolean
@@ -80,17 +48,13 @@ export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
   const mnemonicPresent = mnemonic && Object.keys(mnemonic).length > 1
 
   React.useEffect(() => {
-    if (typeof __DEV__ === "boolean" && __DEV__) {
-      setMnemonic(DEV_MNEMONIC)
-    }
-
-    if (mnemonicPresent) {
+    if (mnemonicPresent && !prop) {
       let _tempMnemonic = Object.assign({}, mnemonic)
       emptyFields.forEach((f) => (_tempMnemonic[f] = ""))
       setTempMnemonic(_tempMnemonic)
       setContent(textContent.confirm_mnemonic)
     } else setContent(textContent.import_mnemonic)
-  }, [mnemonicPresent, mnemonic])
+  }, [mnemonicPresent, mnemonic, pageIndex])
 
   const isDisabledInput = (idx: number) => {
     if (mnemonicPresent) {
@@ -123,7 +87,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
     )
   }, [currMnemonicLength, hasError])
 
-  const onConfirmPress = async () => {
+  const onNextButtonPress = async () => {
     setIsLoading(true)
 
     try {
@@ -138,23 +102,26 @@ export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
 
       if (nonExistingUserBaseAddr === userBaseAddr)
         throw new Error("Please provide a different mnemonic")
-      console.log(walletKeys)
-      setWalletKeys(walletKeys)
 
-      if (prop === "sign-in") {
-        userCred = await Users.checkIfUserExistsForPublicKey(walletKeys.accountPubKeyHex)
-
-        if (!userCred) {
-          setNonExistingUserBaseAddr(userBaseAddr)
-          throw new Error("No user found for given mnemonic.")
-        }
-
-        setMnemonic(tempMnemonic)
-        setIsOfflineMnemonic(acceptedStoreOfflineCheckbox)
-        setUsername(userCred?.username)
+      if (!prop) {
         setWalletKeys(walletKeys)
-        pagerRef.current.setPage(1)
-      } else pagerRef.current.setPage(3)
+        return pagerRef.current.setPage(3)
+      }
+
+      userCred = await Users.checkIfUserExistsForPublicKey(walletKeys.accountPubKeyHex)
+
+      if (prop === "sign-in" && !userCred) {
+        setNonExistingUserBaseAddr(userBaseAddr)
+        throw new Error("No user found for a given mnemonic.")
+      } else if (prop === "import-mnemonic" && userCred) {
+        throw new Error("User already exist for a given mnemonic.")
+      }
+
+      setMnemonic(tempMnemonic)
+      setIsOfflineMnemonic(acceptedStoreOfflineCheckbox)
+      setUsername(userCred?.username || "")
+      setWalletKeys(walletKeys)
+      pagerRef.current.setPage(1)
     } catch (e) {
       showErrorToast(e)
     } finally {
@@ -175,10 +142,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
     })
   }
 
-  //@TODO revert this
-  // const emptyFields = [2, 7, 11]
-  const emptyFields: any = []
-
+  const emptyFields = [2, 7, 11]
   const validateMnemonicInputField = (val: string, idx: any): boolean => {
     val = val?.trim()
     if (isConfirmScreen && mnemonic) return mnemonic[idx] === val
@@ -264,26 +228,25 @@ export const MnemonicInsertScreen = ({ pagerRef, prop }: any) => {
 
       <View style={styles.main}>{renderTextInputs()}</View>
       <View style={styles.footerWrapper}>
-        {prop === "sign-in" && (
+        {prop && (
           <View style={styles.messageWrapper}>
             <Checkbox
               tag="store-offline"
               colorMode="dark"
               onCheckBoxPress={onCheckBoxPress}
               acceptedCheckbox={acceptedStoreOfflineCheckbox}>
-              I would like to store a copy on my device, and access it later through my
-              user profile.
+              I'd like to store a copy on my device, and access it later through my User
+              Profile.
             </Checkbox>
           </View>
         )}
 
         <FullWidthButton
           text="Next"
-          //@TODO revert this
-          // disabled={isDisabledButton()}
+          disabled={isDisabledButton()}
           buttonType="transparent"
           colorScheme="dark"
-          onPressCallback={onConfirmPress}
+          onPressCallback={onNextButtonPress}
           loadingIndicator={isLoading}
         />
       </View>
@@ -295,7 +258,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "90%",
-    // height: "100%",
     alignItems: "center",
     justifyContent: "space-between",
   },
@@ -303,11 +265,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: Sizing.x15,
   },
-  main: {
-    // flex: 1,
-    // alignItems: "center",
-    // marginVertical: "auto",
-  },
+  main: {},
   inputRow: {
     width: " 100%",
     flexDirection: "row",

@@ -62,10 +62,7 @@ export const EventDescription = ({ navigation, route }: any) => {
 
     try {
       // @TODO (s)
-      // 1. check if user can pay for the event
-      // 2. check whether there are still open time slots
-      // 3. adjust the event time and availabilities to match users' own time-zone
-      // 4. check whether deep-linking navigation still working
+      // check whether deep-linking navigation still working
 
       // We have all event info from previous fetch when navigating with deep link
       // if (route.params?.fromShareLink) {
@@ -78,38 +75,6 @@ export const EventDescription = ({ navigation, route }: any) => {
       let event = await Events.getEventById(eventId)
       if (!event) return
 
-      // if (!availableDaysLeftInCurrMonth(Object.values(event.selectedDays))) {
-      //   const nextAvailableMonth: number | undefined = (
-      //     Object.values(event.selectedDays) as number[]
-      //   ).find(
-      //     (d: any) =>
-      //       dayjs(d).month() > dayjs().month() && dayjs(d).year() >= dayjs().year()
-      //   )
-      //   if (!nextAvailableMonth) return
-
-      //   const availableStartDate = dayjs(nextAvailableMonth)
-      //   const calendarSetup = {
-      //     nextMonths: true,
-      //     month: availableStartDate.month(),
-      //     year: availableStartDate.year(),
-      //     isBookingCalendar: true,
-      //     isRegularCalendar: false,
-      //     availabilities: availableDays,
-      //     startFromCustomMonth: true,
-      //     isNewCalendar: true,
-      //   }
-      //   loadMyCalendar(calendarSetup)
-      //   changeMonthHeader({
-      //     month: months[availableStartDate.month()],
-      //     year: availableStartDate.year(),
-      //     numOfEvents: 0,
-      //     startingDate: new Date(availableStartDate.year(), availableStartDate.month()),
-      //   })
-      // } else {
-      //   setAvailCalendar(availableDays)
-      // }
-      // setPreviewingEvent(Object.assign({}, event, route.params))
-
       navigation.navigate("Available Event Dates Selection", {
         event,
       })
@@ -120,11 +85,6 @@ export const EventDescription = ({ navigation, route }: any) => {
     }
   }
 
-  // const onEventDetailPreview = () =>
-  //   navigation.navigate("Event Details", {
-  //     header: "Details",
-  //     organizerEvent: { ...route.params },
-  //   })
   const onSharePress = async () => await shareEvent(eventId)
   const onDeleteEvent = async () => {
     try {

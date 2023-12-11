@@ -87,10 +87,8 @@ export const SendTransactionScreen = ({ navigation }: any) => {
         <Formik
           validationSchema={txSendValidationSchema(lovelaceBalance)}
           initialValues={{
-            //@TODO revert this
-            receivingAddress:
-              "addr_test1qrfryeesst563em92304sl0w7t3u4cgeqfrk5tdhm4p8h25klhcy3gf5y5mlxd9s9llctp7lzw5hct7yxg2gy8jfvs4qdxlqd5",
-            ada: 1,
+            receivingAddress: "",
+            ada: 2,
           }}
           innerRef={formikRef}
           onSubmit={noop}>

@@ -86,16 +86,17 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   const deleteUserAccount = async () => {
     if (!id) return
     try {
-      const success = await Users.deleteUserAccount(id)
-      if (!success) showStandardModal(FAILED_ACCOUNT_DELETION_MSG)
+      const deleted = await Users.deleteUserAccount(id)
+      if (!deleted) throw new Error("We were unable to remove your account")
 
       await removeStorageData()
       showStandardModal(
+        //@TODO add a real email address
         `We're sorry to see you go! Please let us know what can we improve ${process.env.BUSINESS_EMAIL}. Bonfire will keep things warm for you.`,
         "Account removed"
       )
     } catch (e) {
-      showStandardModal(FAILED_ACCOUNT_DELETION_MSG)
+      showErrorToast(e)
     }
   }
   // const onShowPastCalendarEvents = async () => {
@@ -113,7 +114,6 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   // }
   const onPreviewMnemonicPress = () => {
     setAuthenticatorVisible(true)
-    // show modal with password/biometric authentication
   }
   const onUnlockCollataralPress = async () => {
     try {
@@ -133,7 +133,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       return showErrorToast(
         "Something went wrong. Have you enabled this option during registration?"
       )
-    showStandardModal(mnemonic, "Remember to keep it secure and not share with anyone.")
+    showStandardModal(mnemonic, "Remember to keep it secure and don't share with anyone.")
     mnemonic = ""
   }
   const onHideAuthenticator = () => setAuthenticatorVisible(false)

@@ -128,22 +128,13 @@ export const DurationChoice = ({ navigation, route }: Props) => {
 
   const onNextPress = () => {
     //@TODO after beta release point user to deposit more funds if necessary
-    //... or hide the time items that are too expensive
-    // if (buttonText === "Deposit Funds")
-    //   navigation.navigate("Add Funds", {
-    //     ...route.params,
-    //     fromScreen: "Duration Choice",
-    //   })
-    // if (buttonText === "Preview Order") {
     setDuration(selectedDuration)
     setDurationCost(cost)
-    // transform PaymentTokens back into json schema but for a single date
 
     navigation.navigate("Booking Confirmation", {
       header: "Booking Details",
       event: route.params.event,
     })
-    // }
   }
 
   const onBackNavigationPress = () => navigation.goBack()

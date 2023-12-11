@@ -110,7 +110,6 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     assetsPaymentTokens.shift()
     const paymentTokens = assetsUnitsToValue(lovelacePaymentToken, assetsPaymentTokens)
 
-    // create a locking transaction
     const lockingDatumInfo: EscrowContractDatum = {
       beneficiaryPkh: new Address(params.event.organizerAddress).pubKeyHash?.hex,
       benefactorPkh: new Address(baseAddress).pubKeyHash?.hex,

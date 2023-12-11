@@ -11,16 +11,14 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { ProfileContext } from "contexts/profileContext"
 
 export const ImportMnemonicConfirmation = ({ pagerRef, prop }: any) => {
-  const { colorScheme, textContent } = appContext()
+  const { textContent } = appContext()
   const { baseAddress } = walletContext()
   const { username } = React.useContext(ProfileContext)
-  const params: any = {}
-  const [_walletChecksum, setWalletChecksum] = React.useState<string>("")
+  const [_walletChecksum] = React.useState<string>("")
 
   const onNextPress = () => {
     pagerRef.current.setPage(2)
   }
-  const onBackPress = () => pagerRef.current.setPage(0)
 
   return (
     <View style={styles.container}>
@@ -57,13 +55,6 @@ export const ImportMnemonicConfirmation = ({ pagerRef, prop }: any) => {
           buttonType="transparent"
           colorScheme="dark"
           onPressCallback={onNextPress}
-          loadingIndicator={false}
-        />
-        <FullWidthButton
-          text="Back"
-          buttonType="transparent"
-          colorScheme="dark"
-          onPressCallback={onBackPress}
           loadingIndicator={false}
         />
       </View>

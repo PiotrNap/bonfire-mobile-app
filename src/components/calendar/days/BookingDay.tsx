@@ -33,9 +33,9 @@ export const _BookingDay = ({
   availabilities,
   isAvailable,
 }: BookingDayProps) => {
-  const { pickedDate, setPickedDate } = bookingContext()
+  const { pickedDate, setPickedDate: setPickedDate } = bookingContext()
 
-  console.log("re-render bookingday", `${number}-${month}-${year}`)
+  // console.log("re-render bookingday", `${number}-${month}-${year}`)
   const dayInTime = getTime(year, monthsByName[month], number)
   const isActiveDay = (activeDay && activeDay === number) || pickedDate === dayInTime
 

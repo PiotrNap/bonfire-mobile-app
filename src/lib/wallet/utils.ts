@@ -269,7 +269,6 @@ export function checkForCollateralAndFeeUtxos(
 
   for (let utxo of utxos) {
     let v = utxo.value
-    console.log("v >", v.dump())
     const currUtxoMinLovelace = utxo.output.calcMinLovelace(networkParams)
     const currUtxoTotalLovelace = utxo.value.lovelace
     const isLovelaceOnly = v.assets.isZero()
@@ -279,22 +278,12 @@ export function checkForCollateralAndFeeUtxos(
       totalMinUtxoLovelace += currUtxoMinLovelace
       continue
     }
-    console.log(collateralUtxoId, `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`)
-
-    console.log(
-      isLovelaceOnly,
-      currUtxoTotalLovelace,
-      COLLATERAL_LOVELACE,
-      !collateralUtxo
-    )
-
     if (
       (isLovelaceOnly &&
         currUtxoTotalLovelace === COLLATERAL_LOVELACE &&
         !collateralUtxo) ||
       collateralUtxoId === `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`
     ) {
-      console.log("collateral ??", utxo)
       collateralUtxo = utxo
     } else if (isLovelaceOnly) {
       if (v.lovelace > serviceFee + MIN_VALIDATOR_FEE && !feeUtxo) {

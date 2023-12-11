@@ -10,7 +10,7 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { Checkbox } from "components/forms/Checkbox"
 import { useWalletInit } from "lib/hooks/useWalletInit"
 import { monospace } from "../../styles/typography"
-import { CheckIcon, DuplicateIcon } from "assets/icons"
+import { CheckIcon } from "assets/icons"
 import Clipboard from "@react-native-clipboard/clipboard"
 
 export const MnemonicPreview = ({ pagerRef }: any) => {
@@ -28,18 +28,11 @@ export const MnemonicPreview = ({ pagerRef }: any) => {
   } = useWalletInit()
 
   React.useEffect(() => {
-    //TODO reverse this
-    // let mnemonic = generateMnemonic()
-    // setMnemonic(mnemonic)
-
-    //TODO reverse this
-    let test =
-      "top polar minute special rival adjust burger wasp session dinosaur conduct cabbage"
-    // "expand good gun morning wall assault heart punch access magic spoon tag"
+    let mnemonic = generateMnemonic()
     let seed = {}
-    test.split(" ").forEach((w: string, idx: number) => (seed[idx] = w))
+    mnemonic.split(" ").forEach((w: string, idx: number) => (seed[idx] = w))
     setMnemonic(seed)
-    setMnemonicString(test)
+    setMnemonicString(mnemonic)
   }, [])
 
   const onCheckBoxPress = (tag?: string) => {

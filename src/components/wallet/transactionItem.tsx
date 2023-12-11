@@ -17,6 +17,8 @@ export const TransactionItem = React.memo(
     const isIncomingFromSmartContract = transaction.inputs.some(
       (input) => input.address === ESCROW_CONTRACT_ADDRESS
     )
+    // transaction is outgoing IF more assets were spent than received
+    // @TODO after release; implement the above logic
     const isOutgoing = transaction.inputs.some(
       (input) => input.address === transaction.user_address
     )

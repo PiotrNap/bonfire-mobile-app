@@ -22,8 +22,6 @@ export const Authenticator = ({
   authRequestType,
 }: Props) => {
   const [authModalVisible, setAuthModalVisible] = React.useState<boolean>(false)
-  // @TODO what was I ... ?
-  // const [isLoading
   const [passwordPromptModalVisible, setPasswordPromptModalVisible] =
     React.useState<boolean>(false)
 

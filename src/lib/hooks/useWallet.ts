@@ -92,7 +92,7 @@ export const useWallet = (makeInitialFetch = true) => {
 
         const availableLovelace = lovelaceValueOfInputs(filterLovelaceOnlyInputs(data))
         const lockedLovelace = lovelaceValueOfInputs(data) - availableLovelace
-        //@TODO implement proper calculation of locked lovelaces
+        //@TODO after release; implement proper calculation of locked lovelaces
         setLovelaceBalance(availableLovelace + lockedLovelace)
         setLockedLovelaceBalance(lockedLovelace)
 
