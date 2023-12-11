@@ -16,19 +16,30 @@ import { SlideDownModal } from "components/modals/SlideDownModal"
 import { ProfileContext } from "contexts/profileContext"
 import { Users } from "Api/Users"
 import { showErrorToast } from "lib/helpers"
-import Crypto from "crypto"
 
 export interface UserDetailScreenProps {}
 
-export const UserDetailsScreen = ({ pagerRef }: any) => {
+export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
   const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [modalState, setModalState] = React.useState<any>({
-    type: "safety-warning",
+    type: null,
     visible: false,
   })
   const [formValues, setFormValues] = React.useState<any>(null)
-  const { setUsername, setBio, setSkills, setJobTitle, setHourlyRateAda, setProfession } =
-    React.useContext(ProfileContext)
+  const {
+    setUsername,
+    setBio,
+    setSkills,
+    setJobTitle,
+    setHourlyRateAda,
+    setProfession,
+    username,
+    bio,
+    skills,
+    jobTitle,
+    hourlyRateAda,
+    profession,
+  } = React.useContext(ProfileContext)
   const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
   const onSubmit = async (values: any) => {
@@ -40,9 +51,13 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
       const usernameFree = await Users.checkUsernameAvailability(values.username)
       if (!usernameFree) return showErrorToast({ message: "Username already taken" })
 
-      // store the values in context or pass as a route param, don't create account yet
       setFormValues(values)
-      return setModalState({ type: "safety-warning", visible: true })
+      if (!prop) {
+        // store the values in context or pass as a route param, don't create account yet
+        setModalState({ type: "safety-warning", visible: true })
+      } else {
+        onModalConfirm()
+      }
     } catch (e) {
       showErrorToast(e)
     }
@@ -55,8 +70,12 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
     setJobTitle(formValues.jobTitle)
     setHourlyRateAda(formValues.hourlyRateAda)
 
-    pagerRef.current.setPage(1)
-    setModalState({ visible: false, type: null })
+    if (!prop) {
+      pagerRef.current.setPage(1)
+      setModalState({ visible: false, type: null })
+    } else {
+      pagerRef.current.setPage(2)
+    }
   }
 
   return (
@@ -72,7 +91,12 @@ export const UserDetailsScreen = ({ pagerRef }: any) => {
         <Formik
           validationSchema={accountValidationScheme()}
           initialValues={{
-            username: "",
+            username,
+            jobTitle,
+            profession,
+            bio,
+            skills,
+            hourlyRateAda,
           }}
           onSubmit={onSubmit}>
           {({ handleSubmit, isValid, validateForm }) => (

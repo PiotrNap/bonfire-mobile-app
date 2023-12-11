@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Animated, StyleSheet, Dimensions, Pressable } from "react-native"
+import { View, Animated, StyleSheet, Dimensions } from "react-native"
 
 import {
   UserDetailsScreen,
@@ -8,7 +8,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
-import { Buttons, Colors, Outlines, Sizing } from "styles/index"
+import { Colors, Outlines, Sizing } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { MnemonicPreview } from "screens/wallet/MnemonicPreviewScreen"
 import { MnemonicInsertScreen } from "screens/wallet/MnemonicInsertScreen"
@@ -22,12 +22,19 @@ import { TouchableOpacity } from "react-native-gesture-handler"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
-const CREATE_ACCOUNT_SCREENS = [
+const NEW_MNEMONIC_SIGN_UP = [
   { component: UserDetailsScreen },
   { component: MnemonicPreview },
   { component: MnemonicInsertScreen },
   { component: NewWalletSetUp },
   { component: RegistrationConfirmationScreen },
+]
+
+const IMPORT_MNEMONIC_SIGN_UP = [
+  { component: MnemonicInsertScreen, prop: "import-mnemonic" },
+  { component: UserDetailsScreen, prop: "import-mnemonic" },
+  { component: NewWalletSetUp, prop: "import-mnemonic" },
+  { component: RegistrationConfirmationScreen, prop: "import-mnemonic" },
 ]
 
 const SIGN_IN_SCREENS = [
@@ -40,7 +47,12 @@ export const InitialUserScreens = ({ route }: any) => {
   const navigation = useNavigation()
   const [pagePosition, setPagePosition] = React.useState<number>(0)
   const { params } = route || {}
-  let SCREENS = params === "create-account" ? CREATE_ACCOUNT_SCREENS : SIGN_IN_SCREENS
+  let SCREENS =
+    params === "new-mnemonic"
+      ? NEW_MNEMONIC_SIGN_UP
+      : params === "import-mnemonic"
+      ? IMPORT_MNEMONIC_SIGN_UP
+      : SIGN_IN_SCREENS
   const { pageIndex, setRef, ref: _ref } = appContext()
   const ref = React.useRef<PagerView>(null)
 

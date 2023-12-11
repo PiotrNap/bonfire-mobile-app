@@ -15,7 +15,13 @@ export interface SlideDownModalProps {
 }
 export type ModalState = {
   visible: boolean
-  type: "create-account" | "sign-in" | "safety-warning" | null
+  type:
+    | "create-account"
+    | "sign-in"
+    | "safety-warning"
+    | "new-mnemonic"
+    | "import-mnemonic"
+    | null
 }
 
 export const SlideDownModal = ({
@@ -34,12 +40,20 @@ export const SlideDownModal = ({
         setContent(modalContent["create-account"])
         break
       }
-      case "sign-in": {
-        setContent(modalContent["sign-in"])
+      case "new-mnemonic": {
+        setContent(modalContent["new-mnemonic"])
         break
       }
       case "safety-warning": {
         setContent(modalContent["safety-warning"])
+        break
+      }
+      case "sign-in": {
+        setContent(modalContent["import-mnemonic"])
+        break
+      }
+      case "import-mnemonic": {
+        setContent(modalContent["import-mnemonic"])
         break
       }
       default:
@@ -50,10 +64,23 @@ export const SlideDownModal = ({
   const hideModal = () => {
     setModalState({ visible: false, type: null })
   }
+  const onImportMnemonicPress = () => {
+    setModalState({ visible: false, type: "create-account" })
+    setModalState({ visible: true, type: "import-mnemonic" })
+  }
+  const onCreateMnemonicPress = () => {
+    setModalState({ visible: false, type: "create-account" })
+    setModalState({ visible: true, type: "new-mnemonic" })
+  }
   const onButtonPress = () => {
+    console.log("modalType >", modalType)
     switch (modalType) {
-      case "create-account": {
-        navigate("Initial User Screens", "create-account")
+      case "new-mnemonic": {
+        navigate("Initial User Screens", "new-mnemonic")
+        break
+      }
+      case "import-mnemonic": {
+        navigate("Initial User Screens", "import-mnemonic")
         break
       }
       case "sign-in": {
@@ -105,11 +132,26 @@ export const SlideDownModal = ({
               </View>
             </View>
             <View style={styles.buttonWrapper}>
-              <FullWidthButton
-                onPressCallback={onButtonPress}
-                text={content.buttonTitle}
-                colorScheme="light"
-              />
+              {modalType === "create-account" ? (
+                <>
+                  <FullWidthButton
+                    onPressCallback={onImportMnemonicPress}
+                    text={content.buttonFirstTitle}
+                    colorScheme="light"
+                  />
+                  <FullWidthButton
+                    onPressCallback={onCreateMnemonicPress}
+                    text={content.buttonSecondTitle}
+                    colorScheme="light"
+                  />
+                </>
+              ) : (
+                <FullWidthButton
+                  onPressCallback={onButtonPress}
+                  text={content.buttonTitle}
+                  colorScheme="light"
+                />
+              )}
             </View>
           </View>
         </>
@@ -124,7 +166,7 @@ const styles = StyleSheet.create({
   modalView: {
     borderTopRightRadius: Sizing.x40,
     borderTopLeftRadius: Sizing.x40,
-    flex: 3,
+    flex: 2,
     justifyContent: "flex-end",
     alignItems: "center",
     backgroundColor: Colors.primary.neutral,
@@ -142,7 +184,7 @@ const styles = StyleSheet.create({
     borderWidth: Sizing.x2,
   },
   mainWrapper: {
-    flex: 6,
+    flex: 4,
     width: "100%",
     height: "100%",
     justifyContent: "center",
@@ -157,10 +199,6 @@ const styles = StyleSheet.create({
     padding: 4,
     backgroundColor: Colors.primary.s400,
     borderRadius: Outlines.borderRadius.max,
-  },
-  textContainer: {
-    alignItems: "center",
-    width: "100%",
   },
   header: {
     ...Typography.header.x50,
@@ -187,11 +225,17 @@ const styles = StyleSheet.create({
 
 const modalContent = {
   "create-account": {
+    header: "Choose Sign-Up Method",
+    body: "Do you have an existing mnemonic phrase you'd like to import, or do you prefer to create a new one?",
+    buttonFirstTitle: "Import Existing",
+    buttonSecondTitle: "Create a New Phrase",
+  },
+  "new-mnemonic": {
     header: "Before We Start",
     body: "In the following screens, you will be prompted to provide some basic info about yourself (optional) and your username. Then we will show you your secret recovery phrase. This phrase gives you full control over your crypto assets and allows you to log in on a different device. Bonfire doesn't store any of your private keys on our servers.",
     buttonTitle: "I'm ready",
   },
-  "sign-in": {
+  "import-mnemonic": {
     header: "Before We Start",
     body: "In the following screens you will be asked to insert your mnemonic phrase. We will derive an address to check whether a given user exists. Bonfire doesn't store any of your private keys on our servers.",
     buttonTitle: "I'm ready",

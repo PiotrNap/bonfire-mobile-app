@@ -47,9 +47,8 @@ export const PasswordSetUpForm = ({
     <Formik
       validationSchema={passwordSetUpValidationScheme()}
       initialValues={{
-        //@TODO remove this placeholder
-        password: "qwert12345",
-        password_confirm: "qwert12345",
+        password: "",
+        password_confirm: "",
       }}
       onSubmit={onSubmit}>
       {({ handleSubmit, isValid, validateForm }) => (
@@ -105,7 +104,6 @@ export const PasswordSetUpForm = ({
             <FullWidthButton
               text={pageType === "sign-up" ? "Next" : "Confirm"}
               disabled={!isValid}
-              style={{ marginBottom: Sizing.x15 }}
               buttonType="transparent"
               onPressCallback={handleSubmit}
               loadingIndicator={isLoading}

@@ -6,7 +6,6 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { appContext } from "contexts/contextApi"
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
-import { ToastMessage } from "components/popups/toastMessage"
 
 export interface BidSlideModalProps {
   children?: React.ReactNode

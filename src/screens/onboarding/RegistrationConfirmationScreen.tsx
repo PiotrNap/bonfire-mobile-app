@@ -269,6 +269,18 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
           <></>
         )}
       </View>
+      {isBetaTestingActive && (
+        <View style={styles.betaTesterCodeWrapper}>
+          <SubHeaderText customStyle={styles.betaTesterInputLabel}>
+            Have a Beta-Tester code? Fill it here:
+          </SubHeaderText>
+          <TextInput
+            onChange={(e) => setBetaTesterCode(e.nativeEvent.text)}
+            keyboardType="numeric"
+            style={[formStyleDark.input, styles.betaTesterInputField]}
+          />
+        </View>
+      )}
       <View style={styles.messageWrapper}>
         <Checkbox
           tag="accepted-tos-and-pp"
@@ -289,18 +301,6 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
           </View>
         </View>
       </View>
-      {isBetaTestingActive && (
-        <View style={styles.betaTesterCodeWrapper}>
-          <SubHeaderText customStyle={styles.betaTesterInputLabel}>
-            Have a Beta-Tester code? Fill it here:
-          </SubHeaderText>
-          <TextInput
-            onChange={(e) => setBetaTesterCode(e.nativeEvent.text)}
-            keyboardType="numeric"
-            style={[formStyleDark.input, styles.betaTesterInputField]}
-          />
-        </View>
-      )}
       <FullWidthButton
         disabled={!acceptedTerms}
         onPressCallback={onConfirm}

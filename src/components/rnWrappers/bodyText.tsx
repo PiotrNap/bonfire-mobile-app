@@ -35,10 +35,7 @@ export const BodyText = ({
         ? { color: colors[0] }
         : { color: colors[1] }
       : {
-          color:
-            colorScheme === "light"
-              ? Colors.primary.s600
-              : Colors.primary.neutral,
+          color: colorScheme === "light" ? Colors.primary.s600 : Colors.primary.neutral,
         }
 
   return <Text style={[styles.text, textColor, customStyle]}>{children}</Text>
