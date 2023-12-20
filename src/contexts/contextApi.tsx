@@ -31,6 +31,7 @@ import {
   SendUnlockingTxInfo,
   Assets,
   WalletKeys,
+  SeedPhraseWordCount,
 } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
 import { MarkedDates } from "react-native-calendars/src/types"
@@ -373,6 +374,7 @@ export const walletContext = () => {
     walletUtxos: state.walletUtxos,
     walletAssets: state.walletAssets,
     sendTxInfo: state.sendTxInfo,
+    seedPhraseWordCount: state.seedPhraseWordCount,
     setLovelaceBalance: (lovelace: bigint) => {
       dispatch({
         type: "SET_LOVELACE_BALANCE",
@@ -429,8 +431,17 @@ export const walletContext = () => {
         payload: { walletUtxos: txIns },
       })
     },
+    setSeedPhraseWordCount: (seedPhraseWordCount: SeedPhraseWordCount) => {
+      dispatch({
+        type: "SET_SEED_PHRASE_WORD_COUNT",
+        payload: { seedPhraseWordCount },
+      })
+    },
     resetSecrets: () => {
       dispatch({ type: "RESET_SECRETS" })
+    },
+    resetState: () => {
+      dispatch({ type: "RESET_STATE" })
     },
   }
 }

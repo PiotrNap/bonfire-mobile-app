@@ -184,13 +184,6 @@ export const CreateAccountForm = ({
                 <Text style={styles.checkboxTextLink}>Privacy Policy + Terms of Use</Text>
               </Checkbox>
             </View>
-            {/*
-          @TODO
-          <View style={styles.appendix}>
-            <Text style={styles.appendixText}>Already have an account?</Text>
-            <Text style={styles.appendixTextLink}>Sign in</Text>
-          </View>
-          */}
             <FullWidthButton
               colorScheme={"dark"}
               buttonType="transparent"

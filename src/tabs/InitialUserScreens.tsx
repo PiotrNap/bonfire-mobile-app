@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { ScalingDot } from "react-native-animated-pagination-dots"
 import { Colors, Outlines, Sizing } from "styles/index"
-import { appContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { MnemonicPreview } from "screens/wallet/MnemonicPreviewScreen"
 import { MnemonicInsertScreen } from "screens/wallet/MnemonicInsertScreen"
 import { LeftArrowIcon } from "assets/icons"
@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { fontWeight } from "../styles/typography"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import { ProfileContext } from "contexts/profileContext"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
@@ -54,6 +55,8 @@ export const InitialUserScreens = ({ route }: any) => {
       ? IMPORT_MNEMONIC_SIGN_UP
       : SIGN_IN_SCREENS
   const { pageIndex, setRef, ref: _ref } = appContext()
+  const { resetState } = walletContext()
+  const { resetProfileState } = React.useContext(ProfileContext)
   const ref = React.useRef<PagerView>(null)
 
   const screenWidth = Dimensions.get("window").width
@@ -73,7 +76,11 @@ export const InitialUserScreens = ({ route }: any) => {
     setPagePosition(position)
   }
   const navigateBack = () => {
-    if (pagePosition === 0) navigation.navigate("Welcome Screen")
+    if (pagePosition === 0) {
+      navigation.navigate("Welcome Screen")
+      resetState() // reset wallet state
+      resetProfileState()
+    }
 
     if (ref?.current) ref.current.setPage(pagePosition - 1)
   }

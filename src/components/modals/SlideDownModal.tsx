@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dragElem: {
-    width: "45%",
+    width: Sizing.x100,
     marginTop: Sizing.x30,
     borderColor: Colors.primary.s300,
     borderRadius: Outlines.borderRadius.max,

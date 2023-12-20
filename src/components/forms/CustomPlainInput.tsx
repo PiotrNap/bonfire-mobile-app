@@ -1,4 +1,5 @@
 import { appContext } from "contexts/contextApi"
+import { MnemonicInputsContext } from "contexts/mnemonicInputsContext"
 import * as React from "react"
 import {
   View,
@@ -34,34 +35,48 @@ export type CustomPlainInputProps = TextInputProps & {
   onError?: (val: boolean, idx: any) => void
 }
 
-export const CustomPlainInput = ({
-  icon,
-  placeholder,
-  label,
-  idx,
-  labelStyle,
-  customChild,
-  onPressHandler,
-  styles,
-  customInputStyle,
-  customInputWrapperStyle,
-  multiline,
-  numberOfLines,
-  maxChar,
-  keyboardType,
-  onChangeCallback,
-  onEndEditingCallback,
-  textContentType,
-  defaultValue,
-  isDisabled,
-  onError,
-  validate,
-}: CustomPlainInputProps) => {
+export const CustomPlainInput = React.forwardRef((props, ref) => {
+  var {
+    icon,
+    placeholder,
+    label,
+    idx,
+    labelStyle,
+    customChild,
+    onPressHandler,
+    styles,
+    customInputStyle,
+    customInputWrapperStyle,
+    multiline,
+    numberOfLines,
+    maxChar,
+    keyboardType,
+    onChangeCallback,
+    onEndEditingCallback,
+    textContentType,
+    defaultValue,
+    isDisabled,
+    onError,
+    validate,
+  }: CustomPlainInputProps = props
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
   const [isValid, setIsValid] = React.useState<boolean>(true)
+  const { addMnemonicInput, focusNextField } = React.useContext(MnemonicInputsContext)
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
+  const inputRef = React.useRef<TextInput>(null)
   const Icon = icon
+
+  React.useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus && inputRef.current.focus()
+    },
+    idx,
+  }))
+
+  React.useEffect(() => {
+    addMnemonicInput(idx, inputRef)
+  }, [])
 
   const additionalProps: TextInputProps = {
     keyboardType: keyboardType ?? "default",
@@ -111,6 +126,15 @@ export const CustomPlainInput = ({
     }
   }
 
+  const onChange = (e) =>
+    onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
+  const onEndEditing = (e) =>
+    onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
+  const onSubmitEditing = () => {
+    focusNextField(idx)
+  }
+  const onBlur = (e) => validate && validateInput(e.nativeEvent.text, true)
+
   return (
     <View style={styles.inputContainer}>
       {label && (
@@ -129,17 +153,15 @@ export const CustomPlainInput = ({
             !isValid && styles.errorInput,
             customInputStyle,
           ]}
+          ref={inputRef}
           numberOfLines={numberOfLines != null ? numberOfLines : 1}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          onChange={(e) =>
-            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
-          }
-          onEndEditing={(e) =>
-            onEndEditingCallback && onEndEditingCallback(e.nativeEvent.text, idx)
-          }
+          onChange={onChange}
+          onEndEditing={onEndEditing}
+          onSubmitEditing={onSubmitEditing}
           placeholderTextColor={styles.placeholderText.color}
-          onBlur={(e) => validate && validateInput(e.nativeEvent.text, true)}
+          onBlur={onBlur}
           defaultValue={defaultValue}
           editable={!isDisabled}
           {...additionalProps}
@@ -153,7 +175,7 @@ export const CustomPlainInput = ({
       </View>
     </View>
   )
-}
+})
 
 const defaultStyles = StyleSheet.create({
   iconWrapper: {

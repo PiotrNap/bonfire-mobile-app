@@ -2,7 +2,6 @@ import { TxInput } from "@hyperionbt/helios"
 import { EventCardInfo, OrganizerRate } from "common/interfaces/bookingInterface"
 import {
   Cancellation,
-  EventAvailability,
   EventSlot,
   EventType,
   EventVisibility,
@@ -26,6 +25,7 @@ import {
   WalletKeys,
   Assets,
   AssetUnit,
+  SeedPhraseWordCount,
 } from "lib/wallet/types"
 import { MarkedDates } from "react-native-calendars/src/types"
 
@@ -75,6 +75,7 @@ export enum WalletTypes {
   SetSendTxInfo = "SET_SEND_TX_INFO",
   SetBaseAddress = "SET_BASE_ADDRESS",
   SetIsOfflineMnemonic = "SET_IS_OFFLINE_MNEMONIC",
+  SetSeedPhraseWordCount = "SET_SEED_PHRASE_WORD_COUNT",
   ResetSecrets = "RESET_SECRETS",
   ResetState = "RESET_STATE",
 }
@@ -335,6 +336,9 @@ export type WalletPayload = {
   }
   [WalletTypes.SetIsOfflineMnemonic]: {
     isOfflineMnemonic: boolean
+  }
+  [WalletTypes.SetSeedPhraseWordCount]: {
+    seedPhraseWordCount: SeedPhraseWordCount
   }
   [WalletTypes.ResetSecrets]: {}
   [WalletTypes.ResetState]: {}

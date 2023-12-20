@@ -5,6 +5,7 @@ import {
   SendRegularTxInfo,
   SendUnlockingTxInfo,
   Assets,
+  SeedPhraseWordCount,
 } from "lib/wallet/types"
 import * as React from "react"
 
@@ -24,6 +25,7 @@ interface InitialState {
   accountKeyHex: string
   isOfflineMnemonic: boolean
   sendTxInfo: SendTxInfo | null
+  seedPhraseWordCount: SeedPhraseWordCount
 }
 interface WalletContextProps {
   state: InitialState
@@ -44,6 +46,7 @@ const initState: InitialState = {
   accountPubKeyHex: "",
   isOfflineMnemonic: false,
   sendTxInfo: null,
+  seedPhraseWordCount: 12,
 }
 
 const reducer = (state: InitialState, action: WalletActions) => {
@@ -87,6 +90,11 @@ const reducer = (state: InitialState, action: WalletActions) => {
       return {
         ...state,
         baseAddress: action.payload.baseAddress,
+      }
+    case WalletTypes.SetSeedPhraseWordCount:
+      return {
+        ...state,
+        seedPhraseWordCount: action.payload.seedPhraseWordCount,
       }
     case WalletTypes.SetWalletKeys:
       const { walletKeys } = action.payload

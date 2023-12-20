@@ -17,18 +17,20 @@ const _ToggleButton = ({
   defaultValue,
   animationDuration,
   onSelect,
+  customColorScheme,
 }: {
   options: string[]
   values: any[]
   animationDuration: number
   defaultValue: any
-  onSelect: (value: string) => any
+  onSelect: (value: any) => any
+  customColorScheme?: "light" | "dark"
 }) => {
   const [active, setActive] = useState(options[values.indexOf(defaultValue) || 0])
   const [viewWidth, setViewWidth] = useState(0)
   const animation = useRef(new Animated.Value(values.indexOf(defaultValue) || 0)).current
   const { colorScheme } = appContext()
-  const isLigthMode = colorScheme === "light"
+  const isLigthMode = (customColorScheme ?? colorScheme) === "light"
 
   const handlePress = (option: string, value: any) => {
     Animated.timing(animation, {

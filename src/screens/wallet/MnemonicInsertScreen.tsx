@@ -6,15 +6,17 @@ import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { walletContext } from "contexts/contextApi"
-import { Colors, Sizing } from "styles/index"
+import { Colors, Sizing, Typography } from "styles/index"
 import { Wallet } from "lib/wallet"
 import { Users } from "Api/Users"
 import { ProfileContext } from "contexts/profileContext"
 import { Checkbox } from "components/forms/Checkbox"
 import { showErrorToast } from "lib/helpers"
 import wordlist from "bip39/src/wordlists/english.json"
+import { ToggleButton } from "screens/organizer/newEvent/toggleButton"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { MnemonicInputsProvider } from "contexts/mnemonicInputsContext"
 
-const MAX_MNEMONIC_LENGTH = 12
 const MNEMONIC_ERRORS = {
   0: false,
   1: false,
@@ -30,11 +32,22 @@ const MNEMONIC_ERRORS = {
 }
 
 export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
+  const {
+    mnemonic,
+    setWalletKeys,
+    setIsOfflineMnemonic,
+    setMnemonic,
+    seedPhraseWordCount,
+    setSeedPhraseWordCount,
+  } = walletContext()
+  const { setUsername } = React.useContext(ProfileContext)
   const [words, _] = React.useState<Set<string>>(new Set(wordlist))
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [content, setContent] = React.useState<any>(false)
   const [tempMnemonic, setTempMnemonic] = React.useState<{}>({})
   const [currMnemonicLength, setCurrentMnemonicLength] = React.useState<{}>({})
+  const [selectedMnemonicLength, setSelectedMnemonicLength] =
+    React.useState<number>(seedPhraseWordCount)
   const [inputErrors, setInputErrors] = React.useState<{
     [key: string]: boolean
   }>(MNEMONIC_ERRORS)
@@ -42,8 +55,6 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
   const [nonExistingUserBaseAddr, setNonExistingUserBaseAddr] = React.useState<string>("")
   const [acceptedStoreOfflineCheckbox, setAccepteStoreOfflinedCheckbox] =
     React.useState<boolean>(false)
-  const { mnemonic, setWalletKeys, setIsOfflineMnemonic, setMnemonic } = walletContext()
-  const { setUsername } = React.useContext(ProfileContext)
   const isConfirmScreen = pagerRef.current?.state?.isConfirmScreen
   const mnemonicPresent = mnemonic && Object.keys(mnemonic).length > 1
 
@@ -54,10 +65,14 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       setTempMnemonic(_tempMnemonic)
       setContent(textContent.confirm_mnemonic)
     } else setContent(textContent.import_mnemonic)
-  }, [mnemonicPresent, mnemonic, pageIndex])
+
+    setSelectedMnemonicLength(seedPhraseWordCount)
+  }, [mnemonicPresent, mnemonic, pageIndex, seedPhraseWordCount])
 
   const isDisabledInput = (idx: number) => {
-    if (mnemonicPresent) {
+    if (prop === "import-mnemonic") return false
+
+    if (mnemonicPresent && prop !== "import-mnemonic") {
       return !emptyFields.includes(idx)
     } else {
       if (idx === 1) return false
@@ -77,7 +92,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
     let tempMnemonicLength = Object.values(tempMnemonic).filter((w) => w != "").length
     return (
       hasError ||
-      tempMnemonicLength !== 12 ||
+      tempMnemonicLength !== selectedMnemonicLength ||
       (isConfirmScreen && !mnemonic) ||
       (isConfirmScreen &&
         mnemonicPresent &&
@@ -85,19 +100,21 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
           (key) => key in tempMnemonic && mnemonic[key] === tempMnemonic[key]
         ))
     )
-  }, [currMnemonicLength, hasError])
+  }, [currMnemonicLength, hasError, selectedMnemonicLength])
 
   const onNextButtonPress = async () => {
     setIsLoading(true)
 
     try {
-      let phrase = Object.values(prop === "sign-in" ? tempMnemonic : mnemonic).join(" ")
+      let phrase = Object.values(
+        prop === "sign-in" || prop === "import-mnemonic" ? tempMnemonic : mnemonic
+      ).join(" ")
       if (!phrase.length) return
 
       const walletKeys = await new Wallet().init(phrase)
       if (!walletKeys || !Object.values(walletKeys).length) throw new Error()
 
-      let userBaseAddr = walletKeys.baseAddress || ""
+      let userBaseAddr = walletKeys.testnetBaseAddress || ""
       let userCred
 
       if (nonExistingUserBaseAddr === userBaseAddr)
@@ -121,9 +138,11 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       setIsOfflineMnemonic(acceptedStoreOfflineCheckbox)
       setUsername(userCred?.username || "")
       setWalletKeys(walletKeys)
+      setSeedPhraseWordCount(selectedMnemonicLength)
+
       pagerRef.current.setPage(1)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast("Please double-check each input field", "Incorrect Mnemonic")
     } finally {
       setIsLoading(false)
     }
@@ -162,11 +181,14 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
     if (!tag) return
     if (tag === "store-offline") setAccepteStoreOfflinedCheckbox((prev) => !prev)
   }
+  const changeMnemonicLength = (length: number) => {
+    setSelectedMnemonicLength(length)
+  }
 
-  const renderTextInputs = () => {
+  const renderTextInputs = React.useCallback(() => {
     const inputs = []
     let rowInputsSum = 0
-    for (let i = 0; i < MAX_MNEMONIC_LENGTH / 3; i++) {
+    for (let i = 0; i < selectedMnemonicLength / 3; i++) {
       inputs.push(
         <View style={styles.inputRow} key={i}>
           <View style={styles.inputRowItem}>
@@ -216,9 +238,13 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       rowInputsSum += 3
     }
     return inputs
-  }
+  }, [selectedMnemonicLength])
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
+      style={{ width: "90%", marginVertical: Sizing.x15 }}>
       <View style={styles.header}>
         <HeaderText customStyles={{ marginBottom: Sizing.x10 }} colorScheme="dark">
           {content.header}
@@ -226,7 +252,22 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
         <SubHeaderText colors={[Colors.primary.neutral]}>{content.body}</SubHeaderText>
       </View>
 
-      <View style={styles.main}>{renderTextInputs()}</View>
+      <View style={styles.main}>
+        <SubHeaderText
+          customStyle={styles.mnemonicLengthLabel}
+          colors={[Colors.primary.neutral]}>
+          Select Seed Phrase Length
+        </SubHeaderText>
+        <ToggleButton
+          defaultValue={selectedMnemonicLength}
+          options={["12", "15", "18", "21", "24"]}
+          values={[12, 15, 18, 21, 24]}
+          animationDuration={30}
+          onSelect={changeMnemonicLength}
+          customColorScheme={"dark"}
+        />
+        <MnemonicInputsProvider>{renderTextInputs()}</MnemonicInputsProvider>
+      </View>
       <View style={styles.footerWrapper}>
         {prop && (
           <View style={styles.messageWrapper}>
@@ -235,8 +276,8 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
               colorMode="dark"
               onCheckBoxPress={onCheckBoxPress}
               acceptedCheckbox={acceptedStoreOfflineCheckbox}>
-              I'd like to store a copy on my device, and access it later through my User
-              Profile.
+              I would like to store a copy on my device (accessible later through my User
+              Profile)
             </Checkbox>
           </View>
         )}
@@ -250,7 +291,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
           loadingIndicator={isLoading}
         />
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   )
 }
 
@@ -286,10 +327,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   messageWrapper: {
-    width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: Sizing.x5,
+    marginVertical: Sizing.x10,
+  },
+  mnemonicLengthLabel: {
+    flex: 1,
+    ...Typography.subHeader.x10,
+    paddingLeft: Sizing.x5,
+    paddingBottom: Sizing.x5,
   },
 })
 
