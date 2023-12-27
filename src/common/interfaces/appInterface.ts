@@ -2,6 +2,7 @@
  * @interfaces for appContext.tsx file.
  */
 
+import { NetworkId } from "lib/wallet/types"
 import { Wallet } from "./textContent/wallet"
 
 export type ColorSchemeName = "light" | "dark"
@@ -11,6 +12,7 @@ export interface AppState {
   accountType: "attendee" | "organizer" | null
   receivingAddr: string
   colorScheme: ColorSchemeName
+  networkId: NetworkId
   appBgColor: string
   favoriteOrganizers: any[]
   validGoogleOAuth: boolean

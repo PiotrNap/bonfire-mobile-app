@@ -52,6 +52,7 @@ import { TimeIcon } from "./time"
 import { TrashIcon } from "./trash"
 import { UserIcon } from "./user"
 import { WalletIcon } from "./wallet"
+import { SwitchIcon } from "./switch"
 
 export {
   AdaIcon,
@@ -104,6 +105,7 @@ export {
   SearchIcon,
   ShareIcon,
   SingleColorDot,
+  SwitchIcon,
   UserIcon,
   WalletIcon,
   TimeIcon,

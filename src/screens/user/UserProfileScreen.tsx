@@ -9,7 +9,7 @@ import Avatar from "react-native-boring-avatars"
 
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
-import { CogIcon, LightBulbIcon, MoneyIcon, PaymentIcon } from "icons/index"
+import { CogIcon, LightBulbIcon, MoneyIcon, PaymentIcon, SwitchIcon } from "icons/index"
 
 import { ImagePickerModal } from "components/modals/ImagePickerModal"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
@@ -24,6 +24,8 @@ import FastImage from "react-native-fast-image"
 import { CustomSwitch } from "components/rnWrappers/customSwitch"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { showErrorToast } from "lib/helpers"
+import { NetworkId } from "@emurgo/csl-mobile-bridge"
+import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile Main"> {}
@@ -31,7 +33,7 @@ export interface UserProfileProps
 export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
-  const { colorScheme, setColorScheme } = appContext()
+  const { colorScheme, setColorScheme, networkId, setNetworkId } = appContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
@@ -76,6 +78,8 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const onImagePress = () => setImagePressed(true)
   const onImagePressOut = () => setImagePressed(false)
   const updateCurrImage = () => setCurrImage("")
+  const changeNetworkId = () =>
+    setNetworkId(networkId === "Mainnet" ? "Preprod" : "Mainnet")
 
   return (
     <SafeAreaView
@@ -173,7 +177,6 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
         </Pressable>
       </View>
       <View style={styles.mainNavigation}>
-        {/* top section */}
         <SettingsNavigationItem
           icon={CogIcon}
           onPressCallback={() => navigation.navigate("Profile Settings")}
@@ -184,11 +187,22 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           onPressCallback={() => navigation.navigate("My Payouts")}
           title="My Payouts"
         />
-        {/* bottom section */}
-        <SettingsItem
-          icon={LightBulbIcon}
-          title="Dark Mode"
-          customStyle={{ marginTop: "auto" }}>
+      </View>
+      <View style={styles.bottomNavigation}>
+        <SettingsItem icon={SwitchIcon} title="Network">
+          <View style={{ flexDirection: "row" }}>
+            <SubHeaderText
+              customStyle={{ position: "absolute", right: 50 }}
+              colors={[Colors.primary.s800, Colors.primary.neutral]}>
+              {`${networkId}`}
+            </SubHeaderText>
+            <CustomSwitch
+              onValueChange={changeNetworkId}
+              value={networkId === "Mainnet"}
+            />
+          </View>
+        </SettingsItem>
+        <SettingsItem icon={LightBulbIcon} title="Dark Mode">
           <CustomSwitch
             onValueChange={setDarkMode}
             value={darkMode}
@@ -231,6 +245,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: Sizing.x10,
     width: "100%",
+  },
+  bottomNavigation: {
+    maxWidth: "100%",
+    marginTop: "auto",
+    marginBottom: Sizing.x10,
+    justifyContent: "flex-end",
   },
   button_light: {
     ...Buttons.bar.secondary,

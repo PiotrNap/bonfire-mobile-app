@@ -22,9 +22,11 @@ import Clipboard from "@react-native-clipboard/clipboard"
 import Crypto from "crypto"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
-  const { colorScheme, setQrCodeValue } = appContext()
-  const { sendTxInfo, baseAddress, walletUtxos, setSendTxInfo } = walletContext()
+  const { colorScheme, setQrCodeValue, networkId } = appContext()
+  const { sendTxInfo, addresses, walletUtxos, setSendTxInfo } = walletContext()
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
   const { params } = route
   const isLightMode = colorScheme === "light"
   const isTxHistoryPreview = params?.isTxHistoryPreview
@@ -63,7 +65,14 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     }
     if (!accountKey) return showErrorToast("Something went wrong. Missing signing key.")
     try {
-      await Wallet.sendRegularTransaction(txInfo, baseAddress, walletUtxos, accountKey)
+      await Wallet.sendRegularTransaction(
+        txInfo,
+        networkBasedAddress,
+        walletUtxos,
+        accountKey,
+        false,
+        networkId
+      )
 
       setSendTxInfo({})
       setAuthenticatorVisible(false)

@@ -50,7 +50,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
   useWallet() // reload wallet utxos
 
-  const { colorScheme } = appContext()
+  const { colorScheme, networkId } = appContext()
   const {
     textContent,
     selectedDates,
@@ -65,7 +65,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   } = eventCreationContext()
   const { duration, durationCost, pickedStartTime } = bookingContext()
   const { username, id, collateralUtxoId } = React.useContext(ProfileContext)
-  const { walletUtxos, baseAddress } = walletContext()
+  const { walletUtxos, addresses } = walletContext()
   const { updateWalletBalance } = useWallet()
   const {
     errorMsg,
@@ -81,6 +81,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const [isCollateralTransaction, setIsCollateralTransaction] =
     React.useState<boolean>(false)
   const [cancellationTxInfo, setCancellationTxInfo] = React.useState<any>(null)
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
 
   const isLightMode = colorScheme === "light"
   const bookingSlot = params?.bookingSlot
@@ -112,7 +114,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
     const lockingDatumInfo: EscrowContractDatum = {
       beneficiaryPkh: new Address(params.event.organizerAddress).pubKeyHash?.hex,
-      benefactorPkh: new Address(baseAddress).pubKeyHash?.hex,
+      benefactorPkh: new Address(networkBasedAddress).pubKeyHash?.hex,
       releaseDate: BigInt(Math.floor(new Date(pickedStartTime).getTime() + duration)),
       cancelFee: params.event.cancellation.fee || 0,
       cancelWindowStart: BigInt(
@@ -133,9 +135,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       const { txHash, datumHash } = await Wallet.sendLockingTransaction(
         paymentTokens,
         lockingDatumInfo,
-        baseAddress,
+        networkBasedAddress,
         walletUtxos,
-        accountKey
+        accountKey,
+        networkId
       )
 
       // create new booking-record
@@ -185,10 +188,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       eventCardColor,
       eventTitleColor,
       note: eventNote || "",
+      networkId,
       organizer: {
         id,
         username,
-        baseAddress,
+        baseAddress: networkBasedAddress,
       },
     }
 

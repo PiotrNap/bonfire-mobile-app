@@ -20,10 +20,16 @@ export const useAppLogin = () => {
         let pubKey = await getFromEncryptedStorage("device-pubKey")
         let deviceID = await getFromEncryptedStorage("device-id")
         let userSettings = await getFromEncryptedStorage("user-settings")
-        let walletBaseAddress = await AsyncStorage.getItem("account-#0-baseAddress")
+        let addresses = await AsyncStorage.getItem("account-#0-baseAddresses")
         let collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
         const isExpired = new Date() >= new Date(authCred?.expiresAt)
         const deviceTimeZone = getDevicesTimeZone()
+
+        if (typeof addresses === "string") {
+          addresses = JSON.parse(addresses)
+        } else {
+          addresses = { mainnet: "", testnet: "" }
+        }
 
         console.log(`
         retrieving from encrypted storage:
@@ -31,7 +37,7 @@ export const useAppLogin = () => {
             deviceID: ${deviceID}
             devicePubKey: ${pubKey}
             deviceSecKey: ${privKey}
-            baseAddress: ${walletBaseAddress}
+            addresses: ${JSON.stringify(addresses)}
             collateralUtxoId: ${collateralUtxoId}
             timeZone: ${deviceTimeZone}
             `)
@@ -46,7 +52,7 @@ export const useAppLogin = () => {
             deviceID,
             hourlyRateAda: authCred.hourlyRateAda,
             timeZone: deviceTimeZone,
-            baseAddress: walletBaseAddress,
+            addresses,
             collateralUtxoId,
           })
         }
@@ -66,7 +72,7 @@ export const useAppLogin = () => {
               hourlyRateAda: accessTokenDto?.hourlyRateAda,
               userSettings,
               deviceID,
-              baseAddress: walletBaseAddress,
+              addresses,
               collateralUtxoId,
             })
             setToEncryptedStorage("auth-credentials", accessTokenDto)

@@ -12,7 +12,7 @@ import { ProfileContext } from "contexts/profileContext"
 
 export const ImportMnemonicConfirmation = ({ pagerRef, prop }: any) => {
   const { textContent } = appContext()
-  const { baseAddress } = walletContext()
+  const { addresses } = walletContext()
   const { username } = React.useContext(ProfileContext)
   const [_walletChecksum] = React.useState<string>("")
 
@@ -32,10 +32,10 @@ export const ImportMnemonicConfirmation = ({ pagerRef, prop }: any) => {
           </SubHeaderText>
         </View>
       </View>
-      {baseAddress && (
+      {addresses.mainnet && (
         <View style={styles.addressWrapper}>
           <BodyText customColorScheme="light" customStyle={{ ...monospace.base }}>
-            {baseAddress}
+            {addresses.mainnet}
           </BodyText>
         </View>
       )}

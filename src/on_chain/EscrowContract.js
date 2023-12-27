@@ -1,6 +1,10 @@
 import { Program } from "@hyperionbt/helios"
-
-// @TODO replace pubkey-hashes before launching on mainnet
+import {
+  BETA_TESTER_MPH,
+  MIN_LOVELACE_SERVICE_FEE,
+  MIN_PERCENT_SERVICE_FEE,
+  TREASURY_PKH,
+} from "@env"
 
 const EscrowContractScript = `
     spending escrow_contract
@@ -140,5 +144,3 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
 export const escrowProgram = Program.new(EscrowContractScript)
 export const escrowProgramCompiled = escrowProgram.compile(false) // simplify = false
 export const escrowValidatorHash = escrowProgramCompiled.validatorHash
-
-// console.log("Smart contract address: ", Address.fromHash(escrowValidatorHash).toBech32())

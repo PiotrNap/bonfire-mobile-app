@@ -28,6 +28,7 @@ const initialAppState: AppState = {
   //   accessToken: null,
   // },
   colorScheme: colorScheme == null ? "light" : colorScheme,
+  networkId: "Mainnet",
   appBgColor: colorScheme === "dark" ? Colors.neutral.s600 : Colors.primary.neutral,
   favoriteOrganizers: [],
   pageIndex: 0,
@@ -82,6 +83,11 @@ const reducer = (state: AppState, action: AppActions) => {
       return {
         ...state,
         bottomNavigationHeight: action.payload.height,
+      }
+    case AppTypes.SetNetworkId:
+      return {
+        ...state,
+        networkId: action.payload.networkId,
       }
     case AppTypes.SetColorScheme:
       const isDarkMode = action.payload.newColorScheme === "dark"

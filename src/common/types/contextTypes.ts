@@ -1,5 +1,9 @@
 import { TxInput } from "@hyperionbt/helios"
-import { EventCardInfo, OrganizerRate } from "common/interfaces/bookingInterface"
+import {
+  EventCardInfo,
+  HourlyRate,
+  OrganizerRate,
+} from "common/interfaces/bookingInterface"
 import {
   Cancellation,
   EventSlot,
@@ -26,6 +30,7 @@ import {
   Assets,
   AssetUnit,
   SeedPhraseWordCount,
+  NetworkId,
 } from "lib/wallet/types"
 import { MarkedDates } from "react-native-calendars/src/types"
 
@@ -39,6 +44,7 @@ export enum AppTypes {
   SetColorScheme = "SET_COLOR_SCHEME",
   SetValidGoogleOAuth = "SET_VALID_GOOGLE_OAUTH",
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
+  SetNetworkId = "SET_NETWORK_ID",
   SetBottomnavigationHeight = "SET_BOTTOMNAVIGATION_HEIGHT",
   SetQrCodeValue = "SET_QRCODE_VALUE",
   ResetState = "RESET_STATE",
@@ -73,7 +79,7 @@ export enum WalletTypes {
   SetWalletKeys = "SET_WALLET_KEYS",
   SetWalletAssets = "SET_WALLET_ASSETS",
   SetSendTxInfo = "SET_SEND_TX_INFO",
-  SetBaseAddress = "SET_BASE_ADDRESS",
+  SetBaseAddresses = "SET_BASE_ADDRESSES",
   SetIsOfflineMnemonic = "SET_IS_OFFLINE_MNEMONIC",
   SetSeedPhraseWordCount = "SET_SEED_PHRASE_WORD_COUNT",
   ResetSecrets = "RESET_SECRETS",
@@ -164,6 +170,9 @@ export type AppPayload = {
   }
   [AppTypes.SetQrCodeValue]: {
     qrCodeValue: string
+  }
+  [AppTypes.SetNetworkId]: {
+    networkId: NetworkId
   }
   [AppTypes.ResetState]: {}
   ["unknown"]: any
@@ -325,8 +334,8 @@ export type WalletPayload = {
   [WalletTypes.SetMnemonic]: {
     mnemonic: {}
   }
-  [WalletTypes.SetBaseAddress]: {
-    baseAddress: {}
+  [WalletTypes.SetBaseAddresses]: {
+    addresses: { mainnet: string; testnet: string }
   }
   [WalletTypes.SetWalletKeys]: {
     walletKeys: WalletKeys

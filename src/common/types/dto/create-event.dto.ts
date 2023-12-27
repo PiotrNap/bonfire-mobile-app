@@ -3,6 +3,7 @@ import {
   EventAvailability,
   EventVisibility,
 } from "common/interfaces/newEventInterface"
+import { NetworkId } from "lib/wallet/types"
 
 export interface EventUser {
   id: string
@@ -23,4 +24,5 @@ export interface CreateEventDto {
   eventTitleColor: string
   organizer: EventUser
   note: string
+  networkId: NetworkId
 }

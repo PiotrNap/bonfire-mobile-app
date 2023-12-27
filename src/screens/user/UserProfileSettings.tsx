@@ -246,7 +246,6 @@ const styles = StyleSheet.create({
   sensitiveInfoSection: {
     borderWidth: Outlines.borderWidth.base,
     borderRadius: Outlines.borderRadius.base,
-    padding: Sizing.x8,
-    marginVertical: Sizing.x5,
+    padding: Sizing.x5,
   },
 })

@@ -49,9 +49,11 @@ type PayoutTxInfo = {
 type MyPayoutTxType = "payout" | "collateral"
 
 export const MyPayouts = ({ navigation }: ScreenProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, networkId } = appContext()
   const { id } = React.useContext(ProfileContext)
-  const { walletUtxos, baseAddress } = walletContext()
+  const { walletUtxos, addresses } = walletContext()
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
   useWallet() // this will re-fetch wallets utxo's
 
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
@@ -102,10 +104,13 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
 
     setIsLoading(true)
     try {
-      let _blockFrost = blockFrost()
+      let _blockFrost = blockFrost(networkId)
       console.log("selectedPayout.lockingTxHash >", selectedPayout.lockingTxHash)
       // fetch utxos from selected transactions and get the utxo that holds the payment tokens
-      const { data, error } = await Wallet.getTxUtxos(selectedPayout.lockingTxHash)
+      const { data, error } = await Wallet.getTxUtxos(
+        selectedPayout.lockingTxHash,
+        networkId
+      )
       if (error) return showErrorToast(error)
 
       const payoutUtxo = data.outputs.find(
@@ -121,12 +126,17 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
       const serviceFee = hasBetaTesterToken ? 0n : calculateFeeForTreasury(payoutTxIn)
       const collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
 
-      console.log("hasBetaTesterToken >", hasBetaTesterToken)
-      console.log("serviceFee >", serviceFee)
-      console.log("collateralUtxoId >", collateralUtxoId)
+      // console.log("hasBetaTesterToken >", hasBetaTesterToken)
+      // console.log("serviceFee >", serviceFee)
+      // console.log("collateralUtxoId >", collateralUtxoId)
 
       const { collateralUtxo, feeUtxo, spareUtxos, hasEnoughFunds, missingLovelace } =
-        checkForCollateralAndFeeUtxos(walletUtxos, serviceFee, collateralUtxoId)
+        checkForCollateralAndFeeUtxos(
+          walletUtxos,
+          serviceFee,
+          collateralUtxoId,
+          networkId
+        )
       if (!hasEnoughFunds)
         return showInfoToast(
           `You need ${lovelaceToAda(missingLovelace).toFixed(
@@ -183,10 +193,11 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
           spareUtxos,
           collateralUtxo,
           feeUtxo,
-          baseAddress,
+          networkBasedAddress,
           accountKey,
           serviceFee,
-          hasBetaTesterToken
+          hasBetaTesterToken,
+          networkId
         )
         console.log("txhash >", txHash)
 
@@ -209,13 +220,14 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
         const txHash = await Wallet.sendRegularTransaction(
           {
             assets: undefined,
-            receiverAddress: baseAddress,
+            receiverAddress: networkBasedAddress,
             lovelace: COLLATERAL_LOVELACE,
           },
-          baseAddress,
+          networkBasedAddress,
           walletUtxos,
           accountKey,
-          true // this is a collateral split Tx
+          true, // this is a collateral split Tx
+          networkId
         )
         if (!txHash) throw new Error("We were unable to submit the transaction")
 

@@ -6,6 +6,7 @@ import {
   SendUnlockingTxInfo,
   Assets,
   SeedPhraseWordCount,
+  Addresses,
 } from "lib/wallet/types"
 import * as React from "react"
 
@@ -20,7 +21,7 @@ interface InitialState {
   walletUtxos: TxInput[]
   walletAssets: Assets | null
   rootKeyHex: string
-  baseAddress: string
+  addresses: Addresses // base addresses
   accountPubKeyHex: string
   accountKeyHex: string
   isOfflineMnemonic: boolean
@@ -41,7 +42,10 @@ const initState: InitialState = {
   walletUtxos: [],
   walletAssets: null,
   rootKeyHex: "",
-  baseAddress: "",
+  addresses: {
+    mainnet: "",
+    testnet: "",
+  },
   accountKeyHex: "",
   accountPubKeyHex: "",
   isOfflineMnemonic: false,
@@ -86,10 +90,13 @@ const reducer = (state: InitialState, action: WalletActions) => {
         ...state,
         isOfflineMnemonic: action.payload.isOfflineMnemonic,
       }
-    case WalletTypes.SetBaseAddress:
+    case WalletTypes.SetBaseAddresses:
       return {
         ...state,
-        baseAddress: action.payload.baseAddress,
+        addresses: {
+          mainnet: action.payload.addresses.mainnet,
+          testnet: action.payload.addresses.testnet,
+        },
       }
     case WalletTypes.SetSeedPhraseWordCount:
       return {
@@ -100,7 +107,10 @@ const reducer = (state: InitialState, action: WalletActions) => {
       const { walletKeys } = action.payload
       return {
         ...state,
-        baseAddress: walletKeys.baseAddress,
+        addresses: {
+          mainnet: walletKeys.addresses.mainnet,
+          testnet: walletKeys.addresses.testnet,
+        },
         rootKeyHex: walletKeys.rootKeyHex,
         accountKeyHex: walletKeys.accountKeyHex,
         accountPubKeyHex: walletKeys.accountPubKeyHex,

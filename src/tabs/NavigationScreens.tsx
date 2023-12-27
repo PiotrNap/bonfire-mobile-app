@@ -2,7 +2,7 @@ import * as React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
 import { NavigationTabBar } from "components/navBarComponents/navigationTabBar"
-import { appContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 import { NavigationTabParamList } from "common/types/navigationTypes"
 import {
@@ -17,14 +17,9 @@ import { useWallet } from "lib/hooks/useWallet"
 const NavigationTabs = createBottomTabNavigator<NavigationTabParamList>()
 
 export const NavigationScreens = ({ route }: any) => {
-  const {
-    setWalletBaseAddress,
-    setID,
-    setUsername,
-    setHourlyRateAda,
-    setTimeZone,
-    setCollateralUtxoId,
-  } = React.useContext(ProfileContext)
+  const { setID, setUsername, setHourlyRateAda, setTimeZone, setCollateralUtxoId } =
+    React.useContext(ProfileContext)
+  const { setBaseAddresses } = walletContext()
   const { setUserSettings } = appContext()
   useWallet() // fetch user wallet assets
 
@@ -38,7 +33,7 @@ export const NavigationScreens = ({ route }: any) => {
         hourlyRateAda,
         userSettings,
         timeZone,
-        baseAddress,
+        addresses,
         collateralUtxoId,
       } = route.params
 
@@ -47,7 +42,7 @@ export const NavigationScreens = ({ route }: any) => {
       hourlyRateAda && setHourlyRateAda(hourlyRateAda)
       setUserSettings(userSettings)
       setTimeZone(timeZone)
-      setWalletBaseAddress(baseAddress)
+      setBaseAddresses(addresses)
       setCollateralUtxoId(collateralUtxoId)
     }
   }, [])

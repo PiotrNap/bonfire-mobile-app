@@ -33,7 +33,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
     mnemonic,
     rootKeyHex,
     isOfflineMnemonic,
-    baseAddress,
+    addresses,
     accountKeyHex,
     accountPubKeyHex,
     resetSecrets,
@@ -71,7 +71,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
           biometricsAccepted,
           password,
           rootKeyHex,
-          baseAddress,
+          addresses,
           baseAddressKey,
           isOfflineMnemonic ? mnemonic : undefined
         )
@@ -136,7 +136,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
         showErrorToast(e)
       }
     },
-    [mnemonic, rootKeyHex, isOfflineMnemonic, baseAddress, biometricsAccepted]
+    [mnemonic, isOfflineMnemonic, biometricsAccepted, rootKeyHex]
   )
 
   return (

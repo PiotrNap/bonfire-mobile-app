@@ -7,6 +7,7 @@ import {
   setToEncryptedStorage,
 } from "lib/encryptedStorage"
 import Keychain from "react-native-keychain"
+import { Addresses } from "./types"
 
 export type AuthTypes = "password" | "device"
 
@@ -22,7 +23,7 @@ export async function addKeysToStorage(
   deviceAuthAccepted: boolean,
   userPassword: string,
   rootKeyHex: string,
-  baseAddress: string,
+  addresses: Addresses,
   baseAddressKey: string,
   mnemonic?: AnyObject
 ): Promise<void> {
@@ -30,7 +31,7 @@ export async function addKeysToStorage(
     // ! No need for encrypting keys before storing them with react-native-keychain,
     // the device will do it automatically
 
-    await AsyncStorage.setItem("account-#0-baseAddress", baseAddress) // unencrypted storage
+    await AsyncStorage.setItem("account-#0-baseAddresses", JSON.stringify(addresses)) // unencrypted storage
 
     // this one is a must-have key storage method, in case nothing else is accepted/available
     const passwordEncryptedRootKey = await encryptWithPassword(rootKeyHex, userPassword)
@@ -94,7 +95,7 @@ export async function deleteKeysFromStorage(accountIndexes = [0]): Promise<void>
         service: `@Bonfire:account-#${accountIdx}-key`,
       })
     }
-    await AsyncStorage.removeItem("account-#0-baseAddress")
+    await AsyncStorage.removeItem("account-#0-baseAddresses")
 
     console.log("All done. Storage keys deleted")
   } catch (e) {

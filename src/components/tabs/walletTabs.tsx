@@ -15,8 +15,10 @@ export const WalletTabs = ({
   isPaginationLoading,
   isLoading,
 }: any) => {
-  const { colorScheme, bottomNavigationHeight } = appContext()
-  const { baseAddress } = walletContext()
+  const { colorScheme, bottomNavigationHeight, networkId } = appContext()
+  const { addresses } = walletContext()
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
   const [activeTab, setActiveTab] = useState("assets")
   const [layoutHeight, setLayoutHeight] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
@@ -29,11 +31,11 @@ export const WalletTabs = ({
   }
   const setActiveAssetsTab = () => {
     setActiveTab("assets")
-    onAssetsListUpdate(baseAddress)
+    onAssetsListUpdate(networkBasedAddress)
   }
   const setActiveTransactionsTab = () => {
     setActiveTab("history")
-    onTxListUpdate(baseAddress, true)
+    onTxListUpdate(networkBasedAddress, true)
   }
 
   return (

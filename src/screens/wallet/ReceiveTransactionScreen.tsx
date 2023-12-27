@@ -24,8 +24,10 @@ export interface WalletTopUpScreenProps {
 
 export const ReceiveTransactionScreen = ({ route, pagerRef }: WalletTopUpScreenProps) => {
   const navigation = useNavigation()
-  const { colorScheme } = appContext()
-  const { baseAddress } = walletContext()
+  const { colorScheme, networkId } = appContext()
+  const { addresses } = walletContext()
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
   const [isLightMode, setIsLightMode] = React.useState<boolean>(false)
   const [copyMsgActive, setCopyMsgActive] = React.useState<boolean>(false)
   const [isVisibleModal, setIsVisibleModal] = React.useState<boolean>(false)
@@ -56,7 +58,7 @@ export const ReceiveTransactionScreen = ({ route, pagerRef }: WalletTopUpScreenP
   )
 
   const onCopyPress = () => {
-    Clipboard.setString(baseAddress)
+    Clipboard.setString(networkBasedAddress)
     setCopyMsgActive(true)
     setTimeout(() => setCopyMsgActive(false), 3000)
   }
@@ -109,14 +111,14 @@ export const ReceiveTransactionScreen = ({ route, pagerRef }: WalletTopUpScreenP
           <View style={styles.main}>
             <View style={styles.qrCodeContainer}>
               <QRCode
-                value={baseAddress}
+                value={networkBasedAddress}
                 size={windowWidth / 3}
                 backgroundColor={Colors.primary.neutral}
               />
             </View>
             <View style={styles.addressWrapper}>
               <BodyText customColorScheme="light" customStyle={{ ...monospace.base }}>
-                {baseAddress}
+                {networkBasedAddress}
               </BodyText>
             </View>
             <Pressable onPress={onCopyPress} style={Buttons.applyOpacity(styles.copyBtn)}>

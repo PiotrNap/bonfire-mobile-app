@@ -20,16 +20,6 @@ export class Users {
       throw e?.response?.data || e
     }
   }
-  public static async getUserByPublickey(baseAddress: string): Promise<any> {
-    try {
-      const res = await axios.get(`users/base-address/${baseAddress}`)
-      const data = res.data
-      return data
-    } catch (e: any) {
-      console.error(e)
-      throw e?.response?.data || e
-    }
-  }
   public static async checkIfUserExistsForPublicKey(
     publickey: string
   ): Promise<UserByPublickey | void> {
@@ -174,9 +164,9 @@ export class Users {
     }
   }
 
-  public static async registerForBetaTesting(betaCode: string, baseAddress: string) {
+  public static async registerForBetaTesting(betaCode: string, id: string) {
     try {
-      return await axios.get(`/users/beta-tokens/${betaCode}/${baseAddress}`)
+      return await axios.get(`/users/${id}/beta-tester-registration/${betaCode}`)
     } catch (e) {
       throw e?.response?.data || e
     }

@@ -13,19 +13,20 @@ import {
 } from "lib/wallet/utils"
 import { useFocusEffect } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { walletContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 
 export const useWallet = (makeInitialFetch = true) => {
   const {
     txHistory,
     setTxHistory,
-    baseAddress,
+    addresses,
     setLovelaceBalance,
     setWalletUtxos,
     setWalletAssets,
-    setBaseAddress,
+    setBaseAddresses,
   } = walletContext()
+  const { networkId } = appContext()
   const { collateralUtxoId } = React.useContext(ProfileContext)
   const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false)
   const [lockedLovelaceBalance, setLockedLovelaceBalance] = React.useState<bigint>(0n)
@@ -33,33 +34,52 @@ export const useWallet = (makeInitialFetch = true) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [txListPage, setTxListPage] = React.useState<number>(1)
   const [txHistoryEndReached, setTxHistoryEndReached] = React.useState<boolean>(false)
-  // const [aU, setaU] = React.useState<any>(1)
-  // const [tU, settU] = React.useState<any>(1)
+
+  const txPromiseRef = React.useRef<Promise<void> | null>(null)
+  const walletBalancePromiseRef = React.useRef<Promise<void> | null>(null)
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
 
   /** Update wallet Utxos and ADA balance **/
   useFocusEffect(
     React.useCallback(() => {
-      if (makeInitialFetch)
-        (async () => {
-          let addr: any = baseAddress
-          if (!addr) {
-            addr = await AsyncStorage.getItem("account-#0-baseAddress")
-            setBaseAddress(addr || "")
+      if (makeInitialFetch) {
+        ;(async () => {
+          if (!addresses.mainnet || !addresses.testnet) {
+            let addresses: any = await AsyncStorage.getItem("account-#0-baseAddresses")
+            if (typeof addresses === "string" && addresses) {
+              addresses = JSON.parse(addresses)
+              setBaseAddresses(addresses)
+              updateWalletBalance(
+                networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
+              )
+              updateWalletTxHistory(
+                networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
+              )
+            }
+          } else {
+            updateWalletBalance(networkBasedAddress)
+            updateWalletTxHistory(networkBasedAddress)
           }
-          updateWalletBalance(addr)
-          updateWalletTxHistory(addr)
         })()
-    }, [])
+      }
+    }, [networkId, networkBasedAddress])
   )
 
-  const updateWalletBalance = React.useCallback(
+  const updateWalletBalance = (addr?: string) => {
+    addr = addr ?? networkBasedAddress
+    if (walletBalancePromiseRef.current) return walletBalancePromiseRef.current
+
+    const newPromise = getWalletBalance(addr)
+    walletBalancePromiseRef.current = newPromise
+    return newPromise
+  }
+
+  const getWalletBalance = React.useCallback(
     async (addr?: string) => {
       try {
-        // console.log("tokens update :", aU)
-        // setaU((p) => p + 1)
-
         setIsLoading(true)
-        addr = addr ?? baseAddress
+        addr = addr ?? networkBasedAddress
 
         const isGoodAddr = Crypto.verifyBech32(addr)
         if (!isGoodAddr)
@@ -69,15 +89,21 @@ export const useWallet = (makeInitialFetch = true) => {
             text2: "Cannot fetch address assets.",
           })
 
-        const { data, error } = await Wallet.getUtxosAtAddress(addr)
-
-        if (!data || error)
+        const { data, error } = await Wallet.getUtxosAtAddress(addr, networkId)
+        if (error)
           Toast.show({
             type: "error",
-            text1: error?.error || "Unable to get assets",
+            text1: error || "Unable to get assets",
             text2: "Maybe try again?",
           })
-        if (!data.length) return setIsLoading(false)
+        if (!data?.length) {
+          setLovelaceBalance(0n)
+          setLockedLovelaceBalance(0n)
+          setWalletAssets(new Map(data))
+          setWalletUtxos(data)
+
+          return
+        }
         const collateralUtxo =
           collateralUtxoId &&
           (data as TxInput[]).some(
@@ -101,25 +127,33 @@ export const useWallet = (makeInitialFetch = true) => {
         setWalletAssets(new Map(assets))
 
         setWalletUtxos(data)
-        setIsLoading(false)
       } catch (e) {
         showErrorToast(e)
+      } finally {
+        setIsLoading(false)
+        walletBalancePromiseRef.current = null
       }
     },
-    [baseAddress, collateralUtxoId]
+    [networkBasedAddress, collateralUtxoId, networkId]
   )
-  const updateWalletTxHistory = React.useCallback(
-    async (addr?: string, refresh = true) => {
+
+  const updateWalletTxHistory = (addr?: string, refresh = true) => {
+    addr = addr ?? networkBasedAddress
+    if (txPromiseRef.current) return txPromiseRef.current
+
+    const newPromise = getTxHistory(addr, refresh)
+    txPromiseRef.current = newPromise
+    return newPromise
+  }
+
+  const getTxHistory = React.useCallback(
+    async (addr: string, refresh) => {
       try {
         if (!refresh) {
           if (txHistoryEndReached) return // no more pagination
           setIsPaginationLoading(true)
         }
 
-        // console.log("txs update :", tU)
-        // settU((p) => p + 1)
-
-        addr = addr ?? baseAddress
         const isGoodAddr = Crypto.verifyBech32(addr)
         if (!isGoodAddr)
           Toast.show({
@@ -128,19 +162,25 @@ export const useWallet = (makeInitialFetch = true) => {
             text2: "Cannot fetch address transactions.",
           })
 
-        const { data: transactions, error } = await Wallet.getTransactionsAtAddress(
+        const {
+          data: transactions,
+          error,
+          statusCode,
+        } = await Wallet.getTransactionsAtAddress(
           addr,
-          refresh ? 1 : txListPage
+          refresh ? 1 : txListPage,
+          networkId
         )
-        if (!transactions || error)
+        if (statusCode === 404 || !transactions?.length) {
+          setTxHistory(transactions)
+          return
+        }
+        if (error) {
           Toast.show({
             type: "error",
-            text1: error?.error || "Unable to get transactions",
+            text1: error || "Unable to get transactions",
             text2: "Maybe try again?",
           })
-        if (!transactions.length) {
-          setTxHistoryEndReached(true) // no tx's left at this address
-          return setIsPaginationLoading(false)
         }
         if (transactions.length < TX_GET_SIZE) {
           setTxHistoryEndReached(true) // we've reached the end
@@ -149,12 +189,15 @@ export const useWallet = (makeInitialFetch = true) => {
         let fullInfoTxs: BlockFrostDetailedTx[] = []
 
         for (let transaction of transactions) {
-          const { data: tx, error } = await Wallet.getTxUtxos(transaction?.tx_hash)
+          const { data: tx, error } = await Wallet.getTxUtxos(
+            transaction?.tx_hash,
+            networkId
+          )
 
           if (error)
             Toast.show({
               type: "error",
-              text1: error?.error || "Unable to get transaction info",
+              text1: error || "Unable to get transaction info",
               text2: "Tx-hash: " + transaction?.tx_hash,
             })
           tx.block_time = transaction.block_time
@@ -169,12 +212,14 @@ export const useWallet = (makeInitialFetch = true) => {
           setTxHistory([...txHistory, ...fullInfoTxs])
           setTxListPage((prev) => prev + 1)
         }
-        setIsPaginationLoading(false)
       } catch (e) {
         showErrorToast(e)
+      } finally {
+        setIsPaginationLoading(false)
+        txPromiseRef.current = null
       }
     },
-    [baseAddress, txHistory, txListPage, txHistoryEndReached]
+    [networkBasedAddress, txHistory, txListPage, txHistoryEndReached, networkId]
   )
 
   return {

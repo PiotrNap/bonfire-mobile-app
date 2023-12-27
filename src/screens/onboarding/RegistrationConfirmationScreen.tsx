@@ -42,7 +42,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
   const [acceptedTerms, setAcceptedTerms] = React.useState<boolean>(false)
   const [betaTesterCode, setBetaTesterCode] = React.useState<string>("")
   const [linkingAvailable, setLinkingAvailable] = React.useState<boolean>(false)
-  const { baseAddress, resetSecrets, accountPubKeyHex } = walletContext()
+  const { addresses, resetSecrets, accountPubKeyHex } = walletContext()
   const {
     setID,
     setDeviceID,
@@ -135,7 +135,8 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
         skills,
         profession,
         publicKey,
-        baseAddress,
+        mainnetBaseAddress: addresses.mainnet,
+        testnetBaseAddress: addresses.testnet,
         walletPublicKey: accountPubKeyHex,
       })
 
@@ -143,11 +144,6 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
         throw new Error(
           `Something went wrong during registration. Please reload the app and try again`
         )
-
-      // register for beta testing
-      if (betaTesterCode) {
-        await Users.registerForBetaTesting(betaTesterCode, baseAddress)
-      }
 
       const authResponseDTO = await startChallengeSequence(
         secretKey,

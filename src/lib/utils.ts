@@ -596,7 +596,6 @@ export function getTimeSpanLength(time: number | string): string {
 
 // takes in an array of ISO strings and returns time formats eg. '0.5hr','1hr'
 export function formatTimeIncrements(timeArray: string[], minDuration: number) {
-  console.log(timeArray)
   if (timeArray.length === 0) {
     return []
   }

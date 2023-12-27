@@ -6,6 +6,15 @@ export type UTxOId = string // <transactionId>#<outputIdx>
 export type TxHash = string
 export type Unit = string
 export type RedeemerType = "Cancel" | "Complete" | "Recycle"
+export type NetworkId = "Mainnet" | "Preprod"
+export type SeedPhraseWordCount = 12 | 15 | 18 | 21 | 24
+
+export const TX_GET_SIZE = 20
+export const PURPOSE = 2147485500
+export const COIN_TYPE = 2147485463
+export const HARD_DERIVATION_START = 2147483648
+
+export type PromiseHandler = { data: any; error: string; statusCode: number }
 
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean
@@ -20,8 +29,13 @@ export type PasswordSetUpFormValues = {
   password: string
   password_confirm: string
 }
+// base addresses for acct idx 0
+export type Addresses = {
+  mainnet: string
+  testnet: string // preprod
+}
 export interface WalletKeys {
-  baseAddress: string
+  addresses: Addresses
   rootKeyHex: string
   accountKeyHex: string
   accountPubKeyHex: string

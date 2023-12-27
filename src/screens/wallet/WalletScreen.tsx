@@ -18,8 +18,8 @@ export interface WalletScreenProps
 
 export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   const { collateralUtxoId } = React.useContext(ProfileContext)
-  const { colorScheme } = appContext()
-  const { txHistory, baseAddress, walletAssets, lovelaceBalance } = walletContext()
+  const { colorScheme, networkId } = appContext()
+  const { txHistory, addresses, walletAssets, lovelaceBalance } = walletContext()
   const {
     updateWalletTxHistory,
     lockedLovelaceBalance,
@@ -27,7 +27,11 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
     isPaginationLoading,
     updateWalletBalance,
   } = useWallet(false)
-  const getNextPageWalletTxHistory = () => updateWalletTxHistory(baseAddress, false)
+
+  const networkBasedAddress =
+    networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
+  const getNextPageWalletTxHistory = () =>
+    updateWalletTxHistory(networkBasedAddress, false)
 
   const darkGradient: string[] = [Colors.primary.s800, Colors.primary.s600]
   const lightGradient: string[] = [Colors.primary.s200, Colors.primary.neutral]
@@ -61,7 +65,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
                   ? styles.walletBalance_ligth
                   : styles.walletBalance_dark,
               ]}>
-              {adaDisplayValue} ₳
+              {adaDisplayValue} {networkId === "Preprod" && "t"}₳
             </Text>
             {/*
             {Number(lockedAdaDisplayValue) > 0 ? (

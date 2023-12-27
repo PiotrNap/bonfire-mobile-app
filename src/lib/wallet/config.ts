@@ -1,6 +1,3 @@
-import { ANDROID_API_URL, IOS_API_URL } from "@env"
-import { isIOS } from "lib/helpers"
-
 export interface NetworkConfig {
   PROVIDER_ID: number
   NETWORK_ID: number
@@ -40,65 +37,8 @@ export const NETWORK_REGISTRY = {
   UNDEFINED: -1,
 }
 
-export const GENERAL_CONFIG = {
-  BACKEND: {
-    API_ROOT: isIOS ? IOS_API_URL : ANDROID_API_URL,
-  },
-  ENABLED: true,
-  PER_EPOCH_PERCENTAGE_REWARD: 69344,
-  COIN_TYPE: CONFIG_NUMBERS.COIN_TYPES.CARDANO,
-  LINEAR_FEE: {
-    COEFFICIENT: "44",
-    CONSTANT: "155381",
-  },
-  MINIMUM_UTXO_VAL: "1000000",
-  POOL_DEPOSIT: "500000000",
-  KEY_DEPOSIT: "2000000",
-}
-
-export const HASKELL_SHELLEY_TESTNET: NetworkConfig = {
-  PROVIDER_ID: NETWORK_REGISTRY.HASKELL_SHELLEY_TESTNET,
-  NETWORK_ID: NETWORK_REGISTRY.HASKELL_SHELLEY_TESTNET,
-  CHAIN_NETWORK_ID: "0",
-  IS_MAINNET: false,
-  EXPLORER_URL_FOR_ADDRESS: (address: string) =>
-    `https://explorer.cardano-testnet.iohkdev.io/address?address=${address}`,
-  EXPLORER_URL_FOR_TX: (tx: string) =>
-    `https://explorer.cardano-testnet.iohkdev.io/tx/${tx}`,
-  BASE_CONFIG: [
-    {
-      // shelley-era
-      START_AT: 74,
-      SLOTS_PER_EPOCH: 432000,
-      SLOT_DURATION: 1,
-    },
-  ],
-  ...GENERAL_CONFIG,
-}
-
-export const HASKELL_SHELLEY: NetworkConfig = {
-  PROVIDER_ID: NETWORK_REGISTRY.HASKELL_SHELLEY,
-  NETWORK_ID: NETWORK_REGISTRY.HASKELL_SHELLEY,
-  CHAIN_NETWORK_ID: "1",
-  IS_MAINNET: true,
-  EXPLORER_URL_FOR_ADDRESS: (address: string) =>
-    `https://explorer.cardano.org/en/address?address=${address}`,
-  EXPLORER_URL_FOR_TX: (tx: string) => `https://explorer.cardano.org/tx/${tx}`,
-  BASE_CONFIG: [
-    {
-      // shelley-era
-      START_AT: 208,
-      SLOTS_PER_EPOCH: 432000,
-      SLOT_DURATION: 1,
-    },
-  ],
-  ...GENERAL_CONFIG,
-}
-
 export const ROLE_TYPE = {
   EXTERNAL_CHAIN: 0,
   INTERNAL_CHAIN: 1,
   STAKING_KEY: 2,
 }
-
-export const RECOVERY_PHRASE_LENGTHS = [9, 12, 15, 18, 21, 24]

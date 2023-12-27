@@ -9,27 +9,16 @@ import {
   Value,
 } from "@hyperionbt/helios"
 import { crc8 } from "crc"
-import {
-  CARDANO_NETWORK,
-  MIN_LOVELACE_SERVICE_FEE,
-  MIN_PERCENT_SERVICE_FEE,
-  BETA_TESTER_MPH,
-} from "@env"
-import { mainnet } from "../../on_chain/configs/mainnet.js"
-import { preprod } from "../../on_chain/configs/preprod.js"
-import { AssetUnit, PaymentTokens, WalletAssets } from "./types"
+import { MIN_LOVELACE_SERVICE_FEE, MIN_PERCENT_SERVICE_FEE, BETA_TESTER_MPH } from "@env"
+import { AssetUnit, NetworkId, PaymentTokens, WalletAssets } from "./types"
 import { HourlyRate } from "common/interfaces/bookingInterface.js"
-import { getNetworkConfig } from "./"
+import { getConfigForNetworkId } from "./"
 import dayjs from "dayjs"
 
 // assuming the total on-chain unlocking-tx fee will be 0.75 ADA
 export const MIN_VALIDATOR_FEE = 750_000n
 export const COLLATERAL_LOVELACE = 5_000_000n
 export const COLLATERAL_STORAGE_KEY = "collateral-utxoid"
-
-export const networkParams: NetworkParams = new NetworkParams(
-  CARDANO_NETWORK === "mainnet" ? mainnet : preprod
-)
 
 function checksum(num) {
   return crc8(Buffer.from(num, "hex")).toString(16).padStart(2, "0")
@@ -251,7 +240,8 @@ export function checkForBetaTesterToken(utxos: TxInput[]) {
 export function checkForCollateralAndFeeUtxos(
   utxos: TxInput[],
   serviceFee: bigint,
-  collateralUtxoId: string | null
+  collateralUtxoId: string | null,
+  networkId: NetworkId
 ): {
   collateralUtxo: TxInput | null
   feeUtxo: TxInput | null
@@ -259,7 +249,8 @@ export function checkForCollateralAndFeeUtxos(
   hasEnoughFunds: boolean // whether users' wallet have enough funds to cover collateral and all tx fee
   missingLovelace: bigint
 } {
-  const networkParams = new NetworkParams(getNetworkConfig())
+  const { networkConfig } = getConfigForNetworkId(networkId)
+  const networkParams = new NetworkParams(networkConfig)
   let collateralUtxo = null,
     feeUtxo = null,
     spareUtxos: TxInput[] = [],

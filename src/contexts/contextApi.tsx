@@ -32,6 +32,7 @@ import {
   Assets,
   WalletKeys,
   SeedPhraseWordCount,
+  NetworkId,
 } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
 import { MarkedDates } from "react-native-calendars/src/types"
@@ -52,6 +53,7 @@ export const appContext = () => {
     ref: state.ref,
     textContent: state.textContent,
     userSettings: state.userSettings,
+    networkId: state.networkId,
     qrCodeValue: state.qrCodeValue,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
     setQrCodeValue: (qrCodeValue: string) =>
@@ -64,6 +66,8 @@ export const appContext = () => {
       dispatch({ type: "SET_REF", payload: { jwtPayload } }),
     setReceivingAddr: (receivingAddr: string) =>
       dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
+    setNetworkId: (networkId: NetworkId) =>
+      dispatch({ type: "SET_NETWORK_ID", payload: { networkId } }),
     toggleAuth: (auth: boolean, accountType: string) => {
       dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } })
     },
@@ -365,7 +369,7 @@ export const walletContext = () => {
   return {
     mnemonic: state.mnemonic,
     lovelaceBalance: state.lovelaceBalance,
-    baseAddress: state.baseAddress,
+    addresses: state.addresses,
     rootKeyHex: state.rootKeyHex,
     accountPubKeyHex: state.accountPubKeyHex,
     accountKeyHex: state.accountKeyHex,
@@ -381,10 +385,10 @@ export const walletContext = () => {
         payload: { lovelace },
       })
     },
-    setBaseAddress: (baseAddress: string) => {
+    setBaseAddresses: (addresses: string) => {
       dispatch({
-        type: "SET_BASE_ADDRESS",
-        payload: { baseAddress },
+        type: "SET_BASE_ADDRESSES",
+        payload: { addresses },
       })
     },
     setSendTxInfo: (
