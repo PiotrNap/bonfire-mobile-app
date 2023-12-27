@@ -12,6 +12,8 @@ import { COLLATERAL_LOVELACE, lovelaceToAda } from "lib/wallet/utils"
 import { WalletTabs } from "components/tabs/walletTabs"
 import { useWallet } from "lib/hooks/useWallet"
 import { ProfileContext } from "contexts/profileContext"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { BigSlideModal } from "components/modals/BigSlideModal"
 
 export interface WalletScreenProps
   extends StackScreenProps<WalletStackParamList, "Wallet Main"> {}
@@ -27,6 +29,14 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
     isPaginationLoading,
     updateWalletBalance,
   } = useWallet(false)
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    ;(async () => {
+      const shouldShowModal = await AsyncStorage.getItem("wallet-modal-min-ada")
+      if (!shouldShowModal && lovelaceBalance < 10_000_000) setModalVisible(true)
+    })()
+  }, [lovelaceBalance])
 
   const networkBasedAddress =
     networkId === "Mainnet" ? addresses.mainnet : addresses.testnet
@@ -40,6 +50,10 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
   }
   const onReceivePress = () => {
     navigation.navigate("Receive Transaction")
+  }
+  const onHideModal = async () => {
+    setModalVisible(false)
+    await AsyncStorage.setItem("wallet-modal-min-ada", "hidden")
   }
   const adaDisplayValue = lovelaceToAda(lovelaceBalance).toFixed(2)
   const lockedAdaDisplayValue = lovelaceToAda(lockedLovelaceBalance).toFixed(2)
@@ -190,6 +204,18 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
           isLoading={isLoading}
           isPaginationLoading={isPaginationLoading}
         />
+        {modalVisible && (
+          <BigSlideModal
+            header="Bonfire's Tip"
+            body="To ensure smooth interactions with our bookings system, we recommend you to have at least 10₳ in your wallet."
+            isVisible={modalVisible}
+            hideModal={onHideModal}
+            buttonTitle="Close"
+            buttonCb={onHideModal}
+            customStyles={styles.tipModal}
+            customTextContainerStyle={styles.tipModalTextContainer}
+          />
+        )}
       </View>
     </SafeAreaView>
   )
@@ -210,18 +236,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     marginBottom: Sizing.x20,
-  },
-  animatedView: {
-    marginTop: Sizing.x10,
-  },
-  checkboxWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: Sizing.x5,
-  },
-  searchToolContainer: {
-    alignItems: "flex-end",
-    marginTop: Sizing.x10,
   },
   walletContainer: {
     height: Sizing.x130,
@@ -305,30 +319,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.primary.s800,
   },
-  tabsContainer: {
-    flex: 1,
-  },
   transactionsHeaderContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  transactionsHeaderText_light: {
-    ...Typography.header.x35,
-    marginBottom: Sizing.x5,
-    color: Colors.primary.s800,
-  },
-  transactionsHeaderText_dark: {
-    ...Typography.header.x35,
-    marginBottom: Sizing.x5,
-    color: Colors.primary.neutral,
-  },
-  transactionsSubheaderText_light: {
-    ...Typography.subHeader.x10,
-    color: Colors.primary.s600,
-  },
-  transactionsSubheaderText_dark: {
-    ...Typography.subHeader.x10,
-    color: Colors.primary.s180,
   },
   iconWrapper: {
     width: "20%",
@@ -340,5 +333,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Sizing.x12,
     right: Sizing.x12,
+  },
+  tipModal: {
+    height: "auto",
+  },
+  tipModalTextContainer: {
+    marginVertical: Sizing.x10,
   },
 })

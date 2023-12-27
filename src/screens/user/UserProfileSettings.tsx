@@ -92,7 +92,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       await removeStorageData()
       showStandardModal(
         //@TODO add a real email address
-        `We're sorry to see you go! Please let us know what can we improve ${process.env.BUSINESS_EMAIL}. Bonfire will keep things warm for you.`,
+        `We're sorry to see you go! Please let us know what could we improve ${process.env.BUSINESS_EMAIL}.`,
         "Account removed"
       )
     } catch (e) {

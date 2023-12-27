@@ -14,7 +14,7 @@ export const PURPOSE = 2147485500
 export const COIN_TYPE = 2147485463
 export const HARD_DERIVATION_START = 2147483648
 
-export type PromiseHandler = { data: any; error: string; statusCode: number }
+export type PromiseHandlerRes = { data: any; error: string; statusCode: number }
 
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean

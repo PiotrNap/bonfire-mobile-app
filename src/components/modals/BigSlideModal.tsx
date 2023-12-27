@@ -1,5 +1,12 @@
 import * as React from "react"
-import { View, Text, StyleSheet, useWindowDimensions, Pressable } from "react-native"
+import {
+  View,
+  Text,
+  StyleSheet,
+  useWindowDimensions,
+  Pressable,
+  ViewStyle,
+} from "react-native"
 
 import Modal from "react-native-modal"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
@@ -20,7 +27,8 @@ export interface BidSlideModalProps {
   secondButtonCb?: (arg?: any) => void
   buttonDisabled?: boolean
   secondButtonDisabled?: boolean
-  customStyles?: any
+  customStyles?: ViewStyle
+  customTextContainerStyle?: ViewStyle
 }
 
 export const BigSlideModal = ({
@@ -36,6 +44,7 @@ export const BigSlideModal = ({
   buttonDisabled,
   secondButtonDisabled,
   customStyles,
+  customTextContainerStyle,
 }: BidSlideModalProps) => {
   const { colorScheme } = appContext()
   const [visible, setVisible] = React.useState<boolean>(isVisible)
@@ -79,7 +88,7 @@ export const BigSlideModal = ({
             ]}
             onPress={onHideModal}
           />
-          <View style={styles.textContainer}>
+          <View style={[styles.textContainer, customTextContainerStyle]}>
             {header && (
               <Text
                 style={isLightMode ? styles.headerText_light : styles.headerText_dark}>

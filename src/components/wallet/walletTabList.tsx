@@ -45,7 +45,6 @@ export const WalletTabList = React.memo(
     const { colorScheme } = appContext()
     const [containerWidth, setContainerWidth] = React.useState<any>(0)
     const isLightMode = colorScheme === "light"
-
     const renderItem = React.useCallback(
       ({ item }: any) => {
         return type === "transactions" ? (
