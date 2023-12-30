@@ -8,7 +8,6 @@ import { NetworkId } from "lib/wallet/types"
 export interface EventUser {
   id: string
   username: string
-  baseAddress: string
 }
 
 export interface CreateEventDto {
@@ -22,7 +21,7 @@ export interface CreateEventDto {
   visibility: EventVisibility
   eventCardColor: string
   eventTitleColor: string
-  organizer: EventUser
+  organizerId: string
   note: string
   networkId: NetworkId
 }

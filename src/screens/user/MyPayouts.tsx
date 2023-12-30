@@ -76,6 +76,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
       const queryResult = await Events.getBookingsByQuery({
         organizer_id: id,
         past_bookings: true,
+        network_id: networkId,
       })
       if (!queryResult)
         throw new Error("Something went wrong while fetching the available payouts")

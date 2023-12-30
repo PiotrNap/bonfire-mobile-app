@@ -189,11 +189,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       eventTitleColor,
       note: eventNote || "",
       networkId,
-      organizer: {
-        id,
-        username,
-        baseAddress: networkBasedAddress,
-      },
+      organizerId: id,
     }
 
     try {
@@ -245,7 +241,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       checkForCollateralAndFeeUtxos(
         walletUtxos,
         cancellationFeeLovelace,
-        collateralUtxoId
+        collateralUtxoId,
+        networkId
       )
 
     // check if after selecting a utxo to cover the collateral,
@@ -296,8 +293,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
     setIsLoading(true)
     try {
-      let _blockFrost = blockFrost()
-      const { data, error } = await Wallet.getTxUtxos(bookingSlot.lockingTxHash)
+      let _blockFrost = blockFrost(networkId)
+      const { data, error } = await Wallet.getTxUtxos(
+        bookingSlot.lockingTxHash,
+        networkId
+      )
       if (error) return showErrorToast(error)
 
       const lockedUtxo = data.outputs.find(
@@ -316,11 +316,12 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         collateralUtxo,
         feeUtxo,
         cancellationFeeValue,
-        isEventOrganizer ? baseAddress : bookingSlot.organizer.baseAddress, // beneficiary addr
-        isEventOrganizer ? bookingSlot.attendee.baseAddress : baseAddress, // benefactor addr
+        isEventOrganizer ? networkBasedAddress : bookingSlot.organizer.baseAddress, // beneficiary addr
+        isEventOrganizer ? bookingSlot.attendee.baseAddress : networkBasedAddress, // benefactor addr
         accountKey,
         isEventOrganizer,
-        isBeforeCancellationWindow
+        isBeforeCancellationWindow,
+        networkId
       )
       if (!txHash) return showErrorToast("Something went wrong during tx submittion")
 

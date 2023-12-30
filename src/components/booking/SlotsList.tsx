@@ -21,7 +21,7 @@ type SlotsListProps = {
 
 export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   const { id } = React.useContext(ProfileContext)
-  const { colorScheme, accountType } = appContext()
+  const { colorScheme, networkId } = appContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [slots, setSlots] = React.useState<EventBookingSlot[]>([])
   const [page, setPage] = React.useState<number>(1)
@@ -39,19 +39,21 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
           limit: 20,
           page: refresh ? 1 : page,
           attendee_id: id,
+          network_id: networkId,
         })
       } else if (listType === "scheduledSlots") {
         res = await Events.getBookingsByQuery({
           limit: 20,
           page: refresh ? 1 : page,
           organizer_id: id,
+          network_id: networkId,
         })
       } else throw new Error("Unknown type of slots to fetch")
 
       if (!res) throw new Error("Unable to fetch booked slots")
 
       const [paginatedSlots, count] = res
-      console.log(paginatedSlots, count)
+
       if (count < PAGINATED_RESULTS_COUNT || count === 0) {
         setIsLastPage(true)
       }
@@ -66,7 +68,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
 
   React.useEffect(() => {
     fetchSlots()
-  }, [reload])
+  }, [reload, networkId])
 
   const isLightMode = colorScheme !== "dark"
   const isEmptyList = slots.length < 1
