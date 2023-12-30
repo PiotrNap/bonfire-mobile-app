@@ -23,6 +23,7 @@ export interface CreateAccountFormProps {
   onChangeCallback: () => void
 }
 
+/** !!! This component isn't used anymore **/
 export const CreateAccountForm = ({
   onErrorCallback,
   onChangeCallback,

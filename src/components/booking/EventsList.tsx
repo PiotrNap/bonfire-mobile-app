@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native"
 export const EventsList = React.forwardRef((props, ref): any => {
   const { customEvents, customIsLoading, isOrganizerOwnEvents, reload } = props
   const { id } = React.useContext(ProfileContext)
-  const { colorScheme, accountType } = appContext()
+  const { colorScheme } = appContext()
   const {
     events,
     isLoading: isPaginationLoading,
@@ -29,19 +29,9 @@ export const EventsList = React.forwardRef((props, ref): any => {
     getEventsPaginated,
   }))
 
-  // we aren't showing organizers own events on browse-screen
-  const filterUserEvents = React.useCallback(
-    (_events: any[]) => {
-      return _events.filter((event) => event.organizerId !== id)
-    },
-    [customEvents, events, id]
-  )
-  const eventsList = () => {
-    if (accountType === "attendee" || isOrganizerOwnEvents) return customEvents ?? events
-    return filterUserEvents(customEvents ?? events)
-  }
+  const eventsList = customEvents ?? events
   const isLightMode = colorScheme !== "dark"
-  const isEmptyEventsList = !eventsList().length
+  const isEmptyEventsList = !eventsList.length
   const isLoading = customIsLoading || isPaginationLoading
 
   const renderEventCard = React.useCallback(({ item }: any) => {
@@ -120,7 +110,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
           <VirtualizedList
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ width: "95%", alignSelf: "center" }}
-            data={eventsList()}
+            data={eventsList}
             getItem={getItem}
             refreshing={isLoading}
             initialNumToRender={5}
