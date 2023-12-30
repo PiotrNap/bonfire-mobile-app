@@ -42,7 +42,6 @@ export const appContext = () => {
 
   return {
     auth: state.authentication,
-    accountType: state.accountType,
     colorScheme: state.colorScheme,
     pageIndex: state.pageIndex,
     appBgColor: state.appBgColor,
@@ -68,9 +67,6 @@ export const appContext = () => {
       dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
     setNetworkId: (networkId: NetworkId) =>
       dispatch({ type: "SET_NETWORK_ID", payload: { networkId } }),
-    toggleAuth: (auth: boolean, accountType: string) => {
-      dispatch({ type: "TOGGLE_AUTH", payload: { auth, accountType } })
-    },
     setValidGoogleOAuth: (validGoogleOAuth: boolean) => {
       dispatch({
         type: "SET_VALID_GOOGLE_OAUTH",

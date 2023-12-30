@@ -20,7 +20,6 @@ const appTextContent = { wallet }
 
 const initialAppState: AppState = {
   authentication: false,
-  accountType: null,
   receivingAddr: "",
   validGoogleOAuth: false,
   // JWT: {
@@ -62,13 +61,6 @@ const reducer = (state: AppState, action: AppActions) => {
         validGoogleOAuth: action.payload.validGoogleOAuth,
       }
     }
-    case AppTypes.ToggleAuth:
-      return {
-        ...state,
-        authentication:
-          action.payload.auth != null ? action.payload.auth : !state.authentication,
-        accountType: action.payload.accountType,
-      }
     case AppTypes.SetPageIndex:
       return {
         ...state,

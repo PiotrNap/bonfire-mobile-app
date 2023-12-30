@@ -8,7 +8,6 @@ export interface ProfileState {
   deviceID: string
   walletBalance: { inputs: TxInput[]; lovelace: number }
   walletName: string
-  walletBaseAddress: string
   collateralUtxoId: string
   bio: string
   imageBase64?: string | null
@@ -36,7 +35,6 @@ export interface ProfileState {
   setHourlyRateAda: (inputs: number) => void
   setHasSyncedWallet: (arg: boolean) => void
   setWalletBalance: (balance: { inputs: TxInput[]; lovelace: number }) => void
-  setWalletBaseAddress: (input: string) => void
   setWalletName: (input: string) => void
   setProfession: (input: string) => void
   setJobTitle: (input: string) => void
@@ -54,7 +52,6 @@ export interface UserBaseDTO {
   deviceID: string
   timeZone?: string
   publicKey?: string
-  baseAddress: string
   profession?: string
   jobTitle?: string
   skills?: string
