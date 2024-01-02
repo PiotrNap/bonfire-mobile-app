@@ -131,6 +131,18 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
       return showErrorToast("Unable to construct Datum object.", "Error")
     try {
+      // how do I prevent cases where users make blockchain transaction, and it fails,
+      // but the booking slot still gets booked.
+
+      const reservation = await Events.reserveEventSlot({
+        eventId: params.event.id,
+        durationCost: paymentTokens.toSchemaJson(),
+        startDate: pickedStartTime,
+        duration,
+      })
+      const { ttl, id } = reservation
+      if (!ttl || !id) throw new Error("Problem occured during event reservation")
+
       // submit transaction
       const { txHash, datumHash } = await Wallet.sendLockingTransaction(
         paymentTokens,
@@ -140,14 +152,13 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         accountKey,
         networkId
       )
+      if (!txHash || !datumHash)
+        throw new Error("Blockchain failure. Please try again in 1-2 min.")
 
       // create new booking-record
-      const res = await Events.bookEvent({
+      const res = await Events.bookEventSlot({
+        id,
         lockingTxHash: txHash,
-        eventId: params.event.id,
-        durationCost: paymentTokens.toSchemaJson(),
-        startDate: pickedStartTime,
-        duration,
         datumHash,
       })
 
@@ -155,7 +166,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         navigation.navigate("Confirmation", {
           isBookingConfirmation: true,
         })
-      }
+      } else throw new Error("Problem occured during event booking")
     } catch (e) {
       showErrorToast(e)
     } finally {

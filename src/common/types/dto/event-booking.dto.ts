@@ -1,8 +1,17 @@
-export interface NewEventBookingDto {
+export interface NewEventSlotReservation {
   eventId: string
   startDate: string
   duration: number
   durationCost: string
+}
+
+export interface EventSlotReservation {
+  id: string // id of reserved booking-slot
+  ttl: number // time until this reservation expires
+}
+
+export interface EventSlotTransactionInfo {
+  id: string // id of reserved booking-slot
   lockingTxHash: string
   datumHash: string // used to reference the utxo for a payout
 }

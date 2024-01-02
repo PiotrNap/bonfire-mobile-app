@@ -1,6 +1,10 @@
 import { User, PaginationRequestDto } from "common/types/dto"
 import { CreateEventDto } from "common/types/dto/create-event.dto"
-import { EventBookingSlot, NewEventBookingDto } from "common/types/dto/event-booking.dto"
+import {
+  EventBookingSlot,
+  EventSlotTransactionInfo,
+  NewEventSlotReservation,
+} from "common/types/dto/event-booking.dto"
 import { getFormDataFromFilePath } from "lib/helpers"
 import { AnyObject } from "yup/lib/types"
 import axios from "./base"
@@ -31,9 +35,19 @@ export class Events {
     }
   }
 
-  public static async bookEvent(event: NewEventBookingDto): Promise<any> {
+  public static async bookEventSlot(txInfo: EventSlotTransactionInfo): Promise<any> {
     try {
-      const res = await axios.post("events/booking", event)
+      const res = await axios.put("events/booking", txInfo)
+
+      if (res.data) return res.data
+    } catch (e) {
+      throw e?.response?.data || e
+    }
+  }
+
+  public static async reserveEventSlot(reservationInfo: NewEventSlotReservation): Promise<any> {
+    try {
+      const res = await axios.post("events/booking", reservationInfo)
 
       if (res.data) return res.data
     } catch (e) {
