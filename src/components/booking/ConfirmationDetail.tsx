@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, Pressable } from "react-native"
+import { View, StyleSheet, Pressable, Linking, Text } from "react-native"
 
 import { Colors, Outlines, Sizing, Typography } from "styles/index"
 import { EventLine, SectionDetail } from "common/interfaces/bookingInterface"
@@ -32,6 +32,45 @@ export const ConfirmationDetail = ({
     callbackFn?.onPress()
     setTimeout(() => setIsCopyPopupVisible(false), 1000)
   }
+
+  const ensureProtocol = (url) => {
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return "http://" + url // Default to http if no protocol is specified
+    }
+    return url
+  }
+
+  const detectAndWrapUrls = (inputText: any) => {
+    if (!inputText || typeof inputText !== "string") return ""
+    const urlRegex = /\b(?:https?:\/\/|www\.)[^\s$.?#].[^\s]*\b/g
+    const urls = inputText.match(urlRegex)
+
+    if (!urls) {
+      return <Text>{inputText}</Text>
+    }
+
+    const parts = inputText.split(urlRegex).filter((part) => part)
+    const processedParts: React.ReactNode[] = []
+
+    parts.forEach((part, index) => {
+      processedParts.push(<Text key={`text-${index}`}>{part}</Text>)
+
+      if (urls[index]) {
+        const urlWithProtocol = ensureProtocol(urls[index])
+        processedParts.push(
+          <Text
+            key={`url-${index}`}
+            style={{ color: isLightMode ? "#1338BE" : "#89CFF0" }}
+            onPress={() => Linking.openURL(urlWithProtocol)}>
+            {urls[index]}
+          </Text>
+        )
+      }
+    })
+
+    return <Text>{processedParts}</Text>
+  }
+
   return (
     <View
       key={getRandomKey(4)}
@@ -108,7 +147,9 @@ export const ConfirmationDetail = ({
             <SubHeaderText
               colors={[Colors.primary.s800, Colors.primary.neutral]}
               customStyle={styles.text}>
-              {lineContent.content}
+              {label === "Note"
+                ? detectAndWrapUrls(lineContent.content)
+                : lineContent.content}
             </SubHeaderText>
             {callbackFn?.icon ? (
               <>

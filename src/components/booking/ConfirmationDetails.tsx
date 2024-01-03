@@ -58,7 +58,7 @@ export const ConfirmationDetails = ({
   withFlatList = true,
 }: any) => {
   const { colorScheme } = appContext()
-  const { timeZone } = React.useContext(ProfileContext)
+  const { timeZone, username } = React.useContext(ProfileContext)
   var {
     duration,
     durationCost,
@@ -287,6 +287,12 @@ export const ConfirmationDetails = ({
         content: previewingEvent?.attendeeAlias || bookingSlot?.attendeeAlias,
       },
     },
+    (previewingEvent?.event?.note || bookingSlot?.event?.note) && {
+      label: "Note",
+      lineContent: {
+        content: previewingEvent?.event?.note || bookingSlot?.event?.note,
+      },
+    },
     (pickedStartTime || bookingSlot?.fromDate) && {
       label: "Date",
       callbackFn: pickedStartTime && {
@@ -309,7 +315,7 @@ export const ConfirmationDetails = ({
         content: `${(duration || bookingSlot?.duration) / (1000 * 60 * 60)}hr`,
       },
     },
-    !bookingSlot?.attendeeAlias &&
+    bookingSlot?.attendeeAlias === username &&
       bookingSlot?.cancellation &&
       bookingSlot?.cancellation?.fee && {
         label: `Cancellation (${bookingSlot.cancellation.window}hr)`,
