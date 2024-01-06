@@ -66,58 +66,61 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
     })()
   }, [])
 
-  const showTermsOfService = async () => {
+  const openInAppBrowser = async (url: string) => {
+    if (!(await InAppBrowser.isAvailable())) return false
+
+    const res = await InAppBrowser.open(url, {
+      // iOS Properties
+      dismissButtonStyle: "cancel",
+      preferredBarTintColor: Colors.primary.s600,
+      preferredControlTintColor: "white",
+      readerMode: false,
+      animated: true,
+      modalPresentationStyle: "fullScreen",
+      modalTransitionStyle: "coverVertical",
+      modalEnabled: true,
+      enableBarCollapsing: false,
+      // Android Properties
+      showTitle: true,
+      toolbarColor: Colors.primary.s600,
+      secondaryToolbarColor: "black",
+      navigationBarColor: "black",
+      navigationBarDividerColor: "white",
+      enableUrlBarHiding: true,
+      enableDefaultShare: true,
+      forceCloseOnRedirection: false,
+      // Specify full animation resource identifier(package:anim/name)
+      // or only resource name(in case of animation bundled with app).
+      animations: {
+        startEnter: "slide_in_right",
+        startExit: "slide_out_left",
+        endEnter: "slide_in_left",
+        endExit: "slide_out_right",
+      },
+      headers: {
+        "my-custom-header": "my custom header value",
+      },
+    })
+    if (res) return true
+  }
+
+  const showLegalDocument = async (type: "terms-of-service" | "privacy-policy") => {
     try {
-      const url = WEBSITE_URL + "/terms-of-service"
-      if (await InAppBrowser.isAvailable()) {
-        const result = await InAppBrowser.open(url, {
-          //@TODO do I need all of those props??
-          // iOS Properties
-          dismissButtonStyle: "cancel",
-          preferredBarTintColor: Colors.primary.s600,
-          preferredControlTintColor: "white",
-          readerMode: false,
-          animated: true,
-          modalPresentationStyle: "fullScreen",
-          modalTransitionStyle: "coverVertical",
-          modalEnabled: true,
-          enableBarCollapsing: false,
-          // Android Properties
-          showTitle: true,
-          toolbarColor: Colors.primary.s600,
-          secondaryToolbarColor: "black",
-          navigationBarColor: "black",
-          navigationBarDividerColor: "white",
-          enableUrlBarHiding: true,
-          enableDefaultShare: true,
-          forceCloseOnRedirection: false,
-          // Specify full animation resource identifier(package:anim/name)
-          // or only resource name(in case of animation bundled with app).
-          animations: {
-            startEnter: "slide_in_right",
-            startExit: "slide_out_left",
-            endEnter: "slide_in_left",
-            endExit: "slide_out_right",
-          },
-          headers: {
-            "my-custom-header": "my custom header value",
-          },
-        })
-      } else {
-        navigation.navigate("Legal Document", { type: "terms-of-service" })
+      const url = WEBSITE_URL + "/" + type
+      const browserResult = await openInAppBrowser(url)
+
+      if (!browserResult) {
+        if (type === "terms-of-service") {
+          navigation.navigate("Legal Document", { type: "terms-of-service" })
+        } else if (type === "privacy-policy") {
+          navigation.navigate("Legal Document", { type: "privacy-policy" })
+        } else throw new Error("Unknown type of Legal document")
       }
     } catch (e) {
       console.error(e)
     }
   }
 
-  const showPrivacyPolicy = () => {
-    if (linkingAvailable) {
-      setIsPreviewingPrivacyPolicy(true)
-    } else {
-      navigation.navigate("Legal Document", { type: "privacy-policy" })
-    }
-  }
   const onAcceptedTerms = () => setAcceptedTerms((p) => !p)
   const onConfirm = async () => {
     setIsLoading(true)
@@ -166,6 +169,13 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
       setDeviceID(newUserDTO.deviceID)
       setID(newUserDTO.id)
       if (authResponseDTO?.accessToken) setAuthorizationToken(authResponseDTO.accessToken)
+
+      // mint beta tester tokens if user registered successfully
+      if (betaTesterCode) {
+        let registered = await Users.registerForBetaTesting(betaTesterCode, newUserDTO.id)
+        if (!registered)
+          throw new Error("Problem occured during BetaTester token minting.")
+      }
 
       // clean up secret keys
       pagerRef.current.state = null
@@ -287,11 +297,11 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
         <View style={styles.messageTextWrapper}>
           <TextComponent>I've read and accept </TextComponent>
           <View style={styles.legalDocumentLinks}>
-            <Pressable onPress={showTermsOfService}>
+            <Pressable onPress={() => showLegalDocument("terms-of-service")}>
               <TextComponent isLink>Terms of Service</TextComponent>
             </Pressable>
             <TextComponent> and </TextComponent>
-            <Pressable onPress={showPrivacyPolicy}>
+            <Pressable onPress={() => showLegalDocument("privacy-policy")}>
               <TextComponent isLink>Privacy Policy</TextComponent>
             </Pressable>
           </View>

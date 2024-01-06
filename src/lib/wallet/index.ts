@@ -393,6 +393,20 @@ export class Wallet {
     isBeforeCancellationWindow: boolean,
     networkId: NetworkId
   ) {
+    console.log("start")
+    console.log(unlockingTxInput)
+    console.log(spareUtxos)
+    console.log(collateralUtxoIn)
+    console.log(feeUtxo)
+    console.log(cancellationFeeValue)
+    console.log(beneficiaryAddress)
+    console.log(benefactorAddress)
+    console.log(signingKey)
+    console.log(isBeneficiary)
+    console.log(isBeforeCancellationWindow)
+    console.log(networkId)
+    console.log("end")
+
     const now = Date.now()
     const fiveMinutes = 1000 * 60 * 5
     const { networkConfig } = getConfigForNetworkId(networkId)
@@ -404,12 +418,14 @@ export class Wallet {
     const userPubKeyHash = userAddress.pubKeyHash
     if (!userPubKeyHash)
       throw Error("Unable to obtain the PubKey hash for user wallet address")
+    console.log(1)
 
     const redeemer = new escrowProgram.types.Redeemer.Cancel(
       unlockingTxInput.outputId.txId.hex,
       unlockingTxInput.outputId.utxoIdx
     )
     const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
+    console.log(2)
 
     //@TODO after beta release add script reference
     const unlockingTx = new Tx()
@@ -421,6 +437,7 @@ export class Wallet {
       .addSigner(userPubKeyHash)
       .validFrom(new Date(now - fiveMinutes))
       .validTo(new Date(now + fiveMinutes))
+    console.log(3)
 
     /*
      * if benefactor is cancelling before cancellation window there's nothing to be added to the output
@@ -433,9 +450,13 @@ export class Wallet {
     } else {
       // means it's during cancellation window
       if (!isBeforeCancellationWindow) {
+        console.log(3.1)
+
         unlockingTx.addOutput(
           new TxOutput(Address.fromBech32(beneficiaryAddress), cancellationFeeValue)
         )
+        console.log(3.2)
+
         unlockingTx.addOutput(
           new TxOutput(
             Address.fromBech32(benefactorAddress),
@@ -464,7 +485,7 @@ export class Wallet {
       )
       await AsyncStorage.setItem(COLLATERAL_STORAGE_KEY, `${txHash}#${newCollateralIdx}`)
 
-      return { txHash }
+      return txHash
     } catch (e) {
       throw e
     } finally {
@@ -512,6 +533,7 @@ export class Wallet {
     txHash: string,
     networkId: NetworkId
   ): Promise<PromiseHandlerRes> {
+    console.log(txHash, networkId)
     return Wallet.promiseHandler(blockFrostFetch(`/txs/${txHash}/utxos`, networkId))
   }
 

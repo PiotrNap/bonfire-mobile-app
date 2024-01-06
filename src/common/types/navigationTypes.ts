@@ -21,6 +21,7 @@ export type AppStackParamList = {
         isBookingWalletTopUp: boolean | undefined
         isNewEvent: boolean | undefined
         isBookingConfirmation: boolean | undefined
+        bodyText: string | undefined
       }
     | undefined
   "Add Funds": { fromScreen: string }

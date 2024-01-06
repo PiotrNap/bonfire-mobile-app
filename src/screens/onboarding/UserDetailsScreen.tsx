@@ -21,11 +21,11 @@ export interface UserDetailScreenProps {}
 
 export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
   const [submitted, setSubmitted] = React.useState<boolean>(false)
+  const [formValues, setFormValues] = React.useState<any>({})
   const [modalState, setModalState] = React.useState<any>({
     type: null,
     visible: false,
   })
-  const [formValues, setFormValues] = React.useState<any>(null)
   const {
     setUsername,
     setBio,
@@ -51,24 +51,24 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
       const usernameFree = await Users.checkUsernameAvailability(values.username)
       if (!usernameFree) return showErrorToast({ message: "Username already taken" })
 
-      setFormValues(values)
       if (!prop) {
         // store the values in context or pass as a route param, don't create account yet
         setModalState({ type: "safety-warning", visible: true })
+        setFormValues(values)
       } else {
-        onModalConfirm()
+        onModalConfirm(values)
       }
     } catch (e) {
       showErrorToast(e)
     }
   }
-  const onModalConfirm = () => {
-    setUsername(formValues.username)
-    setBio(formValues.bio)
-    setProfession(formValues.profession)
-    setSkills(formValues.skills)
-    setJobTitle(formValues.jobTitle)
-    setHourlyRateAda(formValues.hourlyRateAda)
+  const onModalConfirm = (_formValues: any = formValues) => {
+    setUsername(_formValues.username)
+    setBio(_formValues.bio)
+    setProfession(_formValues.profession)
+    setSkills(_formValues.skills)
+    setJobTitle(_formValues.jobTitle)
+    setHourlyRateAda(_formValues.hourlyRateAda)
 
     if (!prop) {
       pagerRef.current.setPage(1)

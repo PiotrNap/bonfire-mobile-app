@@ -16,6 +16,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { appContext, walletContext } from "contexts/contextApi"
 import { ProfileContext } from "contexts/profileContext"
 
+// TODO
+// 1. reduce unnecessary re-fetch of the already fetched Tx-Info
+//      ... see "for (let transaction of transactions) {"
+
 export const useWallet = (makeInitialFetch = true) => {
   const {
     txHistory,
@@ -187,8 +191,21 @@ export const useWallet = (makeInitialFetch = true) => {
         }
 
         let fullInfoTxs: BlockFrostDetailedTx[] = []
-
+        console.log("txHistory >", txHistory)
+        console.log("transaction >", transactions)
+        // there's probably a better way to fetch every tx utxos
         for (let transaction of transactions) {
+          const oldFullTxInfo = txHistory?.find(
+            (tx) =>
+              tx.hash === transaction.tx_hash && tx.block_time === transaction.block_time
+          )
+          console.log(transaction)
+          console.log("exists ??? >", !!oldFullTxInfo)
+          if (oldFullTxInfo) {
+            fullInfoTxs.push(transaction)
+            continue
+          }
+
           const { data: tx, error } = await Wallet.getTxUtxos(
             transaction?.tx_hash,
             networkId

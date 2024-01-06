@@ -58,7 +58,7 @@ export const ConfirmationDetails = ({
   withFlatList = true,
 }: any) => {
   const { colorScheme } = appContext()
-  const { timeZone, username } = React.useContext(ProfileContext)
+  const { timeZone, username, id: userId } = React.useContext(ProfileContext)
   var {
     duration,
     durationCost,
@@ -264,7 +264,7 @@ export const ConfirmationDetails = ({
   ].filter((s) => !!s)
 
   /**
-   * Displayed during event booking confirmation
+   * Displayed during event booking confirmation & booked/scheduled events preview
    */
   const bookingEventSections: SectionDetail[] = [
     (previewingEvent?.title || bookingSlot?.eventTitle) && {
@@ -333,6 +333,7 @@ export const ConfirmationDetails = ({
                 bookingSlot.cancellation.window,
                 bookingSlot.cancellation.fee,
                 bookingSlot.cost,
+                bookingSlot?.organizerId === userId,
                 dayjs(bookingSlot.fromDate).subtract(
                   bookingSlot.cancellation.window / 2,
                   "hours"

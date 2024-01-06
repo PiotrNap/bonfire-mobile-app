@@ -88,6 +88,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const bookingSlot = params?.bookingSlot
   const isCancellableBookingSlot =
     bookingSlot && new Date() < new Date(bookingSlot?.fromDate)
+  const isEventOrganizer = bookingSlot?.organizerId === id
 
   const onHideAuthenticator = () => setAuthenticatorVisible(false)
   const onBackNavigationPress = () => navigation.goBack()
@@ -140,6 +141,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         accountKey,
         networkId
       )
+      if (!txHash || !datumHash)
+        throw new Error("We are unable to submit the transaction.")
 
       // create new booking-record
       const res = await Events.bookEvent({
@@ -234,7 +237,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       bookingSlot.fromDate,
       bookingSlot.cancellation.window,
       bookingSlot.cancellation.fee,
-      bookingSlot.cost
+      bookingSlot.cost,
+      isEventOrganizer
     )
     console.log("cancellationFeeLovelace >", cancellationFeeLovelace)
     const { collateralUtxo, feeUtxo, spareUtxos, hasEnoughFunds, missingLovelace } =
@@ -298,7 +302,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         bookingSlot.lockingTxHash,
         networkId
       )
-      if (error) return showErrorToast(error)
+      console.log("data or error ", data, error)
+      if (error) throw error
 
       const lockedUtxo = data.outputs.find(
         (utxo) => utxo.data_hash === bookingSlot.datumHash
@@ -309,15 +314,18 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         tx_hash: data.hash,
       })
 
-      const isEventOrganizer = bookingSlot.organizerId === id
-      const { txHash } = await Wallet.sendCancellationTransaction(
+      const txHash = await Wallet.sendCancellationTransaction(
         lockedTxIn,
         spareUtxos,
         collateralUtxo,
         feeUtxo,
         cancellationFeeValue,
-        isEventOrganizer ? networkBasedAddress : bookingSlot.organizer.baseAddress, // beneficiary addr
-        isEventOrganizer ? bookingSlot.attendee.baseAddress : networkBasedAddress, // benefactor addr
+        isEventOrganizer
+          ? networkBasedAddress
+          : bookingSlot.organizer["testnetBaseAddress" ?? "mainnetBaseAddress"], // beneficiary addr
+        isEventOrganizer
+          ? bookingSlot.attendee["testnetBaseAddress" ?? "mainnetBaseAddress"]
+          : networkBasedAddress, // benefactor addr
         accountKey,
         isEventOrganizer,
         isBeforeCancellationWindow,
@@ -356,13 +364,14 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       const txHash = await Wallet.sendRegularTransaction(
         {
           assets: undefined,
-          receiverAddress: baseAddress,
+          receiverAddress: networkBasedAddress,
           lovelace: COLLATERAL_LOVELACE,
         },
-        baseAddress,
+        networkBasedAddress,
         walletUtxos,
         accountKey,
-        true // this is a collateral split Tx
+        true, // this is a collateral split Tx
+        networkId
       )
       if (!txHash) throw new Error("We were unable to submit the transaction")
 
@@ -370,6 +379,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         navigation.navigate("Confirmation", {
           customRoute: "User Events",
           reload: true,
+          bodyText:
+            "Collateral-split confirmation will appear shortly in your wallet (usually 1-3 min).",
         })
       }
     } catch (e) {

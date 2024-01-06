@@ -203,6 +203,7 @@ export function calculateCancellationFee(
   window: number,
   rate: number,
   eventCost: string,
+  isEventOrganizer: boolean,
   fromDate?: dayjs.Dayjs
 ): {
   isWithinCancellationWindow: boolean
@@ -219,7 +220,7 @@ export function calculateCancellationFee(
 
   if (now < windowStartDate) cancellationFee = 0n
 
-  if (isWithinCancellationWindow) {
+  if (isWithinCancellationWindow && !isEventOrganizer) {
     cancellationFee = BigInt(lovelaceCost * (rate / 100))
   }
 

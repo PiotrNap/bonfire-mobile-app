@@ -12,10 +12,11 @@ import { Users } from "Api/Users"
 import { ProfileContext } from "contexts/profileContext"
 import { Checkbox } from "components/forms/Checkbox"
 import { showErrorToast } from "lib/helpers"
-import wordlist from "bip39/src/wordlists/english.json"
 import { ToggleButton } from "screens/organizer/newEvent/toggleButton"
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { MnemonicInputsProvider } from "contexts/mnemonicInputsContext"
+import wordlist from "bip39/src/wordlists/english.json"
+import { Layout } from "screens/onboarding/Layout"
+import { useFocusEffect } from "@react-navigation/native"
 
 const MNEMONIC_ERRORS = {
   0: false,
@@ -30,6 +31,9 @@ const MNEMONIC_ERRORS = {
   10: false,
   11: false,
 }
+
+// DEV mnemonic 27/12/2023
+// also report cancel waste border click adapt elder lawsuit vast suit short (username @bro)
 
 export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
   const {
@@ -52,22 +56,22 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
     [key: string]: boolean
   }>(MNEMONIC_ERRORS)
   const [hasError, setHasError] = React.useState<boolean>(false)
-  const [nonExistingUserBaseAddr, setNonExistingUserBaseAddr] = React.useState<string>("")
   const [acceptedStoreOfflineCheckbox, setAccepteStoreOfflinedCheckbox] =
     React.useState<boolean>(false)
   const isConfirmScreen = pagerRef.current?.state?.isConfirmScreen
   const mnemonicPresent = mnemonic && Object.keys(mnemonic).length > 1
 
-  React.useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     if (mnemonicPresent && !prop) {
       let _tempMnemonic = Object.assign({}, mnemonic)
       emptyFields.forEach((f) => (_tempMnemonic[f] = ""))
       setTempMnemonic(_tempMnemonic)
+
       setContent(textContent.confirm_mnemonic)
     } else setContent(textContent.import_mnemonic)
 
     setSelectedMnemonicLength(seedPhraseWordCount)
-  }, [mnemonicPresent, mnemonic, pageIndex, seedPhraseWordCount])
+  }, [mnemonicPresent, mnemonic, pageIndex, seedPhraseWordCount]))
 
   const isDisabledInput = (idx: number) => {
     if (prop === "import-mnemonic") return false
@@ -100,7 +104,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
           (key) => key in tempMnemonic && mnemonic[key] === tempMnemonic[key]
         ))
     )
-  }, [currMnemonicLength, hasError, selectedMnemonicLength])
+  }, [currMnemonicLength, hasError, selectedMnemonicLength, tempMnemonic])
 
   const onNextButtonPress = async () => {
     setIsLoading(true)
@@ -112,23 +116,19 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       if (!phrase.length) return
 
       const walletKeys = await new Wallet().init(phrase)
-      if (!walletKeys || !Object.values(walletKeys).length) throw new Error()
-
-      let userBaseAddr = walletKeys.testnetBaseAddress || ""
-      let userCred
-
-      if (nonExistingUserBaseAddr === userBaseAddr)
-        throw new Error("Please provide a different mnemonic")
+      if (!walletKeys || !Object.values(walletKeys).length)
+        throw new Error("Please double-check each input field")
 
       if (!prop) {
         setWalletKeys(walletKeys)
         return pagerRef.current.setPage(3)
       }
 
-      userCred = await Users.checkIfUserExistsForPublicKey(walletKeys.accountPubKeyHex)
+      const userCred = await Users.checkIfUserExistsForPublicKey(
+        walletKeys.accountPubKeyHex
+      )
 
       if (prop === "sign-in" && !userCred) {
-        setNonExistingUserBaseAddr(userBaseAddr)
         throw new Error("No user found for a given mnemonic.")
       } else if (prop === "import-mnemonic" && userCred) {
         throw new Error("User already exist for a given mnemonic.")
@@ -142,7 +142,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
 
       pagerRef.current.setPage(1)
     } catch (e) {
-      showErrorToast("Please double-check each input field", "Incorrect Mnemonic")
+      showErrorToast(e)
     } finally {
       setIsLoading(false)
     }
@@ -183,6 +183,12 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
   }
   const changeMnemonicLength = (length: number) => {
     setSelectedMnemonicLength(length)
+
+    let newTempMnemonic = {}
+    for (let i = 0; i < length; i++) {
+      newTempMnemonic[i] = tempMnemonic[i] || ""
+    }
+    setTempMnemonic(newTempMnemonic)
   }
 
   const renderTextInputs = React.useCallback(() => {
@@ -238,13 +244,10 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       rowInputsSum += 3
     }
     return inputs
-  }, [selectedMnemonicLength])
+  }, [selectedMnemonicLength, mnemonic])
+
   return (
-    <KeyboardAwareScrollView
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-      keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
-      style={{ width: "90%", marginVertical: Sizing.x15 }}>
+    <Layout scrollable={!!prop}>
       <View style={styles.header}>
         <HeaderText customStyles={{ marginBottom: Sizing.x10 }} colorScheme="dark">
           {content.header}
@@ -253,19 +256,23 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       </View>
 
       <View style={styles.main}>
-        <SubHeaderText
-          customStyle={styles.mnemonicLengthLabel}
-          colors={[Colors.primary.neutral]}>
-          Select Seed Phrase Length
-        </SubHeaderText>
-        <ToggleButton
-          defaultValue={selectedMnemonicLength}
-          options={["12", "15", "18", "21", "24"]}
-          values={[12, 15, 18, 21, 24]}
-          animationDuration={30}
-          onSelect={changeMnemonicLength}
-          customColorScheme={"dark"}
-        />
+        {prop && (
+          <>
+            <SubHeaderText
+              customStyle={styles.mnemonicLengthLabel}
+              colors={[Colors.primary.neutral]}>
+              Select Seed Phrase Length
+            </SubHeaderText>
+            <ToggleButton
+              defaultValue={selectedMnemonicLength}
+              options={["12", "15", "18", "21", "24"]}
+              values={[12, 15, 18, 21, 24]}
+              animationDuration={30}
+              onSelect={changeMnemonicLength}
+              customColorScheme={"dark"}
+            />
+          </>
+        )}
         <MnemonicInputsProvider>{renderTextInputs()}</MnemonicInputsProvider>
       </View>
       <View style={styles.footerWrapper}>
@@ -291,7 +298,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
           loadingIndicator={isLoading}
         />
       </View>
-    </KeyboardAwareScrollView>
+    </Layout>
   )
 }
 

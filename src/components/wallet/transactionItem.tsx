@@ -4,19 +4,35 @@ import { View, Text, StyleSheet, Pressable } from "react-native"
 import { Colors, Sizing } from "styles/index"
 
 import { appContext } from "contexts/contextApi"
-import { BlockFrostDetailedTx } from "lib/wallet/types"
+import { BlockFrostDetailedTx, BlockFrostUtxoInfo } from "lib/wallet/types"
 import { RightArrowIcon, UpArrow } from "assets/icons"
 import { DownArrow } from "assets/icons/downArrow"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { useNavigation } from "@react-navigation/native"
-import { ESCROW_CONTRACT_ADDRESS } from "@env"
+import { MAINNET_ESCROW_CONTRACT_ADDRESS, TESTNET_ESCROW_CONTRACT_ADDRESS } from "@env"
 
 export const TransactionItem = React.memo(
   ({ item: transaction }: { item: BlockFrostDetailedTx }) => {
-    const { colorScheme } = appContext()
-    const isIncomingFromSmartContract = transaction.inputs.some(
-      (input) => input.address === ESCROW_CONTRACT_ADDRESS
+    const { colorScheme, networkId } = appContext()
+    const [assetCount, setAssetCount] = React.useState<number>(0)
+    const [adaAmount, setAdaAmount] = React.useState<number>(0)
+
+    const inputFromEscrowContract = transaction.inputs.find(
+      (input) =>
+        input.address ===
+        (networkId === "Mainnet"
+          ? MAINNET_ESCROW_CONTRACT_ADDRESS
+          : TESTNET_ESCROW_CONTRACT_ADDRESS)
     )
+    // eg. during event cancellation
+    const isOutgoingFromEscrowContract = false
+    // inputFromEscrowContract &&
+    // transaction.outputs.find(
+    //   (out) =>
+    //     out.amount.find((amt) => amt.unit === "lovelace")?.quantity ===
+    //     inputFromEscrowContract.amount.find((amt) => amt.unit === "lovelace")?.quantity
+    // )?.address !== transaction.user_address
+
     // transaction is outgoing IF more assets were spent than received
     // @TODO after release; implement the above logic
     const isOutgoing = transaction.inputs.some(
@@ -27,16 +43,30 @@ export const TransactionItem = React.memo(
       navigation.navigate("Preview Transaction", {
         txInfo: transaction,
         isOutgoing,
-        isIncomingFromSmartContract,
+        isIncomingFromEscrowContract: inputFromEscrowContract,
+        isOutgoingFromEscrowContract,
         isTxHistoryPreview: true,
       })
 
-    const assetCount = transaction.outputs[0].amount.length - 1 // Assuming lovelace is listed first
-    const adaAmount = Number(transaction.outputs[0].amount[0].quantity) / 1000000 // Convert lovelace to ADA
+    React.useLayoutEffect(() => {
+      let assetCount = inputFromEscrowContract
+        ? transaction.outputs.filter(
+            (out) => out.address === transaction.user_address && out.amount.length > 1
+          ).length - 1
+        : transaction.outputs[0].amount.length - 1 // Assuming lovelace is listed first
+      let adaAmount = isOutgoingFromEscrowContract
+        ? 0
+        : Number(
+            transaction.outputs[inputFromEscrowContract ? 1 : 0].amount[0].quantity
+          ) / 1000000 // Convert lovelace to ADA
+
+      setAssetCount(assetCount)
+      setAdaAmount(adaAmount)
+    }, [transaction])
 
     return (
       <View style={styles.container}>
-        {!isIncomingFromSmartContract && isOutgoing ? (
+        {(!inputFromEscrowContract && isOutgoing) || isOutgoingFromEscrowContract ? (
           <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
         ) : (
           <DownArrow

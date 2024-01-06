@@ -62,20 +62,23 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
       showErrorToast(e)
     } finally {
       setIsLoading(false)
-      setPage(refresh ? 1 : (prev) => prev + 1)
+      setPage(refresh ? 1 : (prev) => Number(prev) + 1)
     }
   }
 
-  React.useEffect(() => {
-    fetchSlots()
+  React.useLayoutEffect(() => {
+    fetchSlots(true)
   }, [reload, networkId])
 
   const isLightMode = colorScheme !== "dark"
   const isEmptyList = slots.length < 1
 
-  const renderEventCard = React.useCallback(({ item, index }: any) => {
-    return <SlotsListItem item={item} slotType={listType} />
-  }, [])
+  const renderEventCard = React.useCallback(
+    ({ item, index }: any) => {
+      return <SlotsListItem item={item} slotType={listType} />
+    },
+    [slots]
+  )
 
   const keyExtractor = () => getRandomKey(5)
   const getItem = (data: any, index: number) => data[index]
@@ -94,7 +97,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   }
   const onEndReach = () => {
     if (isLastPage) return
-    fetchSlots(false)
+    fetchSlots()
   }
   const onRefresh = () => fetchSlots(true)
   const onLayout = React.useCallback(

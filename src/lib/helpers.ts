@@ -32,6 +32,18 @@ export const EVENT_COLOR_DARK = "#99CCCC"
 export const isAndroid = Platform.OS === "android"
 export const isIOS = Platform.OS === "ios"
 
+export function AreEqualObjects(fstObj: any, sndObj: any): boolean {
+  if (typeof fstObj !== "object" || typeof sndObj !== "object")
+    throw new Error("One of parameters is not type of object")
+
+  let equal = false
+  for (let k of Object.keys(fstObj)) {
+    equal = fstObj[k] === sndObj[k]
+  }
+
+  return equal
+}
+
 export function chunkArray(array: any[], chunkSize: number) {
   return array.reduce((acc, item, index) => {
     const chunkIndex = Math.floor(index / chunkSize)

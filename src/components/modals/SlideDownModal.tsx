@@ -73,22 +73,25 @@ export const SlideDownModal = ({
     setModalState({ visible: true, type: "new-mnemonic" })
   }
   const onButtonPress = () => {
-    console.log("modalType >", modalType)
     switch (modalType) {
       case "new-mnemonic": {
         navigate("Initial User Screens", "new-mnemonic")
+        hideModal()
         break
       }
       case "import-mnemonic": {
         navigate("Initial User Screens", "import-mnemonic")
+        hideModal()
         break
       }
       case "sign-in": {
         navigate("Initial User Screens", "sign-in")
+        hideModal()
         break
       }
       case "safety-warning": {
         modalCallback && modalCallback()
+        hideModal()
         break
       }
       default:

@@ -65,10 +65,11 @@ export const Confirmation = ({ navigation, route }: Props) => {
           <BodyText
             changingColorScheme
             colors={[Colors.primary.s600, Colors.primary.neutral]}>
-            Success!{" "}
-            {route.params?.isNewEvent
-              ? "Your new event should now appear on your dashboard."
-              : "A transaction confirmation will appear shortly in your wallet (usually around 1-2 min)."}
+            {route.params?.bodyText
+              ? route.params?.bodyText
+              : route.params?.isNewEvent
+              ? "Success! Your new event should now appear on your dashboard."
+              : "Success! A transaction confirmation will appear shortly in your wallet (usually 1-3 min)."}
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>

@@ -32,6 +32,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   const isTxHistoryPreview = params?.isTxHistoryPreview
   const isIncomingFromSmartContract = params?.isIncomingFromSmartContract
   const isOutgoing = params?.isOutgoing
+  const isOutgoingFromEscrowContract = params?.isOutgoingFromEscrowContract
   const txInfo = isTxHistoryPreview ? params?.txInfo : sendTxInfo
   const isSelfFundedTx = React.useMemo(
     () =>
@@ -65,7 +66,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     }
     if (!accountKey) return showErrorToast("Something went wrong. Missing signing key.")
     try {
-      await Wallet.sendRegularTransaction(
+      const txHash = await Wallet.sendRegularTransaction(
         txInfo,
         networkBasedAddress,
         walletUtxos,
@@ -73,6 +74,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
         false,
         networkId
       )
+      if (!txHash) throw new Error("Something went wrong, missing transaction hash")
 
       setSendTxInfo({})
       setAuthenticatorVisible(false)
@@ -96,7 +98,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     return txInfo?.outputs
       ?.filter((out, idx) => {
         if (isIncomingFromSmartContract) {
-          return out.output_index === 0
+          return out.output_index === 1
         } else if (isOutgoing) {
           return out.address !== txInfo.user_address
         } else return out.address === txInfo.user_address
@@ -140,7 +142,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     {
       label: "ADA",
       lineContent: {
-        content: isSelfFundedTx
+        content: isOutgoingFromEscrowContract
+          ? 0
+          : isSelfFundedTx
           ? lovelaceToAda(
               txInfo.outputs[0].amount.find((amt) => amt.unit === "lovelace").quantity
             )
@@ -149,7 +153,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
                 txInfo?.outputs
                   ?.filter((out) => {
                     if (isIncomingFromSmartContract) {
-                      return out.output_index === 0
+                      return out.output_index === 1
                     } else if (isOutgoing) {
                       return out.address !== txInfo.user_address
                     } else return out.address === txInfo.user_address
