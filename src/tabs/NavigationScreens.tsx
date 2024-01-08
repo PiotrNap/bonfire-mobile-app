@@ -13,6 +13,7 @@ import {
   CalendarScreenStack,
 } from "stacks/index"
 import { useWallet } from "lib/hooks/useWallet"
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const NavigationTabs = createBottomTabNavigator<NavigationTabParamList>()
 
@@ -20,7 +21,8 @@ export const NavigationScreens = ({ route }: any) => {
   const { setID, setUsername, setHourlyRateAda, setTimeZone, setCollateralUtxoId } =
     React.useContext(ProfileContext)
   const { setBaseAddresses } = walletContext()
-  const { setUserSettings } = appContext()
+  const { setUserSettings, setDeviceTopInsent } = appContext()
+  const insets = useSafeAreaInsets();
   useWallet() // fetch user wallet assets
 
   React.useEffect(() => {
@@ -44,6 +46,7 @@ export const NavigationScreens = ({ route }: any) => {
       setTimeZone(timeZone)
       setBaseAddresses(addresses)
       setCollateralUtxoId(collateralUtxoId)
+      setDeviceTopInsent(insets.top)
     }
   }, [])
 

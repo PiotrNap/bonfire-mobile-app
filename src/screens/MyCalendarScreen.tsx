@@ -23,7 +23,7 @@ import { Colors, Sizing } from "styles/index"
 const INITIAL_TIME = { hour: new Date().getHours(), minutes: new Date().getMinutes() }
 
 export const MyCalendarScreen = ({ navigation }: any) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const isLightMode = colorScheme === "light"
   const lightOrDarkColor = isLightMode ? Colors.primary.s800 : Colors.primary.neutral
 
@@ -58,7 +58,7 @@ export const MyCalendarScreen = ({ navigation }: any) => {
       setCurrentMonth(month - 1)
       setCurrentYear(year)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }

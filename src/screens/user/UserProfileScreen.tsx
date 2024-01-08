@@ -33,7 +33,7 @@ export interface UserProfileProps
 export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
-  const { colorScheme, setColorScheme, networkId, setNetworkId } = appContext()
+  const { colorScheme, setColorScheme, networkId, setNetworkId , deviceTopInsent} = appContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
@@ -55,7 +55,8 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
         } catch (e) {
           if (e.response.status === 422) return showNSFWImageModal()
           showErrorToast({
-            message: "Something went wrong while updating profile image.",
+            error: "Something went wrong while updating profile image.",
+            topOffset: deviceTopInsent
           })
         }
       })()

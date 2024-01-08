@@ -20,6 +20,7 @@ import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { fontWeight } from "../styles/typography"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { ProfileContext } from "contexts/profileContext"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
@@ -54,9 +55,10 @@ export const InitialUserScreens = ({ route }: any) => {
       : params === "import-mnemonic"
       ? IMPORT_MNEMONIC_SIGN_UP
       : SIGN_IN_SCREENS
-  const { pageIndex, setRef, ref: _ref } = appContext()
+  const { pageIndex, setRef, ref: _ref, setDeviceTopInsent } = appContext()
   const { resetState } = walletContext()
   const { resetProfileState } = React.useContext(ProfileContext)
+  const insets = useSafeAreaInsets();
   const ref = React.useRef<PagerView>(null)
 
   const screenWidth = Dimensions.get("window").width
@@ -90,6 +92,9 @@ export const InitialUserScreens = ({ route }: any) => {
     if (ref) {
       setRef(ref)
     }
+
+    // add top padding to prevent hidding of toast messages
+    setDeviceTopInsent(insets.top)
   }, [])
 
   // This is only working with useMemo/useCallback

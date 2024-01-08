@@ -1,4 +1,3 @@
-import "react-native-gesture-handler"
 import "../global"
 
 import * as React from "react"

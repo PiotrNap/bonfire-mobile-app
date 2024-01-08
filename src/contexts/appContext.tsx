@@ -36,6 +36,7 @@ const initialAppState: AppState = {
   userSettings: null,
   textContent: { wallet },
   qrCodeValue: "",
+  deviceTopInsent: 0
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -76,6 +77,11 @@ const reducer = (state: AppState, action: AppActions) => {
         ...state,
         bottomNavigationHeight: action.payload.height,
       }
+      case AppTypes.SetDeviceTopInsent:
+        return {
+          ...state,
+          deviceTopInsent: action.payload.deviceTopInsent,
+        }
     case AppTypes.SetNetworkId:
       return {
         ...state,

@@ -41,7 +41,7 @@ export const EventDescription = ({ navigation, route }: any) => {
     isStandardColor,
     bookedSlots, // is this passed correctly?
   } = route.params
-  const { colorScheme } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const { id } = React.useContext(ProfileContext)
   const { isLoading: isEventDeletionLoading, deleteEvent } = useEventDeletion(eventId)
 
@@ -79,7 +79,7 @@ export const EventDescription = ({ navigation, route }: any) => {
         event,
       })
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }
@@ -92,7 +92,7 @@ export const EventDescription = ({ navigation, route }: any) => {
       await deleteEvent()
       showSuccessToast("Success!", "This event was removed.")
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       navigation.navigate("User Events")
     }

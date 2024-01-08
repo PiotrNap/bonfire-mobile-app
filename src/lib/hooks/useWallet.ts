@@ -30,7 +30,7 @@ export const useWallet = (makeInitialFetch = true) => {
     setWalletAssets,
     setBaseAddresses,
   } = walletContext()
-  const { networkId } = appContext()
+  const { networkId, deviceTopInsent } = appContext()
   const { collateralUtxoId } = React.useContext(ProfileContext)
   const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false)
   const [lockedLovelaceBalance, setLockedLovelaceBalance] = React.useState<bigint>(0n)
@@ -132,7 +132,7 @@ export const useWallet = (makeInitialFetch = true) => {
 
         setWalletUtxos(data)
       } catch (e) {
-        showErrorToast(e)
+        showErrorToast({error: e, topOffset: deviceTopInsent})
       } finally {
         setIsLoading(false)
         walletBalancePromiseRef.current = null
@@ -230,7 +230,7 @@ export const useWallet = (makeInitialFetch = true) => {
           setTxListPage((prev) => prev + 1)
         }
       } catch (e) {
-        showErrorToast(e)
+        showErrorToast({error: e, topOffset: deviceTopInsent})
       } finally {
         setIsPaginationLoading(false)
         txPromiseRef.current = null

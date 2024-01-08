@@ -14,7 +14,7 @@ interface UserProfileEditProps
   extends StackScreenProps<ProfileStackParamList, "Edit Profile"> {}
 
 export const UserProfileEdit = ({ navigation, route }: UserProfileEditProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const [isInfoChanged, setIsInfoChanged] = React.useState<boolean>(false)
   const [updateResponse, setUpdateResponse] = React.useState<any>(null)
   const isLightMode = colorScheme === "light"
@@ -24,7 +24,7 @@ export const UserProfileEdit = ({ navigation, route }: UserProfileEditProps) => 
   const updateResponseMsg = (val: any) => {
     setUpdateResponse(val)
     if (isErrorResponse) {
-      showErrorToast(updateResponse)
+      showErrorToast({error: updateResponse, topOffset: deviceTopInsent})
     } else showSuccessToast("Success Update", updateResponse?.msg)
   }
 

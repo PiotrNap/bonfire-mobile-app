@@ -54,6 +54,7 @@ export const appContext = () => {
     userSettings: state.userSettings,
     networkId: state.networkId,
     qrCodeValue: state.qrCodeValue,
+    deviceTopInsent: state.deviceTopInsent,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
     setQrCodeValue: (qrCodeValue: string) =>
       dispatch({ type: "SET_QRCODE_VALUE", payload: { qrCodeValue } }),
@@ -67,6 +68,8 @@ export const appContext = () => {
       dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
     setNetworkId: (networkId: NetworkId) =>
       dispatch({ type: "SET_NETWORK_ID", payload: { networkId } }),
+    setDeviceTopInsent: (deviceTopInsent: number) =>
+      dispatch({ type: "SET_DEVICE_TOP_INSENT", payload: { deviceTopInsent } }),
     setValidGoogleOAuth: (validGoogleOAuth: boolean) => {
       dispatch({
         type: "SET_VALID_GOOGLE_OAUTH",

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, StyleSheet, Text, Pressable, StyleProp } from "react-native"
+import { View, StyleSheet, Text, Pressable, StyleProp, DeviceEventEmitter } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import { LeftArrowIcon, QrCodeIcon } from "icons/index"
@@ -18,7 +18,7 @@ import { AssetUnit } from "lib/wallet/types"
 
 export const SendTransactionScreen = ({ navigation }: any) => {
   const { walletAssets } = walletContext()
-  const { colorScheme } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const { setSendTxInfo, lovelaceBalance } = walletContext()
   const [selectedAssets, setSelectedAssets] = React.useState<Map<string, AssetUnit>>(
     new Map()
@@ -46,7 +46,7 @@ export const SendTransactionScreen = ({ navigation }: any) => {
   const onCheckboxPress = (unit: string) => {
     const walletAsset = walletAssets?.get(unit)
     if (!walletAsset)
-      return showErrorToast("Unable to find selected asset in user wallet")
+      return showErrorToast({error:"Unable to find selected asset in user wallet", topOffset: deviceTopInsent})
 
     const isSelected = selectedAssets.has(unit)
     let newSelectedAssets = selectedAssets

@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, Dimensions, Pressable, Linking } from "react-na
 import { RegistrationIcon } from "icons/index"
 import { Typography, Colors, Sizing, Outlines, Forms } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { walletContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useNavigation } from "@react-navigation/native"
 import { ProfileContext } from "contexts/profileContext"
@@ -53,6 +53,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
     skills,
     profession,
   } = React.useContext(ProfileContext)
+  const {deviceTopInsent} = appContext()
   const navigation = useNavigation()
 
   React.useEffect(() => {
@@ -186,7 +187,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
       //@ts-ignore
       navigation.navigate("Navigation Screens")
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }

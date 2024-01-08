@@ -6,8 +6,10 @@ import { showErrorToast, startChallengeSequence } from "lib/helpers"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getDevicesTimeZone } from "lib/utils"
 import { COLLATERAL_STORAGE_KEY } from "lib/wallet/utils"
+import { appContext } from "contexts/contextApi"
 
 export const useAppLogin = () => {
+  const {deviceTopInsent} = appContext()
   const [isAuthorized, setIsAuthorized] = React.useState<boolean>(false)
   const [isAuthLoaded, setIsAuthLoaded] = React.useState<boolean>(false)
   const [user, setUser] = React.useState<any>(null)
@@ -83,7 +85,7 @@ export const useAppLogin = () => {
           if (isAuthorized) setIsAuthorized(false)
         }
       } catch (e) {
-        showErrorToast(e)
+        showErrorToast({error: e, topOffset: deviceTopInsent})
         setIsAuthorized(false)
       }
       setIsAuthLoaded(true)

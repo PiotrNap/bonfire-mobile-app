@@ -7,6 +7,7 @@ import {
   retrieveMnemonicPhraseFromStorage,
 } from "lib/wallet/storage"
 import { StyleSheet } from "react-native"
+import { appContext } from "contexts/contextApi"
 
 type Props = {
   showAuthenticator: boolean
@@ -24,6 +25,7 @@ export const Authenticator = ({
   const [authModalVisible, setAuthModalVisible] = React.useState<boolean>(false)
   const [passwordPromptModalVisible, setPasswordPromptModalVisible] =
     React.useState<boolean>(false)
+    const {deviceTopInsent} = appContext()
 
   React.useEffect(() => {
     if (showAuthenticator) {
@@ -62,7 +64,7 @@ export const Authenticator = ({
 
       await onAuthenticatedCb(res)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       res = ""
       password = ""

@@ -5,7 +5,7 @@ import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { CustomPlainInput } from "components/forms/CustomPlainInput"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
-import { walletContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import { Colors, Sizing, Typography } from "styles/index"
 import { Wallet } from "lib/wallet"
 import { Users } from "Api/Users"
@@ -44,6 +44,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
     seedPhraseWordCount,
     setSeedPhraseWordCount,
   } = walletContext()
+  const {deviceTopInsent} = appContext()
   const { setUsername } = React.useContext(ProfileContext)
   const [words, _] = React.useState<Set<string>>(new Set(wordlist))
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -142,7 +143,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
 
       pagerRef.current.setPage(1)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }

@@ -688,16 +688,16 @@ export function showInfoToast(body: string, header: string): void {
   Toast.show({ type: "info", text1: header, text2: body })
 }
 
-export function showErrorToast(e?: any, header?: string): void {
+export function showErrorToast({error, header, topOffset}: {error:any, header?: string, topOffset:number}): void {
   const isDev = typeof __DEV__ === "boolean" && __DEV__
-  if (isDev) console.error("From Toast: ", e)
+  if (isDev) console.error("From Toast: ", error)
 
-  const body = typeof e === "string" ? e : e?.message || e?.msg || DEFAULT_ERROR_MSG
-
+  const body = typeof error === "string" ? error : error?.message || error?.msg || DEFAULT_ERROR_MSG
   //@TODO send possible erorr to Sentry
   Toast.show({
     type: "error",
     text1: header || "Error",
     text2: body,
+    topOffset
   })
 }

@@ -18,9 +18,9 @@ type Props = StackScreenProps<EventCreationParamList, "Available Days Selection"
 
 export const AvailableDaysSelection = (props: Props) => {
   const navigation = props.navigation
-  const { colorScheme } = appContext()
+  const { colorScheme,deviceTopInsent } = appContext()
   const { selectedDates, setSelectedDates, setDateFrame } = eventCreationContext()
-  const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
+  //const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
   const [_selectedDates, _setSelectedDates] = React.useState<MarkedDates>(selectedDates)
 
   // const googleOauthCallback = () => {
@@ -32,9 +32,9 @@ export const AvailableDaysSelection = (props: Props) => {
   // setError
   // )
 
-  React.useEffect(() => {
-    if (error.isVisible) showErrorToast(null, error.type)
-  }, [error])
+ // React.useEffect(() => {
+  //  if (error.isVisible) showErrorToast({error.type)
+  //}, [error])
 
   const isLightMode = colorScheme === "light"
   const lightOrDarkColor = isLightMode ? Colors.primary.s800 : Colors.primary.neutral
@@ -54,8 +54,8 @@ export const AvailableDaysSelection = (props: Props) => {
   }
 
   const onBackNavigationPress = () => navigation.goBack()
-  const onNextButtonPress = async () => {
-    if (error.isVisible) setError({ isVisible: false, type: "" })
+  const onNextButtonPress = () => {
+    //  if (error.isVisible) setError({ isVisible: false, type: "" })
 
     // if (acceptedCheckbox && !validGoogleOAuth) {
     //   try {

@@ -38,7 +38,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
     accountPubKeyHex,
     resetSecrets,
   } = walletContext()
-  const { setPageIndex } = appContext()
+  const { setPageIndex, deviceTopInsent } = appContext()
   const navigation = useNavigation()
 
   React.useEffect(() => {
@@ -133,7 +133,7 @@ export const NewWalletSetUp = ({ pagerRef, prop }: any) => {
         setPageIndex(4)
         pagerRef.current.setPage(4)
       } catch (e) {
-        showErrorToast(e)
+        showErrorToast({error: e, topOffset: deviceTopInsent})
       }
     },
     [mnemonic, isOfflineMnemonic, biometricsAccepted, rootKeyHex]

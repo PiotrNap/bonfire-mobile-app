@@ -1,21 +1,22 @@
 import * as React from "react"
-import { View, StyleSheet } from "react-native"
+import { StyleSheet, View } from "react-native"
 
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import Filter from "bad-words"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
-import { Typography, Colors, Sizing } from "styles/index"
+import { Users } from "Api/Users"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
-import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
-import { HeaderText } from "components/rnWrappers/headerText"
-import { Field, Formik } from "formik"
-import { accountValidationScheme } from "lib/validators"
-import { formStyleDark, formStyleLight, inputStyles } from "../../styles/forms"
 import { CustomInput } from "components/forms/CustomInput"
 import { SlideDownModal } from "components/modals/SlideDownModal"
+import { HeaderText } from "components/rnWrappers/headerText"
 import { ProfileContext } from "contexts/profileContext"
-import { Users } from "Api/Users"
+import { Field, Formik } from "formik"
 import { showErrorToast } from "lib/helpers"
+import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
+import { accountValidationScheme } from "lib/validators"
+import { Colors, Sizing, Typography } from "styles/index"
+import { formStyleDark, inputStyles } from "../../styles/forms"
+import { appContext } from "contexts/contextApi"
 
 export interface UserDetailScreenProps {}
 
@@ -40,6 +41,7 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
     hourlyRateAda,
     profession,
   } = React.useContext(ProfileContext)
+  const {deviceTopInsent} = appContext()
   const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
   const onSubmit = async (values: any) => {
@@ -49,8 +51,8 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
 
       // check if chosen username is available
       const usernameFree = await Users.checkUsernameAvailability(values.username)
-      if (!usernameFree) return showErrorToast({ message: "Username already taken" })
-
+      
+      if (!usernameFree) return showErrorToast({ error: "Username already taken" , topOffset:deviceTopInsent})
       if (!prop) {
         // store the values in context or pass as a route param, don't create account yet
         setModalState({ type: "safety-warning", visible: true })
@@ -59,7 +61,7 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
         onModalConfirm(values)
       }
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error:e, topOffset:deviceTopInsent})
     }
   }
   const onModalConfirm = (_formValues: any = formValues) => {

@@ -46,6 +46,7 @@ export enum AppTypes {
   SetFavoriteOrganizer = "SET_FAVORITE_ORGANIZER",
   SetNetworkId = "SET_NETWORK_ID",
   SetBottomnavigationHeight = "SET_BOTTOMNAVIGATION_HEIGHT",
+  SetDeviceTopInsent = "SET_DEVICE_TOP_INSENT",
   SetQrCodeValue = "SET_QRCODE_VALUE",
   ResetState = "RESET_STATE",
 }
@@ -161,6 +162,9 @@ export type AppPayload = {
   }
   [AppTypes.SetFavoriteOrganizer]: {
     alias: string
+  }
+  [AppTypes.SetDeviceTopInsent]: {
+    deviceTopInsent: number
   }
   [AppTypes.SetColorScheme]: {
     newColorScheme: ColorSchemeName

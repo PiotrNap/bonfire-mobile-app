@@ -22,7 +22,7 @@ import Clipboard from "@react-native-clipboard/clipboard"
 import Crypto from "crypto"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
-  const { colorScheme, setQrCodeValue, networkId } = appContext()
+  const { colorScheme, setQrCodeValue, networkId , deviceTopInsent} = appContext()
   const { sendTxInfo, addresses, walletUtxos, setSendTxInfo } = walletContext()
   const [authenticatorVisible, setAuthenticatorVisible] = React.useState<boolean>(false)
   const networkBasedAddress =
@@ -55,16 +55,16 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     zIndex: -10,
   }
   const onSignAndSubmit = () => {
-    if (!txInfo) return showErrorToast("Missing send transaction info")
+    if (!txInfo) return showErrorToast({error: "Missing send transaction info", topOffset: deviceTopInsent})
     setAuthenticatorVisible(true)
   }
   const onAuthenticated = async (accountKey?: string | void) => {
     if (!txInfo) {
-      showErrorToast("Missing send transaction info")
+      showErrorToast({error: "Missing send transaction info", topOffset: deviceTopInsent})
       accountKey = ""
       return
     }
-    if (!accountKey) return showErrorToast("Something went wrong. Missing signing key.")
+    if (!accountKey) return showErrorToast({error:"Something went wrong. Missing signing key.", topOffset: deviceTopInsent})
     try {
       const txHash = await Wallet.sendRegularTransaction(
         txInfo,
@@ -85,7 +85,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
         navigationScreen: "Wallet Main",
       })
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       accountKey = ""
     }

@@ -22,6 +22,7 @@ export interface AppState {
   userSettings: UserSettings | null
   textContent: { wallet: Wallet }
   qrCodeValue: string | null
+  deviceTopInsent: number
 }
 
 export interface JWTPayload {

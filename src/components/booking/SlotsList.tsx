@@ -21,7 +21,7 @@ type SlotsListProps = {
 
 export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   const { id } = React.useContext(ProfileContext)
-  const { colorScheme, networkId } = appContext()
+  const { colorScheme, networkId, deviceTopInsent } = appContext()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [slots, setSlots] = React.useState<EventBookingSlot[]>([])
   const [page, setPage] = React.useState<number>(1)
@@ -29,7 +29,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   const navigation = useNavigation()
 
   const fetchSlots = async (refresh = false) => {
-    if (!id) return showErrorToast("", "Unable to fetch Events")
+    if (!id) return showErrorToast({error:"Unable to fetch Events", topOffset: deviceTopInsent})
     setIsLoading(true)
     try {
       let res
@@ -59,7 +59,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
       }
       setSlots(paginatedSlots)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
       setPage(refresh ? 1 : (prev) => Number(prev) + 1)

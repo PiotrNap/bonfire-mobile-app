@@ -23,7 +23,7 @@ interface Props {
 
 export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
   const { isLoading, setIsLoading, updateAccountInfo } = useUpdateAccountInfo()
-  const { colorScheme } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const { setUsername, setBio, setProfession, setJobTitle, setSkills, setHourlyRateAda } =
     React.useContext(ProfileContext)
   const [submitted, setSubmitted] = React.useState<boolean>(false)
@@ -54,7 +54,7 @@ export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
       setHourlyRateAda(hourlyRateAda)
       showSuccessToast("Success", "Your profile got updated")
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }

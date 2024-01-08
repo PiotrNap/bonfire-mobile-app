@@ -49,7 +49,7 @@ type PayoutTxInfo = {
 type MyPayoutTxType = "payout" | "collateral"
 
 export const MyPayouts = ({ navigation }: ScreenProps) => {
-  const { colorScheme, networkId } = appContext()
+  const { colorScheme, networkId,deviceTopInsent } = appContext()
   const { id } = React.useContext(ProfileContext)
   const { walletUtxos, addresses } = walletContext()
   const networkBasedAddress =
@@ -84,7 +84,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
       const [results, count] = queryResult
       if (count > 0) setAvailablePayouts(results)
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsListLoading(false)
     }
@@ -112,7 +112,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
         selectedPayout.lockingTxHash,
         networkId
       )
-      if (error) return showErrorToast(error)
+      if (error) return showErrorToast({error, topOffset: deviceTopInsent})
 
       const payoutUtxo = data.outputs.find(
         (utxo) => utxo.data_hash === selectedPayout.datumHash
@@ -160,7 +160,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
       setAuthenticatorVisible(true)
       setTxType("payout")
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       setIsLoading(false)
     }
@@ -171,15 +171,15 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
 
     try {
       if (!accountKey)
-        return showErrorToast(
-          "Something went wrong. Have you enabled this option during registration?"
+        return showErrorToast({error:
+          "Something went wrong. Have you enabled this option during registration?", topOffset:deviceTopInsent}
         )
-      if (!selectedPayout) return showErrorToast("Have you selected a payout to collect?")
+      if (!selectedPayout) return showErrorToast({error: "Have you selected a payout to collect?", topOffset:deviceTopInsent})
 
       if (txType === "payout") {
         if (!payoutTxInfo)
-          return showErrorToast(
-            "Unable to construct transaction. Missing payout tx-input."
+          return showErrorToast({error:
+            "Unable to construct transaction. Missing payout tx-input.", topOffset:deviceTopInsent}
           )
         const {
           payoutUtxo,
@@ -239,7 +239,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
         }
       }
     } catch (e) {
-      showErrorToast(e)
+      showErrorToast({error: e, topOffset: deviceTopInsent})
     } finally {
       accountKey = ""
       setIsLoading(false)
