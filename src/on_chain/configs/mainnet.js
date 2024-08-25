@@ -1,4 +1,4 @@
-export const mainnet = {
+module.exports = {
   shelleyGenesis: {
     activeSlotsCoeff: 0.05,
     protocolParams: {
@@ -601,7 +601,7 @@ export const mainnet = {
     maxTxExecutionUnits: { memory: 14000000, steps: 10000000000 },
     maxTxSize: 16384,
     maxValueSize: 5000,
-    minPoolCost: 340000000,
+    minPoolCost: 170000000,
     monetaryExpansion: 0.003,
     poolPledgeInfluence: 0.3,
     poolRetireMaxEpoch: 18,
@@ -615,9 +615,9 @@ export const mainnet = {
     utxoCostPerByte: 4310,
   },
   latestTip: {
-    epoch: 444,
-    hash: "18c456989cd8fb4853b52729c89a795f110150d3680f01808ea56eb81e9386fc",
-    slot: 106767377,
-    time: 1698333668000,
+    epoch: 459,
+    hash: "4286b3906ecf96c751be977f8aa84967c52c9f237e79a7428cc94fe19f4c7361",
+    slot: 113163674,
+    time: 1704729965000,
   },
 }

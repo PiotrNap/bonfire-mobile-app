@@ -1,4 +1,4 @@
-export const preprod = {
+module.exports = {
   shelleyGenesis: {
     activeSlotsCoeff: 0.05,
     epochLength: 432000,
@@ -616,9 +616,9 @@ export const preprod = {
     utxoCostPerByte: 4310,
   },
   latestTip: {
-    epoch: 102,
-    hash: "9f6477241b654677aaaa14679f91302c566c0fe696b1553b3b8a07a62fa8febc",
-    slot: 42726947,
-    time: 1698410147000,
+    epoch: 117,
+    hash: "2557d0c19d0594d665f0328cd9f94a1ab42b0f27312a2ada31300ae1d4d8b33d",
+    slot: 49046780,
+    time: 1704729980000,
   },
 }
