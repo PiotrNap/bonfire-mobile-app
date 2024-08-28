@@ -16,7 +16,8 @@ import * as CrossCSL from "@emurgo/cross-csl-mobile"
 import {
   BLOCKFROST_API_KEY_MAINNET,
   BLOCKFROST_API_KEY_TESTNET,
-  TREASURY_ADDRESS,
+  TREASURY_ADDRESS_PREPROD,
+  TREASURY_ADDRESS_MAINNET,
 } from "@env"
 
 //@ts-ignore
@@ -33,8 +34,8 @@ import {
   WalletKeys,
 } from "./types"
 import { COLLATERAL_LOVELACE, COLLATERAL_STORAGE_KEY, unitsToAssets } from "./utils"
-import { mainnet } from "../../on_chain/configs/mainnet"
-import { preprod } from "../../on_chain/configs/preprod"
+import mainnet from "../../on_chain/configs/mainnet"
+import preprod from "../../on_chain/configs/preprod"
 import {
   escrowProgram,
   escrowProgramCompiled,
@@ -125,17 +126,22 @@ export class Wallet {
       .derive(ROLE_TYPE.EXTERNAL_CHAIN)
       .then((key) => key.derive(index))
       .then((key) => key.toRawKey())
+    console.log("here 2")
 
     const stakingVKey = await accountPubKey
       .derive(ROLE_TYPE.STAKING_KEY)
       .then((key) => key.derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX))
       .then((key) => key.toRawKey())
 
+    console.log("here 3")
+
     const addr = await CardanoMobile.BaseAddress.new(
       parseInt(networkMagic, 10),
       await CardanoMobile.Credential.fromKeyhash(await chainVKey.hash()),
       await CardanoMobile.Credential.fromKeyhash(await stakingVKey.hash())
     )
+
+    console.log("here 4")
 
     return (await addr.toAddress()).toBech32()
   }
@@ -325,7 +331,7 @@ export class Wallet {
     const { networkConfig } = getConfigForNetworkId(networkId)
     const params = new NetworkParams(networkConfig)
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
-    const treasuryAddress = new Address(TREASURY_ADDRESS)
+    const treasuryAddress = new Address(`TREASURY_ADDRESS_${networkId.toUpperCase()}`)
     const userAddress = Address.fromBech32(userWalletAddress)
     const userPubKeyHash = userAddress.pubKeyHash
     if (!userPubKeyHash)

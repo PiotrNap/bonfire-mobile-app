@@ -28,7 +28,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
     isLoading,
     isPaginationLoading,
     updateWalletBalance,
-  } = useWallet(false)
+  } = useWallet(true)
   const [modalVisible, setModalVisible] = React.useState<boolean>(false)
 
   React.useEffect(() => {
@@ -206,8 +206,8 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
         />
         {modalVisible && (
           <BigSlideModal
-            header="Bonfire's Tip"
-            body="To ensure smooth interactions with our bookings system, we recommend you to have at least 10₳ in your wallet."
+            header="Pro Tip"
+            body="To ensure smooth interactions with our bookings system, we recommend you have at least 10 ₳ in your wallet."
             isVisible={modalVisible}
             hideModal={onHideModal}
             buttonTitle="Close"
@@ -235,13 +235,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "90%",
-    marginBottom: Sizing.x20,
   },
   walletContainer: {
     height: Sizing.x130,
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: Sizing.x20,
+    marginTop: Sizing.x10,
     padding: Sizing.x14,
     borderRadius: Outlines.borderRadius.base,
     ...Outlines.shadow.lifted,
@@ -286,13 +285,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Sizing.x5,
+    paddingVertical: Sizing.x12,
     paddingHorizontal: Sizing.x12,
-    borderWidth: Sizing.x3,
-    borderColor: Colors.primary.neutral,
+    borderWidth: Sizing.x2,
     borderRadius: Outlines.borderRadius.base,
-    marginBottom: Sizing.x20,
     marginHorizontal: Sizing.x5,
+    //
+    borderColor: Colors.primary.neutral,
     backgroundColor: "transparent",
   },
   walletButton_dark: {
@@ -300,14 +299,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Sizing.x2,
-    paddingHorizontal: Sizing.x7,
+    paddingVertical: Sizing.x12,
+    paddingHorizontal: Sizing.x12,
     borderWidth: Sizing.x3,
-    borderColor: Colors.primary.s800,
     borderRadius: Outlines.borderRadius.base,
-    marginBottom: Sizing.x20,
     marginHorizontal: Sizing.x5,
+    //
     backgroundColor: "transparent",
+    borderColor: Colors.primary.s800,
   },
   walletButtonText_light: {
     ...Typography.header.x25,

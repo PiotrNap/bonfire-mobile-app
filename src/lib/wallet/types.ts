@@ -32,7 +32,7 @@ export type PasswordSetUpFormValues = {
 // base addresses for acct idx 0
 export type Addresses = {
   mainnet: string
-  testnet: string // preprod
+  testnet: string // Preprod
 }
 export interface WalletKeys {
   addresses: Addresses

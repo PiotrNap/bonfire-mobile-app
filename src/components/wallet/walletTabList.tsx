@@ -47,7 +47,8 @@ export const WalletTabList = React.memo(
     const isLightMode = colorScheme === "light"
     const renderItem = React.useCallback(
       ({ item }: any) => {
-        return type === "transactions" ? (
+        console.log("item", item)
+        return item && type === "transactions" ? (
           <TransactionItem item={item} />
         ) : (
           <AssetItem
@@ -67,7 +68,10 @@ export const WalletTabList = React.memo(
       <RefreshControl
         tintColor={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
         refreshing={isLoading}
-        onRefresh={onUpdateList}
+        onRefresh={() => {
+          console.log("how about here?")
+          onUpdateList && onUpdateList()
+        }}
       />
     )
 
@@ -81,9 +85,10 @@ export const WalletTabList = React.memo(
     )
     const onLayout = (e) => setContainerWidth(e.nativeEvent.layout.width)
     const memoizedListData = React.useMemo(
-      () => Array.from(listData.values()),
+      () => (listData ? Array.from(listData.values()) : []),
       [listData]
     )
+    console.log("type + listData ", type, listData)
 
     return memoizedListData.length > 0 ? (
       <FlatList
@@ -110,11 +115,7 @@ export const WalletTabList = React.memo(
         windowSize={8}
       />
     ) : (
-      <View style={styles.noItems}>
-        <SubHeaderText colors={[Colors.primary.s800, Colors.primary.neutral]}>
-          Nothing to show here...
-        </SubHeaderText>
-      </View>
+      <></>
     )
   }
 )

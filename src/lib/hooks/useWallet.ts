@@ -106,6 +106,7 @@ export const useWallet = (makeInitialFetch = true) => {
           setWalletAssets(new Map(data))
           setWalletUtxos(data)
 
+          console.log("no data")
           return
         }
         const collateralUtxo =
@@ -132,7 +133,7 @@ export const useWallet = (makeInitialFetch = true) => {
 
         setWalletUtxos(data)
       } catch (e) {
-        showErrorToast({error: e, topOffset: deviceTopInsent})
+        showErrorToast({ error: e, topOffset: deviceTopInsent })
       } finally {
         setIsLoading(false)
         walletBalancePromiseRef.current = null
@@ -202,7 +203,7 @@ export const useWallet = (makeInitialFetch = true) => {
           console.log(transaction)
           console.log("exists ??? >", !!oldFullTxInfo)
           if (oldFullTxInfo) {
-            fullInfoTxs.push(transaction)
+            fullInfoTxs.push(oldFullTxInfo)
             continue
           }
 
@@ -221,6 +222,7 @@ export const useWallet = (makeInitialFetch = true) => {
           tx.user_address = addr
           fullInfoTxs.push(tx)
         }
+
         // fullInfoTxs = fullInfoTxs.reverse() // because Blockfrost can't sort them
         if (refresh) {
           setTxHistory(fullInfoTxs)
@@ -230,7 +232,7 @@ export const useWallet = (makeInitialFetch = true) => {
           setTxListPage((prev) => prev + 1)
         }
       } catch (e) {
-        showErrorToast({error: e, topOffset: deviceTopInsent})
+        showErrorToast({ error: e, topOffset: deviceTopInsent })
       } finally {
         setIsPaginationLoading(false)
         txPromiseRef.current = null

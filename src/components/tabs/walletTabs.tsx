@@ -3,7 +3,7 @@ import { WalletTabList } from "components/wallet/walletTabList"
 import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from "react-native"
 import { Sizing, Typography } from "styles/index"
 import { appContext, walletContext } from "contexts/contextApi"
-import { schemeBasedFontColor } from "../../styles/typography"
+import { schemeBasedColor } from "../../styles/typography"
 import { noop } from "lib/utils"
 
 export const WalletTabs = ({
@@ -35,6 +35,7 @@ export const WalletTabs = ({
   }
   const setActiveTransactionsTab = () => {
     setActiveTab("history")
+    console.log("here maybe")
     onTxListUpdate(networkBasedAddress, true)
   }
 
@@ -46,22 +47,29 @@ export const WalletTabs = ({
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === "assets" && styles.activeTab,
-            { borderColor: schemeBasedFontColor(colorScheme) },
+            activeTab === "assets" && {
+              borderBottomWidth: 2,
+              borderBottomColor: schemeBasedColor(colorScheme),
+            },
+            ,
+            { borderColor: schemeBasedColor(colorScheme) },
           ]}
           onPress={setActiveAssetsTab}>
-          <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
+          <Text style={[styles.tabText, { color: schemeBasedColor(colorScheme) }]}>
             Assets
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === "history" && styles.activeTab,
-            { borderColor: schemeBasedFontColor(colorScheme) },
+            activeTab === "history" && {
+              borderBottomWidth: 2,
+              borderBottomColor: schemeBasedColor(colorScheme),
+            },
+            { borderColor: schemeBasedColor(colorScheme) },
           ]}
           onPress={setActiveTransactionsTab}>
-          <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
+          <Text style={[styles.tabText, { color: schemeBasedColor(colorScheme) }]}>
             Transactions
           </Text>
         </TouchableOpacity>
@@ -111,11 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   activeTab: {
-    borderBottomWidth: 2,
     borderBottomColor: "#000",
-  },
-  tabContent: {
-    margin: Sizing.x10,
   },
   tabText: {
     ...Typography.header.x20,
