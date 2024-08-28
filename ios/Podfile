@@ -5,6 +5,18 @@ platform :ios, '13.0'
 
 target 'bonfire' do
   config = use_native_modules!
+  
+ def node_require(script)
+   # Resolve script with node to allow for hoisting
+   require Pod::Executable.execute_command('node', ['-p',
+     "require.resolve(
+       '#{script}',
+       {paths: [process.argv[1]]},
+     )", __dir__]).strip
+ end
+
+ node_require('react-native/scripts/react_native_pods.rb')
+ node_require('react-native-permissions/scripts/setup.rb')
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -29,4 +41,28 @@ target 'bonfire' do
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
+
+  # ⬇️ uncomment wanted permissions
+   setup_permissions([
+     # 'AppTrackingTransparency',
+     # 'Bluetooth',
+     # 'Calendars',
+     # 'CalendarsWriteOnly',
+      'Camera',
+     # 'Contacts',
+      'FaceID',
+     # 'LocationAccuracy',
+     # 'LocationAlways',
+      'LocationWhenInUse',
+     # 'MediaLibrary',
+     # 'Microphone',
+     # 'Motion',
+     # 'Notifications',
+     # 'PhotoLibrary',
+      'PhotoLibraryAddOnly',
+     # 'Reminders',
+     # 'Siri',
+     # 'SpeechRecognition',
+     # 'StoreKit',
+   ])
 end
