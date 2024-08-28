@@ -13,13 +13,14 @@ import { appContext } from "contexts/contextApi"
 import { Buttons, Colors, Outlines, Sizing } from "styles/"
 import { LeftArrowIcon } from "assets/icons"
 import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export function QrCodeScannerScreen({ navigation, route }: any) {
-  const { setQrCodeValue } = appContext()
+  const { setQrCodeValue, deviceTopInsent } = appContext()
   const [isCameraActive, setIsCameraActive] = React.useState<boolean>(false)
   const cameraPermission = useCameraPermission()
 
-  const navigateBack = () => navigation.goBack()
+  const navigateBack = () => navigation.navigate("Send Transaction")
   const device = useCameraDevice("back")
   const codeScanner = useCodeScanner({
     codeTypes: ["qr", "ean-13"], // specify the types of codes you want to scan
@@ -51,7 +52,7 @@ export function QrCodeScannerScreen({ navigation, route }: any) {
   }, [])
 
   return device ? (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { marginTop: deviceTopInsent }]}>
       <Pressable
         style={Buttons.applyOpacity(styles.navigation)}
         onPress={navigateBack}

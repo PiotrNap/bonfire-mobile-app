@@ -89,7 +89,11 @@ export const NewEventDescription = ({ navigation }: Props) => {
   /** Check inputs and navigate to next screen **/
   const onNextPress = async () => {
     let paymentTokens: AssetUnit[] = paymentTokensRef.current?.values
-    if (!paymentTokens) return showErrorToast({error:"Missing payment tokens info", topOffset: deviceTopInsent})
+    if (!paymentTokens)
+      return showErrorToast({
+        error: "Missing payment tokens info",
+        topOffset: deviceTopInsent,
+      })
 
     //update the unit 'name' with the user typed 'displayName'
     paymentTokens = paymentTokens.map((pt) => ({
@@ -99,13 +103,19 @@ export const NewEventDescription = ({ navigation }: Props) => {
 
     const paymentTokensValid = await checkIfPaymentTokensAreValid(paymentTokens)
     if (!paymentTokensValid)
-      return showErrorToast({error:"Please double-check tokens input fields", topOffset:deviceTopInsent})
+      return showErrorToast({
+        error: "Please double-check tokens input fields",
+        topOffset: deviceTopInsent,
+      })
 
     const allTokensDivisibleByTwo = paymentTokens.every(
       (pt) => Number(pt.count) % 2 === 0
     )
     if (!allTokensDivisibleByTwo)
-      return showErrorToast({error:"Tokens quantity must be divisible by 2", topOffset: deviceTopInsent})
+      return showErrorToast({
+        error: "All tokens quantity must be divisible by 2",
+        topOffset: deviceTopInsent,
+      })
 
     // update event-creation-context
     setSubmitted(true)

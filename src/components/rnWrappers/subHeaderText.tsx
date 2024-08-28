@@ -56,7 +56,8 @@ export const SubHeaderText = ({
 
 const styles = StyleSheet.create({
   text: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x20,
     maxWidth: "90%",
+    opacity: 0.9,
   },
 })

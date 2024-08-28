@@ -149,8 +149,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
             <SubHeaderText
               customStyle={styles.noEventsText}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              Your event list is empty right now. Start adding events by tapping the '+'
-              button and watch this space fill up with your plans!
+              Start adding events and watch this space fill up with your plans!
             </SubHeaderText>
           ) : (
             <SubHeaderText

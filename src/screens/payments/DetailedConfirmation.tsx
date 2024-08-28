@@ -50,7 +50,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
   useWallet() // reload wallet utxos
 
-  const { colorScheme, networkId ,deviceTopInsent} = appContext()
+  const { colorScheme, networkId, deviceTopInsent } = appContext()
   const {
     textContent,
     selectedDates,
@@ -100,7 +100,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     setAuthenticatorVisible(true)
   }
   const bookEvent = async (accountKey?: string | void) => {
-    if (!accountKey) return showErrorToast({error:"Something went wrong. Missing signing key.", topOffset:deviceTopInsent})
+    if (!accountKey)
+      return showErrorToast({
+        error: "Something went wrong. Missing signing key.",
+        topOffset: deviceTopInsent,
+      })
 
     // Temporary solution...
     const lovelacePaymentToken: AssetUnit = {
@@ -130,7 +134,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     }
 
     if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
-      return showErrorToast({error:"Unable to construct Datum object.", header:"Error", topOffset: deviceTopInsent})
+      return showErrorToast({
+        error: "Unable to construct Datum object.",
+        header: "Error",
+        topOffset: deviceTopInsent,
+      })
     try {
       // submit transaction
       const { txHash, datumHash } = await Wallet.sendLockingTransaction(
@@ -160,7 +168,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         })
       }
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
       accountKey = ""
@@ -192,7 +200,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       eventTitleColor,
       note: eventNote || "",
       networkId,
-      organizerId: id,
+      organizer: { id, username },
     }
 
     try {
@@ -209,7 +217,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       })
     } catch (e) {
       if (e.response?.status === 422) return showNSFWImageModal()
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
     }
@@ -222,7 +230,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     await deleteEvent()
 
     if (errorMsg) {
-      showErrorToast({error:errorMsg, topOffset:deviceTopInsent})
+      showErrorToast({ error: errorMsg, topOffset: deviceTopInsent })
     } else showSuccessToast("Success!", successMsg)
   }
   /***/
@@ -282,11 +290,15 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   }
   const cancelEvent = async (accountKey: string | void) => {
     if (!accountKey)
-      return showErrorToast({error:
-        "Something went wrong. Have you enabled this option during registration?", topOffset: deviceTopInsent}
-      )
+      return showErrorToast({
+        error: "Something went wrong. Have you enabled this option during registration?",
+        topOffset: deviceTopInsent,
+      })
     if (!cancellationTxInfo)
-      return showErrorToast({error:"We're unable to construct a cancellation tx", topOffset: deviceTopInsent})
+      return showErrorToast({
+        error: "We're unable to construct a cancellation tx",
+        topOffset: deviceTopInsent,
+      })
     const {
       spareUtxos,
       feeUtxo,
@@ -331,7 +343,11 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         isBeforeCancellationWindow,
         networkId
       )
-      if (!txHash) return showErrorToast({error:"Something went wrong during tx submittion", topOffset: deviceTopInsent})
+      if (!txHash)
+        return showErrorToast({
+          error: "Something went wrong during tx submittion",
+          topOffset: deviceTopInsent,
+        })
 
       const res = await Events.deleteEventBooking(bookingSlot.id, {
         ...(isEventOrganizer ? { organizer_id: id } : { attendee_id: id }),
@@ -344,7 +360,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         reload: true,
       })
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       accountKey = ""
       setIsLoading(false)
@@ -355,9 +371,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   /** Collateral split **/
   const makeCollateralSplit = async (accountKey: string | void) => {
     if (!accountKey)
-      return showErrorToast({error:
-        "Something went wrong. Have you enabled this option during registration?", topOffset: deviceTopInsent}
-      )
+      return showErrorToast({
+        error: "Something went wrong. Have you enabled this option during registration?",
+        topOffset: deviceTopInsent,
+      })
 
     setIsLoading(true)
     try {
@@ -384,7 +401,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         })
       }
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       accountKey = ""
       setIsLoading(false)
@@ -402,7 +419,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   /***/
 
   return (
-    <Layout scrollable>
+    <Layout scrollable={true}>
       <View style={[styles.container, { flex: 1 }]}>
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>

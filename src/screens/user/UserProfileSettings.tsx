@@ -41,7 +41,8 @@ type ScreenProps = StackScreenProps<ProfileStackParamList, "Profile Settings">
 
 export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   const { id, collateralUtxoId, setCollateralUtxoId } = React.useContext(ProfileContext)
-  const { colorScheme, resetAppState, userSettings, setUserSettings, deviceTopInsent } = appContext()
+  const { colorScheme, resetAppState, userSettings, setUserSettings, deviceTopInsent } =
+    appContext()
   const { resetCalendarState } = myCalendarContext()
   const { resetBookingState } = bookingContext()
   const { resetEventCreationState } = eventCreationContext()
@@ -80,7 +81,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
 
       RNRestart.Restart() // restarts the app
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     }
   }
   const deleteUserAccount = async () => {
@@ -96,7 +97,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
         "Account removed"
       )
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     }
   }
   // const onShowPastCalendarEvents = async () => {
@@ -122,23 +123,21 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       setCollateralUtxoId("")
     } catch (e) {
       showErrorToast({
-        error:"We couldn't unlock your collateral for some reason.",
-        header: "Something went wrong", 
-        topOffset: deviceTopInsent
-      }
-      )
+        error: "We couldn't unlock your collateral for some reason.",
+        header: "Something went wrong",
+        topOffset: deviceTopInsent,
+      })
     }
   }
   const onAuthenticated = (mnemonic: string | void) => {
     setAuthenticatorVisible(false)
     if (!mnemonic)
-    return showErrorToast({
-      error: "Have you enabled this option during registration?",
-      header: "Something went wrong", 
-      topOffset: deviceTopInsent
-    }
-    )
-    showStandardModal(mnemonic, "Remember to keep it secure and don't share with anyone.")
+      return showErrorToast({
+        error: "Have you enabled this option during registration?",
+        header: "Something went wrong",
+        topOffset: deviceTopInsent,
+      })
+    showStandardModal(mnemonic, "Remember to keep it secure and don't share with anyone!")
     mnemonic = ""
   }
   const onHideAuthenticator = () => setAuthenticatorVisible(false)

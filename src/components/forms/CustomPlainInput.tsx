@@ -58,6 +58,7 @@ export const CustomPlainInput = React.forwardRef((props, ref) => {
     isDisabled,
     onError,
     validate,
+    autoCapitalize,
   }: CustomPlainInputProps = props
   const [charsLeft, setCharsLeft] = React.useState<number | null>(null)
   const [isValid, setIsValid] = React.useState<boolean>(true)
@@ -90,6 +91,7 @@ export const CustomPlainInput = React.forwardRef((props, ref) => {
   if (maxChar) {
     additionalProps.maxLength = maxChar
   }
+  if (autoCapitalize) additionalProps.autoCapitalize = autoCapitalize
 
   if (isLightMode) {
     styles = Object.assign({}, defaultStyles, styles, inputStyles, formStyleLight)

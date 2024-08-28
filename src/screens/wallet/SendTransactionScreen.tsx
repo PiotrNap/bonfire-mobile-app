@@ -1,5 +1,14 @@
 import * as React from "react"
-import { View, StyleSheet, Text, Pressable, StyleProp, DeviceEventEmitter } from "react-native"
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  StyleProp,
+  DeviceEventEmitter,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
 import { LeftArrowIcon, QrCodeIcon } from "icons/index"
@@ -18,7 +27,7 @@ import { AssetUnit } from "lib/wallet/types"
 
 export const SendTransactionScreen = ({ navigation }: any) => {
   const { walletAssets } = walletContext()
-  const { colorScheme, deviceTopInsent } = appContext()
+  const { colorScheme, deviceTopInsent, qrCodeValue, setQrCodeValue } = appContext()
   const { setSendTxInfo, lovelaceBalance } = walletContext()
   const [selectedAssets, setSelectedAssets] = React.useState<Map<string, AssetUnit>>(
     new Map()
@@ -29,11 +38,16 @@ export const SendTransactionScreen = ({ navigation }: any) => {
   const formikRef = React.useRef<any>(null)
   const isLightMode = colorScheme === "light"
 
-  const onBackNavigationPress = () => navigation.goBack()
+  const onBackNavigationPress = () => {
+    setAdaAmount("0")
+    setReceiverAddress("")
+    setQrCodeValue("")
+    navigation.goBack()
+  }
 
   const onPreviewPress = () => {
     setSendTxInfo({
-      receiverAddress,
+      receiverAddress: receiverAddress || qrCodeValue || "",
       lovelace: Number(adaAmount) * 1_000_000,
       assets: selectedAssets,
     })
@@ -46,7 +60,10 @@ export const SendTransactionScreen = ({ navigation }: any) => {
   const onCheckboxPress = (unit: string) => {
     const walletAsset = walletAssets?.get(unit)
     if (!walletAsset)
-      return showErrorToast({error:"Unable to find selected asset in user wallet", topOffset: deviceTopInsent})
+      return showErrorToast({
+        error: "Unable to find selected asset in user wallet",
+        topOffset: deviceTopInsent,
+      })
 
     const isSelected = selectedAssets.has(unit)
     let newSelectedAssets = selectedAssets
@@ -71,112 +88,117 @@ export const SendTransactionScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
-      <View style={styles.mainContainer}>
-        <View style={styles.navigation}>
-          <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-            <LeftArrowIcon
-              width={24}
-              height={24}
-              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
-            />
-          </Pressable>
-        </View>
-        <View style={styles.header}>
-          <HeaderText colorScheme={colorScheme}>{"Send Funds"}</HeaderText>
-        </View>
-        <Formik
-          validationSchema={txSendValidationSchema(lovelaceBalance)}
-          initialValues={{
-            receivingAddress: "",
-            ada: 2,
-          }}
-          innerRef={formikRef}
-          onSubmit={noop}>
-          {({ isValid, validateForm, values }) => {
-            React.useEffect(() => {
-              if (values.receivingAddress && values.ada) setIsValidForm(isValid)
-            }, [isValid, values])
-            return (
-              <>
-                <View style={styles.receiverContainer}>
-                  <View style={styles.receiverFieldContainer}>
-                    <Field
-                      key="receivingAddress"
-                      name="receivingAddress"
-                      label="Receiver Address"
-                      component={CustomInput}
-                      keyboardType="default"
-                      placeholder={"addr1qqandzg..."}
-                      validateForm={validateForm}
-                      onChange={onReceiverAddressChange}
-                      styles={formStyles}
-                      required
-                    />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.mainContainer}>
+          <View style={styles.navigation}>
+            <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+              <LeftArrowIcon
+                width={24}
+                height={24}
+                color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.header}>
+            <HeaderText colorScheme={colorScheme}>{"Send Funds"}</HeaderText>
+          </View>
+          <Formik
+            validationSchema={txSendValidationSchema(lovelaceBalance)}
+            initialValues={{
+              receivingAddress: "",
+              ada: 0,
+            }}
+            innerRef={formikRef}
+            onSubmit={noop}>
+            {({ isValid, validateForm, values, setFieldValue }) => {
+              React.useEffect(() => {
+                if (values.receivingAddress && values.ada) setIsValidForm(isValid)
+              }, [isValid, values])
+              React.useEffect(() => {
+                if (qrCodeValue) setFieldValue("receivingAddress", qrCodeValue)
+              }, [qrCodeValue])
+              return (
+                <>
+                  <View style={styles.receiverContainer}>
+                    <View style={styles.receiverFieldContainer}>
+                      <Field
+                        key="receivingAddress"
+                        name="receivingAddress"
+                        label="Receiver Address"
+                        component={CustomInput}
+                        keyboardType="default"
+                        placeholder={"addr1qqandzg..."}
+                        validateForm={validateForm}
+                        onChange={onReceiverAddressChange}
+                        styles={formStyles}
+                        required
+                      />
+                    </View>
+                    <Pressable
+                      onPress={onScanPress}
+                      style={Buttons.applyOpacity([
+                        styles.scanBtn,
+                        {
+                          backgroundColor: isLightMode
+                            ? Colors.primary.s200
+                            : Colors.primary.s600,
+                          borderColor: isLightMode
+                            ? Colors.primary.s200
+                            : Colors.primary.s600,
+                        },
+                      ])}>
+                      <QrCodeIcon
+                        width={24}
+                        height={24}
+                        color={isLightMode ? Colors.primary.s800 : "white"}
+                        strokeWidth={2}
+                      />
+                      <Text
+                        style={[
+                          styles.buttonText,
+                          { color: isLightMode ? Colors.primary.s800 : "white" },
+                        ]}>
+                        Scan
+                      </Text>
+                    </Pressable>
                   </View>
-                  <Pressable
-                    onPress={onScanPress}
-                    style={Buttons.applyOpacity([
-                      styles.scanBtn,
-                      {
-                        backgroundColor: isLightMode
-                          ? Colors.primary.s200
-                          : Colors.primary.s600,
-                        borderColor: isLightMode
-                          ? Colors.primary.s200
-                          : Colors.primary.s600,
-                      },
-                    ])}>
-                    <QrCodeIcon
-                      width={24}
-                      height={24}
-                      color={isLightMode ? Colors.primary.s800 : "white"}
-                      strokeWidth={2}
-                    />
-                    <Text
-                      style={[
-                        styles.buttonText,
-                        { color: isLightMode ? Colors.primary.s800 : "white" },
-                      ]}>
-                      Scan
-                    </Text>
-                  </Pressable>
-                </View>
-                <Field
-                  key="ada"
-                  name="ada"
-                  label="Ada Amount"
-                  component={CustomInput}
-                  keyboardType="numeric"
-                  validateForm={validateForm}
-                  styles={formStyles}
-                  onChange={onAdaAmountChange}
-                />
-              </>
-            )
-          }}
-        </Formik>
-        <View style={styles.tabContent}>
-          {walletAssets && (
-            <WalletTabList
-              isSendTransactionScreen
-              listData={walletAssets}
-              onEndReached={noop}
-              selectedAssets={selectedAssets}
-              onCheckboxPress={onCheckboxPress}
-              type="assets"
-            />
-          )}
-        </View>
+                  <Field
+                    key="ada"
+                    name="ada"
+                    label="Ada Amount"
+                    component={CustomInput}
+                    keyboardType="numeric"
+                    validateForm={validateForm}
+                    styles={formStyles}
+                    onChange={onAdaAmountChange}
+                  />
+                </>
+              )
+            }}
+          </Formik>
+          <View style={styles.tabContent}>
+            {walletAssets && (
+              <WalletTabList
+                isSendTransactionScreen
+                listData={walletAssets}
+                onEndReached={noop}
+                selectedAssets={selectedAssets}
+                onCheckboxPress={onCheckboxPress}
+                type="assets"
+              />
+            )}
+          </View>
 
-        <View>
-          <FullWidthButton
-            text={"Preview"}
-            lightMode={isLightMode}
-            disabled={!isValidForm}
-            onPressCallback={onPreviewPress}
-          />
+          <View>
+            <FullWidthButton
+              text={"Preview"}
+              lightMode={isLightMode}
+              disabled={!isValidForm}
+              onPressCallback={onPreviewPress}
+            />
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   )
 }

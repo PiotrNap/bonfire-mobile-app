@@ -138,7 +138,7 @@ export const NavigationTabBar = ({ state, descriptors, navigation }: any) => {
     <View
       onLayout={onLayoutChange}
       style={[
-        { marginBottom: bottomInset },
+        { paddingBottom: bottomInset },
         colorScheme == "light" ? styles.container_light : styles.container_dark,
       ]}>
       {state.routes.map(renderTabItem)}

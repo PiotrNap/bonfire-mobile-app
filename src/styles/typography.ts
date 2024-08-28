@@ -399,6 +399,6 @@ export const roboto: Record<Roboto, TextStyle> = {
   },
 }
 
-export function schemeBasedFontColor(scheme: "light" | "dark"): string {
+export function schemeBasedColor(scheme: "light" | "dark"): string {
   return scheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100
 }

@@ -51,7 +51,7 @@ export class Events {
   }
 
   public static async getBookingsByQuery(
-    query: AnyObject
+    query: any
   ): Promise<[EventBookingSlot[], number] | void> {
     const queryString = new URLSearchParams(query)
     try {

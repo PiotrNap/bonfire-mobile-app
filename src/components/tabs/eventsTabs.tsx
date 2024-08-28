@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
 import { Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
-import { schemeBasedFontColor } from "../../styles/typography"
+import { schemeBasedColor } from "../../styles/typography"
 import { EventsList } from "components/booking/EventsList"
 import { SlotsList } from "components/booking/SlotsList"
 
@@ -26,33 +26,42 @@ export const EventsTabs = ({ reload }: EventsTabParams) => {
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === EventsTabsType.active_events && styles.activeTab,
-            { borderColor: schemeBasedFontColor(colorScheme) },
+            activeTab === EventsTabsType.active_events && {
+              borderBottomWidth: 2,
+              borderBottomColor: schemeBasedColor(colorScheme),
+            },
+            { borderColor: schemeBasedColor(colorScheme) },
           ]}
           onPress={() => setActiveTab(EventsTabsType.active_events)}>
-          <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
+          <Text style={[styles.tabText, { color: schemeBasedColor(colorScheme) }]}>
             Active
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === EventsTabsType.booked_slots && styles.activeTab,
-            { borderColor: schemeBasedFontColor(colorScheme) },
+            activeTab === EventsTabsType.booked_slots && {
+              borderBottomWidth: 2,
+              borderBottomColor: schemeBasedColor(colorScheme),
+            },
+            { borderColor: schemeBasedColor(colorScheme) },
           ]}
           onPress={() => setActiveTab(EventsTabsType.booked_slots)}>
-          <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
+          <Text style={[styles.tabText, { color: schemeBasedColor(colorScheme) }]}>
             Booked
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === EventsTabsType.scheduled_slots && styles.activeTab,
-            { borderColor: schemeBasedFontColor(colorScheme) },
+            activeTab === EventsTabsType.scheduled_slots && {
+              borderBottomWidth: 2,
+              borderBottomColor: schemeBasedColor(colorScheme),
+            },
+            { borderColor: schemeBasedColor(colorScheme) },
           ]}
           onPress={() => setActiveTab(EventsTabsType.scheduled_slots)}>
-          <Text style={[styles.tabText, { color: schemeBasedFontColor(colorScheme) }]}>
+          <Text style={[styles.tabText, { color: schemeBasedColor(colorScheme) }]}>
             Scheduled
           </Text>
         </TouchableOpacity>

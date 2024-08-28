@@ -58,7 +58,7 @@ export const MyCalendarScreen = ({ navigation }: any) => {
       setCurrentMonth(month - 1)
       setCurrentYear(year)
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
     }
@@ -76,7 +76,7 @@ export const MyCalendarScreen = ({ navigation }: any) => {
     fetchCalendarData(date.year, date.month - 1)
   }
   return (
-    <SafeAreaView style={styles.calendarContainer}>
+    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <CalendarProvider
         date={currentDate}
         onDateChanged={onDateChanged}
@@ -86,6 +86,7 @@ export const MyCalendarScreen = ({ navigation }: any) => {
         // numberOfDays={3}
       >
         <ExpandableCalendar
+          allowShadow={false}
           key={colorScheme}
           displayLoadingIndicator={isLoading}
           indicatorStyle={isLightMode ? "default" : "white"}
@@ -138,8 +139,15 @@ export const MyCalendarScreen = ({ navigation }: any) => {
 }
 
 const styles = StyleSheet.create({
-  calendarContainer: {
+  safeArea_light: {
     flex: 1,
+    backgroundColor: Colors.primary.neutral,
+    alignItems: "center",
+  },
+  safeaArea_dark: {
+    flex: 1,
+    backgroundColor: Colors.neutral.s600,
+    alignItems: "center",
   },
   timelinePlaceholderContainer: {
     flex: 1,

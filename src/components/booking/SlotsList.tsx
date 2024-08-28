@@ -29,7 +29,11 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   const navigation = useNavigation()
 
   const fetchSlots = async (refresh = false) => {
-    if (!id) return showErrorToast({error:"Unable to fetch Events", topOffset: deviceTopInsent})
+    if (!id)
+      return showErrorToast({
+        error: "Unable to fetch Events",
+        topOffset: deviceTopInsent,
+      })
     setIsLoading(true)
     try {
       let res
@@ -59,7 +63,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
       }
       setSlots(paginatedSlots)
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
       setPage(refresh ? 1 : (prev) => Number(prev) + 1)
@@ -215,14 +219,13 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingBottom: Sizing.x15,
   },
   noSchedulingsMessage: {
     flex: 1,
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingBottom: Sizing.x60,
+    paddingBottom: Sizing.x40,
   },
   lottieAnimation: {
     width: Sizing.x120,

@@ -33,7 +33,8 @@ export interface UserProfileProps
 export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { isLoading } = useUserInfo() // fetch new user informations
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
-  const { colorScheme, setColorScheme, networkId, setNetworkId , deviceTopInsent} = appContext()
+  const { colorScheme, setColorScheme, networkId, setNetworkId, deviceTopInsent } =
+    appContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
@@ -56,7 +57,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           if (e.response.status === 422) return showNSFWImageModal()
           showErrorToast({
             error: "Something went wrong while updating profile image.",
-            topOffset: deviceTopInsent
+            topOffset: deviceTopInsent,
           })
         }
       })()
@@ -191,9 +192,9 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
       </View>
       <View style={styles.bottomNavigation}>
         <SettingsItem icon={SwitchIcon} title="Network">
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <SubHeaderText
-              customStyle={{ position: "absolute", right: 50 }}
+              customStyle={{ position: "absolute", right: 60 }}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
               {`${networkId}`}
             </SubHeaderText>
@@ -204,11 +205,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           </View>
         </SettingsItem>
         <SettingsItem icon={LightBulbIcon} title="Dark Mode">
-          <CustomSwitch
-            onValueChange={setDarkMode}
-            value={darkMode}
-            style={{ marginLeft: "auto" }}
-          />
+          <CustomSwitch onValueChange={setDarkMode} value={darkMode} />
         </SettingsItem>
       </View>
     </SafeAreaView>

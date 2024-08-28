@@ -103,8 +103,8 @@ export const MnemonicPreview = ({ pagerRef }: any) => {
             colorMode="dark"
             onCheckBoxPress={onCheckBoxPress}
             acceptedCheckbox={acceptedStoreOfflineCheckbox}>
-            I would like to store a copy on my device, and access it later through my user
-            profile.
+            I would like to store a copy on my device, and access it later through User
+            Profile.
           </Checkbox>
         </View>
         <FullWidthButton

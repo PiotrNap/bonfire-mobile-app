@@ -21,7 +21,7 @@ export interface CreateEventDto {
   visibility: EventVisibility
   eventCardColor: string
   eventTitleColor: string
-  organizerId: string
+  organizer: EventUser
   note: string
   networkId: NetworkId
 }

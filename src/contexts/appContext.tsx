@@ -27,7 +27,7 @@ const initialAppState: AppState = {
   //   accessToken: null,
   // },
   colorScheme: colorScheme == null ? "light" : colorScheme,
-  networkId: "Mainnet",
+  networkId: "Preprod",
   appBgColor: colorScheme === "dark" ? Colors.neutral.s600 : Colors.primary.neutral,
   favoriteOrganizers: [],
   pageIndex: 0,
@@ -36,7 +36,7 @@ const initialAppState: AppState = {
   userSettings: null,
   textContent: { wallet },
   qrCodeValue: "",
-  deviceTopInsent: 0
+  deviceTopInsent: 0,
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -77,11 +77,11 @@ const reducer = (state: AppState, action: AppActions) => {
         ...state,
         bottomNavigationHeight: action.payload.height,
       }
-      case AppTypes.SetDeviceTopInsent:
-        return {
-          ...state,
-          deviceTopInsent: action.payload.deviceTopInsent,
-        }
+    case AppTypes.SetDeviceTopInsent:
+      return {
+        ...state,
+        deviceTopInsent: action.payload.deviceTopInsent,
+      }
     case AppTypes.SetNetworkId:
       return {
         ...state,
