@@ -81,6 +81,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
 
       RNRestart.Restart() // restarts the app
     } catch (e) {
+      console.error("Code: ", e.code)
       showErrorToast({ error: e, topOffset: deviceTopInsent })
     }
   }

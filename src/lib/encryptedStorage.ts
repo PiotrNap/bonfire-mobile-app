@@ -48,13 +48,7 @@ export const getFromEncryptedStorage = async (key: StoragePropertyKeys): Promise
 }
 
 export const clearEncryptedStorage = async (): Promise<void> => {
-  try {
-    for (const property of STORAGE_PROPERTY_KEYS) {
-      await ES.removeItem(generateUniqueEncryptedStorageKey(property))
-    }
-  } catch (e) {
-    throw e
-  }
+  return await ES.clear()
 }
 
 export const STORAGE_PROPERTY_KEYS: StoragePropertyKeys[] = [

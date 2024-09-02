@@ -81,20 +81,32 @@ export async function addKeysToStorage(
 
 // deletes every secret key stored on this device
 export async function deleteKeysFromStorage(accountIndexes = [0]): Promise<void> {
+  let exists
   try {
-    await removeFromEncryptedStorage("mnemonic")
-    await Keychain.resetGenericPassword({ service: "@Bonfire:mnemonic" })
+    exists = !!(await getFromEncryptedStorage("mnemonic"))
+    if (exists) {
+      await removeFromEncryptedStorage("mnemonic")
+      await Keychain.resetGenericPassword({ service: "@Bonfire:mnemonic" })
+    }
 
-    await removeFromEncryptedStorage("root-key")
-    await Keychain.resetGenericPassword({ service: "@Bonfire:root-key" })
+    exists = !!(await getFromEncryptedStorage("root-key"))
+    if (exists) {
+      await removeFromEncryptedStorage("root-key")
+      await Keychain.resetGenericPassword({ service: "@Bonfire:root-key" })
+    }
 
     for (let accountIdx of accountIndexes) {
       //@ts-ignore because of dynamic `key` string value
-      await removeFromEncryptedStorage(`account-#${accountIdx}-key`)
-      await Keychain.resetGenericPassword({
-        service: `@Bonfire:account-#${accountIdx}-key`,
-      })
+      exists = !!(await getFromEncryptedStorage(`account-#${accountIdx}-key`))
+      if (exists) {
+        //@ts-ignore because of dynamic `key` string value
+        await removeFromEncryptedStorage(`account-#${accountIdx}-key`)
+        await Keychain.resetGenericPassword({
+          service: `@Bonfire:account-#${accountIdx}-key`,
+        })
+      }
     }
+
     await AsyncStorage.removeItem("account-#0-baseAddresses")
 
     console.log("All done. Storage keys deleted")
