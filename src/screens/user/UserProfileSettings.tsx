@@ -144,26 +144,27 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
   const onHideAuthenticator = () => setAuthenticatorVisible(false)
 
   return (
-    <Layout scrollable>
-      <View style={styles.navigation}>
-        <Pressable onPress={onBackNavigationPress} hitSlop={10}>
-          <LeftArrowIcon
-            width={24}
-            height={24}
-            color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
-          />
-        </Pressable>
-      </View>
-      {collateralUtxoId && (
-        <SettingsItem titleStyle={textStyle} title={"Unlock collateral UTxO"}>
-          <SmallButton
-            onPress={onUnlockCollataralPress}
-            title="Unlock"
-            customStyle={{ width: "100%", justifyContent: "center" }}
-          />
-        </SettingsItem>
-      )}
-      {/*
+    <>
+      <Layout scrollable>
+        <View style={styles.navigation}>
+          <Pressable onPress={onBackNavigationPress} hitSlop={10}>
+            <LeftArrowIcon
+              width={24}
+              height={24}
+              color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
+            />
+          </Pressable>
+        </View>
+        {collateralUtxoId && (
+          <SettingsItem titleStyle={textStyle} title={"Unlock collateral UTxO"}>
+            <SmallButton
+              onPress={onUnlockCollataralPress}
+              title="Unlock"
+              customStyle={{ width: "100%", justifyContent: "center" }}
+            />
+          </SettingsItem>
+        )}
+        {/*
       @TODO after beta release
       <SettingsItem titleStyle={textStyle} title={"Show past events on my calendar."}>
         <Text style={switchTextStyle}>
@@ -175,56 +176,57 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
         />
       </SettingsItem>
       */}
-      <View
-        style={[
-          styles.sensitiveInfoSection,
-          {
-            borderColor:
-              colorScheme === "light" ? Colors.primary.s600 : Colors.primary.neutral,
-          },
-        ]}>
-        <View style={styles.sectionHeader}>
-          <SubHeaderText
-            customStyle={Typography.roboto.bold}
-            colors={[Colors.danger.s400]}>
-            Danger Zone
-          </SubHeaderText>
-        </View>
-        {isOfflineMnemonic && (
+        <View
+          style={[
+            styles.sensitiveInfoSection,
+            {
+              borderColor:
+                colorScheme === "light" ? Colors.primary.s600 : Colors.primary.neutral,
+            },
+          ]}>
+          <View style={styles.sectionHeader}>
+            <SubHeaderText
+              customStyle={Typography.roboto.bold}
+              colors={[Colors.danger.s400]}>
+              Danger Zone
+            </SubHeaderText>
+          </View>
+          {isOfflineMnemonic && (
+            <SettingsItem
+              titleStyle={textStyle}
+              title={"Preview my mnemonic phrase (requires authentication)"}>
+              <SmallButton
+                onPress={onPreviewMnemonicPress}
+                title="Preview"
+                customStyle={{ width: "100%", justifyContent: "center" }}
+              />
+            </SettingsItem>
+          )}
           <SettingsItem
             titleStyle={textStyle}
-            title={"Preview my mnemonic phrase (requires authentication)"}>
-            <SmallButton
-              onPress={onPreviewMnemonicPress}
-              title="Preview"
-              customStyle={{ width: "100%", justifyContent: "center" }}
+            title={
+              "Remove all data stored on this device \n(includes private & public keys)"
+            }>
+            <SmallDangerButton
+              onPressCallback={() => showCredentialsLossWarningModal(removeStorageData)}
+              text="Remove"
             />
           </SettingsItem>
-        )}
-        <SettingsItem
-          titleStyle={textStyle}
-          title={
-            "Remove all data stored on this device \n(includes private & public keys)"
-          }>
-          <SmallDangerButton
-            onPressCallback={() => showCredentialsLossWarningModal(removeStorageData)}
-            text="Remove"
-          />
-        </SettingsItem>
-        <SettingsItem titleStyle={textStyle} title={"Deactivate my account"}>
-          <SmallDangerButton
-            onPressCallback={() => showAccountDeletionWarningModal(deleteUserAccount)}
-            text="Deactivate"
-          />
-        </SettingsItem>
-      </View>
-      <BodyText
-        customStyle={{
-          ...Typography.roboto.regular,
-          fontSize: 15,
-        }}>
-        v0.1.0 {String(GIT_HASH).substring(0, 8)}
-      </BodyText>
+          <SettingsItem titleStyle={textStyle} title={"Deactivate my account"}>
+            <SmallDangerButton
+              onPressCallback={() => showAccountDeletionWarningModal(deleteUserAccount)}
+              text="Deactivate"
+            />
+          </SettingsItem>
+        </View>
+        <BodyText
+          customStyle={{
+            ...Typography.roboto.regular,
+            fontSize: 15,
+          }}>
+          v0.1.0 {String(GIT_HASH).substring(0, 8)}
+        </BodyText>
+      </Layout>
       {authenticatorVisible && (
         <Authenticator
           authRequestType="mnemonic"
@@ -233,7 +235,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
           onHideAuthenticatorCb={onHideAuthenticator}
         />
       )}
-    </Layout>
+    </>
   )
 }
 

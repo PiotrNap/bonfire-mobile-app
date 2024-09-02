@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { BigSlideModal } from "components/modals/BigSlideModal"
 import { PasswordForm } from "components/forms/PasswordForm"
 import { showErrorToast } from "lib/helpers"
@@ -6,7 +6,7 @@ import {
   retrieveAccountKeyFromStorage,
   retrieveMnemonicPhraseFromStorage,
 } from "lib/wallet/storage"
-import { StyleSheet } from "react-native"
+import { Keyboard, StyleSheet } from "react-native"
 import { appContext } from "contexts/contextApi"
 
 type Props = {
@@ -25,7 +25,26 @@ export const Authenticator = ({
   const [authModalVisible, setAuthModalVisible] = React.useState<boolean>(false)
   const [passwordPromptModalVisible, setPasswordPromptModalVisible] =
     React.useState<boolean>(false)
-    const {deviceTopInsent} = appContext()
+  const { deviceTopInsent } = appContext()
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", (event) => {
+      setKeyboardVisible(true)
+      setKeyboardHeight(event.endCoordinates.height) // Capture keyboard height
+    })
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false)
+      setKeyboardHeight(0) // Reset keyboard height when hidden
+    })
+
+    // Clean up listeners on component unmount
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [])
 
   React.useEffect(() => {
     if (showAuthenticator) {
@@ -64,13 +83,14 @@ export const Authenticator = ({
 
       await onAuthenticatedCb(res)
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       res = ""
       password = ""
       onHideAuthenticatorCb()
     }
   }
+
   return (
     <>
       {authModalVisible && (
@@ -89,6 +109,8 @@ export const Authenticator = ({
         <BigSlideModal
           isVisible={passwordPromptModalVisible}
           hideModal={onHideAuthenticatorCb}
+          keyboardHeight={keyboardHeight}
+          keyboardVisible={keyboardVisible}
           customStyles={styles.authModal}>
           <PasswordForm onSubmitCallback={startAuthentication} />
         </BigSlideModal>
@@ -98,6 +120,18 @@ export const Authenticator = ({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 5,
+  },
   authModal: {
     height: "auto",
   },

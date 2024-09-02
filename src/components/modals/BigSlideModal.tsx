@@ -29,6 +29,8 @@ export interface BidSlideModalProps {
   secondButtonDisabled?: boolean
   customStyles?: ViewStyle
   customTextContainerStyle?: ViewStyle
+  keyboardHeight?: number
+  keyboardVisible?: boolean
 }
 
 export const BigSlideModal = ({
@@ -45,6 +47,8 @@ export const BigSlideModal = ({
   secondButtonDisabled,
   customStyles,
   customTextContainerStyle,
+  keyboardHeight = 0,
+  keyboardVisible,
 }: BidSlideModalProps) => {
   const { colorScheme } = appContext()
   const [visible, setVisible] = React.useState<boolean>(isVisible)
@@ -76,6 +80,7 @@ export const BigSlideModal = ({
           isLightMode
             ? { backgroundColor: Colors.primary.neutral }
             : { backgroundColor: Colors.neutral.s600 },
+          keyboardVisible && { marginBottom: keyboardHeight / 2 },
         ]}>
         <View style={styles.main}>
           <Pressable
