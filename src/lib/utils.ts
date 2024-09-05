@@ -567,12 +567,12 @@ export function getDigitalLocaleTime(time: number | Date | string): string | voi
   if (timeString == null || timeString.length === 0) return
 
   abbreviation = timeString[1]
-  timeString.pop()
+  if (timeString.length > 1) timeString.pop()
   timeString = timeString[0].split(":")
   timeString.pop()
   timeString = timeString.join(":")
 
-  return timeString + " " + abbreviation
+  return timeString + " " + (abbreviation || "")
 }
 
 /**

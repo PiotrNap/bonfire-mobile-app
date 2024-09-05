@@ -10,6 +10,7 @@ import { LeftArrowIcon } from "assets/icons"
 interface Props {
   children: React.ReactNode
   scrollable?: boolean
+  additionalScrolling?: boolean
   backNavigationIcon?: boolean
   backNavigationCb?: () => void
 }
@@ -17,20 +18,25 @@ interface Props {
 export const Layout = ({
   children,
   scrollable,
+  additionalScrolling,
   backNavigationIcon,
   backNavigationCb,
 }: Props) => {
   const { colorScheme } = appContext()
+  const [scrollY, setScrollY] = React.useState(0)
   const isLightMode = colorScheme === "light"
-  // const [isScrolledToBottom, setIsScrolledToBottom] = React.useState(false)
+  const scrollRef = React.useRef(null)
 
-  // const onScroll = (event: any) => {
-  //   const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent
-  //   const isBottom =
-  //     layoutMeasurement.height + contentOffset.y >= contentSize.height
-  //   setIsScrolledToBottom(isBottom)
-  // }
-
+  const handleScroll = (event) => {
+    const currentOffsetY = event.nativeEvent.contentOffset.y
+    setScrollY(currentOffsetY) // Update scroll position
+  }
+  const scrollBy = (offsetY) => {
+    // Add an offset to the current scroll position and scroll to the new position
+    if (scrollRef.current) {
+      scrollRef.current.scrollToPosition(0, scrollY + offsetY, true)
+    }
+  }
   return !scrollable ? (
     <SafeAreaView
       style={[
@@ -41,8 +47,9 @@ export const Layout = ({
         <View style={styles.navigation}>
           <Pressable onPress={backNavigationCb} hitSlop={10}>
             <LeftArrowIcon
-              width={24}
-              height={24}
+              strokeWidth={Sizing.x3}
+              width={Sizing.x25}
+              height={Sizing.x25}
               color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
             />
           </Pressable>
@@ -53,18 +60,27 @@ export const Layout = ({
   ) : (
     <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <KeyboardAwareScrollView
+        ref={scrollRef}
         scrollEventThrottle={400} // how long to wait before firing up scroll event
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={true}
         keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
+        scrollToOverflowEnabled={true}
+        scrollEnabled={true}
+        onScroll={handleScroll}
         style={{ width: "100%", height: "100%" }}
+        onKeyboardWillShow={(frames: Object) => {
+          if (additionalScrolling) scrollBy(120)
+        }}
+        automaticallyAdjustsScrollIndicatorInsets
         contentContainerStyle={{ alignItems: "center" }}>
         {backNavigationIcon && (
           <View style={styles.navigation}>
             <Pressable onPress={backNavigationCb} hitSlop={10}>
               <LeftArrowIcon
-                width={24}
-                height={24}
+                strokeWidth={Sizing.x3}
+                width={Sizing.x25}
+                height={Sizing.x25}
                 color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
               />
             </Pressable>

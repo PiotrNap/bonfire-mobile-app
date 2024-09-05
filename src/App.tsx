@@ -104,9 +104,9 @@ function App() {
               </WalletContextProvider>
             </ProfileContextProvider>
           </AppContextProvider>
+          <ToastMessage />
         </SafeAreaProvider>
       )}
-      <ToastMessage />
     </>
   )
 }

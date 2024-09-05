@@ -86,7 +86,7 @@ export const EventsList = React.forwardRef((props, ref): any => {
     />
   )
   const onAddEventPress = () => {
-    navigation.navigate("New Event Description")
+    navigation.navigate("My Events", { screen: "New Event Description" })
   }
   const onEndReach = React.useCallback(() => {
     if (isLastPage) return
@@ -155,8 +155,8 @@ export const EventsList = React.forwardRef((props, ref): any => {
             <SubHeaderText
               customStyle={styles.noEventsText}
               colors={[Colors.primary.s800, Colors.primary.neutral]}>
-              Looks like there are no events to show right now. Be the first to create an
-              event and inspire the community!
+              Looks like there are no events to show right now.{"\n"} Be the first one to
+              create an event and inspire the community!
             </SubHeaderText>
           )}
           <CurvedArrow

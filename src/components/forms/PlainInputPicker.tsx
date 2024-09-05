@@ -31,11 +31,8 @@ export interface PlainInputPickerProps {
 
 export const PlainInputPicker = (props: PlainInputPickerProps) => {
   const { colorScheme } = appContext()
-  const [dropDownAnimationValue, setDropDownAnimationValue] =
-    React.useState<number>(0)
-  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
-    null
-  )
+  const [dropDownAnimationValue, setDropDownAnimationValue] = React.useState<number>(0)
+  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(null)
   const [showPicker, setShowPicker] = React.useState<boolean>(false)
   const [inputValue, setInputValue] = React.useState<any>(null)
   const isLightMode = colorScheme === "light"
@@ -69,9 +66,7 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
     if (!openPicker && showPicker) onInputPress()
 
     const listeners = () => {
-      dropDownHeightRef.addListener(({ value }) =>
-        setDropDownAnimationValue(value)
-      )
+      dropDownHeightRef.addListener(({ value }) => setDropDownAnimationValue(value))
     }
     listeners()
 
@@ -133,16 +128,10 @@ export const PlainInputPicker = (props: PlainInputPickerProps) => {
         style={styles.input}>
         <View style={styles.textInputWrapper}>
           <Text
-            style={[
-              { color: Colors.primary.s600 },
-              os === "ios" && { lineHeight: 0 },
-            ]}>
+            style={[{ color: Colors.primary.s600 }, os === "ios" && { lineHeight: 0 }]}>
             {inputValue + " min"}
           </Text>
-          <DownIcon
-            style={styles.icon}
-            stroke={Colors.primary.s600}
-          />
+          <DownIcon style={styles.icon} stroke={Colors.primary.s600} />
         </View>
         {os === "ios" && showPicker && (
           <Animated.View

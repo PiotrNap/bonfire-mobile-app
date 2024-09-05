@@ -30,11 +30,8 @@ export interface TimePickerInputProps {
 
 export const TimePickerInput = (props: TimePickerInputProps) => {
   const [showTimePicker, setShowTimePicker] = React.useState<boolean>(false)
-  const [dropDownAnimationValue, setDropDownAnimationValue] =
-    React.useState<number>(0)
-  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(
-    null
-  )
+  const [dropDownAnimationValue, setDropDownAnimationValue] = React.useState<number>(0)
+  const [dimensions, setDimensions] = React.useState<LayoutRectangle | null>(null)
   const { colorScheme } = appContext()
   var {
     label,
@@ -60,9 +57,7 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
     if (!openPicker && showTimePicker) onInputPress()
 
     const listeners = () => {
-      dropDownHeightRef.addListener(({ value }) =>
-        setDropDownAnimationValue(value)
-      )
+      dropDownHeightRef.addListener(({ value }) => setDropDownAnimationValue(value))
     }
     listeners()
 
@@ -132,26 +127,17 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
   return (
     <View style={styles.inputContainer}>
       <SubHeaderText
-          customStyle={defaultStyles.label}
-          colors={[Colors.primary.s800, Colors.primary.neutral]}>
-          {label}
-       </SubHeaderText>
-      <Pressable
-        onLayout={onLayout}
-        onPress={onInputPress}
-        style={styles.input}>
+        customStyle={defaultStyles.label}
+        colors={[Colors.primary.s800, Colors.primary.neutral]}>
+        {label}
+      </SubHeaderText>
+      <Pressable onLayout={onLayout} onPress={onInputPress} style={styles.input}>
         <View style={styles.textInputWrapper}>
           <Text
-            style={[
-              { color: Colors.primary.s600 },
-              os === "ios" && { lineHeight: 0 },
-            ]}>
+            style={[{ color: Colors.primary.s600 }, os === "ios" && { lineHeight: 0 }]}>
             {getDigitalTime(timeValue, "12")}
           </Text>
-          <DownIcon
-            style={styles.icon}
-            stroke={Colors.primary.s600}
-          />
+          <DownIcon style={styles.icon} stroke={Colors.primary.s600} />
         </View>
         {os === "ios" && (
           <Animated.View
@@ -165,6 +151,7 @@ export const TimePickerInput = (props: TimePickerInputProps) => {
             ]}>
             <DateTimePicker
               style={styles.dateTimePicker}
+              textColor={Colors.neutral.s800}
               value={timeValue}
               mode="time"
               display="spinner"
@@ -221,5 +208,5 @@ const defaultStyles = StyleSheet.create({
     ...Typography.subHeader.x10,
     paddingLeft: Sizing.x5,
     paddingBottom: Sizing.x5,
-  }
+  },
 })

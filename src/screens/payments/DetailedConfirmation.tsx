@@ -419,7 +419,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   /***/
 
   return (
-    <Layout scrollable={true}>
+    <Layout scrollable={true} additionalScrolling>
       <View style={[styles.container, { flex: 1 }]}>
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>

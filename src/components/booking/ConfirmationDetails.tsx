@@ -37,6 +37,7 @@ import {
 import { EventBookingSlot } from "common/types/dto"
 import Clipboard from "@react-native-clipboard/clipboard"
 import dayjs from "dayjs"
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view"
 
 interface ConfirmationDetails {
   isNewEvent: boolean
@@ -236,7 +237,7 @@ export const ConfirmationDetails = ({
               icon: hr.displayName === "ada" ? <AdaIcon {...iconStyles} /> : null,
             }
           : {
-              content: `${hr.displayName} - ${Number(hr.count)}`,
+              content: `(${hr.displayName}) ${Number(hr.count)}`,
             }
       ),
     },
@@ -392,8 +393,13 @@ export const ConfirmationDetails = ({
     ? organizerEventSections
     : bookingEventSections
 
+  console.log(withFlatList)
   return withFlatList ? (
-    <FlatList data={data} renderItem={renderSections} keyExtractor={keyExtractor} />
+    <KeyboardAwareFlatList
+      data={data}
+      renderItem={renderSections}
+      keyExtractor={keyExtractor}
+    />
   ) : (
     <>{data.map((item, index) => renderSections({ item, index }))}</>
   )

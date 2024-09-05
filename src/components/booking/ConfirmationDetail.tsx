@@ -6,9 +6,10 @@ import { EventLine, SectionDetail } from "common/interfaces/bookingInterface"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { appContext } from "contexts/contextApi"
 import { useNavigation } from "@react-navigation/native"
-import { fontWeight } from "../../styles/typography"
+import { fontSize, fontWeight } from "../../styles/typography"
 import { CopyMessage } from "components/popups/copyMessage"
 import { getRandomKey } from "lib/utils"
+import { PencilAltIcon } from "assets/icons"
 
 export const ConfirmationDetail = ({
   label,
@@ -87,11 +88,11 @@ export const ConfirmationDetail = ({
             <SubHeaderText
               children={label}
               colors={[Colors.primary.s800, Colors.primary.neutral]}
-              customStyle={{ marginRight: "auto", ...fontWeight.bold }}
+              customStyle={{ marginRight: "auto", ...fontWeight.bold, ...fontSize.x30 }}
             />
             {callbackFn ? (
               <SubHeaderText
-                customStyle={{ ...fontWeight.bold }}
+                customStyle={{ ...fontWeight.bold, ...fontSize.x30 }}
                 children={callbackFn.label}
                 colors={[Colors.primary.s800, Colors.primary.s200]}
                 callbackFn={() =>
@@ -122,14 +123,14 @@ export const ConfirmationDetail = ({
           <View style={styles.headerContent} key={label}>
             <SubHeaderText
               colors={[Colors.primary.s800, Colors.primary.neutral]}
-              customStyle={{ marginRight: "auto", ...fontWeight.bold }}>
+              customStyle={{ marginRight: "auto", ...fontWeight.bold, ...fontSize.x30 }}>
               {label}
             </SubHeaderText>
             {callbackFn ? (
               <>
                 <SubHeaderText
                   colors={[Colors.primary.s800, Colors.primary.s200]}
-                  customStyle={{ ...fontWeight.bold }}
+                  customStyle={{ ...fontWeight.bold, ...fontSize.x30 }}
                   callbackFn={() =>
                     callbackFn?.onPress
                       ? callbackFn?.onPress
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   text: {
-    ...Typography.subHeader.x25,
+    ...Typography.subHeader.x20,
     marginLeft: Sizing.x2,
   },
 })

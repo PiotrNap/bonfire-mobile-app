@@ -19,7 +19,10 @@ export const BrowseScreensStack = () => (
   <BookingContextProvider>
     <MyCalendarProvider>
       <Stack.Navigator
-        screenOptions={{ headerShown: false }}
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: false, // Disable swipe gesture
+        }}
         initialRouteName="Search List">
         <Stack.Screen name="Search List" component={SearchListScreen} />
         <Stack.Screen name="Event Description" component={EventDescription} />

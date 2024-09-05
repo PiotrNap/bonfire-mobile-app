@@ -13,10 +13,10 @@ import { ProfileContext } from "contexts/profileContext"
 import { Field, Formik } from "formik"
 import { showErrorToast } from "lib/helpers"
 import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
-import { accountValidationScheme } from "lib/validators"
 import { Colors, Sizing, Typography } from "styles/index"
 import { formStyleDark, inputStyles } from "../../styles/forms"
 import { appContext } from "contexts/contextApi"
+import { accountValidationScheme } from "lib/validators"
 
 export interface UserDetailScreenProps {}
 
@@ -41,7 +41,7 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
     hourlyRateAda,
     profession,
   } = React.useContext(ProfileContext)
-  const {deviceTopInsent} = appContext()
+  const { deviceTopInsent } = appContext()
   const formStyles = Object.assign({}, inputStyles, formStyleDark)
 
   const onSubmit = async (values: any) => {
@@ -51,8 +51,12 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
 
       // check if chosen username is available
       const usernameFree = await Users.checkUsernameAvailability(values.username)
-      
-      if (!usernameFree) return showErrorToast({ error: "Username already taken" , topOffset:deviceTopInsent})
+
+      if (!usernameFree)
+        return showErrorToast({
+          error: "Username already taken",
+          topOffset: deviceTopInsent,
+        })
       if (!prop) {
         // store the values in context or pass as a route param, don't create account yet
         setModalState({ type: "safety-warning", visible: true })
@@ -61,7 +65,7 @@ export const UserDetailsScreen = ({ pagerRef, prop }: any) => {
         onModalConfirm(values)
       }
     } catch (e) {
-      showErrorToast({error:e, topOffset:deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     }
   }
   const onModalConfirm = (_formValues: any = formValues) => {

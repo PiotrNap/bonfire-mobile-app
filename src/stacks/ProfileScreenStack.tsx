@@ -14,7 +14,11 @@ const ProfileStack = createStackNavigator<ProfileStackParamList>()
 
 export const ProfileScreenStack = () => {
   return (
-    <ProfileStack.Navigator headerMode="none">
+    <ProfileStack.Navigator
+      screenOptions={{
+        gestureEnabled: false, // Disable swipe gesture
+      }}
+      headerMode="none">
       <ProfileStack.Screen name="Profile Main" component={UserProfileScreen} />
       <ProfileStack.Screen name="Edit Profile" component={UserProfileEdit} />
       <ProfileStack.Screen name="Profile Settings" component={UserProfileSettings} />

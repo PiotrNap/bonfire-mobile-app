@@ -118,9 +118,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
         return out.amount.map((amount) =>
           amount.unit === "lovelace"
             ? ""
-            : `${hexToUtf8(fromAssetUnit(amount.unit).name)} - (${Number(
+            : `(${hexToUtf8(fromAssetUnit(amount.unit).name)}) ${Number(
                 amount.quantity
-              ).toFixed(2)})`
+              ).toFixed(2)}`
         )
       })
       .flat()
@@ -203,7 +203,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
       label: "Assets",
       lineContent: Array.from(txInfo?.assets).map((asset: any) => {
         return {
-          content: `${hexToUtf8(asset[1].name)} - (${Number(asset[1].count).toFixed(2)})`,
+          content: `(${hexToUtf8(asset[1].name)}) ${Number(asset[1].count).toFixed(2)}`,
         }
       }),
     },
@@ -233,8 +233,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>
             <LeftArrowIcon
-              width={24}
-              height={24}
+              strokeWidth={Sizing.x3}
+              width={Sizing.x25}
+              height={Sizing.x25}
               color={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
             />
           </Pressable>

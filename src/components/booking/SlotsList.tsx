@@ -61,7 +61,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
       if (count < PAGINATED_RESULTS_COUNT || count === 0) {
         setIsLastPage(true)
       }
-      setSlots(paginatedSlots)
+      if (Array.isArray(paginatedSlots)) setSlots(paginatedSlots)
     } catch (e) {
       showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
@@ -75,7 +75,7 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   }, [reload, networkId])
 
   const isLightMode = colorScheme !== "dark"
-  const isEmptyList = slots.length < 1
+  const isEmptyList = slots?.length < 1
 
   const renderEventCard = React.useCallback(
     ({ item, index }: any) => {
@@ -85,8 +85,8 @@ export const SlotsList = ({ listType, reload }: SlotsListProps) => {
   )
 
   const keyExtractor = () => getRandomKey(5)
-  const getItem = (data: any, index: number) => data[index]
-  const getItemCount = (data: any) => data.length
+  const getItem = (data: any, index: number) => data?.[index]
+  const getItemCount = (data: any) => data?.length
 
   const _ActivityIndicator = () => (
     <ActivityIndicator

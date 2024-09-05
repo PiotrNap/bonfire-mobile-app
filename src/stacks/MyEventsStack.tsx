@@ -19,7 +19,12 @@ const Stack = createStackNavigator<MyEventsStackParamList>()
 export const MyEventsStack = () => {
   return (
     <EventCreationContextProvider>
-      <Stack.Navigator initialRouteName="User Events" headerMode="none">
+      <Stack.Navigator
+        screenOptions={{
+          gestureEnabled: false, // Disable swipe gesture
+        }}
+        initialRouteName="User Events"
+        headerMode="none">
         <Stack.Screen name="User Events" component={MyEvents} />
         <Stack.Screen name="New Event Description" component={NewEventDescription} />
         <Stack.Screen

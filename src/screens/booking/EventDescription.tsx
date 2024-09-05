@@ -79,7 +79,7 @@ export const EventDescription = ({ navigation, route }: any) => {
         event,
       })
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
     }
@@ -92,7 +92,7 @@ export const EventDescription = ({ navigation, route }: any) => {
       await deleteEvent()
       showSuccessToast("Success!", "This event was removed.")
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       navigation.navigate("User Events")
     }
@@ -127,7 +127,7 @@ export const EventDescription = ({ navigation, route }: any) => {
   )
 
   return (
-    <View style={{ flex: 1, paddingBottom: insets.bottom }}>
+    <View style={{ flex: 1 }}>
       <View style={styles.topContainer}>
         <Background>
           <View style={[styles.topInnerWrapper, { paddingTop: insets.top }]}>
@@ -146,7 +146,7 @@ export const EventDescription = ({ navigation, route }: any) => {
           <View
             style={[
               styles.eventCardBodyWrapper,
-              { paddingBottom: insets.bottom + Sizing.x15 },
+              { paddingBottom: insets.bottom + Sizing.x25 },
             ]}>
             <Text style={[styles.eventTitle, { color: titleColor }]}>{title}</Text>
             <View
@@ -242,7 +242,7 @@ export const EventDescription = ({ navigation, route }: any) => {
           ) : (
             <FullWidthButton
               onPressCallback={onBookEventPress}
-              text="Pick a Date"
+              text="Book Event"
               colorScheme={colorScheme}
               loadingIndicator={isLoading}
               style={{ marginTop: "auto" }}
@@ -278,7 +278,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: Sizing.x15,
   },
   topInnerWrapper: {
     width: "90%",
@@ -338,7 +337,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sectionWrapper: {
-    marginBottom: Sizing.x5,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -349,7 +347,7 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     width: "90%",
-    marginVertical: Sizing.x5,
+    marginVertical: Sizing.x15,
   },
   hourlyRateWrapper: {},
   hourlyRateInnerWrapper: {},

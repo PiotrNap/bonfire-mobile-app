@@ -18,7 +18,7 @@ type Props = StackScreenProps<EventCreationParamList, "Available Days Selection"
 
 export const AvailableDaysSelection = (props: Props) => {
   const navigation = props.navigation
-  const { colorScheme,deviceTopInsent } = appContext()
+  const { colorScheme, deviceTopInsent } = appContext()
   const { selectedDates, setSelectedDates, setDateFrame } = eventCreationContext()
   //const [error, setError] = React.useState<any>({ isVisible: false, type: "" })
   const [_selectedDates, _setSelectedDates] = React.useState<MarkedDates>(selectedDates)
@@ -32,7 +32,7 @@ export const AvailableDaysSelection = (props: Props) => {
   // setError
   // )
 
- // React.useEffect(() => {
+  // React.useEffect(() => {
   //  if (error.isVisible) showErrorToast({error.type)
   //}, [error])
 
@@ -119,7 +119,7 @@ export const AvailableDaysSelection = (props: Props) => {
           <HeaderText
             customStyles={{ marginBottom: Sizing.x10 }}
             colorScheme={colorScheme}>
-            Select dates you are available
+            Tap on days you are available
           </HeaderText>
         </View>
         {/*

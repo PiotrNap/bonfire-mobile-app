@@ -126,22 +126,17 @@ export class Wallet {
       .derive(ROLE_TYPE.EXTERNAL_CHAIN)
       .then((key) => key.derive(index))
       .then((key) => key.toRawKey())
-    console.log("here 2")
 
     const stakingVKey = await accountPubKey
       .derive(ROLE_TYPE.STAKING_KEY)
       .then((key) => key.derive(CONFIG_NUMBERS.STAKING_ACCOUNT_INDEX))
       .then((key) => key.toRawKey())
 
-    console.log("here 3")
-
     const addr = await CardanoMobile.BaseAddress.new(
       parseInt(networkMagic, 10),
       await CardanoMobile.Credential.fromKeyhash(await chainVKey.hash()),
       await CardanoMobile.Credential.fromKeyhash(await stakingVKey.hash())
     )
-
-    console.log("here 4")
 
     return (await addr.toAddress()).toBech32()
   }

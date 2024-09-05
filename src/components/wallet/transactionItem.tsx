@@ -65,7 +65,7 @@ export const TransactionItem = React.memo(
     }, [transaction])
 
     return (
-      <View style={styles.container}>
+      <Pressable style={styles.container} hitSlop={Sizing.x15} onPress={onTxItemPress}>
         {(!inputFromEscrowContract && isOutgoing) || isOutgoingFromEscrowContract ? (
           <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
         ) : (
@@ -96,18 +96,14 @@ export const TransactionItem = React.memo(
             }`}
           </SubHeaderText>
         </View>
-        <Pressable hitSlop={Sizing.x15} onPress={onTxItemPress}>
-          <RightArrowIcon
-            width="20"
-            height="20"
-            strokeWidth={2}
-            stroke={
-              colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral
-            }
-            style={{ marginRight: "auto" }}
-          />
-        </Pressable>
-      </View>
+        <RightArrowIcon
+          width="20"
+          height="20"
+          strokeWidth={2}
+          stroke={colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral}
+          style={{ marginRight: "auto" }}
+        />
+      </Pressable>
     )
   }
 )

@@ -184,7 +184,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
           />
         </View>
       ),
-    [bgColor, titleColor, transparent]
+    [bgColor, titleColor, transparent, bgOpacity]
   )
 
   return (
@@ -346,7 +346,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
             customStyle={{ ...fontWeight.semibold, marginRight: Sizing.x5 }}
             changingColorScheme={true}
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            Colors {!transparent ? "enabled" : "disabled"}
+            Enable colors
           </BodyText>
           <CustomSwitch
             onValueChange={() => setTransparent((prev) => !prev)}
@@ -378,8 +378,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignSelf: "center",
-    width: "90%",
-    marginBottom: Sizing.x15,
+    marginBottom: Sizing.x10,
   },
   subHeader: {
     alignSelf: "center",

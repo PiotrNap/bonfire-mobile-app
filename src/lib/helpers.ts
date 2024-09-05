@@ -122,8 +122,12 @@ export function convertToEventAvailabilityUTC(
   Object.keys(dates).forEach((date) => {
     timeSlots.forEach((slot) => {
       // Parse local time
-      const fromTimeLocal = new Date(`${date} ${slot.from.hour}:${slot.from.minutes}`)
-      const toTimeLocal = new Date(`${date} ${slot.to.hour}:${slot.to.minutes}`)
+      const str1 = `${date} ${String(slot.from.hour).padStart(2, "0")}:${
+        slot.from.minutes
+      }`
+      const str2 = `${date} ${String(slot.to.hour).padStart(2, "0")}:${slot.to.minutes}`
+      const fromTimeLocal = new Date(str1)
+      const toTimeLocal = new Date(str2)
 
       // Convert to UTC
       const fromTimeUTC = fromTimeLocal.toISOString()

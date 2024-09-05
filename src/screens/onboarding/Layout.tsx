@@ -2,13 +2,13 @@ import { View, StyleSheet } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { Colors, Sizing, Typography } from "styles/index"
 
-export const Layout = ({ children, scrollable }) => {
+export const Layout = ({ children, scrollable, customStyle }) => {
   return scrollable ? (
     <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
-      style={styles.container}>
+      style={[styles.container, customStyle]}>
       {children}
     </KeyboardAwareScrollView>
   ) : (

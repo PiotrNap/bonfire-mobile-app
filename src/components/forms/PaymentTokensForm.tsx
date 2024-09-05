@@ -23,11 +23,10 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
       paymentTokens: defaultValues.length // defaultValues come from eventCreationContext
         ? defaultValues
         : [
-            // 5 ADA is a minimum to cover all possible minUtxos
             {
               policyId: "",
               label: "",
-              count: !!hourlyRateAda ? hourlyRateAda : 5,
+              count: !!hourlyRateAda ? hourlyRateAda : 100,
               name: utf8ToHex("ada"),
               displayName: "ada",
             },

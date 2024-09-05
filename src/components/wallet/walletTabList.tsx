@@ -47,7 +47,6 @@ export const WalletTabList = React.memo(
     const isLightMode = colorScheme === "light"
     const renderItem = React.useCallback(
       ({ item }: any) => {
-        console.log("item", item)
         return item && type === "transactions" ? (
           <TransactionItem item={item} />
         ) : (
@@ -69,7 +68,6 @@ export const WalletTabList = React.memo(
         tintColor={isLightMode ? Colors.primary.s600 : Colors.primary.neutral}
         refreshing={isLoading}
         onRefresh={() => {
-          console.log("how about here?")
           onUpdateList && onUpdateList()
         }}
       />
@@ -88,12 +86,11 @@ export const WalletTabList = React.memo(
       () => (listData ? Array.from(listData.values()) : []),
       [listData]
     )
-    console.log("type + listData ", type, listData)
 
     return memoizedListData.length > 0 ? (
       <FlatList
         onLayout={onLayout}
-        contentContainerStyle={isLoading ? { opacity: 0.5 } : {}}
+        contentContainerStyle={[{ height: "100%" }, isLoading ? { opacity: 0.5 } : {}]}
         refreshControl={!isSendTransactionScreen ? refreshControl : undefined}
         data={memoizedListData}
         keyExtractor={keyExtractor}

@@ -11,7 +11,12 @@ const WalletStack = createStackNavigator<WalletStackParamList>()
 
 export const WalletScreenStack = () => {
   return (
-    <WalletStack.Navigator headerMode="none" initialRouteName="Wallet Main">
+    <WalletStack.Navigator
+      screenOptions={{
+        gestureEnabled: false, // Disable swipe gesture
+      }}
+      headerMode="none"
+      initialRouteName="Wallet Main">
       <WalletStack.Screen name={"Wallet Main"} component={WalletScreen} />
       <WalletStack.Screen
         name={"Receive Transaction"}

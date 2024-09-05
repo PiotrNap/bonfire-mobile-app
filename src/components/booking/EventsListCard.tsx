@@ -70,29 +70,40 @@ export const EventsListCard = ({
     isEventCardPreview && isTransparent
       ? [Colors.primary.s800, Colors.primary.s600]
       : (isEventCardPreview && !isTransparent) || !isStandardColor
-      ? [_color.toHexString(), _color.toHexString()]
+      ? [color, color]
       : [Colors.primary.s800, Colors.primary.s600]
 
+  console.log(gradient)
+
   const Background = React.useCallback(
-    ({ children }) =>
-      !isEventCardPreview && image ? (
-        <FastImage
-          source={{
-            uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
-          }}
-          style={styles.background}>
-          {children}
-        </FastImage>
-      ) : (
-        <LinearGradient
-          colors={gradient}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.background}>
-          {children}
-        </LinearGradient>
-      ),
-    [image, gradient]
+    ({ children }) => (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        {image && (
+          <FastImage
+            resizeMode={FastImage.resizeMode.cover}
+            source={{
+              uri: isEventCardPreview ? image : `data:image/png;base64,${image}`,
+            }}
+            style={[styles.background, { zIndex: 0 }]}
+          />
+        )}
+        {!isTransparent && (
+          <LinearGradient
+            colors={gradient}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.background, { zIndex: 10 }]}
+          />
+        )}
+        <View style={{ zIndex: 20, width: "90%", height: "90%" }}>{children}</View>
+      </View>
+    ),
+    [image, color]
   )
 
   return (
@@ -133,8 +144,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: Sizing.x120,
     padding: Sizing.x15,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     borderRadius: Outlines.borderRadius.base,
-    backgroundColor: Colors.primary.s600,
   },
   dateCard: {
     maxWidth: Sizing.x80,

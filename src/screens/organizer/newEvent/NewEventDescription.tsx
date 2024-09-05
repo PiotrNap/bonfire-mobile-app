@@ -223,6 +223,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 defaultValue={cancellation?.fee}
                 customOnChange={onFeeChange}
                 component={CustomInput}
+                keyboardType="numeric"
                 submitted={submitted}
                 validateForm={validateForm}
                 styles={formStyles}

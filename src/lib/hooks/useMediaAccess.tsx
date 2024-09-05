@@ -9,10 +9,7 @@ import {
   PermissionStatus,
 } from "react-native-permissions"
 
-import {
-  launchImageLibrary,
-  ImageLibraryOptions,
-} from "react-native-image-picker"
+import { launchImageLibrary, ImageLibraryOptions } from "react-native-image-picker"
 
 export const useMediaAccess = () => {
   const [access, setAccess] = React.useState<boolean | null>(false)
@@ -23,7 +20,7 @@ export const useMediaAccess = () => {
     const permission =
       os === "android"
         ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
-        : PERMISSIONS.IOS.PHOTO_LIBRARY
+        : PERMISSIONS.IOS.MEDIA_LIBRARY
     try {
       const result = await check(permission)
       if (result === RESULTS.GRANTED) {
@@ -36,6 +33,12 @@ export const useMediaAccess = () => {
     } catch (e) {}
   }
 
+  const openAppSettings = () => {
+    Linking.openURL("app-settings:").catch(() => {
+      Alert.alert("Error", "Unable to open app settings")
+    })
+  }
+
   React.useEffect(() => {
     ;(async () => await checkImageLibraryPermission())()
   }, [])
@@ -43,8 +46,7 @@ export const useMediaAccess = () => {
   const requestImageLibraryAccessAsync = async (): Promise<boolean> => {
     const rationale: Rationale = {
       title: "Media library permission needed",
-      message:
-        "We need access to your media library in order to upload a new image.",
+      message: "We need access to your media library in order to upload a new image.",
       buttonNegative: "Deny",
       buttonPositive: "Approve",
       buttonNeutral: "Close",
@@ -57,6 +59,8 @@ export const useMediaAccess = () => {
 
     try {
       const res: PermissionStatus = await request(permission, rationale)
+
+      if (res === "limited") return true
       if (res === "blocked") {
         Alert.alert(
           "Permission Required",
@@ -70,7 +74,12 @@ export const useMediaAccess = () => {
         Alert.alert(
           "Access needed",
           "We need access to your media library for uploading images. You may need to manually give Bonfire permission.",
-          [{ text: "Close", style: "cancel", onPress: () => {} }]
+          os === "ios"
+            ? [
+                { text: "Close", style: "cancel", onPress: () => {} },
+                { text: "Open Settings", onPress: openAppSettings },
+              ]
+            : [{ text: "Close", style: "cancel", onPress: () => {} }]
         )
       } else {
         return true

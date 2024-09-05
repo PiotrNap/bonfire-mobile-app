@@ -53,7 +53,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
     skills,
     profession,
   } = React.useContext(ProfileContext)
-  const {deviceTopInsent} = appContext()
+  const { deviceTopInsent } = appContext()
   const navigation = useNavigation()
 
   React.useEffect(() => {
@@ -131,7 +131,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
       let publicKey = Buffer.from(keyPair?.publicKey).toString("base64")
 
       // create new user record
-      const newUserDTO = await Users.createAccount({
+      const user = await Users.createAccount({
         username,
         hourlyRateAda,
         bio,
@@ -139,41 +139,40 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
         skills,
         profession,
         publicKey,
-        mainnetBaseAddress: addresses.mainnet,
-        testnetBaseAddress: addresses.testnet,
         walletPublicKey: accountPubKeyHex,
+        baseAddresses: addresses,
       })
 
-      if (!newUserDTO || !newUserDTO.id)
+      if (!user || !user.id)
         throw new Error(
           `Something went wrong during registration. Please reload the app and try again`
         )
 
       const authResponseDTO = await startChallengeSequence(
         secretKey,
-        newUserDTO.deviceID,
-        newUserDTO.id
+        user.deviceID,
+        user.id
       )
 
       console.log(`
         adding to encrypted storage:
-            deviceID: ${newUserDTO.deviceID}
+            deviceID: ${user.deviceID}
             authCred: ${authResponseDTO}
             devicePubKey: ${publicKey}
             deviceSecKey: ${secretKey}
             `)
-      await setToEncryptedStorage("device-id", newUserDTO.deviceID)
+      await setToEncryptedStorage("device-id", user.deviceID)
       await setToEncryptedStorage("auth-credentials", authResponseDTO)
       await setToEncryptedStorage("device-privKey", secretKey)
       await setToEncryptedStorage("device-pubKey", publicKey)
 
-      setDeviceID(newUserDTO.deviceID)
-      setID(newUserDTO.id)
+      setDeviceID(user.deviceID)
+      setID(user.id)
       if (authResponseDTO?.accessToken) setAuthorizationToken(authResponseDTO.accessToken)
 
       // mint beta tester tokens if user registered successfully
       if (betaTesterCode) {
-        let registered = await Users.registerForBetaTesting(betaTesterCode, newUserDTO.id)
+        let registered = await Users.registerForBetaTesting(betaTesterCode, user.id)
         if (!registered)
           throw new Error("Problem occured during BetaTester token minting.")
       }
@@ -187,7 +186,7 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
       //@ts-ignore
       navigation.navigate("Navigation Screens")
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
     }
@@ -296,12 +295,14 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
           acceptedCheckbox={acceptedTerms}
         />
         <View style={styles.messageTextWrapper}>
-          <TextComponent>I've read and accept </TextComponent>
-          <View style={styles.legalDocumentLinks}>
+          <View style={{ flexDirection: "row", width: "100%", height: "auto" }}>
+            <TextComponent>I've read and accept </TextComponent>
             <Pressable onPress={() => showLegalDocument("terms-of-service")}>
               <TextComponent isLink>Terms of Service</TextComponent>
             </Pressable>
-            <TextComponent> and </TextComponent>
+            <TextComponent> and</TextComponent>
+          </View>
+          <View style={{ flexDirection: "row", width: "100%", height: "auto" }}>
             <Pressable onPress={() => showLegalDocument("privacy-policy")}>
               <TextComponent isLink>Privacy Policy</TextComponent>
             </Pressable>
@@ -372,25 +373,26 @@ const styles = StyleSheet.create({
     padding: Sizing.x20,
   },
   betaTesterCodeWrapper: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    marginVertical: Sizing.x12,
-    flexDirection: "row",
+    textAlign: "left",
+    alignItems: "flex-start",
+    marginTop: Sizing.x15,
   },
   betaTesterInputLabel: {
     flex: 1,
     textAlign: "right",
-    marginRight: Sizing.x10,
   },
   betaTesterInputField: {
     flex: 1,
+    marginTop: Sizing.x15,
   },
   messageWrapper: {
     marginTop: Sizing.x10,
     marginBottom: Sizing.x5,
     flexDirection: "row",
   },
-  messageTextWrapper: {},
+  messageTextWrapper: {
+    maxWidth: "auto",
+  },
   legalDocumentLinks: {
     flexDirection: "row",
   },

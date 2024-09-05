@@ -45,6 +45,7 @@ export const SubHeaderText = ({
 
   return (
     <Text
+      disabled={!!onPress}
       onPress={onPress}
       style={[styles.text, textColor, customStyle]}
       pointerEvents="box-none"
