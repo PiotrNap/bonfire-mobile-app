@@ -305,7 +305,8 @@ PODS:
     - React-Core
   - react-native-haskell-shelley (5.1.3):
     - React
-  - react-native-image-picker (4.10.3):
+  - react-native-image-picker (7.1.2):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -443,7 +444,7 @@ PODS:
     - React-Core
   - RNOS (1.2.8):
     - React
-  - RNPermissions (4.0.4):
+  - RNPermissions (4.1.5):
     - React-Core
   - RNReanimated (3.6.1):
     - RCT-Folly (= 2021.07.22.00)
@@ -701,7 +702,7 @@ SPEC CHECKSUMS:
   react-native-aes: b580a7919ae1ba5a1b457e7e4914a87eb01de6f4
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
   react-native-haskell-shelley: 92544de7277b53cda2393528d530b526c81b48a6
-  react-native-image-picker: 60f4246eb5bb7187fc15638a8c1f13abd3820695
+  react-native-image-picker: 51fdb07f7ef722988c8a219e1416153760a25e4d
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: b7daa1a8df36095a032dff095a1ea8963cb48371
@@ -733,7 +734,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: 360b6a66b22035fb16062f2c7c492d28207c55da
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
   RNOS: 38b328f96b5bf2bb97ae72bccba4121d991c5661
-  RNPermissions: 27b403c01bae8618abb6f9e64321b7363a82d070
+  RNPermissions: 65b9ee05b85743e142848335cd752d08cd73c5f7
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: d7d7bc8229af3842c9cfc3a723c815a52cdd1105
@@ -743,6 +744,6 @@ SPEC CHECKSUMS:
   VisionCamera: 459701e86be125db2583392d2d06acb15b04ec03
   Yoga: 1d6727ed193122f6adaf435c3de1a768326ff83b
 
-PODFILE CHECKSUM: 2287b2c8fd4f215e5ac80269ce7ef30322f98e5b
+PODFILE CHECKSUM: d4a2d45ebd97af1a65acdabaf3a885fae9fa6c68
 
 COCOAPODS: 1.15.2
