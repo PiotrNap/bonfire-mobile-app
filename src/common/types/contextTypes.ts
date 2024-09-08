@@ -33,6 +33,7 @@ import {
   NetworkId,
 } from "lib/wallet/types"
 import { MarkedDates } from "react-native-calendars/src/types"
+import { BIOMETRY_TYPE } from "react-native-keychain"
 
 export enum AppTypes {
   ToggleAuth = "TOGGLE_AUTH",
@@ -48,6 +49,7 @@ export enum AppTypes {
   SetBottomnavigationHeight = "SET_BOTTOMNAVIGATION_HEIGHT",
   SetDeviceTopInsent = "SET_DEVICE_TOP_INSENT",
   SetQrCodeValue = "SET_QRCODE_VALUE",
+  SetBiometryType = "SET_BIOMETRY_TYPE",
   ResetState = "RESET_STATE",
 }
 
@@ -177,6 +179,9 @@ export type AppPayload = {
   }
   [AppTypes.SetNetworkId]: {
     networkId: NetworkId
+  }
+  [AppTypes.SetBiometryType]: {
+    biometryType: BIOMETRY_TYPE | null
   }
   [AppTypes.ResetState]: {}
   ["unknown"]: any

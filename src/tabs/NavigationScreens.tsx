@@ -12,9 +12,8 @@ import {
   BrowseScreensStack,
   CalendarScreenStack,
 } from "stacks/index"
-import { useWallet } from "lib/hooks/useWallet"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { getSupportedBiometryType } from "react-native-keychain"
 
 const NavigationTabs = createBottomTabNavigator<NavigationTabParamList>()
 
@@ -22,10 +21,15 @@ export const NavigationScreens = ({ route }: any) => {
   const { setID, setUsername, setHourlyRateAda, setTimeZone, setCollateralUtxoId } =
     React.useContext(ProfileContext)
   const { setBaseAddresses } = walletContext()
-  const { setUserSettings, setDeviceTopInsent } = appContext()
+  const { setUserSettings, setDeviceTopInsent, setBiometryType } = appContext()
   const insets = useSafeAreaInsets()
 
   React.useEffect(() => {
+    ;(async () => {
+      let t = await getSupportedBiometryType()
+      console.log("type ", t)
+      setBiometryType(t)
+    })()
     // if the params aren't empty, we are redirected from
     // main screens stack during login
     if (Object.entries(route.params).length != 0) {

@@ -25,7 +25,7 @@ export const Authenticator = ({
   const [authModalVisible, setAuthModalVisible] = React.useState<boolean>(false)
   const [passwordPromptModalVisible, setPasswordPromptModalVisible] =
     React.useState<boolean>(false)
-  const { deviceTopInsent } = appContext()
+  const { deviceTopInsent, biometryType } = appContext()
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
 
@@ -93,10 +93,10 @@ export const Authenticator = ({
 
   return (
     <>
-      {authModalVisible && (
+      {authModalVisible && biometryType !== null && (
         <BigSlideModal
           header="Choose method of authentication"
-          isVisible={authModalVisible}
+          isVisible={true}
           hideModal={onHideAuthenticatorCb}
           buttonTitle="Password"
           secondButtonTitle="Biometric"
@@ -105,9 +105,9 @@ export const Authenticator = ({
           customStyles={styles.authModal}
         />
       )}
-      {passwordPromptModalVisible && (
+      {(passwordPromptModalVisible || !biometryType) && (
         <BigSlideModal
-          isVisible={passwordPromptModalVisible}
+          isVisible={true}
           hideModal={onHideAuthenticatorCb}
           keyboardHeight={keyboardHeight}
           keyboardVisible={keyboardVisible}

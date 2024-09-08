@@ -3,6 +3,7 @@
  */
 
 import { NetworkId } from "lib/wallet/types"
+import { BIOMETRY_TYPE } from "react-native-keychain"
 import { Wallet } from "./textContent/wallet"
 
 export type ColorSchemeName = "light" | "dark"
@@ -23,6 +24,7 @@ export interface AppState {
   textContent: { wallet: Wallet }
   qrCodeValue: string | null
   deviceTopInsent: number
+  biometryType: BIOMETRY_TYPE | null
 }
 
 export interface JWTPayload {

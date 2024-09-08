@@ -36,6 +36,7 @@ import {
 } from "lib/wallet/types"
 import { TxInput } from "@hyperionbt/helios"
 import { MarkedDates } from "react-native-calendars/src/types"
+import { BIOMETRY_TYPE } from "react-native-keychain"
 
 export const appContext = () => {
   const { state, dispatch } = React.useContext(AppContext)
@@ -54,6 +55,7 @@ export const appContext = () => {
     userSettings: state.userSettings,
     networkId: state.networkId,
     qrCodeValue: state.qrCodeValue,
+    biometryType: state.biometryType,
     deviceTopInsent: state.deviceTopInsent,
     resetAppState: () => dispatch({ type: "RESET_STATE" }),
     setQrCodeValue: (qrCodeValue: string) =>
@@ -68,6 +70,8 @@ export const appContext = () => {
       dispatch({ type: "SET_REC_ADDR", payload: { receivingAddr } }),
     setNetworkId: (networkId: NetworkId) =>
       dispatch({ type: "SET_NETWORK_ID", payload: { networkId } }),
+    setBiometryType: (t: BIOMETRY_TYPE | null) =>
+      dispatch({ type: "SET_BIOMETRY_TYPE", payload: { biometryType: t } }),
     setDeviceTopInsent: (deviceTopInsent: number) =>
       dispatch({ type: "SET_DEVICE_TOP_INSENT", payload: { deviceTopInsent } }),
     setValidGoogleOAuth: (validGoogleOAuth: boolean) => {

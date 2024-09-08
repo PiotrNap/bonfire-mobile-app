@@ -37,6 +37,7 @@ const initialAppState: AppState = {
   textContent: { wallet },
   qrCodeValue: "",
   deviceTopInsent: 0,
+  biometryType: null,
 }
 
 const reducer = (state: AppState, action: AppActions) => {
@@ -113,6 +114,12 @@ const reducer = (state: AppState, action: AppActions) => {
       return {
         ...state,
         qrCodeValue: action.payload.qrCodeValue,
+      }
+    }
+    case AppTypes.SetBiometryType: {
+      return {
+        ...state,
+        biometryType: action.payload.biometryType,
       }
     }
     case AppTypes.ResetState: {
