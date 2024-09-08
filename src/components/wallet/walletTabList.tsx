@@ -14,7 +14,6 @@ import { TransactionItem } from "./transactionItem"
 import { AssetItem } from "./assetItem"
 import { AssetUnit } from "lib/wallet/types"
 import Crypto from "crypto"
-import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 
 export interface TransactionListProps {
   listData: Map<string, any>
@@ -90,12 +89,13 @@ export const WalletTabList = React.memo(
     return memoizedListData.length > 0 ? (
       <FlatList
         onLayout={onLayout}
-        contentContainerStyle={[{ height: "100%" }, isLoading ? { opacity: 0.5 } : {}]}
+        contentContainerStyle={[isLoading ? { opacity: 0.5 } : {}]}
         refreshControl={!isSendTransactionScreen ? refreshControl : undefined}
         data={memoizedListData}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         scrollEnabled={!isLoading}
+        disableScrollViewPanResponder={isLoading}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.3}
         getItemLayout={getItemLayout}

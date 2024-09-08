@@ -176,8 +176,12 @@ export const useWallet = (makeInitialFetch = true) => {
           refresh ? 1 : txListPage,
           networkId
         )
-        if (statusCode === 404 || !transactions?.length) {
-          setTxHistory(transactions)
+        if (
+          statusCode === 404 ||
+          !transactions?.length ||
+          transactions.length < TX_GET_SIZE
+        ) {
+          setTxHistoryEndReached(true) // we've reached the end
           return
         }
         if (error) {
@@ -186,9 +190,6 @@ export const useWallet = (makeInitialFetch = true) => {
             text1: error || "Unable to get transactions",
             text2: "Maybe try again?",
           })
-        }
-        if (transactions.length < TX_GET_SIZE) {
-          setTxHistoryEndReached(true) // we've reached the end
         }
 
         let fullInfoTxs: BlockFrostDetailedTx[] = []
