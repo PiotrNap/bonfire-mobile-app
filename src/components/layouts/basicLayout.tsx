@@ -18,27 +18,15 @@ interface Props {
 export const Layout = ({
   children,
   scrollable,
-  additionalScrolling,
   backNavigationIcon,
   backNavigationCb,
 }: Props) => {
   const { colorScheme } = appContext()
-  const [scrollY, setScrollY] = React.useState(0)
   const isLightMode = colorScheme === "light"
-  const scrollRef = React.useRef(null)
 
-  const handleScroll = (event) => {
-    const currentOffsetY = event.nativeEvent.contentOffset.y
-    setScrollY(currentOffsetY) // Update scroll position
-  }
-  const scrollBy = (offsetY) => {
-    // Add an offset to the current scroll position and scroll to the new position
-    if (scrollRef.current) {
-      scrollRef.current.scrollToPosition(0, scrollY + offsetY, true)
-    }
-  }
   return !scrollable ? (
     <SafeAreaView
+      edges={["top"]}
       style={[
         styles.safeArea,
         isLightMode ? styles.safeArea_light : styles.safeaArea_dark,
@@ -58,20 +46,17 @@ export const Layout = ({
       {children}
     </SafeAreaView>
   ) : (
-    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
+    <SafeAreaView
+      edges={["top"]}
+      style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <KeyboardAwareScrollView
-        ref={scrollRef}
         scrollEventThrottle={400} // how long to wait before firing up scroll event
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={true}
         keyboardOpeningTime={Number.MAX_SAFE_INTEGER}
         scrollToOverflowEnabled={true}
         scrollEnabled={true}
-        onScroll={handleScroll}
         style={{ width: "100%", height: "100%" }}
-        onKeyboardWillShow={(frames: Object) => {
-          if (additionalScrolling) scrollBy(120)
-        }}
         automaticallyAdjustsScrollIndicatorInsets
         contentContainerStyle={{ alignItems: "center" }}>
         {backNavigationIcon && (

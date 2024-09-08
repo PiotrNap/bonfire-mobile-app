@@ -168,6 +168,7 @@ export const AvailableTimeSelection = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[
         styles.safeArea,
         {

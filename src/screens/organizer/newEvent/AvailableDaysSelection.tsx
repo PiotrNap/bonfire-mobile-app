@@ -99,6 +99,7 @@ export const AvailableDaysSelection = (props: Props) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[
         styles.safeArea,
         {

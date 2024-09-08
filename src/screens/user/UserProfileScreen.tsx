@@ -85,6 +85,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark]}>
       <View style={styles.headerNavigation}>
         <ImagePickerModal

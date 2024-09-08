@@ -1,7 +1,7 @@
 import * as React from "react"
 import { View, Text, StyleSheet, Pressable } from "react-native"
 
-import { Colors, Sizing } from "styles/index"
+import { Buttons, Colors, Sizing } from "styles/index"
 
 import { appContext } from "contexts/contextApi"
 import { BlockFrostDetailedTx, BlockFrostUtxoInfo } from "lib/wallet/types"
@@ -65,7 +65,10 @@ export const TransactionItem = React.memo(
     }, [transaction])
 
     return (
-      <Pressable style={styles.container} hitSlop={Sizing.x15} onPress={onTxItemPress}>
+      <Pressable
+        style={Buttons.applyOpacity(styles.container)}
+        hitSlop={Sizing.x15}
+        onPress={onTxItemPress}>
         {(!inputFromEscrowContract && isOutgoing) || isOutgoingFromEscrowContract ? (
           <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
         ) : (

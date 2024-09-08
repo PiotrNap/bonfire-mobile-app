@@ -87,7 +87,9 @@ export const SendTransactionScreen = ({ navigation }: any) => {
   }
 
   return (
-    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
+    <SafeAreaView
+      edges={["top"]}
+      style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.mainContainer}>
           <View style={styles.navigation}>

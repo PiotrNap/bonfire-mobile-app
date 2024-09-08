@@ -1,7 +1,9 @@
+import { useSafeArea } from "react-native-safe-area-context"
 import Toast, { ErrorToast, InfoToast, SuccessToast } from "react-native-toast-message"
 import { Typography } from "styles/index"
 
 export const ToastMessage = () => {
+  const { top } = useSafeArea()
   const toastConfig = {
     /*
     Overwrite 'error' type,
@@ -42,5 +44,5 @@ export const ToastMessage = () => {
     ),
   }
 
-  return <Toast topOffset={20} config={toastConfig} />
+  return <Toast topOffset={top} config={toastConfig} />
 }

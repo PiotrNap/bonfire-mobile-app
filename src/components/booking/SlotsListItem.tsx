@@ -15,7 +15,7 @@ export interface SlotsListItemProps {
 }
 
 export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
-  const { colorScheme } = appContext()
+  const { colorScheme, networkId } = appContext()
   const isLightMode = colorScheme === "light"
   const navigation = useNavigation()
 
@@ -25,42 +25,44 @@ export const SlotsListItem = ({ item, slotType }: SlotsListItemProps) => {
       bookingSlotType: slotType,
     })
   }
-  const containerBackgrounColor = isLightMode ? Colors.primary.s600 : Colors.primary.s600
+  const containerBackgrounColor = isLightMode ? Colors.primary.s800 : Colors.primary.s800
 
   return (
-    <Pressable
-      key={getRandomKey(2)}
-      onPress={onCardPress}
-      style={Buttons.applyOpacity([
-        styles.main,
-        { backgroundColor: containerBackgrounColor },
-      ])}>
-      <View pointerEvents="none" style={styles.textContainer}>
-        <SubHeaderText colors={[Colors.primary.neutral]}>
-          Event: {item.eventTitle}
-        </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.neutral]}>
-          {slotType === "bookedSlots"
-            ? `By: ${item.organizerAlias}`
-            : `With: ${item.attendeeAlias}`}
-        </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.neutral]}>
-          From: {new Date(item.fromDate).toLocaleString()}
-        </SubHeaderText>
-        <SubHeaderText colors={[Colors.primary.neutral]}>
-          To: {new Date(item.toDate).toLocaleString()}
-        </SubHeaderText>
-      </View>
-      <View pointerEvents="none" style={styles.arrowContainer}>
-        <RightArrowIcon
-          width="20"
-          height="20"
-          strokeWidth={2}
-          stroke={Colors.primary.neutral}
-          style={{ marginRight: "auto" }}
-        />
-      </View>
-    </Pressable>
+    item && (
+      <Pressable
+        key={getRandomKey(2)}
+        onPress={onCardPress}
+        style={Buttons.applyOpacity([
+          styles.main,
+          { backgroundColor: containerBackgrounColor },
+        ])}>
+        <View pointerEvents="none" style={styles.textContainer}>
+          <SubHeaderText colors={[Colors.primary.neutral]}>
+            Event: {item.eventTitle}
+          </SubHeaderText>
+          <SubHeaderText colors={[Colors.primary.neutral]}>
+            {slotType === "bookedSlots"
+              ? `By: ${item.organizerAlias}`
+              : `With: ${item.attendeeAlias}`}
+          </SubHeaderText>
+          <SubHeaderText colors={[Colors.primary.neutral]}>
+            From: {new Date(item.fromDate).toLocaleString()}
+          </SubHeaderText>
+          <SubHeaderText colors={[Colors.primary.neutral]}>
+            To: {new Date(item.toDate).toLocaleString()}
+          </SubHeaderText>
+        </View>
+        <View pointerEvents="none" style={styles.arrowContainer}>
+          <RightArrowIcon
+            width="20"
+            height="20"
+            strokeWidth={2}
+            stroke={Colors.primary.neutral}
+            style={{ marginRight: "auto" }}
+          />
+        </View>
+      </Pressable>
+    )
   )
 }
 

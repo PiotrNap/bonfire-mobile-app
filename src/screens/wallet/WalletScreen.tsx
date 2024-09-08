@@ -60,6 +60,7 @@ export const WalletScreen = ({ navigation, route }: WalletScreenProps) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[colorScheme == "light" ? styles.safeArea_light : styles.safeaArea_dark]}>
       <View style={[styles.container]}>
         <LinearGradient

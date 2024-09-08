@@ -74,7 +74,7 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
     setIsListLoading(true)
     try {
       const queryResult = await Events.getBookingsByQuery({
-        user_id: id,
+        organizer_id: id,
         past_bookings: true,
         network_id: networkId,
       })

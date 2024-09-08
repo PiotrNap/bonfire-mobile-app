@@ -96,7 +96,6 @@ export const WalletTabList = React.memo(
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         scrollEnabled={!isLoading}
-        disableScrollViewPanResponder={isLoading}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.3}
         getItemLayout={getItemLayout}

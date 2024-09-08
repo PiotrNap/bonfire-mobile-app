@@ -76,7 +76,9 @@ export const MyCalendarScreen = ({ navigation }: any) => {
     fetchCalendarData(date.year, date.month - 1)
   }
   return (
-    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
+    <SafeAreaView
+      edges={["top"]}
+      style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <CalendarProvider
         date={currentDate}
         onDateChanged={onDateChanged}

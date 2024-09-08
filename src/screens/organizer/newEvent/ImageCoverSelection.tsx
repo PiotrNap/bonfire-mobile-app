@@ -10,12 +10,7 @@ import {
 } from "react-native"
 
 import { SafeAreaView } from "react-native-safe-area-context"
-import {
-  CameraIcon,
-  LeftArrowIcon,
-  PlaceholderIcon,
-  RemoveIcon,
-} from "assets/icons"
+import { CameraIcon, LeftArrowIcon, PlaceholderIcon, RemoveIcon } from "assets/icons"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
@@ -42,9 +37,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
   const { setImageUri, imageURI } = eventCreationContext()
 
   const mainPositionAnimation = React.useRef<any>(new Animated.Value(0)).current
-  const secondPositionAnimation = React.useRef<any>(
-    new Animated.Value(200)
-  ).current
+  const secondPositionAnimation = React.useRef<any>(new Animated.Value(200)).current
   const isLightMode = colorScheme === "light"
 
   React.useEffect(() => {
@@ -107,12 +100,11 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[
         styles.safeArea,
         {
-          backgroundColor: isLightMode
-            ? Colors.primary.neutral
-            : Colors.neutral.s600,
+          backgroundColor: isLightMode ? Colors.primary.neutral : Colors.neutral.s600,
         },
       ]}>
       <View style={{ width: "100%", height: "100%", alignItems: "center" }}>
@@ -137,10 +129,7 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
         </View>
         <View style={styles.main}>
           <View
-            style={[
-              styles.imagePreview,
-              { paddingBottom: layout ? layout.height : 0 },
-            ]}>
+            style={[styles.imagePreview, { paddingBottom: layout ? layout.height : 0 }]}>
             {!currImage && layout ? (
               <View style={styles.imagePreview_inner}>
                 <PlaceholderIcon

@@ -29,8 +29,8 @@ const _PayoutsListItem = React.memo(
       onCheckBoxPress(index)
     }
     const containerBackgrounColor = isLightMode
-      ? Colors.primary.s600
-      : Colors.primary.s600
+      ? Colors.primary.s800
+      : Colors.primary.s800
 
     return (
       <Pressable

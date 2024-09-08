@@ -189,6 +189,7 @@ export const EventCardCustomization = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={[
         styles.safeArea,
         {

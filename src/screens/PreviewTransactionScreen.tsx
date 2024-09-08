@@ -5,7 +5,7 @@ import { SectionDetail } from "common/interfaces/bookingInterface"
 import { ConfirmationDetail } from "components/booking"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, walletContext } from "contexts/contextApi"
-import { FlatList, Pressable, SafeAreaView, StyleSheet, View } from "react-native"
+import { FlatList, Pressable, StyleSheet, View } from "react-native"
 import { Colors, Sizing } from "styles/index"
 import {
   cutStringInside,
@@ -20,6 +20,7 @@ import { Authenticator } from "components/modals/Authenticator"
 import { getRandomKey } from "lib/utils"
 import Clipboard from "@react-native-clipboard/clipboard"
 import Crypto from "crypto"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export function PreviewTransactionScreen({ navigation, route }: any) {
   const { colorScheme, setQrCodeValue, networkId, deviceTopInsent } = appContext()
@@ -228,7 +229,9 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
   const keyExtractor = () => Crypto.randomBytes(4).toString("base64")
 
   return (
-    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
+    <SafeAreaView
+      edges={["top"]}
+      style={[isLightMode ? styles.safeArea_light : styles.safeArea_dark]}>
       <View style={styles.mainContainer}>
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>

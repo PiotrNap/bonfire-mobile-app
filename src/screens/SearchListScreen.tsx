@@ -68,7 +68,9 @@ export const SearchListScreen = ({ navigation, route }: any) => {
   }, [])
 
   return (
-    <SafeAreaView style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
+    <SafeAreaView
+      edges={["top"]}
+      style={[isLightMode ? styles.safeArea_light : styles.safeaArea_dark]}>
       <View style={styles.topContainer}>
         <SearchBar
           onSubmitSearch={onSubmitSearch}

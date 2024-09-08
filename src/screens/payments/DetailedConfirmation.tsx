@@ -45,6 +45,7 @@ import { Layout } from "components/layouts/basicLayout"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { fontWeight } from "../../styles/typography"
 import { BigSlideModal } from "components/modals/BigSlideModal"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export const DetailedConfirmation = ({ navigation, route }: any) => {
   const params = route?.params
@@ -310,6 +311,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     setIsLoading(true)
     try {
       let _blockFrost = blockFrost(networkId)
+      console.log(1, _blockFrost)
       const { data, error } = await Wallet.getTxUtxos(
         bookingSlot.lockingTxHash,
         networkId
@@ -320,12 +322,14 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       const lockedUtxo = data.outputs.find(
         (utxo) => utxo.data_hash === bookingSlot.datumHash
       )
+      console.log(2)
       //@ts-ignore because of method being internal
       const lockedTxIn: TxInput = await _blockFrost.restoreTxInput({
         ...lockedUtxo,
         tx_hash: data.hash,
       })
 
+      console.log(3)
       const txHash = await Wallet.sendCancellationTransaction(
         lockedTxIn,
         spareUtxos,
@@ -343,12 +347,14 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         isBeforeCancellationWindow,
         networkId
       )
+      console.log(4)
       if (!txHash)
         return showErrorToast({
           error: "Something went wrong during tx submittion",
           topOffset: deviceTopInsent,
         })
 
+      console.log(5)
       const res = await Events.deleteEventBooking(bookingSlot.id, {
         ...(isEventOrganizer ? { organizer_id: id } : { attendee_id: id }),
         txHash,
@@ -360,6 +366,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         reload: true,
       })
     } catch (e) {
+      console.error(e)
       showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       accountKey = ""
@@ -419,8 +426,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
   /***/
 
   return (
-    <Layout scrollable={true} additionalScrolling>
-      <View style={[styles.container, { flex: 1 }]}>
+    <Layout scrollable={true}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ height: "100%" }}
+        style={{ width: "90%" }}>
         <View style={styles.navigation}>
           <Pressable onPress={onBackNavigationPress} hitSlop={10}>
             <LeftArrowIcon
@@ -530,7 +539,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
             <></>
           )}
         </View>
-      </View>
+      </KeyboardAwareScrollView>
       {isCollateralPromptVisible && (
         <BigSlideModal
           header="Collateral Required"

@@ -5,6 +5,7 @@ import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import { appContext } from "contexts/contextApi"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
 import { Layout } from "./basicLayout"
+import { useNavigation } from "@react-navigation/native"
 
 interface EventBookingLayoutProps {
   children: React.ReactNode
@@ -23,10 +24,11 @@ export const EventBookingLayout = ({
   screenSubHeader,
 }: EventBookingLayoutProps) => {
   const { colorScheme } = appContext()
+  const { goBack } = useNavigation()
 
   const isLightMode = colorScheme !== "dark"
   return (
-    <Layout backNavigationIcon scrollable>
+    <Layout backNavigationIcon backNavigationCb={goBack} scrollable>
       <View style={styles.timesHeader}>
         <Text style={isLightMode ? styles.headerText_light : styles.headerText_dark}>
           {screenHeader}

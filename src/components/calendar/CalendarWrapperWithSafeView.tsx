@@ -14,9 +14,7 @@ export const CalendarWrapperWithSafeView = ({ children }: CalendarWrapperProps) 
   const { colorScheme } = appContext()
   return (
     <SafeAreaView
-      style={
-        colorScheme == "light" ? styles.safeArea_light : styles.safeArea_dark
-      }>
+      style={colorScheme == "light" ? styles.safeArea_light : styles.safeArea_dark}>
       <MyCalendarProvider>{children}</MyCalendarProvider>
     </SafeAreaView>
   )
