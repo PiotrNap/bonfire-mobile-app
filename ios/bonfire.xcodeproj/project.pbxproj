@@ -14,9 +14,13 @@
 		329FF86DAE664FB695337065 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 96F50701A13640C29EB57816 /* Roboto-Black.ttf */; };
 		422FFD723D4A44BC8AE66AD4 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF0FCEB5734D474EA7DD517C /* Roboto-Light.ttf */; };
 		5C6AF5F3BC60427180BA1B1D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A5517E10733401ABEC75D88 /* Roboto-Bold.ttf */; };
+		606EECA2CC35480D9DB4E8D6 /* libPods-bonfire-bonfireTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77251EA2C6C1D7FB803465DF /* libPods-bonfire-bonfireTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		A1729FEC759F66564D88CC9C /* libPods-bonfire-bonfireTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47488188D54A2D3B01A84A82 /* libPods-bonfire-bonfireTests.a */; };
-		BDED690B017A0BE4A2926D65 /* libPods-bonfire.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 42750860605BEBB4DC3FFFCF /* libPods-bonfire.a */; };
+		A293356C3E915A5A0C738418 /* libPods-bonfire.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E08EEB84C57D1420B4A677 /* libPods-bonfire.a */; };
+		AE07EBD82C99798A00E977CB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AE07EBD72C99798A00E977CB /* FirebaseAnalytics */; };
+		AE07EBDA2C99798A00E977CB /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = AE07EBD92C99798A00E977CB /* FirebaseAppDistribution-Beta */; };
+		AE0CDDC32C99BC0B007F5F7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */; };
+		AE0CDDC42C99BC0B007F5F7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */; };
 		C606B51A395F454EBB7721A8 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0502DDA0F9034C70B5AA35CB /* Roboto-Thin.ttf */; };
 		D93DC7D76DAD48DF9F42A082 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2372CC13FC69486A8D1818A4 /* Roboto-Regular.ttf */; };
 		E7E461FC6EC14B44ADA97CA6 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2EE228B639A44E5FB08C8A21 /* Roboto-Medium.ttf */; };
@@ -43,19 +47,20 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = bonfire/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = bonfire/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = bonfire/main.m; sourceTree = "<group>"; };
-		14407E8C8DC3CEF574B60989 /* Pods-bonfire-bonfireTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.release.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.release.xcconfig"; sourceTree = "<group>"; };
-		1489640B5F4AFD3F8F7A2152 /* Pods-bonfire.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.release.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.release.xcconfig"; sourceTree = "<group>"; };
-		16EA672BDE22120828EFF3C3 /* Pods-bonfire-bonfireTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.debug.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1A5517E10733401ABEC75D88 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		2372CC13FC69486A8D1818A4 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		23BEE9277916482F82BDEEC5 /* Pods-bonfire.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.release.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.release.xcconfig"; sourceTree = "<group>"; };
 		2EE228B639A44E5FB08C8A21 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		42750860605BEBB4DC3FFFCF /* libPods-bonfire.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		47488188D54A2D3B01A84A82 /* libPods-bonfire-bonfireTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire-bonfireTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		51E08EEB84C57D1420B4A677 /* libPods-bonfire.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		77251EA2C6C1D7FB803465DF /* libPods-bonfire-bonfireTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire-bonfireTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = bonfire/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8378C6AD97C56BEC27BD0C0D /* Pods-bonfire.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.debug.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.debug.xcconfig"; sourceTree = "<group>"; };
 		96F50701A13640C29EB57816 /* Roboto-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Black.ttf"; path = "../assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
+		993F6489B87969C5D39E2F77 /* Pods-bonfire.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.debug.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.debug.xcconfig"; sourceTree = "<group>"; };
+		AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D2F73812F33E6FAD5F788447 /* Pods-bonfire-bonfireTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.release.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EF0FCEB5734D474EA7DD517C /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
+		F1C7B1777CCD1967D5B36A9F /* Pods-bonfire-bonfireTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.debug.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1729FEC759F66564D88CC9C /* libPods-bonfire-bonfireTests.a in Frameworks */,
+				606EECA2CC35480D9DB4E8D6 /* libPods-bonfire-bonfireTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +76,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDED690B017A0BE4A2926D65 /* libPods-bonfire.a in Frameworks */,
+				AE07EBD82C99798A00E977CB /* FirebaseAnalytics in Frameworks */,
+				AE07EBDA2C99798A00E977CB /* FirebaseAppDistribution-Beta in Frameworks */,
+				A293356C3E915A5A0C738418 /* libPods-bonfire.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +105,7 @@
 		13B07FAE1A68108700A75B9A /* bonfire */ = {
 			isa = PBXGroup;
 			children = (
+				AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -112,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				42750860605BEBB4DC3FFFCF /* libPods-bonfire.a */,
-				47488188D54A2D3B01A84A82 /* libPods-bonfire-bonfireTests.a */,
+				51E08EEB84C57D1420B4A677 /* libPods-bonfire.a */,
+				77251EA2C6C1D7FB803465DF /* libPods-bonfire-bonfireTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -128,10 +136,10 @@
 		8372E036BABDC365722F4C05 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8378C6AD97C56BEC27BD0C0D /* Pods-bonfire.debug.xcconfig */,
-				1489640B5F4AFD3F8F7A2152 /* Pods-bonfire.release.xcconfig */,
-				16EA672BDE22120828EFF3C3 /* Pods-bonfire-bonfireTests.debug.xcconfig */,
-				14407E8C8DC3CEF574B60989 /* Pods-bonfire-bonfireTests.release.xcconfig */,
+				993F6489B87969C5D39E2F77 /* Pods-bonfire.debug.xcconfig */,
+				23BEE9277916482F82BDEEC5 /* Pods-bonfire.release.xcconfig */,
+				F1C7B1777CCD1967D5B36A9F /* Pods-bonfire-bonfireTests.debug.xcconfig */,
+				D2F73812F33E6FAD5F788447 /* Pods-bonfire-bonfireTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -181,11 +189,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "bonfireTests" */;
 			buildPhases = (
-				7AD86D9AD472880F79A4C2CD /* [CP] Check Pods Manifest.lock */,
+				A7C2D5545A5A29793C067723 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				99CE6AF998ED62647AE3CD9F /* [CP] Copy Pods Resources */,
+				BA8765A289F4959784482674 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -201,20 +209,24 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "bonfire" */;
 			buildPhases = (
-				C12AAE2D1F85A748476163E1 /* [CP] Check Pods Manifest.lock */,
+				41D78FA370E07DC020D2F235 /* [CP] Check Pods Manifest.lock */,
 				AE2A9EBC2C80ECB000DC5804 /* ShellScript */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				B749180FC8A9BFA3E3CCED0C /* [CP] Copy Pods Resources */,
+				DE979FF2B6AF4AE810EEC0B3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = bonfire;
+			packageProductDependencies = (
+				AE07EBD72C99798A00E977CB /* FirebaseAnalytics */,
+				AE07EBD92C99798A00E977CB /* FirebaseAppDistribution-Beta */,
+			);
 			productName = bonfire;
 			productReference = 13B07F961A680F5B00A75B9A /* bonfire.app */;
 			productType = "com.apple.product-type.application";
@@ -245,6 +257,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				AE07EBD62C99798A00E977CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -260,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE0CDDC42C99BC0B007F5F7A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +285,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				AE0CDDC32C99BC0B007F5F7A /* GoogleService-Info.plist in Resources */,
 				329FF86DAE664FB695337065 /* Roboto-Black.ttf in Resources */,
 				5C6AF5F3BC60427180BA1B1D /* Roboto-Bold.ttf in Resources */,
 				422FFD723D4A44BC8AE66AD4 /* Roboto-Light.ttf in Resources */,
@@ -295,7 +312,29 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=/Users/piotr/.nvm/versions/node/v20.14.0/bin/node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		7AD86D9AD472880F79A4C2CD /* [CP] Check Pods Manifest.lock */ = {
+		41D78FA370E07DC020D2F235 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-bonfire-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A7C2D5545A5A29793C067723 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -317,23 +356,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		99CE6AF998ED62647AE3CD9F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		AE2A9EBC2C80ECB000DC5804 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -351,7 +373,24 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport cargo=/Users/piotr/.cargo/bin/cargo\n";
 		};
-		B749180FC8A9BFA3E3CCED0C /* [CP] Copy Pods Resources */ = {
+		BA8765A289F4959784482674 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE979FF2B6AF4AE810EEC0B3 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -366,28 +405,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-bonfire/Pods-bonfire-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C12AAE2D1F85A748476163E1 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-bonfire-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -442,7 +459,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 16EA672BDE22120828EFF3C3 /* Pods-bonfire-bonfireTests.debug.xcconfig */;
+			baseConfigurationReference = F1C7B1777CCD1967D5B36A9F /* Pods-bonfire-bonfireTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -450,7 +467,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = bonfireTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -469,12 +486,12 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14407E8C8DC3CEF574B60989 /* Pods-bonfire-bonfireTests.release.xcconfig */;
+			baseConfigurationReference = D2F73812F33E6FAD5F788447 /* Pods-bonfire-bonfireTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = bonfireTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -493,7 +510,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8378C6AD97C56BEC27BD0C0D /* Pods-bonfire.debug.xcconfig */;
+			baseConfigurationReference = 993F6489B87969C5D39E2F77 /* Pods-bonfire.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -521,7 +538,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1489640B5F4AFD3F8F7A2152 /* Pods-bonfire.release.xcconfig */;
+			baseConfigurationReference = 23BEE9277916482F82BDEEC5 /* Pods-bonfire.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -594,6 +611,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
@@ -655,6 +680,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
@@ -705,6 +738,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AE07EBD62C99798A00E977CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AE07EBD72C99798A00E977CB /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AE07EBD62C99798A00E977CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		AE07EBD92C99798A00E977CB /* FirebaseAppDistribution-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AE07EBD62C99798A00E977CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAppDistribution-Beta";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
