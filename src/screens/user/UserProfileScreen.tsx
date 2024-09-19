@@ -9,7 +9,14 @@ import Avatar from "react-native-boring-avatars"
 
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { appContext } from "contexts/contextApi"
-import { CogIcon, LightBulbIcon, MoneyIcon, PaymentIcon, SwitchIcon } from "icons/index"
+import {
+  CogIcon,
+  LightBulbIcon,
+  MoneyIcon,
+  PaymentIcon,
+  RightArrowIcon,
+  SwitchIcon,
+} from "icons/index"
 
 import { ImagePickerModal } from "components/modals/ImagePickerModal"
 import { useCameraAccess } from "lib/hooks/useCameraAccess"
@@ -24,8 +31,10 @@ import FastImage from "react-native-fast-image"
 import { CustomSwitch } from "components/rnWrappers/customSwitch"
 import { showNSFWImageModal } from "lib/modalAlertsHelpers"
 import { showErrorToast } from "lib/helpers"
-import { NetworkId } from "@emurgo/csl-mobile-bridge"
 import { SubHeaderText } from "components/rnWrappers/subHeaderText"
+import { openInAppBrowser } from "lib/utils"
+
+const WEBSITE_URL = process.env.WEBSITE_URL || ""
 
 export interface UserProfileProps
   extends StackScreenProps<ProfileStackParamList, "Profile Main"> {}
@@ -208,6 +217,28 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
         <SettingsItem icon={LightBulbIcon} title="Dark Mode">
           <CustomSwitch onValueChange={setDarkMode} value={darkMode} />
         </SettingsItem>
+
+        <SettingsItem title="Need help or have feeback?">
+          <Pressable
+            style={styles.contactUsItem}
+            onPress={() => openInAppBrowser(WEBSITE_URL + "/contact-us")}>
+            <Text
+              style={
+                colorScheme === "light" ? styles.itemText_light : styles.itemText_dark
+              }>
+              Contact Us
+            </Text>
+            <RightArrowIcon
+              width={26}
+              height={26}
+              color={
+                colorScheme === "light" ? Colors.primary.brand : Colors.primary.neutral
+              }
+              style={styles.itemIcon}
+              strokeWidth={1.6}
+            />
+          </Pressable>
+        </SettingsItem>
       </View>
     </SafeAreaView>
   )
@@ -320,5 +351,20 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     ...Typography.subHeader.x20,
+  },
+  itemIcon: {
+    // marginLeft: "auto",
+  },
+  itemText_light: {
+    ...Typography.subHeader.x25,
+    color: Colors.primary.s600,
+  },
+  itemText_dark: {
+    ...Typography.subHeader.x25,
+    color: Colors.primary.neutral,
+  },
+  contactUsItem: {
+    width: "auto",
+    flexDirection: "row",
   },
 })

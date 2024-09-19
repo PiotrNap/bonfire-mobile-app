@@ -20,7 +20,6 @@ import { formStyleDark } from "../../styles/forms"
 import { Checkbox } from "components/forms/Checkbox"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ModalState, SlideDownModal } from "components/modals/SlideDownModal"
-import { InAppBrowser } from "@stytch/react-native-inappbrowser-reborn"
 
 export interface RegistrationConfirmationScreen {}
 
@@ -66,44 +65,6 @@ export const RegistrationConfirmationScreen = ({ pagerRef }: any) => {
       } catch (e) {}
     })()
   }, [])
-
-  const openInAppBrowser = async (url: string) => {
-    if (!(await InAppBrowser.isAvailable())) return false
-
-    const res = await InAppBrowser.open(url, {
-      // iOS Properties
-      dismissButtonStyle: "cancel",
-      preferredBarTintColor: Colors.primary.s600,
-      preferredControlTintColor: "white",
-      readerMode: false,
-      animated: true,
-      modalPresentationStyle: "fullScreen",
-      modalTransitionStyle: "coverVertical",
-      modalEnabled: true,
-      enableBarCollapsing: false,
-      // Android Properties
-      showTitle: true,
-      toolbarColor: Colors.primary.s600,
-      secondaryToolbarColor: "black",
-      navigationBarColor: "black",
-      navigationBarDividerColor: "white",
-      enableUrlBarHiding: true,
-      enableDefaultShare: true,
-      forceCloseOnRedirection: false,
-      // Specify full animation resource identifier(package:anim/name)
-      // or only resource name(in case of animation bundled with app).
-      animations: {
-        startEnter: "slide_in_right",
-        startExit: "slide_out_left",
-        endEnter: "slide_in_left",
-        endExit: "slide_out_right",
-      },
-      headers: {
-        "my-custom-header": "my custom header value",
-      },
-    })
-    if (res) return true
-  }
 
   const showLegalDocument = async (type: "terms-of-service" | "privacy-policy") => {
     try {
