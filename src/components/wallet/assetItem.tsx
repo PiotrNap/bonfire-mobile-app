@@ -10,6 +10,7 @@ import { Wallet } from "lib/wallet"
 import { ipfsToHttp, toAssetUnit, toLabel } from "lib/wallet/utils"
 import { Toast } from "react-native-toast-message/lib/src/Toast"
 import { Checkbox } from "components/forms/Checkbox"
+import { NetworkId } from "@emurgo/csl-mobile-bridge"
 
 export interface assetItemInterface {
   item: AssetUnit
@@ -27,21 +28,27 @@ export const AssetItem = React.memo(
     isLastItem,
     onCheckboxPress,
   }: assetItemInterface) => {
+    const { networkId } = appContext()
     const [imageUrl, setImageUrl] = React.useState<any>("")
     const [selectedCheckbox, setSelectedCheckbox] = React.useState<boolean>(isSelected)
-    const { policyId, name, label, count } = item
+    const {
+      policyId,
+      name,
+      label,
+      count: { name: utf8Name, quantity },
+    } = item
     const { colorScheme } = appContext()
     const assetName = Buffer.from(name, "hex").toString()
     const handlePress = () => {
       if (onCheckboxPress) {
-        onCheckboxPress(toAssetUnit(policyId, name, label), Number(count))
+        onCheckboxPress(toAssetUnit(policyId, name, label), Number(quantity))
         setSelectedCheckbox((p) => !p)
       }
     }
 
     const getAssetInfo = React.useCallback(async () => {
       const unit = policyId + label + name
-      const { error, data } = await Wallet.getAssetInfo(unit)
+      const { error, data } = await Wallet.getAssetInfo(unit, networkId)
 
       if (error) {
         Toast.show({
@@ -106,7 +113,7 @@ export const AssetItem = React.memo(
                     colorScheme === "light" ? Colors.neutral.s800 : Colors.neutral.s100,
                 },
               ]}>
-              {count}
+              {quantity}
             </Text>
           )}
         </View>

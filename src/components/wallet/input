@@ -15,8 +15,7 @@ import {
   TREASURY_PKH,
 } from "@env"
 import { COLLATERAL_LOVELACE, lovelaceToAda } from "lib/wallet/utils"
-import { Address, PubKeyHash } from "@helios-lang/compat"
-import { ArrowUpDown, CircleArrowRight } from "lucide-react-native"
+import { Address } from "@helios-lang/compat"
 
 export const TransactionItem = React.memo(
   ({ item: transaction }: { item: BlockFrostDetailedTx }) => {
@@ -24,7 +23,7 @@ export const TransactionItem = React.memo(
     const [type, setType] = React.useState<"in" | "out" | null>(null)
     const [lovelace, setLovelace] = React.useState<number | undefined>(0)
     const [assetCount, setAssetCount] = React.useState<number>(0)
-    const [assets, setAssets] = React.useState<any[]>([])
+    // console.log(JSON.stringify(transaction.inputs, null, 4))
 
     const escrowUtxoInput = transaction.inputs.find(
       (input) =>
@@ -45,7 +44,7 @@ export const TransactionItem = React.memo(
     const userAddr = transaction.user_address
     const treasuryAddr = Address.fromHash(
       networkId === "Mainnet",
-      new PubKeyHash(TREASURY_PKH)
+      TREASURY_PKH
     ).toBech32()
     const noEscrowContractInteraction = !escrowUtxoInput && !escrowUtxoOutput
     const escrowedUtxo = transaction.inputs.find((out) => {
@@ -54,6 +53,7 @@ export const TransactionItem = React.memo(
       return out.amount.every((amt) => escrowedAssets?.includes(amt.unit))
     })
 
+    // console.log(escrowedUtxo)
     const escrowedUtxoReceiver = escrowedUtxo?.address
     const cancellationFee =
       escrowedUtxoReceiver === userAddr &&
@@ -61,24 +61,21 @@ export const TransactionItem = React.memo(
         (out) => out.address != userAddr && out.address != treasuryAddr
       )
     const serviceFee = transaction.outputs.find((out) => out.address === treasuryAddr)
-    const collateralSplitTx =
-      transaction.inputs.every(
-        (out) => BigInt(out.amount[0].quantity) !== COLLATERAL_LOVELACE
-      ) &&
-      transaction.outputs.some(
-        (out) => BigInt(out.amount[0].quantity) === COLLATERAL_LOVELACE
-      )
+    const collateralSplit = transaction.inputs.every(out => BigInt(out.amount[0].quantity) !== COLLATERAL_LOVELACE) &&
+        transaction.outputs.some(out => BigInt(out.amount[0].quantity) !== COLLATERAL_LOVELACE)
 
+    // transaction is outgoing IF more assets were spent than received
+    // @TODO after release; implement the above logic
+    const isOutgoing = transaction.inputs.some(
+      (input) => input.address === transaction.user_address
+    )
     const navigation = useNavigation()
     const onTxItemPress = () =>
       navigation.navigate("Preview Transaction", {
         txInfo: transaction,
-        isOutgoing: type === "out",
-        lovelace: lovelace,
-        assets,
-        isIncomingFromEscrowContract:
-          escrowUtxoInput && escrowedUtxoReceiver === userAddr,
-        isOutgoingFromEscrowContract: !!escrowUtxoInput,
+        isOutgoing,
+        // isIncomingFromEscrowContract: inputFromEscrowContract,
+        // isOutgoingFromEscrowContract,
         isTxHistoryPreview: true,
       })
 
@@ -95,72 +92,16 @@ export const TransactionItem = React.memo(
             Number(escrowUtxoOutput?.amount[0].quantity || 0) -
               Number(serviceFee.amount[0].quantity)
           )
-        } else setLovelace(Number(escrowUtxoInput?.amount[0].quantity || 0))
+        } else setLovelace(Number(escrowUtxoOutput?.amount[0].quantity || 0))
 
-        setAssetCount(Number(escrowUtxoInput?.amount.length || 0) - 1)
-        setAssets((p) => {
-          let newAssets = [...escrowUtxoInput.amount.slice(1)]
-          return newAssets
-        })
-      } else if (
-        (escrowUtxoInput && escrowedUtxoReceiver !== userAddr) ||
-        collateralSplitTx
-      ) {
-      } else if (escrowUtxoOutput) {
+        setAssetCount(Number(escrowUtxoOutput?.amount.length || 0) - 1)
+      } else if (escrowUtxoInput && escrowedUtxoReceiver !== userAddr) {
         setType("out")
-        setLovelace(Number(escrowUtxoOutput.amount[0].quantity))
-        setAssetCount(escrowUtxoOutput.amount.length - 1)
-        setAssets((p) => {
-          let newAssets = [...escrowUtxoOutput.amount.slice(1)]
-          return newAssets
-        })
-      } else if (noEscrowContractInteraction) {
-        const userInputs = transaction.inputs.filter(
-          (input) => input.address === userAddr
-        )
-        const userOutputs = transaction.outputs.filter((out) => out.address === userAddr)
-
-        if (userInputs.length) {
-          setType("out")
-          const amountIn = userInputs.reduce((p, acc) => {
-            for (let [k, v] of acc.amount.entries()) {
-              p[k] = Number(p[k] || 0) + Number(v)
-            }
-            return acc
-          }, {})
-          const changeAmount = userOutputs.reduce((p, acc) => {
-            for (let [k, v] of acc.amount.entries()) {
-              p[k] = Number(p[k] || 0) + Number(v)
-            }
-            return acc
-          }, {})
-
-          const difference = {}
-          for (let k of Object.keys(changeAmount)) {
-            difference[k] = amountIn[k] - changeAmount[k]
-          }
-          setLovelace(difference["lovelace"])
-          let newAssets = Object.keys(difference)
-            .filter((val) => val !== "lovelace")
-            .map((k) => ({ unit: k, quantity: difference[k] }))
-          setAssetCount(newAssets.length)
-          setAssets(newAssets)
-        } else {
-          setType("in")
-          const receivingAmount = userOutputs.reduce((p, acc) => {
-            for (let [_, { quantity, unit }] of acc.amount.entries()) {
-              p[unit] = Number(p[unit] || 0) + Number(quantity)
-            }
-            return p
-          }, {})
-          setLovelace(receivingAmount["lovelace"])
-          let newAssets = Object.keys(receivingAmount)
-            .filter((val) => val !== "lovelace")
-            .map((k) => ({ unit: k, quantity: receivingAmount[k] }))
-          setAssetCount(newAssets.length - 1)
-          setAssets(newAssets)
-        }
-      }
+      } else if (escrowUtxoOutput) {
+          setType('out')
+          setLovelace(Number(escrowUtxoOutput.amount[0].quantity))
+          setAssetCount(escrowUtxoOutput.amount.length - 1)
+      } else if (colla
     }, [transaction])
 
     return (
@@ -170,20 +111,11 @@ export const TransactionItem = React.memo(
         onPress={onTxItemPress}>
         {type === "out" ? (
           <UpArrow width={22} height={22} stroke={Colors.danger.s400} strokeWidth={2} />
-        ) : type === "in" ? (
+        ) : (
           <DownArrow
             width={22}
             height={22}
             stroke={Colors.success.s400}
-            strokeWidth={2}
-          />
-        ) : (
-          <ArrowUpDown
-            width={22}
-            height={22}
-            stroke={
-              colorScheme === "light" ? Colors.primary.s800 : Colors.primary.neutral
-            }
             strokeWidth={2}
           />
         )}
@@ -200,7 +132,7 @@ export const TransactionItem = React.memo(
           <SubHeaderText
             customStyle={{ marginBottom: 0 }}
             colors={[Colors.primary.s800, Colors.primary.neutral]}>
-            {`${lovelaceToAda(BigInt(lovelace || 0))} ADA ${
+            {`${lovelaceToAda(BigInt(lovelace))} ADA ${
               assetCount > 0
                 ? `+ ${assetCount} ${assetCount > 1 ? "Assets" : "Asset"}`
                 : ""

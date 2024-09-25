@@ -1,6 +1,8 @@
 import * as React from "react"
 import { Toast } from "react-native-toast-message/lib/src/Toast"
-import { Crypto, TxInput } from "@hyperionbt/helios"
+import { Crypto } from "@hyperionbt/helios"
+import { TxInput } from "@helios-lang/compat"
+
 import { BlockFrostDetailedTx } from "lib/wallet/types"
 import { showErrorToast } from "lib/helpers"
 import { TX_GET_SIZE, Wallet } from "lib/wallet"
@@ -106,14 +108,12 @@ export const useWallet = (makeInitialFetch = true) => {
           setWalletAssets(new Map(data))
           setWalletUtxos(data)
 
-          console.log("no data")
           return
         }
         const collateralUtxo =
           collateralUtxoId &&
           (data as TxInput[]).some(
-            (txInput) =>
-              `${txInput.outputId.txId}#${txInput.outputId.utxoIdx}` === collateralUtxoId
+            (txInput) => `${txInput.id.txId}#${txInput.id.utxoIdx}` === collateralUtxoId
           )
 
         // user doesn't have the collateral any more
@@ -176,11 +176,7 @@ export const useWallet = (makeInitialFetch = true) => {
           refresh ? 1 : txListPage,
           networkId
         )
-        if (
-          statusCode === 404 ||
-          !transactions?.length ||
-          transactions.length < TX_GET_SIZE
-        ) {
+        if (statusCode === 404 || !transactions?.length) {
           setTxHistoryEndReached(true) // we've reached the end
           return
         }
@@ -193,16 +189,12 @@ export const useWallet = (makeInitialFetch = true) => {
         }
 
         let fullInfoTxs: BlockFrostDetailedTx[] = []
-        console.log("txHistory >", txHistory)
-        console.log("transaction >", transactions)
         // there's probably a better way to fetch every tx utxos
         for (let transaction of transactions) {
           const oldFullTxInfo = txHistory?.find(
             (tx) =>
               tx.hash === transaction.tx_hash && tx.block_time === transaction.block_time
           )
-          console.log(transaction)
-          console.log("exists ??? >", !!oldFullTxInfo)
           if (oldFullTxInfo) {
             fullInfoTxs.push(oldFullTxInfo)
             continue
@@ -230,7 +222,9 @@ export const useWallet = (makeInitialFetch = true) => {
           setTxListPage(1)
         } else {
           setTxHistory([...txHistory, ...fullInfoTxs])
-          setTxListPage((prev) => prev + 1)
+          if (transactions.length < TX_GET_SIZE) {
+            setTxHistoryEndReached(true) // we've reached the end
+          } else setTxListPage((prev) => prev + 1)
         }
       } catch (e) {
         showErrorToast({ error: e, topOffset: deviceTopInsent })

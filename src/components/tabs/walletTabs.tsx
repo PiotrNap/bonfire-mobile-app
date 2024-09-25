@@ -35,7 +35,6 @@ export const WalletTabs = ({
   }
   const setActiveTransactionsTab = () => {
     setActiveTab("history")
-    console.log("here maybe")
     onTxListUpdate(networkBasedAddress, true)
   }
 

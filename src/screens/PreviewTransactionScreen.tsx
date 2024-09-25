@@ -107,26 +107,39 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     Clipboard.setString(txInfo.hash)
   }
   const getOutputAssets = React.useMemo(() => {
-    return txInfo?.outputs
-      ?.filter((out, idx) => {
-        if (isIncomingFromSmartContract) {
-          return out.output_index === 1
-        } else if (isOutgoing) {
-          return out.address !== txInfo.user_address
-        } else return out.address === txInfo.user_address
-      })
-      .map((out) => {
-        return out.amount.map((amount) =>
-          amount.unit === "lovelace"
-            ? ""
-            : `(${hexToUtf8(fromAssetUnit(amount.unit).name)}) ${Number(
-                amount.quantity
-              ).toFixed(2)}`
-        )
-      })
-      .flat()
-      .filter((asset) => asset) // filter out empty string
-      .map((asset) => ({ content: asset })) // this is required to display in UI
+    let assets = params.assets
+
+    if (!assets) {
+      return txInfo?.outputs
+        ?.filter((out, idx) => {
+          if (isIncomingFromSmartContract) {
+            return out.output_index === 1
+          } else if (isOutgoing) {
+            return out.address !== txInfo.user_address
+          } else return out.address === txInfo.user_address
+        })
+        .map((out) => {
+          return out.amount.map((amount) =>
+            amount.unit === "lovelace"
+              ? ""
+              : `(${hexToUtf8(fromAssetUnit(amount.unit).name)}) ${Number(
+                  amount.quantity
+                ).toFixed(2)}`
+          )
+        })
+        .flat()
+        .filter((asset) => asset) // filter out empty string
+        .map((asset) => ({ content: asset })) // this is required to display in UI
+    } else {
+      return (
+        assets
+          // slice out the Minting Policy hash
+          .map((a) => `(${hexToUtf8(a.unit.slice(56))}) ${Number(a.quantity).toFixed(2)}`)
+          .flat()
+          .filter((asset) => asset) // filter out empty string
+          .map((asset) => ({ content: asset }))
+      ) // this is required to display in UI
+    }
   }, [txInfo])
 
   const txHistoryDetails: any[] = [
@@ -154,29 +167,7 @@ export function PreviewTransactionScreen({ navigation, route }: any) {
     {
       label: "ADA",
       lineContent: {
-        content: isOutgoingFromEscrowContract
-          ? 0
-          : isSelfFundedTx
-          ? lovelaceToAda(
-              txInfo.outputs[0].amount.find((amt) => amt.unit === "lovelace").quantity
-            )
-          : lovelaceToAda(
-              BigInt(
-                txInfo?.outputs
-                  ?.filter((out) => {
-                    if (isIncomingFromSmartContract) {
-                      return out.output_index === 1
-                    } else if (isOutgoing) {
-                      return out.address !== txInfo.user_address
-                    } else return out.address === txInfo.user_address
-                  })
-                  .map((out) => {
-                    return out.amount.find((amount) => amount.unit === "lovelace")
-                      .quantity
-                  })
-                  .reduce((prev, acc) => Number(acc) + prev, 0) || 0
-              )
-            ),
+        content: lovelaceToAda(params.lovelace),
         icon: <AdaIcon {...iconStyles} />,
       },
     },

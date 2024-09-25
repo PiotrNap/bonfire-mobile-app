@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
     marginTop: Sizing.x10,
     padding: Sizing.x14,
     borderRadius: Outlines.borderRadius.base,
-    ...Outlines.shadow.lifted,
   },
   walletHeader_ligth: {
     ...Typography.header.x30,

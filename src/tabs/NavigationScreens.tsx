@@ -27,7 +27,6 @@ export const NavigationScreens = ({ route }: any) => {
   React.useEffect(() => {
     ;(async () => {
       let t = await getSupportedBiometryType()
-      console.log("type ", t)
       setBiometryType(t)
     })()
     // if the params aren't empty, we are redirected from
