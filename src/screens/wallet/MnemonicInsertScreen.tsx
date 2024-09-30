@@ -11,7 +11,7 @@ import { Wallet } from "lib/wallet"
 import { Users } from "Api/Users"
 import { ProfileContext } from "contexts/profileContext"
 import { Checkbox } from "components/forms/Checkbox"
-import { showErrorToast } from "lib/helpers"
+import { showErrorToast, showInfoToast } from "lib/helpers"
 import { ToggleButton } from "screens/organizer/newEvent/toggleButton"
 import { MnemonicInputsProvider } from "contexts/mnemonicInputsContext"
 import wordlist from "bip39/src/wordlists/english.json"
@@ -44,7 +44,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
     seedPhraseWordCount,
     setSeedPhraseWordCount,
   } = walletContext()
-  const {deviceTopInsent} = appContext()
+  const { deviceTopInsent } = appContext()
   const { setUsername } = React.useContext(ProfileContext)
   const [words, _] = React.useState<Set<string>>(new Set(wordlist))
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -132,7 +132,10 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
       if (prop === "sign-in" && !userCred) {
         throw new Error("No user found for a given mnemonic.")
       } else if (prop === "import-mnemonic" && userCred) {
-        throw new Error("User already exist for a given mnemonic.")
+        return showInfoToast(
+          "There already exists a user with the given credential",
+          "Do we know each other?"
+        )
       }
 
       setMnemonic(tempMnemonic)
@@ -143,13 +146,13 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
 
       pagerRef.current.setPage(1)
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
     }
   }
   const onInputBoxUpdate = (value: string, idx: number) => {
-    value = value?.trim()
+    value = value?.trim().toLowerCase()
     setTempMnemonic((prev) => {
       prev[idx] = value.trim()
       setCurrentMnemonicLength(
@@ -202,7 +205,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
             <CustomPlainInput
               defaultValue={
                 mnemonic && !emptyFields.includes(rowInputsSum)
-                  ? mnemonic[rowInputsSum]
+                  ? mnemonic[rowInputsSum]?.toLowerCase()
                   : ""
               }
               onEndEditingCallback={onInputBoxUpdate}
@@ -210,6 +213,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
               idx={rowInputsSum}
               validate={validateMnemonicInputField}
               onError={onError}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputRowItem}>
@@ -224,6 +228,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
               idx={1 + rowInputsSum}
               validate={validateMnemonicInputField}
               onError={onError}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputRowItem}>
@@ -238,6 +243,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
               idx={2 + rowInputsSum}
               validate={validateMnemonicInputField}
               onError={onError}
+              autoCapitalize="none"
             />
           </View>
         </View>
@@ -248,7 +254,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
   }, [selectedMnemonicLength, mnemonic])
 
   return (
-    <Layout scrollable={!!prop}>
+    <Layout scrollable customStyle={{ marginVertical: Sizing.x15 }}>
       <View style={styles.header}>
         <HeaderText customStyles={{ marginBottom: Sizing.x10 }} colorScheme="dark">
           {content.header}
@@ -284,7 +290,7 @@ export const MnemonicInsertScreen = ({ pagerRef, prop, pageIndex }: any) => {
               colorMode="dark"
               onCheckBoxPress={onCheckBoxPress}
               acceptedCheckbox={acceptedStoreOfflineCheckbox}>
-              I would like to store a copy on my device (accessible later through my User
+              I would like to store a copy on my device (accessible later through User
               Profile)
             </Checkbox>
           </View>

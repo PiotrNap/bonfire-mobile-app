@@ -184,7 +184,7 @@ export function convertFromEventAvailability(
     const fromDate = formatDateWithDashes(fromTimeLocal)
     const toDate = formatDateWithDashes(toTimeLocal)
 
-    if (new Date() > toTimeLocal) return
+    if (new Date() > fromTimeLocal) return
     ;[fromDate, toDate].forEach((date, idx) => {
       if (!localDates[date]) {
         if (isBookingCalendar) {
@@ -718,5 +718,8 @@ export function showErrorToast({
     text1: header || "Error",
     text2: body,
     topOffset,
+    props: {
+      text2NumberOfLines: 2,
+    },
   })
 }

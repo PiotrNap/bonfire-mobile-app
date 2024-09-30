@@ -26,21 +26,20 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
             {
               policyId: "",
               label: "",
-              count: !!hourlyRateAda ? hourlyRateAda : 100,
+              count: {
+                quantity: !!hourlyRateAda ? hourlyRateAda : 100,
+                name: "",
+              },
               name: utf8ToHex("ada"),
               displayName: "ada",
             },
-            //@TODO make gimbals here as a default
-            // {
-            //   policyId: "2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c30",
-            //   label: "",
-            //   count: 100,
-            //   name: "gimbal",
-            // },
             {
               policyId: "2542e94ef77993cba4594135f2874c8fe19c63fe22760a079552658b",
               label: "",
-              count: 100,
+              count: {
+                quantity: 100,
+                name: "TestCommunityCoin",
+              },
               name: utf8ToHex("TestCommunityCoin"),
               displayName: "TestCommunityCoin",
             },
@@ -133,7 +132,7 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
             min: 2,
           }}
           control={control}
-          name={`paymentTokens[${index}].count`}
+          name={`paymentTokens[${index}].count.quantity`}
           render={({ field }) => (
             <TokenInput
               styles={formStyles}
@@ -160,7 +159,14 @@ export const PaymentTokensForm = React.forwardRef((props, ref) => {
           <Pressable
             hitSlop={Sizing.x10}
             style={Buttons.applyOpacity(styles.addPaymentTokenBtn)}
-            onPress={() => append({ policyId: "", name: "", count: 0, label: "" })}>
+            onPress={() =>
+              append({
+                policyId: "",
+                name: "",
+                count: { quantity: 0, name: "" },
+                label: "",
+              })
+            }>
             <PlusIcon style={styles.icon} stroke={Colors.neutral.s150} />
           </Pressable>
         </View>

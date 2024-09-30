@@ -233,11 +233,11 @@ export const ConfirmationDetails = ({
       lineContent: hourlyRate.map((hr) =>
         hr.displayName === "ada"
           ? {
-              content: hr.count,
+              content: hr.count.quantity,
               icon: hr.displayName === "ada" ? <AdaIcon {...iconStyles} /> : null,
             }
           : {
-              content: `(${hr.displayName}) ${Number(hr.count)}`,
+              content: `(${hr.displayName}) ${Number(hr.count.quantity)}`,
             }
       ),
     },
@@ -357,16 +357,16 @@ export const ConfirmationDetails = ({
     durationCost &&
       durationCost.size > 0 && {
         label: "Total cost",
-        lineContent: Array.from(durationCost).map((costEntries) =>
-          costEntries[0] === "lovelace"
+        lineContent: Array.from(durationCost).map((costEntries) => {
+          return costEntries[0] === "lovelace"
             ? {
                 content: `${lovelaceToAda(BigInt(costEntries[1]))}`,
                 icon: sectionsIcons.ada,
               }
             : {
-                content: `(${hexToUtf8(costEntries[1].name)}) ${costEntries[1].count}`,
+                content: `(${costEntries[1].count.name}) ${costEntries[1].count.quantity}`,
               }
-        ),
+        }),
       },
   ].filter((s) => !!s)
 
@@ -393,7 +393,6 @@ export const ConfirmationDetails = ({
     ? organizerEventSections
     : bookingEventSections
 
-  console.log(withFlatList)
   return withFlatList ? (
     <KeyboardAwareFlatList
       data={data}

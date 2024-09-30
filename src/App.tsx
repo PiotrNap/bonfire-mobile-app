@@ -21,6 +21,9 @@ import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 import { ToastMessage } from "components/popups/toastMessage"
 import { WelcomeScreen } from "screens/onboarding"
 
+import { setEra } from "@helios-lang/era"
+setEra("Conway")
+
 enableScreens() // enables native screens for navigation instead of using Views
 
 // this will enable LayoutAnimation API

@@ -14,9 +14,12 @@ import {
   TESTNET_ESCROW_CONTRACT_ADDRESS,
   TREASURY_PKH,
 } from "@env"
-import { COLLATERAL_LOVELACE, lovelaceToAda } from "lib/wallet/utils"
-import { Address, PubKeyHash } from "@helios-lang/compat"
+import { COLLATERAL_LOVELACE, lovelaceToAda, reduceTxAmount } from "lib/wallet/utils"
+import { Address, bytesToHex, Datum, hexToBytes, PubKeyHash } from "@helios-lang/compat"
+import { DatumHash } from "@helios-lang/ledger-babbage"
+import { decodeUplcData } from "@helios-lang/uplc"
 import { ArrowUpDown, CircleArrowRight } from "lucide-react-native"
+import { UplcData } from "@hyperionbt/helios"
 
 export const TransactionItem = React.memo(
   ({ item: transaction }: { item: BlockFrostDetailedTx }) => {
@@ -48,20 +51,38 @@ export const TransactionItem = React.memo(
       new PubKeyHash(TREASURY_PKH)
     ).toBech32()
     const noEscrowContractInteraction = !escrowUtxoInput && !escrowUtxoOutput
-    const escrowedUtxo = transaction.inputs.find((out) => {
+    const escrowedUtxo = transaction.outputs.find((out) => {
       let escrowedAssets = escrowUtxoInput?.amount.map((amt) => amt.unit)
 
-      return out.amount.every((amt) => escrowedAssets?.includes(amt.unit))
+      return (
+        out.amount.length === escrowedAssets?.length &&
+        out.amount.every((amt) => escrowedAssets?.includes(amt.unit))
+      )
     })
 
-    const escrowedUtxoReceiver = escrowedUtxo?.address
+    const userInputs = transaction.inputs.filter((input) => input.address === userAddr)
+    const escrowUtxoOutputReceiver = escrowedUtxo?.address
+    const escrowedUtxoBeneficiary = escrowUtxoInput?.inline_datum
+      ? decodeUplcData(escrowUtxoInput?.inline_datum)?.items[0].bytes
+      : null
+    const escrowedUtxoBeneficiaryAddress =
+      escrowedUtxoBeneficiary &&
+      Address.fromHash(
+        networkId === "Mainnet",
+        new PubKeyHash(escrowedUtxoBeneficiary)
+      ).toBech32()
     const cancellationFee =
-      escrowedUtxoReceiver === userAddr &&
+      userInputs &&
+      escrowUtxoOutputReceiver === userAddr &&
       transaction.outputs.find(
         (out) => out.address != userAddr && out.address != treasuryAddr
-      )
+      ) &&
+      transaction.outputs.find((out) => out.address === escrowedUtxoBeneficiaryAddress)
+
     const serviceFee = transaction.outputs.find((out) => out.address === treasuryAddr)
+
     const collateralSplitTx =
+      noEscrowContractInteraction &&
       transaction.inputs.every(
         (out) => BigInt(out.amount[0].quantity) !== COLLATERAL_LOVELACE
       ) &&
@@ -77,22 +98,22 @@ export const TransactionItem = React.memo(
         lovelace: lovelace,
         assets,
         isIncomingFromEscrowContract:
-          escrowUtxoInput && escrowedUtxoReceiver === userAddr,
+          escrowUtxoInput && escrowUtxoOutputReceiver === userAddr,
         isOutgoingFromEscrowContract: !!escrowUtxoInput,
         isTxHistoryPreview: true,
       })
 
     React.useLayoutEffect(() => {
-      if (escrowUtxoInput && escrowedUtxoReceiver === userAddr) {
+      if (escrowUtxoInput && escrowUtxoOutputReceiver === userAddr) {
         setType("in")
         if (cancellationFee) {
           setLovelace(
-            Number(escrowUtxoOutput?.amount[0].quantity || 0) -
+            Number(escrowedUtxo?.amount[0].quantity || 0) -
               Number(cancellationFee.amount[0].quantity)
           )
         } else if (serviceFee) {
           setLovelace(
-            Number(escrowUtxoOutput?.amount[0].quantity || 0) -
+            Number(escrowUtxoInput?.amount[0].quantity || 0) -
               Number(serviceFee.amount[0].quantity)
           )
         } else setLovelace(Number(escrowUtxoInput?.amount[0].quantity || 0))
@@ -103,7 +124,9 @@ export const TransactionItem = React.memo(
           return newAssets
         })
       } else if (
-        (escrowUtxoInput && escrowedUtxoReceiver !== userAddr) ||
+        (escrowUtxoInput &&
+          escrowUtxoOutputReceiver &&
+          escrowUtxoOutputReceiver !== userAddr) ||
         collateralSplitTx
       ) {
       } else if (escrowUtxoOutput) {
@@ -122,18 +145,8 @@ export const TransactionItem = React.memo(
 
         if (userInputs.length) {
           setType("out")
-          const amountIn = userInputs.reduce((p, acc) => {
-            for (let [k, v] of acc.amount.entries()) {
-              p[k] = Number(p[k] || 0) + Number(v)
-            }
-            return acc
-          }, {})
-          const changeAmount = userOutputs.reduce((p, acc) => {
-            for (let [k, v] of acc.amount.entries()) {
-              p[k] = Number(p[k] || 0) + Number(v)
-            }
-            return acc
-          }, {})
+          const amountIn = reduceTxAmount(userInputs)
+          const changeAmount = reduceTxAmount(userOutputs)
 
           const difference = {}
           for (let k of Object.keys(changeAmount)) {

@@ -36,7 +36,7 @@ import {
 import { AssetUnit } from "lib/wallet/types"
 import { Authenticator } from "components/modals/Authenticator"
 import { blockFrost, Wallet } from "lib/wallet"
-import { Address, TxInput, Value } from "@hyperionbt/helios"
+import { Address, TxInput, Value } from "@helios-lang/compat"
 import { EscrowContractDatum } from "lib/wallet/types"
 import { useWallet } from "lib/hooks/useWallet"
 import { input, inputLabel } from "../../styles/forms"
@@ -109,20 +109,28 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
     // Temporary solution...
     const lovelacePaymentToken: AssetUnit = {
-      count: Number(durationCost.get("lovelace")),
+      count: {
+        quantity: String(durationCost.get("lovelace")),
+        name: "",
+      },
       label: "",
       name: "",
       policyId: "",
     }
     const assetsPaymentTokens = Array.from(durationCost.values())
     assetsPaymentTokens.shift()
-    const paymentTokens = assetsUnitsToValue(lovelacePaymentToken, assetsPaymentTokens)
+    const paymentTokensValue = assetsUnitsToValue(
+      lovelacePaymentToken,
+      assetsPaymentTokens
+    )
 
     const lockingDatumInfo: EscrowContractDatum = {
-      beneficiaryPkh: new Address(params.event.organizerAddress).pubKeyHash?.hex,
-      benefactorPkh: new Address(networkBasedAddress).pubKeyHash?.hex,
+      beneficiaryPkh: Address.fromBech32(
+        params.event.organizerAddress
+      ).pubKeyHash?.toHex(),
+      benefactorPkh: Address.fromBech32(networkBasedAddress).pubKeyHash?.toHex(),
       releaseDate: BigInt(Math.floor(new Date(pickedStartTime).getTime() + duration)),
-      cancelFee: params.event.cancellation.fee || 0,
+      cancelFee: Number(params.event.cancellation.fee) || 0,
       cancelWindowStart: BigInt(
         Math.floor(
           new Date(pickedStartTime).getTime() -
@@ -131,7 +139,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       ),
       cancelWindowEnd: BigInt(Math.floor(new Date(pickedStartTime).getTime())),
       createdAt: BigInt(Math.floor(new Date().getTime())),
-      paymentTokens: paymentTokens.toSchemaJson(),
+      paymentTokens: paymentTokensValue.toUplcData().toSchemaJson(),
     }
 
     if (Object.values(lockingDatumInfo).some((v) => v == null || v === ""))
@@ -143,7 +151,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
     try {
       // submit transaction
       const { txHash, datumHash } = await Wallet.sendLockingTransaction(
-        paymentTokens,
+        paymentTokensValue,
         lockingDatumInfo,
         networkBasedAddress,
         walletUtxos,
@@ -157,7 +165,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       const res = await Events.bookEvent({
         lockingTxHash: txHash,
         eventId: params.event.id,
-        durationCost: paymentTokens.toSchemaJson(),
+        durationCost: paymentTokensValue.toUplcData().toSchemaJson(),
         startDate: pickedStartTime,
         duration,
         datumHash,
@@ -238,6 +246,7 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
 
   /** Event cancellation **/
   const onCancelEventPress = () => {
+    setIsLoading(true)
     const {
       isWithinCancellationWindow,
       isBeforeCancellationWindow,
@@ -308,7 +317,6 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
       cancellationFeeValue,
     } = cancellationTxInfo
 
-    setIsLoading(true)
     try {
       let _blockFrost = blockFrost(networkId)
       console.log(1, _blockFrost)
@@ -317,7 +325,10 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         networkId
       )
       console.log("data or error ", data, error)
-      if (error) throw error
+      if (error)
+        throw new Error(
+          "This booking does not seem to be available yet in the blockchain"
+        )
 
       const lockedUtxo = data.outputs.find(
         (utxo) => utxo.data_hash === bookingSlot.datumHash
@@ -329,7 +340,6 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         tx_hash: data.hash,
       })
 
-      console.log(3)
       const txHash = await Wallet.sendCancellationTransaction(
         lockedTxIn,
         spareUtxos,
@@ -338,9 +348,13 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         cancellationFeeValue,
         isEventOrganizer
           ? networkBasedAddress
-          : bookingSlot.organizer["testnetBaseAddress" ?? "mainnetBaseAddress"], // beneficiary addr
+          : bookingSlot.organizer.baseAddresses[
+              networkId === "Preprod" ? "testnet" : "mainnet"
+            ], // beneficiary addr
         isEventOrganizer
-          ? bookingSlot.attendee["testnetBaseAddress" ?? "mainnetBaseAddress"]
+          ? bookingSlot.attendee.baseAddresses[
+              networkId === "Preprod" ? "testnet" : "mainnet"
+            ]
           : networkBasedAddress, // benefactor addr
         accountKey,
         isEventOrganizer,

@@ -7,7 +7,6 @@ import {
   Events,
   EventsDay,
   EventTimeWindow,
-  Availabilities,
 } from "interfaces/myCalendarInterface"
 import { months, monthsByName, weekDays } from "common/types/calendarTypes"
 import { AnyObject } from "yup/lib/types"

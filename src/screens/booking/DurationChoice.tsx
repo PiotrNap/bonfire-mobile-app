@@ -65,12 +65,18 @@ export const DurationChoice = ({ navigation, route }: Props) => {
         if (time === selectedDuration) {
           newMap.set(k, {
             ...v,
-            count: 0,
+            count: {
+              quantity: "0",
+              name: hexToUtf8(v.name),
+            },
           })
         } else {
           newMap.set(k, {
             ...v,
-            count: Number(v?.count) * multiplier,
+            count: {
+              quantity: String(Number(v?.count.quantity) * multiplier),
+              name: hexToUtf8(v.name),
+            },
           })
         }
       }
@@ -184,8 +190,8 @@ export const DurationChoice = ({ navigation, route }: Props) => {
       eventCardTitleColor={eventTitleColor}>
       <View style={styles.estimatedCostContainer}>
         <View style={styles.selectedCostWrapper}>
-          {[...cost].map(([k, v]) =>
-            k === "lovelace" ? (
+          {[...cost].map(([k, v]) => {
+            return k === "lovelace" ? (
               <Text
                 key={getRandomKey(3)}
                 style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
@@ -195,10 +201,10 @@ export const DurationChoice = ({ navigation, route }: Props) => {
               <Text
                 key={getRandomKey(3)}
                 style={isLightMode ? styles.eventCost_light : styles.eventCost_dark}>
-                {v.count} {hexToUtf8(v.name)}
+                {v.count.quantity} {v.count.name}
               </Text>
             )
-          )}
+          })}
         </View>
         {/*
         <View style={styles.multiplier}>
