@@ -58,6 +58,8 @@
 	<string>Allow $(PRODUCT_NAME) to access your photo library in order to upload new photos</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to add to your photo library in order to save your images</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>$(PRODUCT_NAME) app needs access to your music library to provide a better experience.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Black.ttf</string>
