@@ -1,5 +1,6 @@
 import { Redeemer } from "@emurgo/csl-mobile-bridge"
-import { Assets } from "@hyperionbt/helios"
+import { TimeLike } from "@helios-lang/ledger-conway"
+import { Assets } from "@helios-lang/compat"
 import { AnyObject } from "yup/lib/types"
 
 export type UTxOId = string // <transactionId>#<outputIdx>
@@ -14,7 +15,7 @@ export const PURPOSE = 2147485500
 export const COIN_TYPE = 2147485463
 export const HARD_DERIVATION_START = 2147483648
 
-export type PromiseHandlerRes = { data: any; error: string; statusCode: number }
+export type PromiseHandlerRes = { data: any; error: string | {}; statusCode: number }
 
 export type WalletNavigationParams = {
   isNewWalletCreation?: boolean
@@ -45,7 +46,10 @@ export type AssetUnit = {
   policyId: string
   name: string
   displayName?: string
-  count: string | number
+  count: {
+    name: string // utf8
+    quantity: string
+  }
   label: string
 }
 export type BlockfrostTx = {
@@ -54,7 +58,7 @@ export type BlockfrostTx = {
   block_height: number
   block_time: string
 }
-export type BlockFrostUtxoInfo = Array<{
+export type BlockFrostUtxoInfo = {
   address: string
   amount: Array<{
     unit: string
@@ -64,16 +68,15 @@ export type BlockFrostUtxoInfo = Array<{
   output_index: number
   data_hash: null
   inline_datum: null
-  reference_script_hash: null
   collateral: boolean
-  reference: boolean
-}>
+  reference_script_hash: null | string
+}
 export type BlockFrostDetailedTx = {
   hash: string
   block_time: string // added manually
   user_address: string // added manually
-  inputs: BlockFrostUtxoInfo
-  outputs: BlockFrostUtxoInfo
+  inputs: BlockFrostUtxoInfo[]
+  outputs: BlockFrostUtxoInfo[]
 }
 export type SendRegularTxInfo = {
   receiverAddress: string
@@ -96,8 +99,8 @@ export type EscrowContractDatum = {
   benefactorPkh: string
   releaseDate: number
   cancelFee: number
-  cancelWindowStart: number
-  cancelWindowEnd: number
+  cancelWindowStart: TimeLike
+  cancelWindowEnd: TimeLike
   createdAt: number
   paymentTokens: string // JSON representation of hourly rate payment tokens
 }

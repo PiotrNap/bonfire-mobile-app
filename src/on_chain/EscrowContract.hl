@@ -1,12 +1,6 @@
-import {
-  BETA_TESTER_MPH,
-  MIN_LOVELACE_SERVICE_FEE,
-  MIN_PERCENT_SERVICE_FEE,
-  TREASURY_PKH,
-} from "@env"
+spending escrow_contract
 
-const EscrowContractScript = `
-    spending escrow_contract
+import { tx } from ScriptContext
 
 struct Datum {
     beneficiaryPkh : PubKeyHash
@@ -35,14 +29,14 @@ enum Redeemer {
     Recycle
 }
 
-const TREASURY_PKH: ByteArray = #${TREASURY_PKH}
+const TREASURY_PKH: ByteArray = #84e6f5ca8f28b6401742a20119073c64685cd7d7c11b6504b5274075
 const treasuryPkh: PubKeyHash = PubKeyHash::new(TREASURY_PKH)
 
-const BETA_TESTER_MPH: ByteArray = #${BETA_TESTER_MPH}
+const BETA_TESTER_MPH: ByteArray = #84bfdaf7852337c37246d554329f07b23f824e1e19fc0d356996a810
 const betaTesterMph: MintingPolicyHash = MintingPolicyHash::new(BETA_TESTER_MPH)
 
-const minServiceFeePercent: Int = ${MIN_PERCENT_SERVICE_FEE}
-const minServiceFeeLovelace: Int = ${MIN_LOVELACE_SERVICE_FEE}
+const minServiceFeePercent: Int = 3
+const minServiceFeeLovelace: Int = 3000000
 
 func getServiceFeeAmnt(lovelacePayout: Int, withBetaTesterToken: Bool) -> Value {
     if (withBetaTesterToken) {
@@ -70,8 +64,7 @@ func checkInputForBetaTesterToken(txIn: TxInput) -> Bool {
 *  7. Allow to recycle UTxOs older than 1 year by the treasury
 */
 
-func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
-    tx: Tx = ctx.tx;
+func main(datum: Datum, redeemer: Redeemer) -> Bool {
     benefactorPkh: PubKeyHash = datum.benefactorPkh;
     beneficiaryPkh: PubKeyHash = datum.beneficiaryPkh;
     now: Time = tx.time_range.start;
@@ -139,4 +132,3 @@ func main(datum: Datum, redeemer: Redeemer, ctx: ScriptContext) -> Bool {
         }
     }
 }
-`

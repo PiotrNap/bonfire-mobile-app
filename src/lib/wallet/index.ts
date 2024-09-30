@@ -1,23 +1,23 @@
 import {
-  Address,
-  BlockfrostV0,
-  NetworkParams,
-  Tx,
   TxInput,
   TxOutput,
   Value,
-  Bip32PrivateKey,
   hexToBytes,
   bytesToHex,
   Datum,
-} from "@hyperionbt/helios"
+  PubKeyHash,
+  ValidatorHash,
+} from "@helios-lang/compat"
+import { BlockfrostV0 } from "@helios-lang/tx-utils"
+import { Address, Bip32PrivateKey, type Tx } from "@helios-lang/compat"
+import { DEFAULT_NETWORK_PARAMS } from "@helios-lang/ledger-conway"
+
 import { mnemonicToEntropy } from "bip39"
 import * as CrossCSL from "@emurgo/cross-csl-mobile"
 import {
   BLOCKFROST_API_KEY_MAINNET,
   BLOCKFROST_API_KEY_TESTNET,
-  TREASURY_ADDRESS_PREPROD,
-  TREASURY_ADDRESS_MAINNET,
+  TREASURY_PKH,
 } from "@env"
 
 //@ts-ignore
@@ -36,12 +36,10 @@ import {
 import { COLLATERAL_LOVELACE, COLLATERAL_STORAGE_KEY, unitsToAssets } from "./utils"
 import mainnet from "../../on_chain/configs/mainnet"
 import preprod from "../../on_chain/configs/preprod"
-import {
-  escrowProgram,
-  escrowProgramCompiled,
-  escrowValidatorHash,
-} from "../../on_chain/EscrowContract"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { TxBuilder } from "@helios-lang/compat"
+import { escrowProgram, createContractContext } from "../../on_chain"
+import { escrow_contract } from "../../on_chain/dist"
 
 export const TX_GET_SIZE = 20
 export const PURPOSE = 2147485500
@@ -190,53 +188,40 @@ export class Wallet {
     isCollateralSplitTx: boolean = false,
     networkId: NetworkId
   ): Promise<TxHash | void> {
-    // console.log(
-    //   "regular tx args >",
-    //   assets,
-    //   receiverAddress,
-    //   lovelace,
-    //   userAddress,
-    //   userUtxos,
-    //   signingKey
-    // )
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
-    const { networkConfig } = getConfigForNetworkId(networkId)
-    const params = new NetworkParams(networkConfig)
 
-    const outputAddress = new Address(receiverAddress)
+    const outputAddress = Address.fromBech32(receiverAddress)
     const outputAssets = unitsToAssets(assets)
 
     const outputValue = new Value(lovelace, outputAssets)
-    const output = new TxOutput(outputAddress, outputValue)
-    const now = Date.now()
-    const fiveMinutes = 1000 * 60 * 5
-
     const collateralUtxoId = await AsyncStorage.getItem(COLLATERAL_STORAGE_KEY)
     // prevent spending the collateral utxo
     if (collateralUtxoId && !isCollateralSplitTx) {
       userUtxos = userUtxos.filter(
-        (txIn) => `${txIn.outputId.txId}#${txIn.outputId.utxoIdx}` !== collateralUtxoId
+        (txIn) => `${txIn.id.txId}#${txIn.id.utxoIdx}` !== collateralUtxoId
       )
     }
 
-    const tx = new Tx()
-      .addInputs(userUtxos)
-      .addOutput(output)
-      .validFrom(new Date(now - fiveMinutes))
-      .validTo(new Date(now + fiveMinutes))
+    const tx = new TxBuilder({ isMainnet: networkId === "Mainnet" })
+      .spend(userUtxos)
+      .pay(outputAddress, outputValue)
 
     try {
-      await tx.finalize(params, new Address(userAddress))
-      let signature = privKey.sign(tx.bodyHash)
-      tx.addSignature(signature)
+      const readyTx = await tx.build({
+        networkParams: DEFAULT_NETWORK_PARAMS(),
+        spareUtxos: userUtxos,
+        changeAddress: userAddress,
+      })
+      let signature = privKey.sign(readyTx.body.hash())
+      readyTx.addSignatures([signature])
 
-      const { data, error } = await Wallet.submitTransaction(tx, networkId)
+      const { data, error } = await Wallet.submitTransaction(readyTx, networkId)
       if (error) throw error
 
       const txHash = bytesToHex(data.bytes)
       // update collateral utxoId
       if (isCollateralSplitTx) {
-        const newCollateralIdx = tx.body.outputs.findIndex(
+        const newCollateralIdx = readyTx.body.outputs.findIndex(
           (output) =>
             output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
         )
@@ -262,17 +247,15 @@ export class Wallet {
     signingKey: string,
     networkId: NetworkId
   ) {
+    const { data: networkParams, error } = await this.getParameters(networkId)
+    if (error) throw new Error("We have problem getting on-chain parameters: " + error)
+
+    const isMainnet = networkId === "Mainnet"
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
-    const { networkConfig } = getConfigForNetworkId(networkId)
-    const params = new NetworkParams(networkConfig)
-    const now = Date.now()
-    const fiveMinutes = 1000 * 60 * 5
-
-    const escrowDatum = new escrowProgram.types.Datum(...Object.values(lockingDatumInfo))
-    const inlineDatum = Datum.inline(escrowDatum)
-
+    const escrowDatum = escrow_contract.$Datum({ isMainnet }).toUplcData(lockingDatumInfo)
+    const inlineDatum = Datum.Inline(escrowDatum)
     const lockingTxOutput = new TxOutput(
-      Address.fromHash(escrowValidatorHash),
+      Address.fromHash(isMainnet, new ValidatorHash(escrowProgram.hash())),
       paymentTokens,
       inlineDatum
     )
@@ -283,26 +266,27 @@ export class Wallet {
     // prevent spending the collateral utxo
     if (collateralUtxoId) {
       userUtxos = userUtxos.filter(
-        (txIn) => `${txIn.outputId.txId}#${txIn.outputId.utxoIdx}` !== collateralUtxoId
+        (txIn) => `${txIn.id.txId}#${txIn.id.utxoIdx}` !== collateralUtxoId
       )
     }
-
     // lock funds
-    const lockingTx = new Tx()
-      .addInputs(userUtxos)
-      .addOutput(lockingTxOutput)
-      .validFrom(new Date(now - fiveMinutes))
-      .validTo(new Date(now + fiveMinutes))
+    const lockingTx = new TxBuilder({ isMainnet })
+      .spend(userUtxos)
+      .payUnsafe(lockingTxOutput)
 
     try {
-      await lockingTx.finalize(params, new Address(userAddress))
-      let signature = privKey.sign(lockingTx.bodyHash)
-      lockingTx.addSignature(signature)
+      const readyTx = await lockingTx.build({
+        networkParams,
+        changeAddress: userAddress,
+        spareUtxos: userUtxos,
+      })
+      let signature = privKey.sign(readyTx.body.hash())
+      readyTx.addSignature(signature)
 
-      const { data, error } = await Wallet.submitTransaction(lockingTx, networkId)
+      const { data, error } = await Wallet.submitTransaction(readyTx, networkId)
       if (error) throw error
 
-      return { txHash: bytesToHex(data.bytes), datumHash: inlineDatum.hash.hex }
+      return { txHash: bytesToHex(data.bytes), datumHash: inlineDatum.hash.toHex() }
     } catch (e) {
       throw e
     } finally {
@@ -321,59 +305,67 @@ export class Wallet {
     hasBetaTesterToken: boolean,
     networkId: NetworkId
   ) {
-    const now = Date.now()
-    const fiveMinutes = 1000 * 60 * 5
-    const { networkConfig } = getConfigForNetworkId(networkId)
-    const params = new NetworkParams(networkConfig)
+    const { data: networkParams, error } = await this.getParameters(networkId)
+    if (error) throw new Error("We have problem getting on-chain parameters: " + error)
+
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
-    const treasuryAddress = new Address(`TREASURY_ADDRESS_${networkId.toUpperCase()}`)
+    const treasuryAddress = Address.fromHash(
+      networkId === "Mainnet",
+      new PubKeyHash(TREASURY_PKH)
+    )
     const userAddress = Address.fromBech32(userWalletAddress)
     const userPubKeyHash = userAddress.pubKeyHash
     if (!userPubKeyHash)
       throw Error("Unable to obtain the PubKey hash for user wallet address")
 
-    const frstTxOutId = new escrowProgram.types.TxOutId(
-      unlockingTxInput.outputId.txId.hex,
-      unlockingTxInput.outputId.utxoIdx
-    )
-    const redeemer = new escrowProgram.types.Redeemer.Complete([frstTxOutId])
-    const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
+    const context = createContractContext(networkId)
+    const completeAction = {
+      txOutIds: [
+        {
+          txId: unlockingTxInput.id.txId.toHex(),
+          utxoIdx: unlockingTxInput.id.utxoIdx,
+        },
+      ],
+    }
+
+    const redeemer = context.escrow_contract.Redeemer.toUplcData({
+      Complete: completeAction,
+    })
 
     //@TODO after beta release add script reference
     /** For wallets with Beta-Tester NFT we don't expect any fee to be sent to the treasury **/
-    const unlockingTx = new Tx()
-      .attachScript(escrowProgramCompiled)
-      .addInputs([...spareUtxos, feeUtxo])
+    const unlockingTx = new TxBuilder({ isMainnet: networkId === "Mainnet" })
+      .attachUplcProgram(escrowProgram)
+      .spend([...spareUtxos, feeUtxo])
+      .spendUnsafe(unlockingTxInput, redeemer)
       .addCollateral(collateralUtxoIn)
-      .addInput(unlockingTxInput, redeemer)
-      .addOutput(collateralUtxoOut) // produce a fresh collateral utxo
-      .addSigner(userPubKeyHash)
-      .validFrom(new Date(now - fiveMinutes))
-      .validTo(new Date(now + fiveMinutes))
+      .pay(userAddress, collateralUtxoIn.value) // produce a fresh collateral utxo
+      .payUnsafe(userAddress, unlockingTxInput.value, unlockingTxInput.datum)
+      .validFromSlot(BigInt(networkParams.refTipSlot))
+      .validToSlot(BigInt(networkParams.refTipSlot + 60))
+      .addSigners(privKey.derivePubKey().toHash())
 
     if (!hasBetaTesterToken) {
-      const serviceFeeTxOut = new TxOutput(treasuryAddress, new Value(Number(serviceFee)))
-      unlockingTx.addOutput(serviceFeeTxOut)
+      unlockingTx.pay(treasuryAddress, new Value(Number(serviceFee)))
     }
-
     try {
-      await unlockingTx.finalize(params, new Address(userWalletAddress))
-      let signature = privKey.sign(unlockingTx.bodyHash)
-      unlockingTx.addSignature(signature)
+      const readyTx = await unlockingTx.build({
+        networkParams,
+        changeAddress: Address.fromBech32(userWalletAddress),
+      })
+      let signature = privKey.sign(readyTx.body.hash())
+      // let s = readyTx.
 
-      // console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
-
-      const { data, error } = await Wallet.submitTransaction(unlockingTx, networkId)
+      readyTx.addSignature(signature)
+      const { data, error } = await Wallet.submitTransaction(readyTx, networkId)
       if (error) throw error
-
       const txHash = bytesToHex(data.bytes)
       // update collateral utxoId
-      const newCollateralIdx = unlockingTx.body.outputs.findIndex(
+      const newCollateralIdx = readyTx.body.outputs.findIndex(
         (output) =>
           output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
       )
       await AsyncStorage.setItem(COLLATERAL_STORAGE_KEY, `${txHash}#${newCollateralIdx}`)
-
       return { txHash }
     } catch (e) {
       throw e
@@ -394,24 +386,6 @@ export class Wallet {
     isBeforeCancellationWindow: boolean,
     networkId: NetworkId
   ) {
-    console.log("start")
-    console.log(unlockingTxInput)
-    console.log(spareUtxos)
-    console.log(collateralUtxoIn)
-    console.log(feeUtxo)
-    console.log(cancellationFeeValue)
-    console.log(beneficiaryAddress)
-    console.log(benefactorAddress)
-    console.log(signingKey)
-    console.log(isBeneficiary)
-    console.log(isBeforeCancellationWindow)
-    console.log(networkId)
-    console.log("end")
-
-    const now = Date.now()
-    const fiveMinutes = 1000 * 60 * 5
-    const { networkConfig } = getConfigForNetworkId(networkId)
-    const params = new NetworkParams(networkConfig)
     const privKey = new Bip32PrivateKey(hexToBytes(signingKey))
     const userAddress = Address.fromBech32(
       isBeneficiary ? beneficiaryAddress : benefactorAddress
@@ -419,68 +393,75 @@ export class Wallet {
     const userPubKeyHash = userAddress.pubKeyHash
     if (!userPubKeyHash)
       throw Error("Unable to obtain the PubKey hash for user wallet address")
-    console.log(1)
 
-    const redeemer = new escrowProgram.types.Redeemer.Cancel(
-      unlockingTxInput.outputId.txId.hex,
-      unlockingTxInput.outputId.utxoIdx
-    )
-    const collateralUtxoOut = new TxOutput(userAddress, collateralUtxoIn.value)
-    console.log(2)
+    const context = createContractContext(networkId)
+    const cancelAction = {
+      txId: unlockingTxInput.id.txId.toHex(),
+      utxoIdx: unlockingTxInput.id.utxoIdx,
+    }
+    const redeemer = context.escrow_contract.Redeemer.toUplcData({
+      Cancel: cancelAction,
+    })
+
+    const { data: networkParams, error } = await this.getParameters(networkId)
+    if (error) throw new Error("We have problem getting on-chain parameters: " + error)
 
     //@TODO after beta release add script reference
-    const unlockingTx = new Tx()
-      .attachScript(escrowProgramCompiled)
-      .addInputs([...spareUtxos, feeUtxo])
+    const unlockingTx = new TxBuilder({ isMainnet: networkId === "Mainnet" })
+      .attachUplcProgram(escrowProgram)
+      .spend(feeUtxo)
+      .spendUnsafe(unlockingTxInput, redeemer)
       .addCollateral(collateralUtxoIn)
-      .addInput(unlockingTxInput, redeemer)
-      .addOutput(collateralUtxoOut) // produce a fresh collateral utxo
-      .addSigner(userPubKeyHash)
-      .validFrom(new Date(now - fiveMinutes))
-      .validTo(new Date(now + fiveMinutes))
-    console.log(3)
+      .pay(userAddress, collateralUtxoIn.value) // produce a fresh collateral utxo
+      .addSigners(userPubKeyHash)
+      .validFromSlot(BigInt(networkParams.refTipSlot))
+      .validToSlot(BigInt(networkParams.refTipSlot + 300))
 
     /*
      * if benefactor is cancelling before cancellation window there's nothing to be added to the output
      */
     if (isBeneficiary) {
       // return everything to the benefactor
-      unlockingTx.addOutput(
-        new TxOutput(Address.fromBech32(benefactorAddress), unlockingTxInput.value)
+      unlockingTx.payUnsafe(
+        //@ts-ignore
+        Address.fromBech32(benefactorAddress),
+        unlockingTxInput.value,
+        unlockingTxInput.datum
       )
     } else {
       // means it's during cancellation window
       if (!isBeforeCancellationWindow) {
-        console.log(3.1)
-
-        unlockingTx.addOutput(
-          new TxOutput(Address.fromBech32(beneficiaryAddress), cancellationFeeValue)
+        unlockingTx.pay(
+          //@ts-ignore
+          Address.fromBech32(beneficiaryAddress),
+          cancellationFeeValue
         )
-        console.log(3.2)
 
-        unlockingTx.addOutput(
-          new TxOutput(
-            Address.fromBech32(benefactorAddress),
-            unlockingTxInput.value.sub(cancellationFeeValue)
-          )
+        unlockingTx.payUnsafe(
+          //@ts-ignore
+          Address.fromBech32(benefactorAddress),
+          unlockingTxInput.value.subtract(cancellationFeeValue),
+          unlockingTxInput.datum
         )
       }
     }
-    console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
 
     try {
-      await unlockingTx.finalize(params, userAddress)
-      let signature = privKey.sign(unlockingTx.bodyHash)
-      unlockingTx.addSignature(signature)
+      const readyTx = await unlockingTx.build({
+        changeAddress: userAddress,
+        spareUtxos,
+        networkParams,
+      })
 
-      // console.log(JSON.stringify(unlockingTx.body.dump(), null, 4))
+      let signature = privKey.sign(readyTx.body.hash())
+      readyTx.addSignature(signature)
 
-      const { data, error } = await Wallet.submitTransaction(unlockingTx, networkId)
+      const { data, error } = await Wallet.submitTransaction(readyTx, networkId)
       if (error) throw error
 
       const txHash = bytesToHex(data.bytes)
       // update collateral utxoId
-      const newCollateralIdx = unlockingTx.body.outputs.findIndex(
+      const newCollateralIdx = readyTx.body.outputs.findIndex(
         (output) =>
           output.value.assets.isZero() && output.value.lovelace === COLLATERAL_LOVELACE
       )
@@ -519,7 +500,7 @@ export class Wallet {
     addr: string,
     networkId: NetworkId
   ): Promise<PromiseHandlerRes> {
-    return Wallet.promiseHandler(blockFrost(networkId).getUtxos(new Address(addr)))
+    return Wallet.promiseHandler(blockFrost(networkId).getUtxos(Address.fromBech32(addr)))
   }
 
   static async getAssetInfo(
@@ -529,12 +510,19 @@ export class Wallet {
     return Wallet.promiseHandler(blockFrostFetch(`/assets/${unit}`, networkId))
   }
 
+  static async getLatestBlock(networkId: NetworkId): Promise<PromiseHandlerRes> {
+    return Wallet.promiseHandler(blockFrostFetch(`/blocks/latest`, networkId))
+  }
+
+  static async getParameters(networkId: NetworkId): Promise<PromiseHandlerRes> {
+    return Wallet.promiseHandler(blockFrost(networkId).parameters)
+  }
+
   /** Get detailed Tx info **/
   static async getTxUtxos(
     txHash: string,
     networkId: NetworkId
   ): Promise<PromiseHandlerRes> {
-    console.log(txHash, networkId)
     return Wallet.promiseHandler(blockFrostFetch(`/txs/${txHash}/utxos`, networkId))
   }
 

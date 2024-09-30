@@ -1,19 +1,28 @@
 import {
-  Address,
+  TxInput,
   Assets,
+  Address,
   hexToBytes,
   MintingPolicyHash,
   NetworkParams,
-  TxInput,
   TxOutput,
   Value,
-} from "@hyperionbt/helios"
+  TxOutputId,
+  TxId,
+} from "@helios-lang/compat"
 import { crc8 } from "crc"
 import { MIN_LOVELACE_SERVICE_FEE, MIN_PERCENT_SERVICE_FEE, BETA_TESTER_MPH } from "@env"
-import { AssetUnit, NetworkId, PaymentTokens, WalletAssets } from "./types"
+import {
+  AssetUnit,
+  BlockFrostUtxoInfo,
+  NetworkId,
+  PaymentTokens,
+  WalletAssets,
+} from "./types"
 import { HourlyRate } from "common/interfaces/bookingInterface.js"
-import { getConfigForNetworkId } from "./"
+import { DEFAULT_NETWORK_PARAMS } from "@helios-lang/ledger-conway"
 import dayjs from "dayjs"
+import { NewspaperIcon } from "lucide-react-native"
 
 // assuming the total on-chain unlocking-tx fee will be 0.75 ADA
 export const MIN_VALIDATOR_FEE = 750_000n
@@ -80,7 +89,7 @@ export function lovelaceValueOfInputs(inputs: TxInput[]): bigint {
 }
 
 export function filterLovelaceOnlyInputs(inputs: TxInput[]): TxInput[] {
-  return inputs.filter((txIn) => !txIn.value.assets.mintingPolicies.length)
+  return inputs.filter((txIn) => !txIn.value.assets.getPolicies().length)
 }
 
 export function txInputsToAssets(txInputs: TxInput[]): Assets[] {
@@ -106,7 +115,11 @@ export function assetsToUnitsArray(assetsArray: Assets[]): [string, AssetUnit][]
         }
 
         if (existingUnit) {
-          newObj.count = Number(newObj.count) + Number(existingUnit[1].count)
+          newObj.count = {
+            quantity:
+              Number(newObj.count.quantity) + Number(existingUnit[1].count.quantity),
+            name,
+          }
           units.push([unit, newObj])
           continue
         }
@@ -130,7 +143,7 @@ export function unitsToAssets(
     let token: [number[], bigint][] = [
       [
         hexToBytes((unitDetails.label || "") + unitDetails.name),
-        BigInt(unitDetails.count),
+        BigInt(unitDetails.count.quantity),
       ],
     ]
     tokens.push([mph, token])
@@ -168,7 +181,7 @@ export function assetsUnitsToValue(
   lovelaceAsset: AssetUnit,
   nativeAssets: AssetUnit[]
 ): Value {
-  let lovelaceCount = Number(lovelaceAsset.count)
+  let lovelaceCount = Number(lovelaceAsset.count.quantity)
 
   // convert to lovelace (good for now solution)
   // ...less than 1mil means its ADA
@@ -184,11 +197,15 @@ export function assetsUnitsToJSONSchema(
   lovelaceAsset: AssetUnit,
   nativeAssets: AssetUnit[]
 ): string {
-  return assetsUnitsToValue(lovelaceAsset, nativeAssets).toSchemaJson()
+  return assetsUnitsToValue(lovelaceAsset, nativeAssets).toUplcData().toSchemaJson()
 }
 
-export function calculateFeeForTreasury(txInput: TxInput): bigint {
-  const totalLovelaceValue = lovelaceValueOfInputs([txInput])
+export function calculateFeeForTreasury(lovelaces: number): bigint
+export function calculateFeeForTreasury(txInput: TxInput): bigint
+
+export function calculateFeeForTreasury(arg: number | TxInput): bigint {
+  const totalLovelaceValue =
+    typeof arg === "number" ? BigInt(arg) : lovelaceValueOfInputs([arg])
 
   if (totalLovelaceValue / 100n < MIN_LOVELACE_SERVICE_FEE) {
     return BigInt(MIN_LOVELACE_SERVICE_FEE)
@@ -232,9 +249,8 @@ export function calculateCancellationFee(
 }
 
 export function checkForBetaTesterToken(utxos: TxInput[]) {
-  return !!utxos.find(
-    (txInput) =>
-      txInput.value.assets.getTokens(new MintingPolicyHash(BETA_TESTER_MPH)).length > 0
+  return !!utxos.find((txInput) =>
+    txInput.value.assets.getPolicies().includes(new MintingPolicyHash(BETA_TESTER_MPH))
   )
 }
 
@@ -250,8 +266,6 @@ export function checkForCollateralAndFeeUtxos(
   hasEnoughFunds: boolean // whether users' wallet have enough funds to cover collateral and all tx fee
   missingLovelace: bigint
 } {
-  const { networkConfig } = getConfigForNetworkId(networkId)
-  const networkParams = new NetworkParams(networkConfig)
   let collateralUtxo = null,
     feeUtxo = null,
     spareUtxos: TxInput[] = [],
@@ -261,7 +275,7 @@ export function checkForCollateralAndFeeUtxos(
 
   for (let utxo of utxos) {
     let v = utxo.value
-    const currUtxoMinLovelace = utxo.output.calcMinLovelace(networkParams)
+    const currUtxoMinLovelace = utxo.output.calcDeposit(DEFAULT_NETWORK_PARAMS())
     const currUtxoTotalLovelace = utxo.value.lovelace
     const isLovelaceOnly = v.assets.isZero()
 
@@ -274,7 +288,7 @@ export function checkForCollateralAndFeeUtxos(
       (isLovelaceOnly &&
         currUtxoTotalLovelace === COLLATERAL_LOVELACE &&
         !collateralUtxo) ||
-      collateralUtxoId === `${utxo.outputId.txId}#${utxo.outputId.utxoIdx}`
+      collateralUtxoId === `${utxo.id.txId}#${utxo.id.utxoIdx}`
     ) {
       collateralUtxo = utxo
     } else if (isLovelaceOnly) {
@@ -290,7 +304,8 @@ export function checkForCollateralAndFeeUtxos(
         spareUtxos.push(utxo)
       }
     } else {
-      let availableLovelace = v.lovelace - calculateUTXOMinLovelace(utxo, networkParams)
+      let availableLovelace =
+        v.lovelace - calculateUTXOMinLovelace(utxo, DEFAULT_NETWORK_PARAMS())
 
       if (availableLovelace > serviceFee + 500_000n && !feeUtxo) {
         feeUtxo = utxo
@@ -324,6 +339,16 @@ export function calculateUTXOMinLovelace(
   let correctedSize = utxo.toCbor().length + 160 // 160 accounts for some database overhead?
 
   return BigInt(correctedSize) * BigInt(lovelacePerByte)
+}
+
+export function reduceTxAmount(utxos: BlockFrostUtxoInfo[]): { [key: string]: number } {
+  return utxos.reduce((p, acc) => {
+    const newAmnt = p
+    for (let amt of acc.amount) {
+      newAmnt[amt.unit] = Number(newAmnt[amt.unit] || 0) + Number(amt.quantity)
+    }
+    return newAmnt
+  }, {})
 }
 
 export function numberToHex(n: number) {
