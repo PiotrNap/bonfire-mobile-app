@@ -6,13 +6,14 @@ import { StackScreenProps } from "@react-navigation/stack"
 import Filter from "bad-words"
 
 import { LeftArrowIcon } from "assets/icons"
+import { Info } from "lucide-react-native"
 import { HeaderText } from "components/rnWrappers/headerText"
 import { appContext, eventCreationContext } from "contexts/contextApi"
 import { Buttons, Colors, Outlines, Sizing, Typography } from "styles/index"
 import { FullWidthButton } from "components/buttons/fullWidthButton"
 import { EventCreationParamList } from "common/types/navigationTypes"
 import { Layout } from "components/layouts/basicLayout"
-import { showInappropriateContentModal } from "lib/modalAlertsHelpers"
+import { showInappropriateContentModal, showStandardModal } from "lib/modalAlertsHelpers"
 import { EventType, EventVisibility } from "common/interfaces/newEventInterface"
 import { CustomInput } from "components/forms/CustomInput"
 import { Field, Formik } from "formik"
@@ -39,6 +40,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
     textContent,
     cancellation,
     hourlyRate,
+    resetEventCreationState,
   } = eventCreationContext()
   const [submitted, setSubmitted] = React.useState<boolean>(false)
   const [title, setTitle] = React.useState<string>("")
@@ -64,16 +66,19 @@ export const NewEventDescription = ({ navigation }: Props) => {
     isLightMode ? formStyleLight : formStyleDark
   )
 
-  const onBackNavigationPress = () => navigation.goBack()
+  const onBackNavigationPress = () => {
+    resetEventCreationState()
+    navigation.goBack()
+  }
   const checkIfPaymentTokensAreValid = async (paymentTokens: AssetUnit[]) => {
     // TODO after release check on our back-end if a given token exists on the blockchain
     return (
       paymentTokens &&
       paymentTokens.every((pt, idx) =>
         idx === 0
-          ? !!pt.count
+          ? !!pt.count.quantity
           : paymentTokens[idx].policyId &&
-            Number(paymentTokens[idx].count) > 0 &&
+            Number(paymentTokens[idx].count.quantity) > 0 &&
             paymentTokens[idx].name
       )
     )
@@ -109,7 +114,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
       })
 
     const allTokensDivisibleByTwo = paymentTokens.every(
-      (pt) => Number(pt.count) % 2 === 0
+      (pt) => Number(pt.count.quantity) % 2 === 0
     )
     if (!allTokensDivisibleByTwo)
       return showErrorToast({
@@ -196,9 +201,23 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 animationDuration={30}
                 onSelect={onVisibilityTypeChange}
               />
-              <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
-                Cancellation
-              </HeaderText>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <HeaderText customStyles={styles.inputLabel} colorScheme={colorScheme}>
+                  Cancellation
+                </HeaderText>
+                <Info
+                  onPress={() =>
+                    showStandardModal(
+                      "Specify the time window before event starts in which your customer will need to pay a % of ADA that she had paid for your booking.",
+                      "Cancellation Penalty"
+                    )
+                  }
+                  style={{ marginLeft: 10 }}
+                  color={
+                    colorScheme === "light" ? Colors.primary.s800 : Colors.neutral.s100
+                  }
+                />
+              </View>
               <SubHeaderText
                 customStyle={styles.inputSubLabel}
                 colors={[Colors.primary.s800, Colors.primary.neutral]}>
@@ -222,6 +241,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 maxChar={40}
                 defaultValue={cancellation?.fee}
                 customOnChange={onFeeChange}
+                isDisabled={cancelWindow === 0}
                 component={CustomInput}
                 keyboardType="numeric"
                 submitted={submitted}

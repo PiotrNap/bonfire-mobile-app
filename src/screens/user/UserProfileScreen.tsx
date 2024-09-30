@@ -171,9 +171,10 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           {userInfo.username}
         </Text>
         <Pressable
-          style={Buttons.applyOpacity(
-            colorScheme === "light" ? styles.button_light : styles.button_dark
-          )}
+          style={Buttons.applyOpacity({
+            ...(colorScheme === "light" ? styles.button_light : styles.button_dark),
+            flexDirection: "row",
+          })}
           onPress={() =>
             navigation.navigate<"Edit Profile">({
               name: "Edit Profile",
@@ -218,25 +219,27 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
           <CustomSwitch onValueChange={setDarkMode} value={darkMode} />
         </SettingsItem>
 
-        <SettingsItem title="Need help or have feeback?">
+        <SettingsItem
+          customStyle={{
+            ...styles.contactUs,
+            ...{
+              backgroundColor:
+                colorScheme === "light" ? Colors.primary.s200 : Colors.primary.s180,
+            },
+          }}
+          titleStyle={{ color: Colors.primary.s800 }}
+          title="Need help or have feeback?">
           <Pressable
-            style={styles.contactUsItem}
+            style={Buttons.applyOpacity(
+              colorScheme === "light" ? styles.button_light : styles.button_dark
+            )}
             onPress={() => openInAppBrowser(WEBSITE_URL + "/contact-us")}>
             <Text
               style={
-                colorScheme === "light" ? styles.itemText_light : styles.itemText_dark
+                colorScheme === "light" ? styles.buttonText_light : styles.buttonText_dark
               }>
-              Contact Us
+              Contact us
             </Text>
-            <RightArrowIcon
-              width={26}
-              height={26}
-              color={
-                colorScheme === "light" ? Colors.primary.brand : Colors.primary.neutral
-              }
-              style={styles.itemIcon}
-              strokeWidth={1.6}
-            />
           </Pressable>
         </SettingsItem>
       </View>
@@ -281,6 +284,7 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     marginBottom: Sizing.x10,
     justifyContent: "flex-end",
+    alignItems: "center",
   },
   button_light: {
     ...Buttons.bar.secondary,
@@ -362,6 +366,12 @@ const styles = StyleSheet.create({
   itemText_dark: {
     ...Typography.subHeader.x25,
     color: Colors.primary.neutral,
+  },
+  contactUs: {
+    borderRadius: Outlines.borderRadius.large,
+    padding: Sizing.x10,
+    alignItems: "center",
+    color: Colors.primary.s800,
   },
   contactUsItem: {
     width: "auto",

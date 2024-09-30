@@ -69,7 +69,7 @@ export const Confirmation = ({ navigation, route }: Props) => {
               ? route.params?.bodyText
               : route.params?.isNewEvent
               ? "Success! Your new event should now appear on your dashboard."
-              : "Success! A transaction confirmation will appear shortly in your wallet (usually 1-3 min)."}
+              : "Success! A transaction confirmation will appear shortly in your wallet (usually 3-5 min)."}
           </BodyText>
         </View>
         <View style={styles.buttonContainer}>

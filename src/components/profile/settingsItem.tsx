@@ -28,11 +28,7 @@ export const SettingsItem = ({
         <IconComponent
           width={26}
           height={26}
-          color={
-            colorScheme === "light"
-              ? Colors.primary.brand
-              : Colors.primary.neutral
-          }
+          color={colorScheme === "light" ? Colors.primary.brand : Colors.primary.neutral}
           strokeWidth={2}
           style={styles.icon}
         />
@@ -41,10 +37,7 @@ export const SettingsItem = ({
         style={[
           styles.settingsItemTitle,
           {
-            color:
-              colorScheme === "light"
-                ? Colors.primary.s600
-                : Colors.neutral.s100,
+            color: colorScheme === "light" ? Colors.primary.s600 : Colors.neutral.s100,
           },
           titleStyle,
         ]}>
@@ -59,12 +52,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    width: "85%",
+    width: "100%",
     marginVertical: Sizing.x10,
   },
   settingsItemTitle: {
     ...Typography.subHeader.x25,
-    width: "75%",
+    width: "60%",
   },
   icon: {
     marginRight: Sizing.x10,
@@ -72,6 +65,6 @@ const styles = StyleSheet.create({
   actionableWrapper: {
     alignItems: "center",
     flexDirection: "row",
-    flex: 1,
+    alignContent: "flex-end",
   },
 })

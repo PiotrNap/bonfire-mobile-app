@@ -10,11 +10,7 @@ export interface Props {
   title: string
 }
 
-export const SettingsNavigationItem = ({
-  onPressCallback,
-  title,
-  icon,
-}: Props) => {
+export const SettingsNavigationItem = ({ onPressCallback, title, icon }: Props) => {
   const { colorScheme } = appContext()
   const IconComponent = icon
 
@@ -23,11 +19,7 @@ export const SettingsNavigationItem = ({
       <IconComponent
         width={26}
         height={26}
-        color={
-          colorScheme === "light"
-            ? Colors.primary.brand
-            : Colors.primary.neutral
-        }
+        color={colorScheme === "light" ? Colors.primary.brand : Colors.primary.neutral}
         strokeWidth={2}
         style={styles.icon}
       />
@@ -42,11 +34,7 @@ export const SettingsNavigationItem = ({
       <RightArrowIcon
         width={26}
         height={26}
-        color={
-          colorScheme === "light"
-            ? Colors.primary.brand
-            : Colors.primary.neutral
-        }
+        color={colorScheme === "light" ? Colors.primary.brand : Colors.primary.neutral}
         style={styles.navigationItemIcon}
         strokeWidth={1.6}
       />
@@ -65,11 +53,11 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   navigationItemText_light: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     color: Colors.primary.s600,
   },
   navigationItemText_dark: {
-    ...Typography.subHeader.x30,
+    ...Typography.subHeader.x25,
     color: Colors.primary.neutral,
   },
   icon: {

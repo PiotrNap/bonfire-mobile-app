@@ -73,8 +73,6 @@ export const EventsListCard = ({
       ? [color, color]
       : [Colors.primary.s800, Colors.primary.s600]
 
-  console.log(gradient)
-
   const Background = React.useCallback(
     ({ children }) => (
       <View

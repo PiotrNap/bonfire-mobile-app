@@ -242,6 +242,8 @@ export const MyPayouts = ({ navigation }: ScreenProps) => {
         if (txHash) {
           navigation.navigate("Confirmation", {
             customRoute: "Profile Main",
+            bodyText:
+              "Collateral-split confirmation will appear shortly in your wallet (usually 1-3 min).",
           })
         }
       }

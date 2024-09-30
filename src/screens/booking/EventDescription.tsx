@@ -91,10 +91,9 @@ export const EventDescription = ({ navigation, route }: any) => {
       if (!eventId) return
       await deleteEvent()
       showSuccessToast("Success!", "This event was removed.")
+      navigation.navigate("User Events")
     } catch (e) {
       showErrorToast({ error: e, topOffset: deviceTopInsent })
-    } finally {
-      navigation.navigate("User Events")
     }
   }
 
@@ -218,7 +217,7 @@ export const EventDescription = ({ navigation, route }: any) => {
                   key={asset[0]}
                   customStyle={styles.hourlyRateBody}
                   colors={[Colors.primary.s800, Colors.primary.neutral]}>
-                  {hexToUtf8(asset[1].name)}: {asset[1].count}
+                  {asset[1].count.name}: {asset[1].count.quantity}
                 </SubHeaderText>
               ))}
             </View>
