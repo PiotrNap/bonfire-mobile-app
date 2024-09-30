@@ -126,6 +126,15 @@ const reducer = (state: InitialState, action: WalletActions) => {
 
       return newState
     }
+    case WalletTypes.ResetWalletAssets: {
+      return {
+        ...state,
+        assetsBalance: null,
+        lovelaceBalance: 0n,
+        txHistory: [],
+        walletUtxos: [],
+      }
+    }
     default:
       throw Error(`Unknown type of action: ${action.type}`)
   }

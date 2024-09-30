@@ -53,8 +53,8 @@ export const AssetItem = React.memo(
       if (error) {
         Toast.show({
           type: "error",
-          text1: error?.error || "Something went wrong. Try again?",
-          text2: error?.message,
+          text1: error?.error || "Ops ...",
+          text2: error?.message || "Something went wrong fetching wallet assets.",
         })
       }
       const ipfsUrl = data?.onchain_metadata?.image || data?.onchain_metadata?.files?.[0]

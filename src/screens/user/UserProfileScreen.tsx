@@ -8,7 +8,7 @@ import ContentLoader, { Circle } from "react-content-loader/native"
 import Avatar from "react-native-boring-avatars"
 
 import { ProfileStackParamList } from "common/types/navigationTypes"
-import { appContext } from "contexts/contextApi"
+import { appContext, walletContext } from "contexts/contextApi"
 import {
   CogIcon,
   LightBulbIcon,
@@ -44,6 +44,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
   const { colorScheme, setColorScheme, networkId, setNetworkId, deviceTopInsent } =
     appContext()
+  const { resetWalletAssets } = walletContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
@@ -89,8 +90,10 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const onImagePress = () => setImagePressed(true)
   const onImagePressOut = () => setImagePressed(false)
   const updateCurrImage = () => setCurrImage("")
-  const changeNetworkId = () =>
+  const changeNetworkId = () => {
     setNetworkId(networkId === "Mainnet" ? "Preprod" : "Mainnet")
+    resetWalletAssets()
+  }
 
   return (
     <SafeAreaView

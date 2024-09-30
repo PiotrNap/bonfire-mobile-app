@@ -87,6 +87,7 @@ export enum WalletTypes {
   SetSeedPhraseWordCount = "SET_SEED_PHRASE_WORD_COUNT",
   ResetSecrets = "RESET_SECRETS",
   ResetState = "RESET_STATE",
+  ResetWalletAssets = "RESET_WALLET_ASSETS",
 }
 
 export enum BookingTypes {
@@ -360,6 +361,7 @@ export type WalletPayload = {
   }
   [WalletTypes.ResetSecrets]: {}
   [WalletTypes.ResetState]: {}
+  [WalletTypes.ResetWalletAssets]: {}
   ["unknown"]: any
 }
 

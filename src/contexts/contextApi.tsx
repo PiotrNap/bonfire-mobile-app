@@ -450,5 +450,8 @@ export const walletContext = () => {
     resetState: () => {
       dispatch({ type: "RESET_STATE" })
     },
+    resetWalletAssets: () => {
+      dispatch({ type: "RESET_WALLET_ASSETS" })
+    },
   }
 }
