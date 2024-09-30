@@ -21,6 +21,8 @@ import { LegalDocumentScreen } from "screens/LegalDocumentScreen"
 import { ToastMessage } from "components/popups/toastMessage"
 import { WelcomeScreen } from "screens/onboarding"
 
+import * as Sentry from "@sentry/react-native"
+
 import { setEra } from "@helios-lang/era"
 setEra("Conway")
 
@@ -33,6 +35,18 @@ if (Platform.OS === "android") {
   }
 }
 const Stack = createStackNavigator<AppStackParamList>()
+
+Sentry.init({
+  dsn: "https://d73dc53aa802e447540e8b2e29f633b0@o4508041102950400.ingest.us.sentry.io/4508041107472384",
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  _experiments: {
+    // profilesSampleRate is relative to tracesSampleRate.
+    // Here, we'll capture profiles for 100% of transactions.
+    profilesSampleRate: 1.0,
+  },
+})
 
 function App() {
   const { isAuthorized, isAuthLoaded, user } = useAppLogin()
@@ -113,5 +127,4 @@ function App() {
     </>
   )
 }
-
-export default App
+export default Sentry.wrap(App)

@@ -453,6 +453,10 @@ PODS:
   - RNScreens (3.29.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - RNSentry (5.33.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - Sentry/HybridSDK (= 8.36.0)
   - RNSVG (12.5.1):
     - React-Core
   - SDWebImage (5.11.1):
@@ -461,6 +465,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
+  - Sentry/HybridSDK (8.36.0)
   - SocketRocket (0.6.0)
   - VisionCamera (3.7.0):
     - React
@@ -531,6 +536,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -541,6 +547,7 @@ SPEC REPOS:
     - libwebp
     - SDWebImage
     - SDWebImageWebPCoder
+    - Sentry
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -666,6 +673,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   VisionCamera:
@@ -737,9 +746,11 @@ SPEC CHECKSUMS:
   RNPermissions: 65b9ee05b85743e142848335cd752d08cd73c5f7
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
+  RNSentry: ffc9dc8929f6ba1f65817fa90251c7a8d138d004
   RNSVG: d7d7bc8229af3842c9cfc3a723c815a52cdd1105
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
+  Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   VisionCamera: 459701e86be125db2583392d2d06acb15b04ec03
   Yoga: 1d6727ed193122f6adaf435c3de1a768326ff83b
