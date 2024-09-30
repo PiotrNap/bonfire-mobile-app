@@ -3,6 +3,7 @@ import { AddDeviceDTO, UserBaseDTO } from "common/interfaces/profileInterface"
 import { PaginationRequestDto } from "common/types/dto"
 import { getFormDataFromFilePath } from "lib/helpers"
 import { AnyObject } from "yup/lib/types"
+import { CARDANO_NETWORK } from "@env"
 import axios from "./base"
 
 type UserByPublickey = {
@@ -166,7 +167,9 @@ export class Users {
 
   public static async registerForBetaTesting(betaCode: string, id: string) {
     try {
-      return await axios.get(`/users/${id}/beta-tester-registration/${betaCode}`)
+      return await axios.get(
+        `/users/${id}/beta-tester-registration/${betaCode}/${CARDANO_NETWORK}`
+      )
     } catch (e) {
       throw e?.response?.data || e
     }
