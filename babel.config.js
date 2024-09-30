@@ -46,6 +46,7 @@ module.exports = function (api) {
         ],
       },
     ],
+    "@babel/plugin-transform-export-namespace-from",
     // reanimated has to be listed as last plugin.
     "react-native-reanimated/plugin",
   ]
