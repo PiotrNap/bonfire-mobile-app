@@ -46,11 +46,11 @@ export const ImageCoverSelection = ({ navigation }: Props) => {
       setCurrImage(imageURI)
     }
 
-    if (imageObj?.assets[0]?.uri && imageObj !== currImage) {
+    if (imageObj && imageObj.assets[0]?.uri && imageObj !== currImage) {
       setCurrImage(imageObj.assets[0].uri)
       setCurrPhase("selected")
       animateNavigationButtons()
-    } else if (mediaObj?.assets[0]?.uri && mediaObj !== currImage) {
+    } else if (mediaObj && mediaObj?.assets[0]?.uri && mediaObj !== currImage) {
       setCurrImage(mediaObj.assets[0].uri)
       setCurrPhase("selected")
       animateNavigationButtons()

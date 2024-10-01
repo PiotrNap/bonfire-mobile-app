@@ -485,14 +485,8 @@ export const DetailedConfirmation = ({ navigation, route }: any) => {
         )}
         {params?.isNewEvent && (
           <View style={styles.noteContainer}>
-            <View style={styles.headerContent}>
-              <SubHeaderText
-                colors={[Colors.primary.s800, Colors.primary.neutral]}
-                customStyle={{ marginRight: "auto", ...fontWeight.bold }}>
-                Note to Your Customers
-              </SubHeaderText>
-            </View>
             <CustomPlainInput
+              label="Note to Your Customers"
               key="note"
               multiline={true}
               numberOfLines={8}
