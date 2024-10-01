@@ -20,6 +20,7 @@ import { formStyleDark } from "../../styles/forms"
 import { Checkbox } from "components/forms/Checkbox"
 import { BodyText } from "components/rnWrappers/bodyText"
 import { ModalState, SlideDownModal } from "components/modals/SlideDownModal"
+import { openInAppBrowser } from "lib/utils"
 
 export interface RegistrationConfirmationScreen {}
 

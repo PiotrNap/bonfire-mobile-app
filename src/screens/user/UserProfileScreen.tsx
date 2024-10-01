@@ -44,7 +44,7 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const { getUserProfile, setImageBase64 } = React.useContext(ProfileContext)
   const { colorScheme, setColorScheme, networkId, setNetworkId, deviceTopInsent } =
     appContext()
-  const { resetWalletAssets } = walletContext()
+  const { resetWalletAssetsAndHistory } = walletContext()
   const { mediaObj, setMediaObj, launchImageLibrary } = useMediaAccess()
   const { imageObj, setImgObj, launchCamera } = useCameraAccess()
   const [imagePressed, setImagePressed] = React.useState<boolean>(false)
@@ -91,8 +91,8 @@ export const UserProfileScreen = ({ navigation }: UserProfileProps) => {
   const onImagePressOut = () => setImagePressed(false)
   const updateCurrImage = () => setCurrImage("")
   const changeNetworkId = () => {
+    resetWalletAssetsAndHistory()
     setNetworkId(networkId === "Mainnet" ? "Preprod" : "Mainnet")
-    resetWalletAssets()
   }
 
   return (

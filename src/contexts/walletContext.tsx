@@ -126,9 +126,10 @@ const reducer = (state: InitialState, action: WalletActions) => {
 
       return newState
     }
-    case WalletTypes.ResetWalletAssets: {
+    case WalletTypes.ResetWalletAssetsAndHistory: {
       return {
         ...state,
+        walletAssets: null,
         assetsBalance: null,
         lovelaceBalance: 0n,
         txHistory: [],
