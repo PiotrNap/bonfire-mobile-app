@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   navigationItem: {
     flexDirection: "row",
     alignItems: "center",
-    width: "85%",
+    width: "90%",
     marginBottom: Sizing.x20,
   },
   navigationItemIcon: {

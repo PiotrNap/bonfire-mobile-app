@@ -176,21 +176,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
         />
       </SettingsItem>
       */}
-        <View
-          style={[
-            styles.sensitiveInfoSection,
-            {
-              borderColor:
-                colorScheme === "light" ? Colors.primary.s600 : Colors.primary.neutral,
-            },
-          ]}>
-          <View style={styles.sectionHeader}>
-            <SubHeaderText
-              customStyle={Typography.roboto.bold}
-              colors={[Colors.danger.s400]}>
-              Danger Zone
-            </SubHeaderText>
-          </View>
+        <View style={[styles.sensitiveInfoSection]}>
           {isOfflineMnemonic && (
             <SettingsItem
               titleStyle={textStyle}
@@ -198,7 +184,7 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
               <SmallButton
                 onPress={onPreviewMnemonicPress}
                 title="Preview"
-                customStyle={{ width: "100%", justifyContent: "center" }}
+                customStyle={styles.buttonStyle}
               />
             </SettingsItem>
           )}
@@ -208,12 +194,14 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
               "Remove all data stored on this device \n(includes private & public keys)"
             }>
             <SmallDangerButton
+              buttonStyle={styles.buttonStyle}
               onPressCallback={() => showCredentialsLossWarningModal(removeStorageData)}
               text="Remove"
             />
           </SettingsItem>
           <SettingsItem titleStyle={textStyle} title={"Deactivate my account"}>
             <SmallDangerButton
+              buttonStyle={styles.buttonStyle}
               onPressCallback={() => showAccountDeletionWarningModal(deleteUserAccount)}
               text="Deactivate"
             />
@@ -251,8 +239,13 @@ const styles = StyleSheet.create({
     marginVertical: Sizing.x5,
   },
   sensitiveInfoSection: {
-    borderWidth: Outlines.borderWidth.base,
-    borderRadius: Outlines.borderRadius.base,
     padding: Sizing.x5,
+  },
+  buttonStyle: {
+    minWidth: Sizing.x10,
+    width: Sizing.x80,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: Sizing.x5,
   },
 })

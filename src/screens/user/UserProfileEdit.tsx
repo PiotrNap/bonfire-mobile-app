@@ -8,25 +8,15 @@ import { appContext } from "contexts/contextApi"
 import { UpdateAccountForm } from "components/forms/UpdateAccountForm"
 import { ProfileStackParamList } from "common/types/navigationTypes"
 import { StackScreenProps } from "@react-navigation/stack"
-import { showErrorToast, showSuccessToast } from "lib/helpers"
 
 interface UserProfileEditProps
   extends StackScreenProps<ProfileStackParamList, "Edit Profile"> {}
 
 export const UserProfileEdit = ({ navigation, route }: UserProfileEditProps) => {
-  const { colorScheme, deviceTopInsent } = appContext()
-  const [isInfoChanged, setIsInfoChanged] = React.useState<boolean>(false)
-  const [updateResponse, setUpdateResponse] = React.useState<any>(null)
+  const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
-  const isErrorResponse = updateResponse?.status !== 201
 
   const onBackNavigationPress = () => navigation.goBack()
-  const updateResponseMsg = (val: any) => {
-    setUpdateResponse(val)
-    if (isErrorResponse) {
-      showErrorToast({error: updateResponse, topOffset: deviceTopInsent})
-    } else showSuccessToast("Success Update", updateResponse?.msg)
-  }
 
   return (
     <Layout scrollable>
@@ -40,11 +30,7 @@ export const UserProfileEdit = ({ navigation, route }: UserProfileEditProps) => 
         </Pressable>
       </View>
       <View style={styles.formContainer}>
-        <UpdateAccountForm
-          userInfo={route.params.userInfo}
-          onInfoHasChanged={(val: boolean) => setIsInfoChanged(val)}
-          onUpdateResponse={updateResponseMsg}
-        />
+        <UpdateAccountForm userInfo={route.params.userInfo} />
       </View>
     </Layout>
   )

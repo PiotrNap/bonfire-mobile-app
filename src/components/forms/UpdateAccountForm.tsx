@@ -16,12 +16,10 @@ import { ProfileContext } from "contexts/profileContext"
 import { showErrorToast, showSuccessToast } from "lib/helpers"
 
 interface Props {
-  onInfoHasChanged: (val: boolean) => void
-  onUpdateResponse: (val: { msg: string; status: number }) => void
   userInfo: any
 }
 
-export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
+export const UpdateAccountForm = ({ userInfo }: Props) => {
   const { isLoading, setIsLoading, updateAccountInfo } = useUpdateAccountInfo()
   const { colorScheme, deviceTopInsent } = appContext()
   const { setUsername, setBio, setProfession, setJobTitle, setSkills, setHourlyRateAda } =
@@ -30,6 +28,8 @@ export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
 
   const isLightMode = colorScheme === "light"
   const handleSubmit = async (newValues: any) => {
+    setSubmitted(true)
+
     const bw = new Filter()
     const words = Object.values(newValues).join(" ")
     if (bw.isProfane(words)) return showInappropriateContentModal()
@@ -42,8 +42,7 @@ export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
 
     setIsLoading(true)
     try {
-      const res = await updateAccountInfo(newValues, userInfo.id)
-      res && onUpdateResponse(newValues)
+      await updateAccountInfo(newValues, userInfo.id)
 
       const { username, bio, profession, jobTitle, skills, hourlyRateAda } = newValues
       setUsername(username)
@@ -54,9 +53,10 @@ export const UpdateAccountForm = ({ onUpdateResponse, userInfo }: Props) => {
       setHourlyRateAda(hourlyRateAda)
       showSuccessToast("Success", "Your profile got updated")
     } catch (e) {
-      showErrorToast({error: e, topOffset: deviceTopInsent})
+      showErrorToast({ error: e, topOffset: deviceTopInsent })
     } finally {
       setIsLoading(false)
+      setSubmitted(false)
     }
   }
   let formStyles: StyleProp<any>

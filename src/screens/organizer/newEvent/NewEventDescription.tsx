@@ -183,7 +183,7 @@ export const NewEventDescription = ({ navigation }: Props) => {
                 key="summary"
                 name="summary"
                 component={CustomInput}
-                maxChar={250}
+                maxChar={300}
                 customOnChange={onSummaryChange}
                 multiline
                 numberOfLines={8}

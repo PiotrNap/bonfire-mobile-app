@@ -11,11 +11,7 @@ export interface Props {
   buttonStyle?: ViewStyle
 }
 
-export const SmallDangerButton = ({
-  onPressCallback,
-  buttonStyle,
-  text,
-}: Props) => {
+export const SmallDangerButton = ({ onPressCallback, buttonStyle, text }: Props) => {
   const { colorScheme } = appContext()
   const isLightMode = colorScheme === "light"
 
@@ -43,7 +39,6 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
     padding: Sizing.x3,
     borderRadius: Outlines.borderRadius.small,
   },

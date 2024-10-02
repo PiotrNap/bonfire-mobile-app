@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    width: "90%",
     marginVertical: Sizing.x10,
   },
   settingsItemTitle: {
     ...Typography.subHeader.x25,
-    width: "60%",
+    flex: 1,
   },
   icon: {
     marginRight: Sizing.x10,
