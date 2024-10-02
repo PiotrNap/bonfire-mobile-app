@@ -32,7 +32,7 @@ enum Redeemer {
 const TREASURY_PKH: ByteArray = #84e6f5ca8f28b6401742a20119073c64685cd7d7c11b6504b5274075
 const treasuryPkh: PubKeyHash = PubKeyHash::new(TREASURY_PKH)
 
-const BETA_TESTER_MPH: ByteArray = #84bfdaf7852337c37246d554329f07b23f824e1e19fc0d356996a810
+const BETA_TESTER_MPH: ByteArray = #1e2dd627dd6e43e6b679e41ff4afea39a9aca3ad179ad7dc3d8e01f0
 const betaTesterMph: MintingPolicyHash = MintingPolicyHash::new(BETA_TESTER_MPH)
 
 const minServiceFeePercent: Int = 3
