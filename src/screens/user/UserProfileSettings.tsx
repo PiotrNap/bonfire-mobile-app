@@ -155,15 +155,6 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
             />
           </Pressable>
         </View>
-        {collateralUtxoId && (
-          <SettingsItem titleStyle={textStyle} title={"Unlock collateral UTxO"}>
-            <SmallButton
-              onPress={onUnlockCollataralPress}
-              title="Unlock"
-              customStyle={{ width: "100%", justifyContent: "center" }}
-            />
-          </SettingsItem>
-        )}
         {/*
       @TODO after beta release
       <SettingsItem titleStyle={textStyle} title={"Show past events on my calendar."}>
@@ -177,6 +168,15 @@ export const UserProfileSettings = ({ navigation }: ScreenProps) => {
       </SettingsItem>
       */}
         <View style={[styles.sensitiveInfoSection]}>
+          {collateralUtxoId && (
+            <SettingsItem titleStyle={textStyle} title={"Unlock collateral UTxO"}>
+              <SmallButton
+                onPress={onUnlockCollataralPress}
+                title="Unlock"
+                customStyle={styles.buttonStyle}
+              />
+            </SettingsItem>
+          )}
           {isOfflineMnemonic && (
             <SettingsItem
               titleStyle={textStyle}

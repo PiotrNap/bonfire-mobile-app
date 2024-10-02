@@ -11,12 +11,12 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		170CABB73A1D325A97E15402 /* libPods-bonfire.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ECF3543E29D01501CF5840E /* libPods-bonfire.a */; };
+		2188EFCE3CA8DC5AC58CCE1D /* libPods-bonfire-bonfireTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E68251A12AA0C1878CFFEAC /* libPods-bonfire-bonfireTests.a */; };
 		329FF86DAE664FB695337065 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 96F50701A13640C29EB57816 /* Roboto-Black.ttf */; };
-		3C7821963F9FC905D43C184B /* libPods-bonfire-bonfireTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ADFB50BF618B021846F49FF /* libPods-bonfire-bonfireTests.a */; };
 		422FFD723D4A44BC8AE66AD4 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF0FCEB5734D474EA7DD517C /* Roboto-Light.ttf */; };
 		5C6AF5F3BC60427180BA1B1D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A5517E10733401ABEC75D88 /* Roboto-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A5F39C4B6574809FD93E2518 /* libPods-bonfire.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63AEB78FAC82E88945F4019A /* libPods-bonfire.a */; };
 		AE07EBD82C99798A00E977CB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AE07EBD72C99798A00E977CB /* FirebaseAnalytics */; };
 		AE07EBDA2C99798A00E977CB /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = AE07EBD92C99798A00E977CB /* FirebaseAppDistribution-Beta */; };
 		AE0CDDC32C99BC0B007F5F7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */; };
@@ -49,18 +49,18 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = bonfire/main.m; sourceTree = "<group>"; };
 		1A5517E10733401ABEC75D88 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		2372CC13FC69486A8D1818A4 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		2D97A0C9EF14292A932B366E /* Pods-bonfire.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.debug.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.debug.xcconfig"; sourceTree = "<group>"; };
 		2EE228B639A44E5FB08C8A21 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		6ADFB50BF618B021846F49FF /* libPods-bonfire-bonfireTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire-bonfireTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		36DB4ECF8F15348F09A81741 /* Pods-bonfire-bonfireTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.debug.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.debug.xcconfig"; sourceTree = "<group>"; };
+		63AEB78FAC82E88945F4019A /* libPods-bonfire.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8045F420D3E47015149CCFD0 /* Pods-bonfire.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.release.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = bonfire/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		92DBE4FCE8EEC6163B3BF350 /* Pods-bonfire.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.release.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.release.xcconfig"; sourceTree = "<group>"; };
 		96F50701A13640C29EB57816 /* Roboto-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Black.ttf"; path = "../assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
-		9CC8239715DB06415349D972 /* Pods-bonfire-bonfireTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.release.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.release.xcconfig"; sourceTree = "<group>"; };
-		9ECF3543E29D01501CF5840E /* libPods-bonfire.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E68251A12AA0C1878CFFEAC /* libPods-bonfire-bonfireTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-bonfire-bonfireTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE0CDDC22C99BC0B007F5F7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		BDBED1143FA8448C7EEA0FAA /* Pods-bonfire-bonfireTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.debug.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.debug.xcconfig"; sourceTree = "<group>"; };
+		C4590165F5B909D9BC127998 /* Pods-bonfire-bonfireTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire-bonfireTests.release.xcconfig"; path = "Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EF0FCEB5734D474EA7DD517C /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
-		FDE40436339E9B665B3EEADC /* Pods-bonfire.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bonfire.debug.xcconfig"; path = "Target Support Files/Pods-bonfire/Pods-bonfire.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C7821963F9FC905D43C184B /* libPods-bonfire-bonfireTests.a in Frameworks */,
+				2188EFCE3CA8DC5AC58CCE1D /* libPods-bonfire-bonfireTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			files = (
 				AE07EBD82C99798A00E977CB /* FirebaseAnalytics in Frameworks */,
 				AE07EBDA2C99798A00E977CB /* FirebaseAppDistribution-Beta in Frameworks */,
-				170CABB73A1D325A97E15402 /* libPods-bonfire.a in Frameworks */,
+				A5F39C4B6574809FD93E2518 /* libPods-bonfire.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				9ECF3543E29D01501CF5840E /* libPods-bonfire.a */,
-				6ADFB50BF618B021846F49FF /* libPods-bonfire-bonfireTests.a */,
+				63AEB78FAC82E88945F4019A /* libPods-bonfire.a */,
+				9E68251A12AA0C1878CFFEAC /* libPods-bonfire-bonfireTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -136,10 +136,10 @@
 		8372E036BABDC365722F4C05 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FDE40436339E9B665B3EEADC /* Pods-bonfire.debug.xcconfig */,
-				92DBE4FCE8EEC6163B3BF350 /* Pods-bonfire.release.xcconfig */,
-				BDBED1143FA8448C7EEA0FAA /* Pods-bonfire-bonfireTests.debug.xcconfig */,
-				9CC8239715DB06415349D972 /* Pods-bonfire-bonfireTests.release.xcconfig */,
+				2D97A0C9EF14292A932B366E /* Pods-bonfire.debug.xcconfig */,
+				8045F420D3E47015149CCFD0 /* Pods-bonfire.release.xcconfig */,
+				36DB4ECF8F15348F09A81741 /* Pods-bonfire-bonfireTests.debug.xcconfig */,
+				C4590165F5B909D9BC127998 /* Pods-bonfire-bonfireTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -189,11 +189,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "bonfireTests" */;
 			buildPhases = (
-				235B4104BBE2BB40FD2122C5 /* [CP] Check Pods Manifest.lock */,
+				4FF5E2B015FE0188D4125AB5 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				E4949052D86EAD29EC4E58AA /* [CP] Copy Pods Resources */,
+				5B9253BF9449F60DB5386897 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -209,15 +209,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "bonfire" */;
 			buildPhases = (
-				067774619518AB1BFA5028F3 /* [CP] Check Pods Manifest.lock */,
+				0E982203B9E77E47C89541FC /* [CP] Check Pods Manifest.lock */,
 				AE2A9EBC2C80ECB000DC5804 /* ShellScript */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				8351788ED960DAC48F46457C /* [CP] Copy Pods Resources */,
 				DB70761923AC43F9B745C9EB /* Upload Debug Symbols to Sentry */,
+				8406AB3E9ADCBEF21B6C1C0D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -313,7 +313,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=/Users/piotr/.nvm/versions/node/v20.14.0/bin/node\n/bin/sh `\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('@sentry/react-native/package.json')) + '/scripts/sentry-xcode.sh'\"` ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		067774619518AB1BFA5028F3 /* [CP] Check Pods Manifest.lock */ = {
+		0E982203B9E77E47C89541FC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -335,7 +335,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		235B4104BBE2BB40FD2122C5 /* [CP] Check Pods Manifest.lock */ = {
+		4FF5E2B015FE0188D4125AB5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -357,7 +357,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8351788ED960DAC48F46457C /* [CP] Copy Pods Resources */ = {
+		5B9253BF9449F60DB5386897 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8406AB3E9ADCBEF21B6C1C0D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -391,22 +408,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport cargo=/Users/piotr/.cargo/bin/cargo\n";
 		};
-		E4949052D86EAD29EC4E58AA /* [CP] Copy Pods Resources */ = {
+		DB70761923AC43F9B745C9EB /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-bonfire-bonfireTests/Pods-bonfire-bonfireTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/bin/sh ../node_modules/@sentry/react-native/scripts/sentry-xcode-debug-files.sh";
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -426,20 +440,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 			showEnvVarsInLog = 0;
-		};
-		DB70761923AC43F9B745C9EB /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			name = "Upload Debug Symbols to Sentry";
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh ../node_modules/@sentry/react-native/scripts/sentry-xcode-debug-files.sh";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -474,7 +474,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BDBED1143FA8448C7EEA0FAA /* Pods-bonfire-bonfireTests.debug.xcconfig */;
+			baseConfigurationReference = 36DB4ECF8F15348F09A81741 /* Pods-bonfire-bonfireTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -501,7 +501,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9CC8239715DB06415349D972 /* Pods-bonfire-bonfireTests.release.xcconfig */;
+			baseConfigurationReference = C4590165F5B909D9BC127998 /* Pods-bonfire-bonfireTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -525,7 +525,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FDE40436339E9B665B3EEADC /* Pods-bonfire.debug.xcconfig */;
+			baseConfigurationReference = 2D97A0C9EF14292A932B366E /* Pods-bonfire.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -553,7 +553,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 92DBE4FCE8EEC6163B3BF350 /* Pods-bonfire.release.xcconfig */;
+			baseConfigurationReference = 8045F420D3E47015149CCFD0 /* Pods-bonfire.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
