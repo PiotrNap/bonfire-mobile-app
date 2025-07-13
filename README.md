@@ -18,3 +18,19 @@ This is an open-source project. Use it at your own risk.
 Community best efforts put into this project have tried to make this software as reliable as possible,
 but it cannot guarantee that things will work as expected every time. None of the people who contributed to 
 this project is or will be responsible for any damage caused by explicit use of this software. 
+
+## App Showcase
+
+- This video shows how to create bookable events that others can pay for using crypto.
+
+https://github.com/user-attachments/assets/ad004870-220b-45b4-9254-292ad54cbc48
+
+
+- This video shows how to use the wallet UI and book events created by others.
+
+https://github.com/user-attachments/assets/3878fa53-a94c-4f34-a3f3-ff93a6231120
+
+
+
+
+
